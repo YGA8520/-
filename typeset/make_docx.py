@@ -388,13 +388,13 @@ def styles_xml():
     s += '<w:style w:type="character" w:default="1" w:styleId="DefaultParagraphFont"><w:name w:val="Default Paragraph Font"/><w:uiPriority w:val="1"/><w:semiHidden/></w:style>'
     # paragraph styles
     s += pst('Body', '<w:widowControl/><w:bidi/><w:spacing w:after="340" w:line="340" w:lineRule="exact"/><w:jc w:val="both"/>', '')
-    s += pst('ArticleTitle', '<w:keepNext/><w:bidi/><w:spacing w:before="170" w:after="170" w:line="440" w:lineRule="exact"/><w:jc w:val="center"/><w:outlineLvl w:val="0"/>',
+    s += pst('ArticleTitle', '<w:keepNext/><w:bidi/><w:spacing w:before="170" w:after="170" w:line="440" w:lineRule="exact"/><w:jc w:val="center"/><w:outlineLvl w:val="1"/>',
              fonts(DISPLAY_FONT) + DB + sz(TITLE_PT), nxt='Body')
-    s += pst('ArticlePart', '<w:keepNext/><w:bidi/><w:spacing w:before="340" w:after="0" w:line="340" w:lineRule="exact"/><w:jc w:val="center"/><w:outlineLvl w:val="1"/>',
+    s += pst('ArticlePart', '<w:keepNext/><w:bidi/><w:spacing w:before="340" w:after="0" w:line="340" w:lineRule="exact"/><w:jc w:val="center"/><w:outlineLvl w:val="2"/>',
              fonts(DISPLAY_FONT) + DB + sz(14.5), nxt='Body')
     s += pst('SubHeading', '<w:keepNext/><w:bidi/><w:spacing w:before="340" w:after="0" w:line="340" w:lineRule="exact"/><w:jc w:val="center"/>',
              fonts(LEAD_FONT) + f'<w:b/><w:bCs/>{sz(11.5)}', nxt='Body')
-    s += pst('SimanTitle', '<w:keepNext/><w:bidi/><w:spacing w:before="312" w:after="312" w:line="760" w:lineRule="exact"/><w:jc w:val="center"/>',
+    s += pst('SimanTitle', '<w:keepNext/><w:bidi/><w:spacing w:before="312" w:after="312" w:line="760" w:lineRule="exact"/><w:jc w:val="center"/><w:outlineLvl w:val="0"/>',
              fonts(DISPLAY_FONT) + DB + sz(30))
     s += pst('ArticleAuthor', '<w:bidi/><w:spacing w:before="80" w:after="280" w:line="280" w:lineRule="exact"/><w:jc w:val="center"/>', fonts(AUTHOR_FONT) + f'<w:b/><w:bCs/>{sz(11.5)}')
     s += pst('ArticleSubtitle', '<w:bidi/><w:spacing w:before="0" w:after="40" w:line="280" w:lineRule="exact"/><w:jc w:val="center"/>', fonts(LEAD_FONT) + sz(11))
@@ -405,7 +405,11 @@ def styles_xml():
     # built-in styles keep their English ids/names (Hebrew Word shows them in Hebrew by itself)
     s += pst('FootnoteText', f'<w:bidi/><w:spacing w:after="30" w:line="{round(FOOT_LEAD * 20)}" w:lineRule="exact"/><w:jc w:val="both"/>', fonts(NOTES_FONT) + sz(FOOT_PT), name='footnote text')
     s += pst('Header', '<w:bidi/><w:spacing w:after="0" w:line="300" w:lineRule="exact"/>', '', name='header')
-    s += pst('TOC1', f'<w:tabs><w:tab w:val="right" w:leader="dot" w:pos="{TEXT_W}"/></w:tabs><w:bidi/><w:spacing w:after="60" w:line="300" w:lineRule="exact"/>', fonts(TOC_FONT) + sz(12), name='toc 1')
+    # TOC1 = the band that opens a siman (grey, ruled above and below), TOC2 = one article
+    s += pst('TOC1', f'<w:keepNext/><w:pBdr><w:top w:val="single" w:sz="12" w:space="3" w:color="000000"/><w:bottom w:val="single" w:sz="4" w:space="3" w:color="000000"/></w:pBdr>'
+             f'<w:shd w:val="clear" w:color="auto" w:fill="E6E6E6"/><w:tabs><w:tab w:val="right" w:leader="underscore" w:pos="{TEXT_W}"/></w:tabs><w:bidi/><w:spacing w:before="300" w:after="110" w:line="340" w:lineRule="exact"/>',
+             fonts(TOC_FONT) + '<w:b/><w:bCs/>' + sz(14), name='toc 1')
+    s += pst('TOC2', f'<w:tabs><w:tab w:val="right" w:leader="dot" w:pos="{TEXT_W}"/></w:tabs><w:bidi/><w:spacing w:after="60" w:line="300" w:lineRule="exact"/>', fonts(TOC_FONT) + sz(12), name='toc 2')
     # character styles
     s += cst('LeadWord', fonts(LEAD_FONT) + f'<w:b/><w:bCs/>{sz(LEAD_PT)}')
     s += cst('SmallSource', sz(SMALL_PT))
@@ -464,6 +468,7 @@ def build(doc_json, layout_json, cfg_json, out):
         headers.append((en, header_xml(book['name'], chap_even or chap, True)))      # even page (right-hand): the author
         return (f'rIdH{tag}d', f'rIdH{tag}e')
     empty_ids = ('rIdHEd', 'rIdHEe')
+    toc_ids = add_header('תוכן עניינים', 'TOC')
     headers.append(('headerEd.xml', empty_header())); headers.append(('headerEe.xml', empty_header()))
 
     # cover (placeholder until the real cover is supplied)
@@ -473,15 +478,20 @@ def build(doc_json, layout_json, cfg_json, out):
                  (para(run(book['subtitle']), ST['coverSub']) if book.get('subtitle') else '') +
                  para(picture('flourish-wide-1.png', 70, 'v'), jc='center', sect=sectpr('continuous', 1, empty_ids)))
 
-    # table of contents: a real TOC field (outline level of the article-title style), with cached entries
-    entries = [(a['title'], lay['toc'][k]['page'] if lay else k + 1) for k, a in enumerate(data['articles'])]
+    # table of contents: a real TOC field (outline levels: siman title = 1, article title = 2), with cached entries; running head like the rest of the booklet
+    items = []
+    for k, a in enumerate(data['articles']):
+        if a.get('divider') and lay:
+            items.append((1, a['divider'], lay['dividerPages'][k]))
+        items.append((2, a['title'], lay['toc'][k]['page'] if lay else k + 1))
     toc = [para(run('תוכן עניינים'), ST['tocTitle'])]
-    for k, (title, pg) in enumerate(entries):
-        pre = ('<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> TOC \\o "1-1" \\u </w:instrText></w:r>'
+    for k, (lvl, title, pg) in enumerate(items):
+        pre = ('<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> TOC \\o "1-2" \\u </w:instrText></w:r>'
                '<w:r><w:fldChar w:fldCharType="separate"/></w:r>') if k == 0 else ''
-        post = '<w:r><w:fldChar w:fldCharType="end"/></w:r>' if k == len(entries) - 1 else ''
-        sect = sectpr('nextPage', 1, empty_ids) if k == len(entries) - 1 else ''
-        toc.append(para(f'{pre}<w:r><w:t xml:space="preserve">{escape(wtxt(title))}</w:t></w:r><w:r><w:tab/></w:r><w:r><w:t>{heb(pg)}</w:t></w:r>{post}', 'TOC1', sect=sect))
+        post = '<w:r><w:fldChar w:fldCharType="end"/></w:r>' if k == len(items) - 1 else ''
+        toc.append(para(f'{pre}<w:r><w:t xml:space="preserve">{escape(wtxt(title))}</w:t></w:r><w:r><w:tab/></w:r><w:r><w:t>{heb(pg)}</w:t></w:r>{post}', f'TOC{lvl}'))
+    eo = cfg.get('endOrnament') or {}
+    toc.append(para(picture(eo.get('name', 'fleuron-small') + '.png', eo.get('w', 18), 'v'), jc='center', spacing='<w:spacing w:before="240" w:after="0" w:line="240" w:lineRule="auto"/>', sect=sectpr('nextPage', 1, toc_ids, start_page=1)))
     parts.append(''.join(toc))
 
     first = True

@@ -41,6 +41,21 @@ def heb_label(s):
 TITLE_WORDS = ('הרב', 'הרה״ג', 'הרה"ג', 'הגאון', 'נשיא', 'האברך', 'האה״ח', 'האה"ח', 'ר׳', "ר'", 'מכלל', 'שיעורו')
 
 
+LEADERS = [   # in the order they appear inside a siman: (core name, the title printed with it)
+    (re.compile(r'מרדכי\s+פוטא?ש'), "נשיא הכולל הגאון ר׳ מרדכי פוטש שליט״א"),
+    (re.compile(r'דוד\s+פוטא?ש'), "נשיא הכולל הגאון ר׳ דוד פוטש שליט״א"),
+    (re.compile(r'משה\s+זאדה'), "ראש הכולל הרב ר׳ משה זאדה שליט״א"),
+]
+
+
+def author_rank(author):
+    """0 מרדכי פוטש, 1 דוד פוטש, 2 משה זאדה, 3 everybody else (the order of the חבורות inside every siman)"""
+    for k, (rx, _) in enumerate(LEADERS):
+        if rx.search(author or ''):
+            return k
+    return len(LEADERS)
+
+
 def honorific(name):
     """"הרב" in front of an author who has no title yet, "שליט״א" after the name"""
     name = re.sub(r'\s+', ' ', name.replace('\t', ' ')).strip()
@@ -48,6 +63,9 @@ def honorific(name):
     name = fix_quotes(name)
     if not name:
         return name
+    for rx, full in LEADERS:
+        if rx.search(name):
+            return full
     if not name.startswith(TITLE_WORDS):
         name = 'הרב ' + name
     if name.endswith('שליט' + GERSH + 'א'):
@@ -93,6 +111,15 @@ CONTEXT_HEADINGS = {      # lines typed as plain text that are headings only by 
 }
 
 
+# a sentence that continues the argument (starts with ו / הנה / אמנם ...) or a very long text is not a sub-heading even if it is bold
+SENTENCE_HEAD = re.compile(r'^(?:[א-ת]{1,2}\.\s*)?(?:ו(?!בענין|בעניין|בדין|ביאור|לענין|לעניין)|הנה\b|אמנם\b|אבל\b|מהא\b|לפי זה\b|להלכה\b)')
+
+
+def is_sentence_heading(text):
+    words = len(text.split())
+    return words >= 30 or (words >= 5 and bool(SENTENCE_HEAD.match(text)))
+
+
 def classify_items(items, fns, D, title_norm=None, loose_heads=False):
     """items: ingest items for ONE article body -> blocks."""
     # explicit small runs present?
@@ -129,6 +156,9 @@ def classify_items(items, fns, D, title_norm=None, loose_heads=False):
         text = runs_text(runs).strip()
         n = len(text)
         align = it['align']
+        force_para = is_sentence_heading(text)
+        if force_para:                          # ordinary paragraph (bold lead word as everywhere), not a heading and not all bold
+            runs = [{k: v for k, v in r.items() if k != 'b'} for r in runs]
         # headings the author marked with a Word heading style, or with underline only (short line, every letter underlined)
         letters = sum(len(re.findall(r'[\u05d0-\u05ea]', r['t'])) for r in it['runs'] if 'fn' not in r)
         ul_letters = sum(len(re.findall(r'[\u05d0-\u05ea]', r['t'])) for r in it['runs'] if 'fn' not in r and r.get('u'))
@@ -139,7 +169,7 @@ def classify_items(items, fns, D, title_norm=None, loose_heads=False):
         loose_head = loose_heads and not any('fn' in r for r in runs) and (
             (align == 'center' and n <= 100 and len(text.split()) <= 12) or
             (len(text.split()) <= 7 and n <= 60 and HEAD_START.match(text) and not text.rstrip().endswith(',')))
-        if (style_head and n <= 220) or underline_head or context_head or loose_head:
+        if not force_para and ((style_head and n <= 220) or underline_head or context_head or loose_head):
             m = SECTION.match(text.replace(GER, "'"))
             if m and not any('fn' in r for r in runs):
                 blocks.append({'t': 'h2', 'runs': [{'t': ('%s %s' % (m.group(1), m.group(2))).replace("'", GER).strip()}]})
@@ -148,10 +178,10 @@ def classify_items(items, fns, D, title_norm=None, loose_heads=False):
             else:
                 blocks.append({'t': 'h3', 'runs': as_heading_runs(runs)})
             continue
-        if re.fullmatch(r"[\u05d0-\u05ea]{1,2}[׳'.:]?", text):      # a lone section letter ("א", "ב") -> small centred heading
+        if not force_para and re.fullmatch(r"[\u05d0-\u05ea]{1,2}[׳'.:]?", text):      # a lone section letter ("א", "ב") -> small centred heading
             blocks.append({'t': 'h3', 'runs': [{'t': text.rstrip('.:'), 'b': True}]})
             continue
-        if all_bold(runs) and (align == 'center' or n <= 140):
+        if not force_para and all_bold(runs) and (align == 'center' or n <= 140):
             m = SECTION.match(text.replace(GER, "'"))
             if m and not any('fn' in r for r in runs):
                 blocks.append({'t': 'h2', 'runs': [{'t': ('%s %s' % (m.group(1), m.group(2))).replace("'", GER).strip()}]})
@@ -333,8 +363,8 @@ def build():
         allarts += new_articles.build_articles()
     except SystemExit as e:
         print('WARNING: additional חבורות not added:', e)
-    # order: by siman, then se'if, then (existing articles first) the order they came in
-    ordered = sorted(allarts, key=lambda a: (a['siman'] or 0, a['seif'], a['idx']))
+    # order: by siman; inside a siman: מרדכי פוטש, דוד פוטש, משה זאדה, then everybody else; then se'if, then the order they came in
+    ordered = sorted(allarts, key=lambda a: (a['siman'] or 0, author_rank(a['author']), a['seif'], a['idx']))
     for a in ordered:                       # running-head versions of long titles (no ellipsis; the client wants a clean cut)
         for pre, short in SHORT_TITLES.items():
             if N(a['title']).startswith(pre):
@@ -357,6 +387,8 @@ def build():
         if a['siman'] and a['siman'] != cur:
             a['divider'] = re.split(r'\s+סעי', a['label'])[0]
             cur = a['siman']
+    if ordered and not ordered[0]['siman']:           # the articles that precede siman 1: the introductions to the booklet
+        ordered[0]['divider'] = 'פתיחות'
     return ordered
 
 

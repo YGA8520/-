@@ -7,6 +7,7 @@ try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = requ
   const [,, docPath, outPdf, cfgPath = path.join(__dirname, 'config.json')] = process.argv;
   const cfg = JSON.parse(fs.readFileSync(cfgPath, 'utf8'));
   const doc = JSON.parse(fs.readFileSync(docPath, 'utf8'));
+  if (process.env.DEBUG_TOC) cfg.debugToc = true;
   // ---- fonts: roles (body / lead / display) and the font files that provide them -> config.json "fonts" and "fontFaces"
   const F = cfg.fonts = Object.assign({ body: 'Frank Ruhl Libre', lead: 'David Libre', display: 'Frank Ruhl Libre' }, cfg.fonts || {});
   F.notes = F.notes || F.body; F.author = F.author || F.lead; F.toc = F.toc || F.body;
@@ -63,6 +64,10 @@ try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = requ
       pg.querySelectorAll('.ln').forEach((el) => {
         const bottom = parseFloat(el.style.top) + parseFloat(el.style.height);
         if (bottom > H - 14) bad.push('pdf page ' + (i + 1) + ': ' + el.textContent.slice(0, 30));
+      });
+      pg.querySelectorAll('.tocwrap').forEach((el) => {          // table-of-contents pages: the last row (or the end ornament) must stay on the page
+        const bottom = el.lastElementChild.getBoundingClientRect().bottom - pg.getBoundingClientRect().top;
+        if (bottom > H - 14) bad.push('pdf page ' + (i + 1) + ': table of contents runs off the page');
       });
     });
     return bad;

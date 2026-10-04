@@ -637,26 +637,56 @@
     articles.forEach((art, ai) => { if (art.divider) seq.push({ kind: 'div', label: art.divider, ai }); seq.push({ kind: 'art', ai }); });
 
     // ------------------------------------------------------------ front matter: table of contents
+    const tocFam = (cfg.fonts || {}).toc || (cfg.fonts || {}).body;
+    const tocFont = `400 ${pt(12)}px "${tocFam}"`;
+    // a long title is broken into lines here (not by the browser) so that the dotted leader and the page number always sit on its last line
+    function tocTitleLines(title) {
+      const W = textW0 - mm(24), words = title.split(/\s+/).filter(Boolean);
+      const lines = []; let cur = [];
+      words.forEach((w) => {
+        if (cur.length && textW(cur.concat(w).join(' '), tocFont) > W) { lines.push(cur); cur = []; }
+        cur.push(w);
+      });
+      lines.push(cur);
+      if (lines.length === 2) {                      // two lines: balance them rather than leaving a short tail
+        let best = null;
+        for (let k = 1; k < words.length; k++) {
+          const a = textW(words.slice(0, k).join(' '), tocFont), b = textW(words.slice(k).join(' '), tocFont);
+          if (a > W || b > W) continue;
+          if (!best || Math.abs(a - b) < best.d) best = { k, d: Math.abs(a - b) };
+        }
+        if (best) return [words.slice(0, best.k).join(' '), words.slice(best.k).join(' ')];
+      }
+      return lines.map((l) => l.join(' '));
+    }
     function tocRows(pageOf, divOf) {
       const rows = [];
+      const gorn = oimg('divider-fleuron', 17, 'gorn', '');
       articles.forEach((art, i) => {
         if (art.divider) {
           const pn = divOf ? heb(divOf(i)) : 'תשצט';
-          rows.push({ kind: 'group', html: `<div class="toc-group"><span>${esc(art.divider)}</span><span class="gl"></span><span class="gpn">${pn}</span></div>` });
+          rows.push({ kind: 'group', html: `<div class="toc-group"><span class="gname">${esc(art.divider)}</span>${gorn}<span class="gl"></span><span class="gpn">${pn}</span></div>` });
         }
         const pn = pageOf ? heb(pageOf(i)) : 'תשצט';
-        rows.push({ kind: 'entry', art: i, html: `<div class="toc-entry"><div class="t1"><span class="tt">${esc(art.title)}</span><span class="dots"></span><span class="pn">${pn}</span></div>${art.author ? `<div class="t2">${esc(art.author)}</div>` : ''}</div>` });
+        const ls = tocTitleLines(art.title);
+        const head = ls.slice(0, -1).map((l) => `<div class="tl">${esc(l)}</div>`).join('');
+        rows.push({ kind: 'entry', art: i, html: `<div class="toc-entry">${head}<div class="t1"><span class="tt">${esc(ls[ls.length - 1])}</span><span class="dots"></span><span class="pn">${pn}</span></div>${art.author ? `<div class="t2">${esc(art.author)}</div>` : ''}</div>` });
       });
+      const eo = cfg.endOrnament || {};
+      rows.push({ kind: 'end', html: `<div class="toc-end">${oimg(eo.name || 'fleuron-small', eo.w || 18, '', 'transform:scaleY(-1);')}</div>` });
       return rows;
     }
     const tocTitleHTML = `<div class="toc-title"><div class="orn-row top">${oimg('flourish-wide-2', 30, '', '')}</div><div class="tt">${esc((doc.toc && doc.toc.title) || 'תוכן עניינים')}</div><div class="orn-row bot">${oimg('divider-fleuron', 40, '', '')}</div></div>`;
     function paginateToc(rows) {
-      const hs = rows.map((r) => { probe.innerHTML = r.html; return probe.firstChild.getBoundingClientRect().height; });
+      const hs = rows.map((r) => {                       // height including the margins (they matter: the siman bands carry large ones)
+        probe.innerHTML = r.html; const el = probe.firstChild, cs = getComputedStyle(el);
+        return el.getBoundingClientRect().height + parseFloat(cs.marginTop) + parseFloat(cs.marginBottom);
+      });
       probe.innerHTML = tocTitleHTML; const titleH = probe.firstChild.getBoundingClientRect().height + mm(6);
       const fill = (avail1, availN) => {
         const pages = []; let cur = [], used = titleH, avail = avail1;
         rows.forEach((r, i) => {
-          const need = hs[i] + (r.kind === 'group' && rows[i + 1] ? hs[i + 1] : 0);
+          const need = hs[i] + (r.kind === 'group' && rows[i + 1] ? hs[i + 1] : 0) + (rows[i + 1] && rows[i + 1].kind === 'end' ? hs[i + 1] : 0);     // a siman band stays with its first entry, the end ornament with the last entry
           if (used + need > avail && cur.length) { pages.push(cur); cur = []; used = 0; avail = availN; }
           cur.push(r); used += hs[i];
         });
@@ -665,6 +695,7 @@
       };
       const full = textH - mm(4);
       let pages = fill(full, full);
+      if (cfg.debugToc) console.log('toc rows', rows.length, 'sum', Math.round(hs.reduce((a,b)=>a+b,0)), 'title', Math.round(titleH), 'full', Math.round(full), 'pages', pages.length, 'textH', Math.round(textH));
       const n = pages.length;
       if (n > 1) {                                   // spread the rows evenly over the same number of pages
         const total = hs.reduce((a, b) => a + b, 0) + titleH;
@@ -700,14 +731,6 @@
       pg.innerHTML = `<div class="cover-in">${oimg('flourish-wide-1', 70, '', '')}<div class="cv-title">${esc(bookName)}</div>${doc.book.subtitle ? `<div class="cv-sub">${esc(doc.book.subtitle)}</div>` : ''}${oimg('flourish-wide-1', 70, '', 'transform:scaleY(-1);')}</div>`;
       root.appendChild(pg);
     }
-    tocPages.forEach((rows, ti) => {
-      const pg = newPage();
-      const no = (doc.firstPageNumber || 1) + ti;
-      const ml = (no % 2 === 0) ? mm(P.marginInner) : mm(P.marginOuter);
-      pg.innerHTML = `<div class="tocwrap" style="left:${ml}px;top:${topM - mm(2)}px;width:${textW0}px">${ti === 0 ? tocTitleHTML : ''}${rows.map((r) => r.html).join('')}</div>`;
-      root.appendChild(pg);
-    });
-
     const hdrCache = new Map();
     function headerTitle(art) {
       const full = art.shortTitle || art.title;
@@ -746,7 +769,7 @@
       const num = `<span class="hnum">${heb(p.no)}</span>`;
       const book = `<span class="hbook">${esc(bookName)}</span>`;
       const dot = '<span class="hdot">&#9679;</span>';
-      const chap = `<span class="hchap">${esc(even ? headerAuthor(p.article) : headerTitle(p.article))}</span>`;
+      const chap = `<span class="hchap">${esc(p.headChap || (even ? headerAuthor(p.article) : headerTitle(p.article)))}</span>`;
       const html = even ? `${book}${dot}${chap}<span class="grow"></span>${num}` : `${num}<span class="grow"></span>${chap}${dot}${book}`;
       const ml = even ? mm(P.marginInner) : mm(P.marginOuter);
       const hr = ORN['header-rule'];
@@ -780,6 +803,15 @@
       });
       return { out, end, gapExtra, leadExtra, left: slack };
     }
+
+    const tocHeadTitle = (doc.toc && doc.toc.title) || 'תוכן עניינים';
+    tocPages.forEach((rows, ti) => {
+      const pg = newPage();
+      const no = (doc.firstPageNumber || 1) + ti;
+      const ml = (no % 2 === 0) ? mm(P.marginInner) : mm(P.marginOuter);
+      pg.innerHTML = headerHTML({ no, headChap: tocHeadTitle }) + `<div class="tocwrap" style="left:${ml}px;top:${topM - mm(2)}px;width:${textW0}px">${ti === 0 ? tocTitleHTML : ''}${rows.map((r) => r.html).join('')}</div>`;
+      root.appendChild(pg);
+    });
 
     seq.forEach((it) => {
       if (it.kind === 'div') {
