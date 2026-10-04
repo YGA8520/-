@@ -17,7 +17,8 @@ PALETTES = {
     'sepia':    dict(t1=30,  s1=1.25, v1=0.86, t2=18,  s2=0.90, v2=0.75, name='חום וזהב'),
     # darker brown + a brighter, warmer gold (olive / grey casts of the old gilding pulled towards one golden hue, shadows and highlights kept)
     'brown':    dict(t1=26, s1=2.30, v1=0.52, name='חום כהה וזהב בוהק',
-                     gold=dict(gamma=1.06, contrast=1.04, bright=0.0, sheen=0.17, waves=1.5, phase=0.12)),
+                     gold=dict(gamma=0.96, contrast=1.04, bright=0.03, sheen=0.12, waves=1.5, phase=0.12),
+                     swash=dict(gamma=0.90, contrast=1.10, bright=0.02)),
 }
 
 
@@ -74,18 +75,21 @@ def frame_masks(img):
 
 # gold ramp (luminance -> colour): dark bronze .. rich gold .. bright highlight.  Applied to the whole gilded frame and to the swash,
 # so no hue of the old artwork (greens, reds, olive) can stain the gold
-GOLD_RAMP = [(0.00, (22, 12, 4)), (0.20, (68, 42, 10)), (0.40, (122, 82, 18)), (0.60, (168, 122, 32)),
-             (0.78, (204, 158, 54)), (0.92, (230, 194, 98)), (1.00, (244, 222, 148))]
+GOLD_RAMP = [(0.00, (46, 28, 8)), (0.20, (100, 66, 16)), (0.40, (152, 106, 26)), (0.60, (194, 144, 44)),
+             (0.78, (226, 180, 70)), (0.92, (244, 210, 112)), (1.00, (252, 236, 162))]            # the frame: rich, not heavy
+SWASH_RAMP = [(0.00, (26, 14, 4)), (0.18, (84, 52, 12)), (0.38, (150, 102, 22)), (0.58, (208, 158, 40)),
+              (0.78, (244, 204, 84)), (0.92, (255, 236, 150)), (1.00, (255, 250, 222))]           # the swash: brilliant gold running into dark bronze
 RING_RECT = ((79, 56, 1329, 1947), (140, 112, 1266, 1876))        # outer / inner rectangle of the frame band, in the 1408 x 2000 artwork
 RING_CIRCLES = ((711.0, 749.0, 329.0), (711.0, 749.0, 342.0))      # the two thin rings of the title medallion
 SWASH_BOX = (285, 560, 640, 800)                                  # the left swash (curl) next to the title
 
 
-def gold_ramp(lum):
-    xs = [x for x, _ in GOLD_RAMP]
+def gold_ramp(lum, ramp=None):
+    ramp = ramp or GOLD_RAMP
+    xs = [x for x, _ in ramp]
     out = np.zeros(lum.shape + (3,), dtype=np.float32)
     for c in range(3):
-        out[..., c] = np.interp(lum, xs, [col[c] / 255.0 for _, col in GOLD_RAMP])
+        out[..., c] = np.interp(lum, xs, [col[c] / 255.0 for _, col in ramp])
     return out
 
 
@@ -97,13 +101,27 @@ def gold_masks(img):
     yy, xx = np.mgrid[0:H, 0:W]
     (ox0, oy0, ox1, oy1), (ix0, iy0, ix1, iy1) = RING_RECT
     ring = (xx >= ox0) & (xx <= ox1) & (yy >= oy0) & (yy <= oy1) & ~((xx >= ix0) & (xx <= ix1) & (yy >= iy0) & (yy <= iy1))
-    # ornaments reaching into the glow: gold-coloured pixels near the frame, closed so that pearls / shadows inside them are included
-    near = (xx > ox0 - 4) & (xx < ox1 + 4) & (yy > oy0 - 4) & (yy < oy1 + 4)
-    core = (h >= 25) & (h <= 68) & (s > 0.26) & (v > 0.22) & near
-    m = Image.fromarray((core * 255).astype(np.uint8)).filter(ImageFilter.MaxFilter(13)).filter(ImageFilter.MinFilter(9))
-    orn = np.asarray(m) > 127
+    # ornaments reaching into the glow: every ornament is drawn with a continuous dark outline, so the glow is exactly the area that can be reached
+    # from the middle of the page without crossing a dark pixel; what is not reachable close to the frame is ornament (silver rims and pearls included)
+    from scipy import ndimage
+    lum0 = rgb @ np.array([0.299, 0.587, 0.114], dtype=np.float32)
+    dark = lum0 < 0.30
+    cross = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]])
+    near = (xx < ox0 + 262) | (xx > ox1 - 262) | (yy < oy0 + 262) | (yy > oy1 - 262)
+    zone = (xx > ox0 - 2) & (xx < ox1 + 2) & (yy > oy0 - 2) & (yy < oy1 + 2) & near
+    zone &= ~((xx >= 925) & (xx <= 1170) & (yy >= 755) & (yy <= 860))      # the black ink flourish right of the title is not part of the frame
+
+    def unreached(iters):       # what cannot be reached from the middle of the page without crossing a (widened) dark outline
+        lab, _ = ndimage.label(~ndimage.binary_dilation(dark, structure=np.ones((3, 3)), iterations=iters), structure=cross)
+        return (lab != lab[H // 2, W // 2]) & zone & ~ring
+    sharp = unreached(1)        # exact silhouettes, but light blades without a closed outline leak (stay brown inside)
+    safe = unreached(3)         # no leaks, but 3 px too fat
+    # exact silhouette + what the fat version adds inside the ornament (leaked light blades): everything that is not glow-coloured (teal / pale neutral)
+    glowish = ((h >= 80) & (h <= 240) & (s > 0.06)) | ((s < 0.14) & (v > 0.45))
+    orn = sharp | (safe & ~sharp & ~glowish)
+    orn = ndimage.binary_closing(orn, structure=np.ones((3, 3))) & zone & ~ring
     frame = (ring | orn).astype(np.uint8) * 255
-    frame = np.asarray(Image.fromarray(frame).filter(ImageFilter.GaussianBlur(1.1))).astype(np.float32) / 255.0
+    frame = np.asarray(Image.fromarray(frame).filter(ImageFilter.GaussianBlur(0.8))).astype(np.float32) / 255.0
     # the swash: everything dark / coloured inside its box, except the thin rings and anything right of the title rule
     lum = rgb @ np.array([0.299, 0.587, 0.114], dtype=np.float32)
     x0, y0, x1, y1 = SWASH_BOX
@@ -127,17 +145,23 @@ def recolor(img, p, masks):
     h, s, v = rgb_to_hsv(rgb)
     frame, swash = [np.asarray(Image.fromarray((m * 255).astype(np.uint8)).resize(img.size, Image.BICUBIC)).astype(np.float32) / 255.0 for m in masks]
     g = p['gold']
-    lum = rgb @ np.array([0.299, 0.587, 0.114], dtype=np.float32)
-    lg = np.clip(0.5 + (np.power(np.clip(lum, 0, 1), g['gamma']) - 0.5) * g['contrast'] + g['bright'], 0, 1)
-    if g.get('sheen'):          # slow diagonal waves of light and shade over the gilding (metal, not a flat colour)
-        Hh, Ww = lg.shape
-        yy, xx = np.mgrid[0:Hh, 0:Ww].astype(np.float32)
-        tt = (xx / Ww * 0.62 + yy / Hh * 0.38) * g.get('waves', 1.5) + g.get('phase', 0.12)
-        lg = np.clip(lg * (1 - g['sheen'] + 2 * g['sheen'] * (0.5 + 0.5 * np.cos(2 * np.pi * tt))), 0, 1)
-    rgb_gold = gold_ramp(lg)
+    lum = np.clip(rgb @ np.array([0.299, 0.587, 0.114], dtype=np.float32), 0, 1)
+
+    def graded(gp, sheen):
+        lg = np.clip(0.5 + (np.power(lum, gp['gamma']) - 0.5) * gp['contrast'] + gp['bright'], 0, 1)
+        if sheen:               # slow diagonal waves of light and shade over the gilding (metal, not a flat colour)
+            Hh, Ww = lg.shape
+            yy, xx = np.mgrid[0:Hh, 0:Ww].astype(np.float32)
+            tt = (xx / Ww * 0.62 + yy / Hh * 0.38) * gp.get('waves', 1.5) + gp.get('phase', 0.12)
+            lg = np.clip(lg * (1 - gp['sheen'] + 2 * gp['sheen'] * (0.5 + 0.5 * np.cos(2 * np.pi * tt))), 0, 1)
+        return lg
+    frame_rgb = gold_ramp(graded(g, True))
+    swash_rgb = gold_ramp(graded(p['swash'], False), SWASH_RAMP)
     tone = hsv_to_rgb(np.full_like(h, p['t1']), np.clip(s * p['s1'], 0, 1), np.clip(v * (1 + (p['v1'] - 1) * np.clip(s * 3.0, 0, 1)), 0, 1))     # white stays white
-    w = np.clip(np.maximum(frame, swash), 0, 1)[..., None]
-    out = w * rgb_gold + (1 - w) * tone
+    wf, ws = np.clip(frame, 0, 1)[..., None], np.clip(swash, 0, 1)[..., None]
+    out = tone
+    out = out * (1 - wf) + frame_rgb * wf
+    out = out * (1 - ws) + swash_rgb * ws
     return Image.fromarray((np.clip(out, 0, 1) * 255 + 0.5).astype(np.uint8), 'RGB')
 
 
