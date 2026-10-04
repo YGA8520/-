@@ -61,7 +61,7 @@
       if (st === 'ld') return `${(cfg.fontWeights || {}).lead || 700} ${(c.size * rel.ld[1]).toFixed(3)}px "${T.lead.family}"`;
       let [w, r] = rel[st];
       if (ctxName === 'foot' && (st === 'n' || st === 'sm') && T.foot.weight) w = T.foot.weight;
-      if (ctxName === 'h2' || ctxName === 'h3') { if (st === 'n') w = T[ctxName].weight; if (st === 'b') w = Math.max(w, T[ctxName].weight); }
+      if ((ctxName === 'h2' || ctxName === 'h3') && st !== 'fnref') w = T[ctxName].weight;      // a heading is set in the weight of its role (display: Regular for Ashcnz), never a synthetic or substituted bold
       return `${w} ${(c.size * r).toFixed(3)}px "${c.fam}"`;
     }
     function spaceNat(ctxName) { return ctxs[ctxName].size * T.spaceEm; }

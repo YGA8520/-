@@ -141,7 +141,7 @@
       "family": "Drogolin Title",
       "file": "FrankRuehlDP-Regular.otf",
       "weight": "400",
-      "unicodeRange": "U+0000-00D6,U+00D8-05F2,U+05F5-2219,U+221B-10FFFF"
+      "unicodeRange": "U+0000-00D6,U+00D8-05CF,U+05EB-05F2,U+05F5-2219,U+221B-10FFFF"
     },
     {
       "family": "Drogolin Title",
@@ -159,7 +159,7 @@
       "family": "Drogolin Title",
       "file": "FrankRuehlDP-Bold.otf",
       "weight": "700",
-      "unicodeRange": "U+0000-00D6,U+00D8-05F2,U+05F5-2219,U+221B-10FFFF"
+      "unicodeRange": "U+0000-00D6,U+00D8-05CF,U+05EB-05F2,U+05F5-2219,U+221B-10FFFF"
     },
     {
       "family": "Drogolin Title",

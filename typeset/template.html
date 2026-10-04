@@ -16,6 +16,8 @@ body { font-kerning: normal; font-feature-settings: "kern" 1; text-rendering: ge
 .c-h2   { font-family: var(--f-display); font-size: calc(14.5 * 96px / 72); font-weight: var(--w-display); }
 .c-h3   { font-family: var(--f-lead); font-size: calc(11.5 * 96px / 72); font-weight: var(--w-lead); }
 .b, .smb { font-weight: 700; }
+.c-h2 .b, .c-h2 .smb { font-weight: var(--w-display); }
+.c-h3 .b, .c-h3 .smb { font-weight: var(--w-lead); }
 .ld { font-family: var(--f-lead); font-weight: var(--w-lead); font-size: 0.95em; }
 .sm, .smb { font-size: 0.84em; }
 .fnref { font-weight: 700; font-size: 0.62em; position: relative; top: -0.55em; }
@@ -61,7 +63,7 @@ table.bt { border-collapse: collapse; margin: 0 auto; font-family: var(--f-body)
 .toc-group::after { content: ""; flex: 1; height: 0.6pt; background: #000; }
 .toc-entry { margin: 0 0 1.5mm; }
 .toc-entry .t1 { display: flex; align-items: flex-end; gap: 1.6mm; font: 400 11.5pt/15pt var(--f-body); }
-.toc-entry .tt { font-weight: 500; max-width: 82%; }
+.toc-entry .tt { font-family: var(--f-display); font-weight: var(--w-display); font-size: 12.5pt; max-width: 82%; }
 .toc-entry .dots { flex: 1; border-bottom: 1.2pt dotted #000; margin-bottom: 4px; min-width: 6mm; }
 .toc-entry .pn { font: var(--w-lead) 11pt var(--f-lead); white-space: nowrap; }
 .toc-entry .t2 { font: 400 9pt/12pt var(--f-author); color: #222; padding-right: 3mm; }

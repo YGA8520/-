@@ -96,6 +96,20 @@ try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = requ
     }), want);
     console.log(dump.join('\n'));
   }
+  if (process.env.DUMP_FONTS) {            // debugging aid: which font role / weight each piece of text really uses
+    const fu = await page.evaluate(() => {
+      const m = {};
+      document.querySelectorAll('.page *').forEach((el) => {
+        const t = [...el.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent).join('').trim();
+        if (!t) return;
+        const cs = getComputedStyle(el), k = cs.fontFamily.split(',')[0].replace(/"/g, '') + ' ' + cs.fontWeight;
+        (m[k] = m[k] || { n: 0, s: [] }).n++;
+        if (m[k].s.length < 2) m[k].s.push(t.slice(0, 24) + ' <' + el.tagName.toLowerCase() + '.' + el.className + ' < ' + (el.parentElement.className || el.parentElement.tagName) + '>');
+      });
+      return m;
+    });
+    console.log('fonts in use:', JSON.stringify(fu, null, 1));
+  }
   // hanging indent: line 2 must start exactly where the regular text of line 1 starts, and must never open a column
   const hang = await page.evaluate(() => {
     let ok = 0, off = [], orphan = 0, maxDev = 0;
