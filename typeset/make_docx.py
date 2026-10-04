@@ -458,10 +458,10 @@ def build(doc_json, layout_json, cfg_json, out):
     D = Doc()
     headers, parts = [], []
 
-    def add_header(chap, tag):
+    def add_header(chap, tag, chap_even=None):
         dn, en = f'header{tag}d.xml', f'header{tag}e.xml'
-        headers.append((dn, header_xml(book['name'], chap, False)))     # default = odd page (left-hand)
-        headers.append((en, header_xml(book['name'], chap, True)))      # even page (right-hand)
+        headers.append((dn, header_xml(book['name'], chap, False)))     # default = odd page (left-hand): the topic of the article
+        headers.append((en, header_xml(book['name'], chap_even or chap, True)))      # even page (right-hand): the author
         return (f'rIdH{tag}d', f'rIdH{tag}e')
     empty_ids = ('rIdHEd', 'rIdHEe')
     headers.append(('headerEd.xml', empty_header())); headers.append(('headerEe.xml', empty_header()))
@@ -486,7 +486,8 @@ def build(doc_json, layout_json, cfg_json, out):
 
     first = True
     for ai, art in enumerate(data['articles']):
-        hid = add_header((lay['headerTitles'][ai] if (lay and lay.get('headerTitles')) else (art.get('shortTitle') or art['title'])), f'A{ai}')
+        hid = add_header((lay['headerTitles'][ai] if (lay and lay.get('headerTitles')) else (art.get('shortTitle') or art['title'])), f'A{ai}',
+                         (lay['headerAuthors'][ai] if (lay and lay.get('headerAuthors')) else art.get('author')))
         # internal divider page where the siman changes
         if art.get('divider') and lay:
             db = lay['dividerBoxes'][art['divider']]

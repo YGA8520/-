@@ -726,6 +726,19 @@
       hdrCache.set(full, out);
       return out;
     }
+    // right-hand pages carry the author in the small running head, left-hand pages the topic of the article
+    const authCache = new Map();
+    function headerAuthor(art) {
+      if (!art.author) return headerTitle(art);                  // an article without an author keeps the topic on both pages
+      if (authCache.has(art.author)) return authCache.get(art.author);
+      const bookW = textW(bookName, (cfg.fontWeights || {}).lead + ' ' + pt(15) + 'px "' + (cfg.fonts || {}).lead + '"');
+      const room = textW0 - bookW - mm(13) - mm(12);
+      const f = '400 ' + pt(10) + 'px "' + (cfg.fonts || {}).lead + '"';
+      let out = art.author;
+      if (textW(out, f) > room) out = out.replace(/\s+שליט[״"]א$/, '');         // too long: without the honorific
+      authCache.set(art.author, out);
+      return out;
+    }
     const HSHIFT = (cfg.header && cfg.header.shift) || 0;      // mm the running head (and its rule) is raised
     function headerHTML(p) {
       // Hebrew book: even pages are the right-hand page.  Page number sits on the outer edge, book name on the inner edge.
@@ -733,7 +746,7 @@
       const num = `<span class="hnum">${heb(p.no)}</span>`;
       const book = `<span class="hbook">${esc(bookName)}</span>`;
       const dot = '<span class="hdot">&#9679;</span>';
-      const chap = `<span class="hchap">${esc(headerTitle(p.article))}</span>`;
+      const chap = `<span class="hchap">${esc(even ? headerAuthor(p.article) : headerTitle(p.article))}</span>`;
       const html = even ? `${book}${dot}${chap}<span class="grow"></span>${num}` : `${num}<span class="grow"></span>${chap}${dot}${book}`;
       const ml = even ? mm(P.marginInner) : mm(P.marginOuter);
       const hr = ORN['header-rule'];
@@ -873,7 +886,7 @@
       });
     });
     curPage = null;
-    return { stats: STATS, pages: root.children.length, toc: articles.map((a, i) => ({ title: a.title, page: startNo[i], pages: artPages[i].length })), tocPages: nToc, titleBoxes, dividerBoxes, dividerPages: divNo, headerTitles: articles.map((a) => headerTitle(a)) };
+    return { stats: STATS, pages: root.children.length, toc: articles.map((a, i) => ({ title: a.title, page: startNo[i], pages: artPages[i].length })), tocPages: nToc, titleBoxes, dividerBoxes, dividerPages: divNo, headerTitles: articles.map((a) => headerTitle(a)), headerAuthors: articles.map((a) => headerAuthor(a)) };
   }
 
   window.typeset = typeset;
