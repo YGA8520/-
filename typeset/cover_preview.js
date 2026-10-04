@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* usage: node cover_preview.js out_dir   -> out_dir/cover-<palette>.png for every palette of config.json (needs assets/cover/cover-bg-<palette>.jpg made by `python make_cover.py <palette> <file>`) */
+/* usage: node cover_preview.js out_dir   -> out_dir/cover-<palette>.png and .pdf for every palette of config.json (needs assets/cover/cover-bg-<palette>.jpg made by `python make_cover.py <palette> <file>`) */
 const fs = require('fs'), path = require('path');
 let chromium;
 try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = require('/opt/node22/lib/node_modules/playwright')); }
@@ -21,6 +21,7 @@ try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = requ
     await p.evaluate(([cc, n]) => { document.body.style.margin = '0'; document.body.innerHTML = '<div id="cv" class="page cover" style="width:176mm;height:250mm;position:relative;overflow:hidden">' + window.coverHTML(cc, n) + '</div>'; }, [c, doc.book.name]);
     await p.evaluate(() => Promise.all([...document.images].map((i) => i.decode().catch(() => {}))));
     await p.locator('#cv').screenshot({ path: path.join(outDir, `cover-${pal}.png`) });
+    await p.pdf({ path: path.join(outDir, `cover-${pal}.pdf`), width: '176mm', height: '250mm', printBackground: true, preferCSSPageSize: true });
     await p.close();
   }
   await browser.close();
