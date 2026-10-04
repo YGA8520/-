@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<style>
+@font-face { font-family: "David Libre"; font-weight: 400; src: url("assets/fonts/DavidLibre-Regular.ttf"); }
+@font-face { font-family: "David Libre"; font-weight: 500; src: url("assets/fonts/DavidLibre-Medium.ttf"); }
+@font-face { font-family: "David Libre"; font-weight: 700; src: url("assets/fonts/DavidLibre-Bold.ttf"); }
+@font-face { font-family: "Frank Ruhl Libre"; font-weight: 300 900; src: url("assets/fonts/FrankRuhlLibre.ttf"); }
+@font-face { font-family: "Bellefair"; font-weight: 400; src: url("assets/fonts/Bellefair-Regular.ttf"); }
+@font-face { font-family: "Suez One"; font-weight: 400; src: url("assets/fonts/SuezOne-Regular.ttf"); }
+@page { size: 176mm 250mm; margin: 0; }
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: #fff; color: #000; }
+body { font-kerning: normal; font-feature-settings: "kern" 1; text-rendering: geometricPrecision; -webkit-print-color-adjust: exact; }
+#pages { direction: ltr; }
+.page:last-child { page-break-after: auto; break-after: auto; }
+.page { position: relative; overflow: hidden; page-break-after: always; break-after: page; background: #fff; direction: ltr; }
+.ln { position: absolute; white-space: pre; direction: rtl; unicode-bidi: plaintext; overflow: visible; font-kerning: normal; }
+.c-body { font-family: "David Libre"; font-size: calc(11 * 96px / 72); }
+.c-foot { font-family: "David Libre"; font-size: calc(9.5 * 96px / 72); }
+.c-h2   { font-family: "Frank Ruhl Libre"; font-size: calc(14.5 * 96px / 72); font-weight: 800; }
+.c-h3   { font-family: "David Libre"; font-size: calc(11.5 * 96px / 72); font-weight: 700; }
+.b, .smb { font-weight: 700; }
+.sm, .smb { font-size: 0.84em; }
+.fnref { font-weight: 700; font-size: 0.62em; position: relative; top: -0.55em; }
+.header { position: absolute; top: calc(18.2mm); height: 9mm; direction: ltr; display: flex; align-items: baseline; border-bottom: 0.6pt solid #000; }
+.header .grow { flex: 1; }
+.header span { direction: rtl; unicode-bidi: isolate; }
+.hnum { font: 700 13pt "David Libre"; }
+.hbook { font: 700 15pt "Frank Ruhl Libre"; font-weight: 800; }
+.hchap { font: 400 10pt "David Libre"; }
+.hdot { font-size: 6pt; margin: 0 7px; position: relative; top: -1px; }
+.bannerWrap { position: absolute; }
+.banner { text-align: center; direction: rtl; }
+.banner .basad { font: 400 9pt "David Libre"; text-align: right; margin-bottom: 1mm; }
+.banner .label { font: 700 11pt "Frank Ruhl Libre"; letter-spacing: 0.02em; margin: 3mm 0 0; }
+.banner .ornament { width: 42mm; margin: 0 auto; height: 9.2mm; color: #000; }
+.banner .ornament svg { width: 100%; height: 100%; display: block; }
+.banner .ornament.top { margin-top: 2mm; }
+.banner .rule { height: 0.7mm; width: 96mm; margin: 0 auto; background: radial-gradient(ellipse at center, #000 0%, #000 55%, rgba(0,0,0,0) 100%); }
+.banner .title { font-family: "Frank Ruhl Libre"; font-weight: 800; font-size: 17pt; line-height: 1.25; padding: 2.4mm 6mm; }
+.banner .author { font: 700 11.5pt "David Libre"; margin-top: 2.5mm; }
+.banner .abstract { font: 400 10pt/15pt "David Libre"; width: 100mm; margin: 4mm auto 0; text-align: justify; text-align-last: center; }
+.fnhead { position: absolute; display: flex; align-items: center; gap: 3mm; direction: rtl; }
+.fnhead .fnrule { flex: 1; height: 1.2pt; background: #9a9a9a; }
+.fnhead .fntitle { font: 700 9pt "David Libre"; }
+.fnmark { position: absolute; direction: rtl; text-align: right; font: 700 9.5pt "David Libre"; white-space: pre; padding-left: 0; }
+.endorn { position: absolute; text-align: center; }
+.endorn svg { width: 30mm; height: 5mm; }
+</style>
+</head>
+<body>
+<div id="pages"></div>
+</body>
+</html>

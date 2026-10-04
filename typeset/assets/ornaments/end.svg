@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 40" class="" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round"><g>
+<path d="M140 30 C141 18 150 10 160 10 C169 10 173 18 168 23 C164 27 157 25 157 20 C157 17 161 16 163 18" />
+<path d="M141 31 C150 29 158 31 166 29 C174 27 180 30 190 30 C198 30 204 28 212 29" />
+<path d="M141 31 C150 33 160 34 170 33 C180 32 188 34 198 33" />
+<path d="M168 23 C170 15 178 12 183 15 C179 17 176 19 168 23 Z" fill="currentColor"/>
+<circle cx="219" cy="29" r="1.2" fill="currentColor" stroke="none"/>
+<circle cx="225" cy="29.3" r="1" fill="currentColor" stroke="none"/>
+<circle cx="230" cy="29.4" r="0.8" fill="currentColor" stroke="none"/>
+</g><g transform="translate(280,0) scale(-1,1)">
+<path d="M140 30 C141 18 150 10 160 10 C169 10 173 18 168 23 C164 27 157 25 157 20 C157 17 161 16 163 18" />
+<path d="M141 31 C150 29 158 31 166 29 C174 27 180 30 190 30 C198 30 204 28 212 29" />
+<path d="M141 31 C150 33 160 34 170 33 C180 32 188 34 198 33" />
+<path d="M168 23 C170 15 178 12 183 15 C179 17 176 19 168 23 Z" fill="currentColor"/>
+<circle cx="219" cy="29" r="1.2" fill="currentColor" stroke="none"/>
+<circle cx="225" cy="29.3" r="1" fill="currentColor" stroke="none"/>
+<circle cx="230" cy="29.4" r="0.8" fill="currentColor" stroke="none"/>
+</g></svg>

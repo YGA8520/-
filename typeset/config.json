@@ -1,0 +1,22 @@
+{
+  "page": { "w": 176, "h": 250, "marginTop": 32, "marginBottom": 18.5, "marginInner": 19.4, "marginOuter": 19.4 },
+  "columns": { "gap": 7.1 },
+  "orphans": 2,
+  "widows": 2,
+  "lastLine": "center",
+  "bannerBelow": 1,
+  "type": {
+    "body":     { "family": "David Libre",      "size": 11,   "leading": 17 },
+    "foot":     { "family": "David Libre",      "size": 9.5,  "leading": 14.6 },
+    "h2":       { "family": "Frank Ruhl Libre", "size": 14.5, "weight": 800 },
+    "h3":       { "family": "David Libre",      "size": 11.5, "weight": 700 },
+    "abstract": { "family": "David Libre",      "size": 10.5 },
+    "smallScale": 0.84,
+    "fnrefScale": 0.62,
+    "spaceEm": 0.27,
+    "stretchEm": 0.2,
+    "shrinkEm": 0.07,
+    "leadMaxWords": 3
+  },
+  "footnotes": { "title": "הערות וציוניות", "gutter": 7.4, "topGap": 3.2, "headGap": 1.2, "itemGap": 0.9 }
+}

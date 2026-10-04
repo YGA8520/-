@@ -1,0 +1,4 @@
+typeset/out/
+typeset/*.doc.json
+typeset/__pycache__/
+*.pyc
