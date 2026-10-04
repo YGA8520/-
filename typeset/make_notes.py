@@ -46,15 +46,16 @@ for ai, a in enumerate(d['articles']):
                 if pos is None:
                     pos = max(t.find(o), t.find(c), 0)
                 rows.append((pg, a['title'], nm, snip(t, pos, pos + 1)))
-        m = re.search(r'\s[,.;:](?!\d)', t)
+        m = re.search(r'\s[,.;:](?![\d.])', t)
         if m and not re.search(r'\s[,.;:]$', t):
             rows.append((pg, a['title'], 'רווח לפני סימן פיסוק', snip(t, m.start(), m.end())))
         if '???' in t:
             i = t.index('???')
             rows.append((pg, a['title'], 'סימני שאלה (???) בטקסט', snip(t, i, i + 3)))
 title = 'הערות על הטקסט המקורי'
-intro = ('בקריאה המלאה של החוברת נמצאו מקומות שבהם הטקסט עצמו אינו תקין, כגון סוגריים שנפתחו ולא נסגרו ורווח לפני פיסוק. '
-         'לא שיניתי תוכן. מי שרוצה יתקן במקור וישלח שוב, והחוברת תיבנה מחדש. מספרי העמודים הם לפי מספור החוברת.')
+intro = ('בקריאה המלאה של החוברת נמצאו מקומות שבהם הטקסט עצמו אינו תקין, כגון סוגריים שנפתחו ולא נסגרו. '
+         'רווחים שהוקלדו לפני סימני פיסוק תוקנו בחוברת. סוגריים לא מאוזנים לא תוקנו (להתעלם בשלב זה) ולא שיניתי תוכן. '
+         'מי שרוצה יתקן במקור וישלח שוב, והחוברת תיבנה מחדש. מספרי העמודים הם לפי מספור החוברת.')
 # ---------------- PDF (via Chromium) ----------------
 esc = lambda s: s.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
 html = ('<html dir="rtl" lang="he"><head><meta charset="utf-8"><style>'
@@ -66,7 +67,7 @@ html = ('<html dir="rtl" lang="he"><head><meta charset="utf-8"><style>'
         ''.join(f'<tr><td class="pg">{p}</td><td>{esc(t)}</td><td class="ty">{esc(k)}</td><td>{esc(x)}</td></tr>' for p, t, k, x in rows) + '</table></body></html>')
 hp = os.path.join(os.path.dirname(os.path.abspath(__file__)), '_notes.html')
 open(hp, 'w').write(html)
-js = ("const {chromium}=require('/opt/node22/lib/node_modules/playwright');(async()=>{const b=await chromium.launch();const p=await b.newPage();"
+js = ("let chromium;try{({chromium}=require('playwright'))}catch(e){({chromium}=require('/opt/node22/lib/node_modules/playwright'))}(async()=>{const b=await chromium.launch();const p=await b.newPage();"
       f"await p.goto('file://{hp}');await p.evaluate(()=>document.fonts.ready);await p.pdf({{path:'{outdir}/source-notes.pdf',format:'A4',printBackground:true,preferCSSPageSize:true}});await b.close();}})();")
 subprocess.run(['node', '-e', js], check=True)
 os.remove(hp)

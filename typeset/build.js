@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /* usage: node build.js doc.json out.pdf [config.json]   -> also writes out.json with layout stats */
 const fs = require('fs'), path = require('path');
-const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+let chromium;
+try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = require('/opt/node22/lib/node_modules/playwright')); }
 (async () => {
   const [,, docPath, outPdf, cfgPath = path.join(__dirname, 'config.json')] = process.argv;
   const cfg = JSON.parse(fs.readFileSync(cfgPath, 'utf8'));
@@ -50,6 +51,22 @@ const { chromium } = require('/opt/node22/lib/node_modules/playwright');
     document.querySelectorAll('.ln').forEach((el) => { if (el.scrollWidth > el.clientWidth + 1.5) bad.push(el.textContent.slice(0, 40) + ' ' + el.scrollWidth + '>' + el.clientWidth); });
     return bad;
   });
+  // hanging indent: line 2 must start exactly where the regular text of line 1 starts, and must never open a column
+  const hang = await page.evaluate(() => {
+    let ok = 0, off = [], orphan = 0, maxDev = 0;
+    document.querySelectorAll('.hangln').forEach((el) => {
+      const prev = el.previousElementSibling;
+      if (!prev || !prev.classList.contains('leadln') || Math.abs(parseFloat(prev.style.left) - parseFloat(el.style.left)) > 0.5) { orphan++; return; }
+      const mk = prev.querySelector('.le');
+      if (!mk) return;
+      const dev = mk.getBoundingClientRect().left - el.getBoundingClientRect().right;
+      maxDev = Math.max(maxDev, Math.abs(dev));
+      if (Math.abs(dev) > 0.6) off.push(prev.textContent.slice(0, 30) + ' // ' + el.textContent.slice(0, 20) + ' ' + dev.toFixed(2)); else ok++;
+    });
+    return { ok, off: off.slice(0, 8), nOff: off.length, orphan, maxDev: +maxDev.toFixed(2) };
+  });
+  console.log('hanging indent: aligned', hang.ok, ' misaligned', hang.nOff, ' column-top (unindented needed)', hang.orphan, ' max deviation px', hang.maxDev);
+  if (hang.nOff) console.log(hang.off);
   // exact word-level check: every source token must be present in the rendered DOM (and nothing extra)
   const domTokens = await page.evaluate(() => {
     const out = [];

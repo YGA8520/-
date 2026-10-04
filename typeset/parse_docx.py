@@ -196,6 +196,22 @@ def mark_sources(runs, max_words=14, heuristic=True):
 SECTION = re.compile(r'^(חלק|פרק|חלק)\s+([א-ת][\'׳"״]?[א-ת]?)\s*[:.\-–]?\s*(.*)$')
 
 
+SPACE_BEFORE_PUNCT = re.compile(r'[ \t\u00a0]+(?=[,.;:](?!\.))')   # " ," / " ." (an ellipsis " ..." is left alone)
+
+
+def fix_space_before_punct(runs):
+    """remove a space typed in front of , . ; : (also when the space and the sign sit in different runs); runs are changed in place"""
+    prev = None
+    for r in runs:
+        if 'fn' in r or not r.get('t'):
+            continue
+        r['t'] = SPACE_BEFORE_PUNCT.sub('', r['t'])
+        if prev is not None and r['t'][0] in ',.;:' and r['t'][:2] != '..' and prev['t'][-1:] in ' \t\u00a0':
+            prev['t'] = prev['t'].rstrip(' \t\u00a0')
+        prev = r
+    return runs
+
+
 def runs_text(runs):
     return ''.join(r['t'] for r in runs if 'fn' not in r)
 

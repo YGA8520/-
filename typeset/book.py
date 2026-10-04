@@ -5,11 +5,26 @@
   * the additional single-article files are added in their place (by siman)
   * files that are fully contained in the compilation are skipped (dedupe)
 """
-import json, os, re, sys, collections
+import json, os, re, sys, collections, unicodedata
 from ingest import load, doc_default_size
-from parse_docx import normalize_runs, mark_sources, all_bold, as_heading_runs, runs_text, fix_quotes, SECTION
+from parse_docx import normalize_runs, mark_sources, all_bold, as_heading_runs, runs_text, fix_quotes, fix_space_before_punct, SECTION
 
-SRC = os.environ.get('SRC_DIR', '/tmp/claude-0/-home-user--/e48d2585-9ec4-5df3-ad1f-53def33d6015/scratchpad/src')
+HERE = os.path.dirname(os.path.abspath(__file__))
+# folder with the source .docx files: $SRC_DIR, or ./src, or (cloud session) the scratchpad copy
+SRC = os.environ.get('SRC_DIR') or next((d for d in (os.path.join(HERE, 'src'), '/tmp/claude-0/-home-user--/e48d2585-9ec4-5df3-ad1f-53def33d6015/scratchpad/src') if os.path.isdir(d)), os.path.join(HERE, 'src'))
+FILE_NAMES = json.load(open(os.path.join(HERE, 'src_names.json'), encoding='utf-8'))   # fNN.docx -> the original file name
+
+
+def src_path(name):
+    """the source file by its short name (f17.docx) or by the original name as uploaded (Hebrew names, Unicode-normalisation tolerant)"""
+    nf = lambda x: unicodedata.normalize('NFC', x).replace('\u200e', '').replace('\u200f', '').strip()
+    if not os.path.isdir(SRC):
+        raise SystemExit('source folder not found: %s  (set SRC_DIR to the folder with the .docx files)' % SRC)
+    have = {nf(f): f for f in os.listdir(SRC)}
+    for cand in (name, FILE_NAMES.get(name, '')):
+        if cand and nf(cand) in have:
+            return os.path.join(SRC, have[nf(cand)])
+    raise SystemExit('source file missing: %s (original name: %s) in %s' % (name, FILE_NAMES.get(name), SRC))
 GER, GERSH = '׳', '״'
 
 
@@ -174,7 +189,7 @@ SKIP_TOC = ('עלון שיעורו',)
 
 
 def split_big(path='f17.docx'):
-    items, fns = load(os.path.join(SRC, path))
+    items, fns = load(src_path(path))
     D = doc_default_size(items)
     toc, toc_end = [], 0
     for n, it in enumerate(items[:80]):
@@ -259,7 +274,7 @@ EXTRA = [
 
 
 def load_extra(m):
-    items, fns = load(os.path.join(SRC, m['file']))
+    items, fns = load(src_path(m['file']))
     D = doc_default_size(items)
     k = 0
     body = []
@@ -300,6 +315,17 @@ def build():
             if a['siman'] <= ex['siman'] and a['siman'] != 0:
                 pos = i + 1
         ordered.insert(pos, ex)
+    # typing slips: a space in front of , . ; :
+    for a in ordered:
+        for blk in a['blocks']:
+            if blk['t'] == 'tbl':
+                for row in blk['rows']:
+                    for cell in row:
+                        fix_space_before_punct(cell)
+            else:
+                fix_space_before_punct(blk['runs'])
+        for runs in a['footnotes'].values():
+            fix_space_before_punct(runs)
     # internal divider page wherever the siman changes (label of the first article of the group)
     cur = 0
     for a in ordered:

@@ -24,7 +24,7 @@
   const nchars = (t) => t.replace(/[\u0591-\u05c7]/g, '').length;
   // ---------------------------------------------------------------- measurement
   const cv = document.createElement('canvas').getContext('2d');
-  cv.textRendering = 'geometricPrecision'; cv.fontKerning = 'normal';
+  cv.textRendering = 'geometricPrecision'; cv.fontKerning = 'normal'; cv.direction = 'rtl';
   const wcache = new Map();
   function textW(text, font) {
     const k = font + '|' + text;
@@ -113,8 +113,28 @@
       for (const w of words) { pref.push(pref[pref.length - 1] + w.w); prefC.push(prefC[prefC.length - 1] + w.segs.reduce((a, s) => a + nchars(s.t), 0)); }
       const INF = 1e18;
       const memo = new Map();
+      // hanging indent: line 2 starts exactly where the regular text of line 1 starts, i.e. after the lead words *as justified in line 1*;
+      // so the width of line 2 depends on how line 1 was broken (same stretch/tracking rule as lineDiv)
+      const hg = opts && opts.hang;
+      const offCache = new Map();
+      function firstOffset(j) {
+        let v = offCache.get(j);
+        if (v !== undefined) return v;
+        const nl = hg.n;
+        if (j <= nl) v = pref[j] + j * S;
+        else {
+          const n = j - 1, Ww = pref[j], letters = prefC[j];
+          const extra = hg.W - Ww - n * S;
+          const trk = Math.max(letters * TR.minEm * em, Math.min(letters * TR.maxEm * em, extra * TR.share));
+          const gap = (hg.W - Ww - trk) / n;
+          v = pref[nl] + (letters ? trk / letters : 0) * prefC[nl] + nl * gap;
+        }
+        offCache.set(j, v);
+        return v;
+      }
+      const Lof = (k, i) => (hg && k === 1 ? hg.W - firstOffset(i) : widths(k));
       function cost(i, j, k) { // line = words[i..j)
-        const L = widths(k);
+        const L = Lof(k, i);
         const n = j - i - 1;
         const Ww = pref[j] - pref[i];
         const last = j === m;
@@ -143,7 +163,7 @@
         const hit = memo.get(key);
         if (hit) return hit;
         let best = [INF, -1];
-        const L = widths(k);
+        const L = Lof(k, i);
         for (let j = i + 1; j <= m; j++) {
           const n = j - i - 1;
           const letters = prefC[j] - prefC[i];
@@ -168,7 +188,7 @@
       f(0, 0);
       while (i < m) {
         const j = f(i, k)[1];
-        out.push({ from: i, to: j, k });
+        out.push({ from: i, to: j, k, L: Lof(k, i) });
         i = j; k = Math.min(k + 1, 2);
       }
       return out;
@@ -241,13 +261,15 @@
           let indent = tryLead(lead);
           if (indent > colW * 0.42 && lead > 1) { lead = 1; indent = tryLead(1); }
           if (indent > colW * 0.42) indent = 0;
-          const widths = (k) => (k === 1 ? colW - indent : colW);
-          const br = breakDP(words, 'body', widths, {});
+          const hang = indent > 0 && words.length > lead;
+          const br = breakDP(words, 'body', () => colW, hang ? { hang: { n: lead, W: colW } } : {});
           br.forEach((ln, idx) => {
             const lastL = idx === br.length - 1;
             const al = lastL && br.length > 1 ? cfg.lastLine : (lastL ? 'start' : 'justify');
             lines.push({
-              ctx: 'body', words: words.slice(ln.from, ln.to), L: al === 'center' ? colW : widths(ln.k), indent: ln.k === 1 && al !== 'center' ? indent : 0,
+              ctx: 'body', words: words.slice(ln.from, ln.to), L: al === 'center' ? colW : ln.L,
+              leadN: hang && idx === 0 ? lead : 0,
+              hang: hang && idx === 1 && al !== 'center',          // line 2 carries the indent: it must never open a column
               align: al,
               para: pid, idx, n: br.length, spaceBefore: idx === 0 ? (prev === null ? 0 : (prev === 'h3' ? 0 : 1)) : 0,
               keepNext: false, fn: [].concat(...words.slice(ln.from, ln.to).map((w) => w.fn || [])),
@@ -323,6 +345,7 @@
     function allowedBreak(a, b, relax) { // between line a and line b (b follows a); relax = accept single-line widows/orphans
       if (a.tbl || b.tbl) return true;
       if (a.keepNext) return false;
+      if (b.hang) return false;                   // line 2 is indented to the regular text of line 1: it cannot open a column
       if (a.para === b.para) {
         const before = a.idx + 1, after = a.n - before;
         if (before < (relax ? 1 : orph) || after < (relax ? 1 : wid)) return false;
@@ -478,11 +501,12 @@
     // ------------------------------------------------------------ DOM rendering
     const root = document.getElementById('pages');
     root.innerHTML = '';
-    function wordsHTML(words, ctxName, gapPx) {
+    function wordsHTML(words, ctxName, gapPx, markAt) {
       const sg = spaceGlyph(ctxName);
       let html = '';
       words.forEach((w, i) => {
         if (i) html += ' ';
+        if (i && i === markAt) html += '<i class="le"></i>';   // zero-size marker: where the regular text of a lead line begins (verification of the hanging indent)
         for (const s of w.segs) html += `<span class="${s.st}">${esc(s.t)}</span>`;
       });
       return { html, ws: gapPx - sg };
@@ -508,11 +532,11 @@
         STATS.hist = STATS.hist || {};
         const bin = Math.min(12, Math.max(0, Math.round(gap / em * 20)));   // bins of 0.05em
         STATS.hist[bin] = (STATS.hist[bin] || 0) + 1;
-        if (curPage !== null && (ratio > 1.9 || ratio < 0.72)) STATS.loose.push({ page: curPage, ratio: +ratio.toFixed(2), ctx: ctxName, text: ln.words.map((w) => w.segs.map((s) => s.t).join('')).join(' ').slice(0, 50) });
+        if (curPage !== null && (ratio > 1.9 || ratio < 0.72)) STATS.loose.push({ page: curPage, ratio: +ratio.toFixed(2), ctx: ctxName, lead: ln.leadN ? 1 : 0, hang: ln.hang ? 1 : 0, text: ln.words.map((w) => w.segs.map((s) => s.t).join('')).join(' ').slice(0, 50) });
       }
-      const { html, ws } = wordsHTML(ln.words, ctxName, gap);
+      const { html, ws } = wordsHTML(ln.words, ctxName, gap, ln.leadN);
       const d = document.createElement('div');
-      d.className = 'ln c-' + ctxName;
+      d.className = 'ln c-' + ctxName + (ln.leadN ? ' leadln' : '') + (ln.hang ? ' hangln' : '');
       const nat = Ww + n * gap;
       const left = ln.align === 'center' ? x + (Lw - nat) / 2 : x;
       d.style.cssText = `left:${left.toFixed(2)}px;top:${y.toFixed(2)}px;width:${(ln.align === 'center' ? nat + 2 : Lw).toFixed(2)}px;height:${lh}px;line-height:${lh}px;word-spacing:${(ws - ls).toFixed(3)}px;` + (ls ? `letter-spacing:${ls.toFixed(3)}px;` : '');
