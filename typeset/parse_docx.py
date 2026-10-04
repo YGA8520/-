@@ -75,12 +75,14 @@ def normalize_runs(runs):
         nxt = next((runs[j] for j in range(i + 1, len(runs)) if 'fn' in runs[j] or runs[j]['t'].strip()), None)
         if prev and nxt and 'fn' not in prev and 'fn' not in nxt and prev['b'] == nxt['b']:
             r['b'] = prev['b']
+            if prev.get('sm') == nxt.get('sm'):
+                r['sm'] = prev.get('sm')
     merged = []
     for r in runs:
         r = dict(r)
         if 'fn' not in r:
             r['t'] = clean_ws(r['t'])
-        if merged and 'fn' not in r and 'fn' not in merged[-1] and merged[-1].get('b') == r.get('b'):
+        if merged and 'fn' not in r and 'fn' not in merged[-1] and merged[-1].get('b') == r.get('b') and merged[-1].get('sm') == r.get('sm'):
             merged[-1]['t'] += r['t']
         else:
             merged.append(r)
@@ -125,7 +127,7 @@ def normalize_runs(runs):
     # re-merge after trimming
     out = []
     for r in merged:
-        if out and 'fn' not in r and 'fn' not in out[-1] and out[-1].get('b') == r.get('b') and out[-1].get('sup') == r.get('sup'):
+        if out and 'fn' not in r and 'fn' not in out[-1] and out[-1].get('b') == r.get('b') and out[-1].get('sup') == r.get('sup') and out[-1].get('sm') == r.get('sm'):
             out[-1]['t'] += r['t']
         else:
             out.append(r)
@@ -138,7 +140,7 @@ def normalize_runs(runs):
 BR = re.compile(r'\[[^\[\]]{2,110}\]|\([^()]{2,90}\)')
 
 
-def mark_sources(runs, max_words=14):
+def mark_sources(runs, max_words=14, heuristic=True):
     """flag short bracketed spans ([...] or (...)) as `sm` (citations set in a smaller size)."""
     text = ''
     bold = []
@@ -150,7 +152,7 @@ def mark_sources(runs, max_words=14):
             text += r['t']
             bold.extend([r.get('b', False)] * len(r['t']))
     small = [False] * len(text)
-    for m in BR.finditer(text):
+    for m in (BR.finditer(text) if heuristic else []):
         inner = m.group(0)
         if '' in inner:
             continue

@@ -11,12 +11,12 @@
 
   // ---------------------------------------------------------------- helpers
   function heb(n) {
-    if (n === 15) return 'טו';
-    if (n === 16) return 'טז';
     const L = [[400, 'ת'], [300, 'ש'], [200, 'ר'], [100, 'ק'], [90, 'צ'], [80, 'פ'], [70, 'ע'], [60, 'ס'], [50, 'נ'], [40, 'מ'], [30, 'ל'], [20, 'כ'], [10, 'י'], [9, 'ט'], [8, 'ח'], [7, 'ז'], [6, 'ו'], [5, 'ה'], [4, 'ד'], [3, 'ג'], [2, 'ב'], [1, 'א']];
     let s = '';
-    for (const [v, c] of L) while (n >= v) { s += c; n -= v; }
-    if (s.endsWith('טו') || s.endsWith('טז')) return s;
+    while (n >= 100) { const [v, c] = L.find((x) => x[0] <= n && x[0] >= 100); s += c; n -= v; }
+    if (n === 15) return s + 'טו';
+    if (n === 16) return s + 'טז';
+    for (const [v, c] of L) { if (v >= 100) continue; while (n >= v) { s += c; n -= v; } }
     return s;
   }
   const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -54,9 +54,10 @@
       h3: { fam: T.h3.family, size: pt(T.h3.size) },
       abs: { fam: T.abstract.family, size: pt(T.abstract.size) },
     };
-    const rel = { n: [400, 1], b: [700, 1], sm: [400, T.smallScale], smb: [700, T.smallScale], fnref: [700, T.fnrefScale], h: [700, 1] };
+    const rel = { n: [400, 1], b: [700, 1], sm: [400, T.smallScale], smb: [700, T.smallScale], fnref: [700, T.fnrefScale], h: [700, 1], ld: [700, (T.lead && T.lead.scale) || 1] };
     function fontFor(ctxName, st) {
       const c = ctxs[ctxName];
+      if (st === 'ld') return `700 ${(c.size * rel.ld[1]).toFixed(3)}px "${T.lead.family}"`;
       let [w, r] = rel[st];
       if (ctxName === 'h2' || ctxName === 'h3') { if (st === 'n') w = T[ctxName].weight; if (st === 'b') w = Math.max(w, T[ctxName].weight); }
       return `${w} ${(c.size * r).toFixed(3)}px "${c.fam}"`;
@@ -216,13 +217,21 @@
         if (b.t === 'p') {
           const words = tokenize(b.runs, 'body', fnMap, false);
           if (!words.length) continue;
-          // lead-in: leading fully bold words
+          // lead-in: the first word of EVERY paragraph (plus an enumerator such as "א׳." and its following word)
           let lead = 0;
-          for (const w of words) { if (w.segs.every((s) => s.st === 'b' || s.st === 'smb' || s.st === 'fnref')) lead++; else break; }
-          if (lead === words.length || lead > T.leadMaxWords) lead = 0;
+          for (const w of words) { if (w.segs.every((x) => x.st === 'b' || x.st === 'smb' || x.st === 'fnref')) lead++; else break; }
+          if (lead > T.leadMaxWords) lead = 1;
+          if (lead === 0) lead = 1;
+          const plain = (w) => w.segs.map((x) => x.t).join('');
+          if (lead === 1 && words.length > 1 && /^(?:\(?[א-ת]{1,3}[׳'.):]+|\d{1,3}[.)])$/.test(plain(words[0]))) lead = 2;
+          if (lead > words.length) lead = words.length;
           const S = spaceNat('body');
-          let indent = 0;
-          if (lead > 0) { for (let i = 0; i < lead; i++) indent += words[i].w; indent += lead * S; if (indent > colW * 0.45) indent = 0; }
+          const restyle = (w) => { for (const x of w.segs) if (x.st === 'n' || x.st === 'b') x.st = 'ld'; w.w = w.segs.reduce((a, x) => a + textW(x.t, fontFor('body', x.st)), 0); };
+          const tryLead = (n) => { let ind = 0; for (let i = 0; i < n; i++) ind += words[i].w; return ind + n * S; };
+          for (let i = 0; i < lead; i++) restyle(words[i]);
+          let indent = tryLead(lead);
+          if (indent > colW * 0.42 && lead > 1) { lead = 1; indent = tryLead(1); }
+          if (indent > colW * 0.42) indent = 0;
           const widths = (k) => (k === 1 ? colW - indent : colW);
           const br = breakDP(words, 'body', widths, {});
           br.forEach((ln, idx) => {
@@ -236,6 +245,10 @@
             });
           });
           prev = 'p';
+        } else if (b.t === 'tbl') {
+          const t = makeTable(b);
+          lines.push({ tbl: true, html: t.html, h: t.h, para: pid, idx: 0, n: 1, spaceBefore: 0, keepNext: false, fn: [] });
+          prev = 'tbl';
         } else if (b.t === 'h2' || b.t === 'h3') {
           const ctxName = b.t;
           const words = tokenize(b.runs, ctxName, fnMap, true);
@@ -265,7 +278,9 @@
 
     // ------------------------------------------------------------ pagination
     const FN = cfg.footnotes;
-    const fnTop = mm(FN.topGap), fnHeadH = fnLh * 1.15, fnHeadGap = mm(FN.headGap), fnItemGap = mm(FN.itemGap);
+    const fnTop = mm(FN.topGap), fnHeadH = mm(FN.headH || 6), fnHeadGap = mm(FN.headGap), fnItemGap = mm(FN.itemGap);
+    const ORN = cfg.ornaments || {};
+    const oimg = (name, wmm, cls, extra) => { const o = ORN[name]; if (!o) return ''; const h = wmm * o.h / o.w; return `<img class="orn ${cls || ''}" src="${o.src}" style="width:${wmm}mm;height:${h.toFixed(3)}mm;${extra || ''}">`; };
     function fnBlockH(entries) {
       if (!entries.length) return 0;
       let h = fnTop + fnHeadH + fnHeadGap;
@@ -273,8 +288,31 @@
       return h;
     }
 
+    const probe = document.createElement('div');
+    probe.className = 'probe'; probe.style.cssText = `position:absolute;visibility:hidden;left:0;top:0;width:${textW0}px`;
+    document.body.appendChild(probe);
+
+    // tables (full-width bands) ----------------------------------------------
+    function runsHTML(runs) {
+      return runs.map((r) => (r.fn !== undefined ? '' : `<span class="${r.b ? (r.sm ? 'smb' : 'b') : (r.sm ? 'sm' : 'n')}">${esc(r.t)}</span>`)).join('');
+    }
+    function makeTable(b) {
+      let h = '<table class="bt">';
+      b.rows.forEach((row, ri) => {
+        h += '<tr>';
+        row.forEach((cell) => { h += (ri === 0 ? '<th>' : '<td>') + runsHTML(cell) + (ri === 0 ? '</th>' : '</td>'); });
+        h += '</tr>';
+      });
+      h += '</table>';
+      const html = `<div class="tblwrap" style="width:${(textW0 * 0.94).toFixed(1)}px">${h}</div>`;
+      probe.innerHTML = html;
+      const hh = probe.firstChild.getBoundingClientRect().height;
+      return { html, h: Math.ceil((hh + lh * 1.2) / lh) * lh };
+    }
+
     function colUnits(arr) { let u = 0; arr.forEach((l, i) => { u += (i > 0 ? l.spaceBefore : 0) + 1; }); return u; }
     function allowedBreak(a, b) { // between line a and line b (b follows a)
+      if (a.tbl || b.tbl) return true;
       if (a.keepNext) return false;
       if (a.para === b.para) {
         const before = a.idx + 1, after = a.n - before;
@@ -282,7 +320,7 @@
       }
       return true;
     }
-    // split page lines into two columns; returns [col0,col1] or null.  mode: 'full' | 'balanced'
+    // split lines of one band into two columns; returns [col0,col1] or null.  mode: 'full' | 'balanced'
     function splitCols(lines, C, mode) {
       const n = lines.length;
       if (!n) return [[], []];
@@ -299,11 +337,10 @@
         if (!best || best.mx > C) return null;
         return [best.c1, best.c2];
       }
-      // full: fill col0 to C units
       let e = -1, u = 0;
       for (let i = 0; i < n; i++) { const nu = u + (i > 0 ? lines[i].spaceBefore : 0) + 1; if (nu > C) break; u = nu; e = i; }
       if (e === n - 1) return [lines, []];
-      let b = e + 1; // lines in col0
+      let b = e + 1;
       let found = -1;
       for (let t = b; t >= Math.max(1, b - 4); t--) { if (allowedBreak(lines[t - 1], lines[t])) { found = t; break; } }
       if (found > 0) b = found;
@@ -315,66 +352,70 @@
     function paginateArticle(L, banner, endOrnH) {
       const pages = [];
       const queue = L.lines.slice();
-      let carry = []; // continued footnote entries [{key, from, to}]
+      let carry = [];
       let first = true;
       let guard = 0;
       while (queue.length || carry.length) {
-        if (++guard > 5000) throw new Error('pagination did not converge');
+        if (++guard > 6000) throw new Error('pagination did not converge');
         const bannerH = first ? banner.h : 0;
-        const page = { lines: [], entries: carry.map((e) => ({ ...e })), banner: first ? banner : null, first, endOrn: false };
+        const page = { bands: [], open: [], usedTop: bannerH, banner: first ? banner : null, first, endOrn: false, carryEntries: carry.map((e) => ({ ...e })) };
         carry = [];
-        const lineEntries = (lines) => { // footnote entries newly introduced by these lines
+        const flat = (open) => { const a = []; for (const b of page.bands) if (b.type === 'cols') a.push(...b.lines); a.push(...open); return a; };
+        const lineEntries = (lines) => {
           const out = [];
           for (const l of lines) for (const k of l.fn) { if (!out.find((e) => e.key === k)) out.push({ key: k, from: 0, to: L.fnReg[k].lines.length }); }
           return out;
         };
-        const capOf = (entries) => Math.floor((textH - bannerH - fnBlockH(entries) + 0.01) / lh);
-        const entriesFor = (lines, splitLast) => {
-          let es = page.carryEntries.concat(lineEntries(lines));
+        const entriesFor = (open, splitLast) => {
+          let es = page.carryEntries.concat(lineEntries(flat(open)));
           if (splitLast && es.length) { const e = es[es.length - 1]; es = es.slice(0, -1).concat([{ ...e, to: splitLast }]); }
           return es;
         };
-        page.carryEntries = page.entries;
-        let closeSplit = null; // {key,k} when last footnote was split
+        const capOf = (entries) => Math.floor((textH - page.usedTop - fnBlockH(entries) + 0.01) / lh);
+        let closeSplit = null;
         let progressed = false;
         while (queue.length) {
           const ln = queue[0];
-          const trial = page.lines.concat([ln]);
-          let es = entriesFor(trial, 0);
-          let C = capOf(es);
-          let cols = splitCols(trial, C, 'full');
-          if (cols && C >= 1) { page.lines = trial; queue.shift(); progressed = true; continue; }
-          // try splitting this line's last new footnote
-          const newE = lineEntries(trial).filter((e) => !page.carryEntries.find((c) => c.key === e.key) && !lineEntries(page.lines).find((p) => p.key === e.key));
+          if (ln.tbl) {
+            const es0 = entriesFor(page.open, 0);
+            const rem0 = textH - page.usedTop - fnBlockH(es0);
+            let before = null, hBefore = 0;
+            if (page.open.length) {
+              before = splitCols(page.open, Math.floor(rem0 / lh), 'balanced');
+              if (!before) break;
+              hBefore = Math.max(colUnits(before[0]), colUnits(before[1])) * lh;
+            }
+            const empty = page.bands.length === 0 && page.open.length === 0;
+            if (ln.h <= rem0 - hBefore + 0.5 || empty) {
+              if (page.open.length) { page.bands.push({ type: 'cols', cols: before, lines: page.open, h: hBefore }); page.usedTop += hBefore; page.open = []; }
+              page.bands.push({ type: 'tbl', item: ln, h: ln.h }); page.usedTop += ln.h; queue.shift(); progressed = true; continue;
+            }
+            break;
+          }
+          const trial = page.open.concat([ln]);
+          const es = entriesFor(trial, 0);
+          const C = capOf(es);
+          if (C >= 1 && splitCols(trial, C, 'full')) { page.open = trial; queue.shift(); progressed = true; continue; }
+          const prevKeys = lineEntries(flat(page.open)).map((e) => e.key);
+          const newE = lineEntries(flat(trial)).filter((e) => !page.carryEntries.find((c) => c.key === e.key) && !prevKeys.includes(e.key));
           if (newE.length) {
             const lastE = newE[newE.length - 1];
             const total = L.fnReg[lastE.key].lines.length;
             let ok = false;
             for (let k = total - 1; k >= 2; k--) {
-              const es2 = entriesFor(trial, k);
-              const C2 = capOf(es2);
-              const cols2 = splitCols(trial, C2, 'full');
-              if (cols2 && C2 >= 1) { closeSplit = { key: lastE.key, k, total }; page.lines = trial; queue.shift(); ok = true; progressed = true; break; }
+              const C2 = capOf(entriesFor(trial, k));
+              if (C2 >= 1 && splitCols(trial, C2, 'full')) { closeSplit = { key: lastE.key, k, total }; page.open = trial; queue.shift(); ok = true; progressed = true; break; }
             }
             if (ok) break;
           }
-          if (!progressed && page.lines.length === 0) { // force one line so we always advance
-            page.lines = [ln]; queue.shift(); progressed = true;
-          }
+          if (!progressed && page.open.length === 0 && page.bands.length === 0) { page.open = [ln]; queue.shift(); progressed = true; }
           break;
         }
-        // page break legality (orphans / widows / keep-next)
-        if (window.__dbg) console.log('close page', pages.length+1, 'last:', page.lines.length && page.lines[page.lines.length-1].words.map(w=>w.segs.map(x=>x.t).join('')).join(' ').slice(0,30), '| heading', page.lines.length && page.lines[page.lines.length-1].heading, '| next:', queue[0] && queue[0].words.map(w=>w.segs.map(x=>x.t).join('')).join(' ').slice(0,30), 'closeSplit', !!closeSplit);
         if (queue.length && !closeSplit) {
           let pops = 0;
-          while (page.lines.length > 8 && pops < 16 && !allowedBreak(page.lines[page.lines.length - 1], queue[0])) {
-            queue.unshift(page.lines.pop()); pops++;
-          }
-        } else if (queue.length && closeSplit) {
-          // keep as is
+          while (page.open.length > 8 && pops < 16 && !allowedBreak(page.open[page.open.length - 1], queue[0])) { queue.unshift(page.open.pop()); pops++; }
         }
-        // final footnote entries
-        let es = page.carryEntries.concat(lineEntries(page.lines));
+        let es = page.carryEntries.concat(lineEntries(flat(page.open)));
         if (closeSplit && es.length && es[es.length - 1].key === closeSplit.key) {
           const e = es[es.length - 1];
           es = es.slice(0, -1).concat([{ ...e, to: closeSplit.k }]);
@@ -386,16 +427,15 @@
         first = false;
         const isLast = queue.length === 0 && carry.length === 0;
         page.isLast = isLast;
-        const C = Math.floor((textH - bannerH - page.fnH + 0.01) / lh);
+        const C = Math.floor((textH - page.usedTop - page.fnH + 0.01) / lh);
         let cols;
         if (isLast) {
-          const C2 = Math.floor((textH - bannerH - page.fnH - (endOrnH || 0) + 0.01) / lh);
-          cols = splitCols(page.lines, C2, 'balanced');
-          if (cols) page.endOrn = true; else cols = splitCols(page.lines, C, 'balanced');
-        } else cols = splitCols(page.lines, C, 'full');
-        if (!cols) cols = splitCols(page.lines, 999, 'full');
-        page.cols = cols;
-        page.C = C;
+          const C2 = Math.floor((textH - page.usedTop - page.fnH - (endOrnH || 0) + 0.01) / lh);
+          cols = splitCols(page.open, C2, 'balanced');
+          if (cols) page.endOrn = true; else cols = splitCols(page.open, C, 'balanced');
+        } else cols = splitCols(page.open, C, 'full');
+        if (!cols) cols = splitCols(page.open, 999, 'full');
+        page.bands.push({ type: 'cols', cols, lines: page.open, last: true });
         pages.push(page);
       }
       return pages;
@@ -426,51 +466,109 @@
       const d = document.createElement('div');
       d.className = 'ln c-' + ctxName;
       const nat = ln.words.reduce((a, w) => a + w.w, 0) + n * gap;
-      let left = x;                       // x = left coordinate of the available box (width Lw+indent)
-      let wdt = Lw;
-      if (ln.align === 'center') left = x + (Lw - nat) / 2 + ln.indent * 0; // indent is 0 for centered lines
-      d.style.cssText = `left:${(ln.align === 'center' ? left : x).toFixed(2)}px;top:${y.toFixed(2)}px;width:${(ln.align === 'center' ? nat + 2 : Lw).toFixed(2)}px;height:${lh}px;line-height:${lh}px;word-spacing:${ws.toFixed(3)}px;`;
+      const left = ln.align === 'center' ? x + (Lw - nat) / 2 : x;
+      d.style.cssText = `left:${left.toFixed(2)}px;top:${y.toFixed(2)}px;width:${(ln.align === 'center' ? nat + 2 : Lw).toFixed(2)}px;height:${lh}px;line-height:${lh}px;word-spacing:${ws.toFixed(3)}px;`;
       d.innerHTML = html;
       return d;
     }
 
     // banner (title block) ----------------------------------------------------
-    function ornSVG(kind) { return (cfg.ornaments && cfg.ornaments[kind]) || ''; }
     function bannerHTML(art) {
+      const B = cfg.banner || {};
       let h = '<div class="banner">';
       if (art.basad) h += `<div class="basad">${esc(art.basad)}</div>`;
       if (art.label) h += `<div class="label">${esc(art.label)}</div>`;
-      h += `<div class="ornament top">${ornSVG('top')}</div>`;
-      h += `<div class="rule"></div><div class="title">${esc(art.title)}</div><div class="rule"></div>`;
-      h += `<div class="ornament bot">${ornSVG('bottom')}</div>`;
+      if (B.style === 'divider') {
+        h += `<div class="orn-row top">${oimg(B.divider || 'divider-long', B.dividerW || 100, '', '')}</div>`;
+        h += `<div class="title">${esc(art.title)}</div>`;
+        h += `<div class="orn-row bot">${oimg(B.divider || 'divider-long', B.dividerW || 100, '', 'transform:scaleY(-1);')}</div>`;
+      } else {
+        h += `<div class="orn-row top">${oimg(B.flourish || 'flourish-wide-2', B.flourishW || 34, '', '')}</div>`;
+        h += `<div class="rule"></div><div class="title">${esc(art.title)}</div><div class="rule"></div>`;
+        h += `<div class="orn-row bot">${oimg(B.flourish || 'flourish-wide-2', B.flourishW || 34, '', 'transform:scaleY(-1);')}</div>`;
+      }
+      if (art.subtitle) h += `<div class="subtitle">${esc(art.subtitle)}</div>`;
       if (art.author) h += `<div class="author">${esc(art.author)}</div>`;
       if (art.abstract) h += `<div class="abstract">${esc(art.abstract)}</div>`;
       return h + '</div>';
     }
-    const probe = document.createElement('div');
-    probe.className = 'probe'; probe.style.cssText = `position:absolute;visibility:hidden;left:0;top:0;width:${textW0}px`;
-    document.body.appendChild(probe);
     function measureBanner(art) {
       probe.innerHTML = bannerHTML(art);
       const h = probe.firstChild.getBoundingClientRect().height;
       return Math.ceil(h / lh) * lh + lh * (cfg.bannerBelow || 1);
     }
 
-    // ------------------------------------------------------------ build all
-    const allPages = [];
-    let pageNo = doc.firstPageNumber || 1;
+    // ------------------------------------------------------------ lay out all articles
     const bookName = doc.book.name;
     const articles = doc.articles;
-    const tocEntries = [];
+    const artPages = [];
     articles.forEach((art, aIdx) => {
       const L = layoutArticle(art, aIdx);
       const bh = art.noBanner ? 0 : measureBanner(art);
       const banner = { h: bh, html: art.noBanner ? '' : bannerHTML(art) };
-      const endOrnH = lh * 3;
-      const pages = paginateArticle(L, banner, endOrnH);
-      pages.forEach((p, i) => { p.article = art; p.aIdx = aIdx; p.fnReg = L.fnReg; p.no = pageNo++; });
-      tocEntries.push({ art, page: pages[0].no, pages: pages.length });
-      allPages.push(...pages);
+      const pages = paginateArticle(L, banner, lh * 3);
+      pages.forEach((p) => { p.article = art; p.aIdx = aIdx; p.fnReg = L.fnReg; });
+      artPages.push(pages);
+    });
+
+    // ------------------------------------------------------------ front matter: table of contents
+    const groupOf = (lab) => (lab ? lab.split(/\s+סעי/)[0] : '');
+    function tocRows(pageOf) {
+      const rows = [];
+      let lastG = null;
+      articles.forEach((art, i) => {
+        const g = groupOf(art.label);
+        if (g && g !== lastG) rows.push({ kind: 'group', html: `<div class="toc-group"><span>${esc(g)}</span></div>` });
+        if (g !== lastG) lastG = g;
+        const pn = pageOf ? heb(pageOf(i)) : 'תשצט';
+        rows.push({ kind: 'entry', art: i, html: `<div class="toc-entry"><div class="t1"><span class="tt">${esc(art.title)}</span><span class="dots"></span><span class="pn">${pn}</span></div>${art.author ? `<div class="t2">${esc(art.author)}</div>` : ''}</div>` });
+      });
+      return rows;
+    }
+    const tocTitleHTML = `<div class="toc-title"><div class="orn-row top">${oimg('flourish-wide-2', 30, '', '')}</div><div class="tt">${esc((doc.toc && doc.toc.title) || 'תוכן עניינים')}</div><div class="orn-row bot">${oimg('divider-fleuron', 40, '', '')}</div></div>`;
+    function paginateToc(rows) {
+      const hs = rows.map((r) => { probe.innerHTML = r.html; return probe.firstChild.getBoundingClientRect().height + (r.kind === 'group' ? 0 : 0); });
+      probe.innerHTML = tocTitleHTML; const titleH = probe.firstChild.getBoundingClientRect().height + mm(6);
+      const pages = []; let cur = [], used = titleH, avail = textH - mm(4);
+      rows.forEach((r, i) => {
+        // keep a group header with its first entry
+        const need = hs[i] + (r.kind === 'group' && rows[i + 1] ? hs[i + 1] : 0);
+        if (used + need > avail && cur.length) { pages.push(cur); cur = []; used = 0; }
+        cur.push(r); used += hs[i];
+      });
+      if (cur.length) pages.push(cur);
+      return pages;
+    }
+    const tocPlaceholder = paginateToc(tocRows(null));
+    const nToc = tocPlaceholder.length;
+    const frontCount = nToc;                       // ToC pages are counted in the numbering, the cover is not
+    let pageNo = (doc.firstPageNumber || 1) + frontCount;
+    const startNo = [];
+    artPages.forEach((pages, i) => { startNo[i] = pageNo; pages.forEach((p) => { p.no = pageNo++; }); });
+    const tocPages = paginateToc(tocRows((i) => startNo[i]));
+    if (tocPages.length !== nToc) console.log('warning: toc page count changed');
+
+    // ------------------------------------------------------------ DOM: pages
+    function newPage() {
+      const pg = document.createElement('div');
+      pg.className = 'page';
+      pg.style.width = pageW + 'px'; pg.style.height = pageH + 'px';
+      return pg;
+    }
+    // cover (placeholder until the real cover is supplied)
+    if (!doc.noCover) {
+      const pg = newPage();
+      pg.classList.add('cover');
+      pg.innerHTML = `<div class="cover-in">${oimg('flourish-wide-1', 70, '', '')}<div class="cv-title">${esc(bookName)}</div>${doc.book.subtitle ? `<div class="cv-sub">${esc(doc.book.subtitle)}</div>` : ''}${oimg('flourish-wide-1', 70, '', 'transform:scaleY(-1);')}</div>`;
+      root.appendChild(pg);
+    }
+    tocPages.forEach((rows, ti) => {
+      const pg = newPage();
+      const no = (doc.firstPageNumber || 1) + ti;
+      const even = no % 2 === 0;
+      const ml = even ? mm(P.marginInner) : mm(P.marginOuter);
+      pg.innerHTML = `<div class="tocwrap" style="left:${ml}px;top:${topM - mm(2)}px;width:${textW0}px">${ti === 0 ? tocTitleHTML : ''}${rows.map((r) => r.html).join('')}</div>`;
+      root.appendChild(pg);
     });
 
     function headerHTML(p) {
@@ -480,16 +578,13 @@
       const book = `<span class="hbook">${esc(bookName)}</span>`;
       const dot = '<span class="hdot">&#9679;</span>';
       const chap = `<span class="hchap">${esc(p.article.shortTitle || p.article.title)}</span>`;
-      // visual order, left to right
       const html = even ? `${book}${dot}${chap}<span class="grow"></span>${num}` : `${num}<span class="grow"></span>${chap}${dot}${book}`;
       const ml = even ? mm(P.marginInner) : mm(P.marginOuter);
       return `<div class="header ${even ? 'even' : 'odd'}" style="left:${ml}px;width:${textW0}px">${html}</div>`;
     }
 
-    allPages.forEach((p) => {
-      const pg = document.createElement('div');
-      pg.className = 'page';
-      pg.style.width = pageW + 'px'; pg.style.height = pageH + 'px';
+    artPages.forEach((pages) => pages.forEach((p) => {
+      const pg = newPage();
       const marginL = (p.no % 2 === 0) ? mm(P.marginInner) : mm(P.marginOuter);
       pg.innerHTML = headerHTML(p);
       const yText = topM;
@@ -500,62 +595,73 @@
         b.innerHTML = p.banner.html;
         pg.appendChild(b);
       }
-      const yBody = yText + p.bannerH;
+      let y = yText + p.bannerH;
       const xCol = [marginL + colW + gapC, marginL]; // col0 = right column
-      p.cols.forEach((col, ci) => {
-        let y = yBody;
-        col.forEach((ln, i) => {
-          if (i > 0) y += ln.spaceBefore * lh;
-          const ind = ln.indent || 0;
-          const box = { ...ln };
-          // lines with indent are right aligned: shrink from the right side
-          const d = lineDiv(box, xCol[ci], y, ln.ctx);
+      for (const band of p.bands) {
+        if (band.type === 'tbl') {
+          const d = document.createElement('div');
+          d.className = 'tblband';
+          d.style.cssText = `left:${marginL + textW0 * 0.03}px;top:${(y + lh * 0.45).toFixed(2)}px;width:${(textW0 * 0.94).toFixed(1)}px;`;
+          d.innerHTML = band.item.html;
           pg.appendChild(d);
-          y += lh;
+          y += band.h;
+          continue;
+        }
+        let endY = y;
+        band.cols.forEach((col, ci) => {
+          let yy = y;
+          col.forEach((ln, i) => {
+            if (i > 0) yy += ln.spaceBefore * lh;
+            pg.appendChild(lineDiv(ln, xCol[ci], yy, ln.ctx));
+            yy += lh;
+          });
+          endY = Math.max(endY, yy);
         });
-        if (ci === 0) p._colEnd0 = y; else p._colEnd1 = y;
-      });
+        y = endY;
+      }
       // footnotes
       if (p.entries.length) {
-        let y = yText + textH - p.fnH + fnTop;
+        let fy = yText + textH - p.fnH + fnTop;
         const hd = document.createElement('div');
         hd.className = 'fnhead';
-        hd.style.cssText = `left:${marginL}px;top:${y}px;width:${textW0}px;height:${fnHeadH}px;`;
-        hd.innerHTML = `<span class="fnrule"></span><span class="fntitle">${esc(FN.title)}</span><span class="fnrule"></span>`;
+        hd.style.cssText = `left:${marginL}px;top:${fy}px;width:${textW0}px;height:${fnHeadH}px;`;
+        const titleW = textW(FN.title, `700 ${pt(FN.titleSize || 9.5)}px "${FN.titleFamily || 'David Libre'}"`);
+        const sideW = Math.max(10, (textW0 - titleW - mm(2 * (FN.titleGap || 3.5))) / 2) / MM;
+        const sw = Math.min(sideW, FN.sideMax || 60);
+        hd.innerHTML = `${oimg(FN.ornament || 'line-scroll', sw, 'fnside', 'transform:scaleX(-1);')}<span class="fntitle">${esc(FN.title)}</span>${oimg(FN.ornament || 'line-scroll', sw, 'fnside', '')}`;
+        hd.style.justifyContent = 'center'; hd.style.gap = (FN.titleGap || 3.5) + 'mm';
         pg.appendChild(hd);
-        y += fnHeadH + fnHeadGap;
+        fy += fnHeadH + fnHeadGap;
         const gutter = mm(FN.gutter);
         p.entries.forEach((e, ei) => {
-          if (ei) y += fnItemGap;
+          if (ei) fy += fnItemGap;
           const reg = p.fnReg[e.key];
           for (let li = e.from; li < e.to; li++) {
             const ln = reg.lines[li];
-            const dl = lineDiv({ words: ln.words, L: ln.L, indent: 0, align: ln.last ? 'start' : 'justify' }, marginL, y, 'foot');
+            const dl = lineDiv({ words: ln.words, L: ln.L, indent: 0, align: ln.last ? 'start' : 'justify' }, marginL, fy, 'foot');
             dl.style.height = fnLh + 'px'; dl.style.lineHeight = fnLh + 'px';
             pg.appendChild(dl);
             if (li === e.from && !e.cont) {
               const mk = document.createElement('div');
               mk.className = 'fnmark';
-              mk.style.cssText = `left:${marginL + ln.L}px;top:${y}px;width:${gutter}px;height:${fnLh}px;line-height:${fnLh}px;`;
+              mk.style.cssText = `left:${marginL + ln.L}px;top:${fy}px;width:${gutter}px;height:${fnLh}px;line-height:${fnLh}px;`;
               mk.textContent = reg.label + '.';
               pg.appendChild(mk);
             }
-            y += fnLh;
+            fy += fnLh;
           }
         });
       }
-      // end ornament
       if (p.endOrn) {
-        const colEnd = Math.max(p._colEnd0 || yBody, p._colEnd1 || yBody);
         const o = document.createElement('div');
         o.className = 'endorn';
-        o.style.cssText = `left:${marginL}px;top:${colEnd + lh * 0.5}px;width:${textW0}px;`;
-        o.innerHTML = ornSVG('end');
+        o.style.cssText = `left:${marginL}px;top:${y + lh * 0.5}px;width:${textW0}px;`;
+        o.innerHTML = oimg((cfg.endOrnament && cfg.endOrnament.name) || 'fleuron-small', (cfg.endOrnament && cfg.endOrnament.w) || 18, '', '');
         pg.appendChild(o);
       }
       root.appendChild(pg);
-    });
-    return { pages: allPages.length, toc: tocEntries.map((t) => ({ title: t.art.title, page: t.page, pages: t.pages })) };
+    }));
+    return { pages: root.children.length, toc: articles.map((a, i) => ({ title: a.title, page: startNo[i], pages: artPages[i].length })), tocPages: nToc };
   }
 
   window.typeset = typeset;
