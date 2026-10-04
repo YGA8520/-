@@ -27,6 +27,7 @@ TW = 56.6929  # twips per mm
 _CFG = json.load(open(os.path.join(HERE, 'config.json')))
 _WF = _CFG.get('wordFonts', {})
 BODY_FONT, LEAD_FONT, DISPLAY_FONT = _WF.get('body', 'FrankRuehl'), _WF.get('lead', 'David'), _WF.get('display', 'FrankRuehl')
+NOTES_FONT, AUTHOR_FONT = _WF.get('notes', BODY_FONT), _WF.get('author', LEAD_FONT)
 BODY_PT, FOOT_PT, SMALL_PT, FOOT_SMALL_PT, LEAD_PT = 12, 10, 10, 8.5, 11.4
 
 NS = ('xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" '
@@ -352,14 +353,14 @@ def styles_xml():
              fonts(LEAD_FONT) + f'<w:b/><w:bCs/>{sz(11.5)}', nxt='Body')
     s += pst('SimanTitle', '<w:keepNext/><w:bidi/><w:spacing w:before="312" w:after="312" w:line="760" w:lineRule="exact"/><w:jc w:val="center"/>',
              fonts(DISPLAY_FONT) + f'<w:b/><w:bCs/>{sz(30)}')
-    s += pst('ArticleAuthor', '<w:bidi/><w:spacing w:before="80" w:after="280" w:line="280" w:lineRule="exact"/><w:jc w:val="center"/>', fonts(LEAD_FONT) + f'<w:b/><w:bCs/>{sz(11.5)}')
+    s += pst('ArticleAuthor', '<w:bidi/><w:spacing w:before="80" w:after="280" w:line="280" w:lineRule="exact"/><w:jc w:val="center"/>', fonts(AUTHOR_FONT) + f'<w:b/><w:bCs/>{sz(11.5)}')
     s += pst('ArticleSubtitle', '<w:bidi/><w:spacing w:before="0" w:after="40" w:line="280" w:lineRule="exact"/><w:jc w:val="center"/>', fonts(LEAD_FONT) + sz(11))
     s += pst('TableText', '<w:bidi/><w:spacing w:after="0" w:line="280" w:lineRule="exact"/><w:jc w:val="center"/>', sz(FOOT_PT))
     s += pst('TocTitle', '<w:bidi/><w:spacing w:before="0" w:after="240"/><w:jc w:val="center"/>', fonts(DISPLAY_FONT) + f'<w:b/><w:bCs/>{sz(21)}')
     s += pst('CoverTitle', '<w:bidi/><w:spacing w:before="0" w:after="200" w:line="900" w:lineRule="exact"/><w:jc w:val="center"/>', fonts(DISPLAY_FONT) + f'<w:b/><w:bCs/>{sz(40)}')
     s += pst('CoverSubtitle', '<w:bidi/><w:spacing w:before="0" w:after="200" w:line="480" w:lineRule="exact"/><w:jc w:val="center"/>', fonts(LEAD_FONT) + sz(16))
     # built-in styles keep their English ids/names (Hebrew Word shows them in Hebrew by itself)
-    s += pst('FootnoteText', '<w:bidi/><w:spacing w:after="30" w:line="292" w:lineRule="exact"/><w:jc w:val="both"/>', sz(FOOT_PT), name='footnote text')
+    s += pst('FootnoteText', '<w:bidi/><w:spacing w:after="30" w:line="292" w:lineRule="exact"/><w:jc w:val="both"/>', fonts(NOTES_FONT) + sz(FOOT_PT), name='footnote text')
     s += pst('Header', '<w:bidi/><w:spacing w:after="0" w:line="300" w:lineRule="exact"/>', '', name='header')
     s += pst('TOC1', f'<w:tabs><w:tab w:val="right" w:leader="dot" w:pos="{TEXT_W}"/></w:tabs><w:bidi/><w:spacing w:after="60" w:line="300" w:lineRule="exact"/>', sz(11.5), name='toc 1')
     # character styles

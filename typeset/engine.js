@@ -60,6 +60,7 @@
       const c = ctxs[ctxName];
       if (st === 'ld') return `700 ${(c.size * rel.ld[1]).toFixed(3)}px "${T.lead.family}"`;
       let [w, r] = rel[st];
+      if (ctxName === 'foot' && (st === 'n' || st === 'sm') && T.foot.weight) w = T.foot.weight;
       if (ctxName === 'h2' || ctxName === 'h3') { if (st === 'n') w = T[ctxName].weight; if (st === 'b') w = Math.max(w, T[ctxName].weight); }
       return `${w} ${(c.size * r).toFixed(3)}px "${c.fam}"`;
     }

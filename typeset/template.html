@@ -12,7 +12,7 @@ body { font-kerning: normal; font-feature-settings: "kern" 1; text-rendering: ge
 .page { position: relative; overflow: hidden; page-break-after: always; break-after: page; background: #fff; direction: ltr; }
 .ln { position: absolute; white-space: pre; direction: rtl; unicode-bidi: plaintext; overflow: visible; font-kerning: normal; }
 .c-body { font-family: var(--f-body); font-size: calc(12 * 96px / 72); }
-.c-foot { font-family: var(--f-body); font-size: calc(10 * 96px / 72); }
+.c-foot { font-family: var(--f-notes); font-weight: var(--w-notes); font-size: calc(10 * 96px / 72); }
 .c-h2   { font-family: var(--f-display); font-size: calc(14.5 * 96px / 72); font-weight: 800; }
 .c-h3   { font-family: var(--f-lead); font-size: calc(11.5 * 96px / 72); font-weight: 700; }
 .b, .smb { font-weight: 700; }
@@ -38,7 +38,7 @@ body { font-kerning: normal; font-feature-settings: "kern" 1; text-rendering: ge
 img.orn { display: inline-block; }
 .banner .rule { height: 0.7mm; width: 96mm; margin: 0 auto; background: radial-gradient(ellipse at center, #000 0%, #000 55%, rgba(0,0,0,0) 100%); }
 .banner .title { font-family: var(--f-display); font-weight: 800; font-size: 17pt; line-height: 1.25; padding: 2.4mm 6mm; }
-.banner .author { font: 700 11.5pt var(--f-lead); margin-top: 2.5mm; }
+.banner .author { font: 700 11.5pt var(--f-author); margin-top: 2.5mm; }
 .banner .abstract { font: 400 10pt/15pt var(--f-lead); width: 100mm; margin: 4mm auto 0; text-align: justify; text-align-last: center; }
 .fnhead { position: absolute; display: flex; align-items: center; direction: rtl; line-height: 0; }
 .fnhead .fntitle { font-family: var(--f-lead); font-weight: 700; line-height: normal; white-space: nowrap; position: relative; top: 0.2mm; }
@@ -64,7 +64,7 @@ table.bt { border-collapse: collapse; margin: 0 auto; font-family: var(--f-body)
 .toc-entry .tt { font-weight: 500; max-width: 82%; }
 .toc-entry .dots { flex: 1; border-bottom: 1.2pt dotted #000; margin-bottom: 4px; min-width: 6mm; }
 .toc-entry .pn { font: 700 11pt var(--f-lead); white-space: nowrap; }
-.toc-entry .t2 { font: 400 9pt/12pt var(--f-lead); color: #222; padding-right: 3mm; }
+.toc-entry .t2 { font: 400 9pt/12pt var(--f-author); color: #222; padding-right: 3mm; }
 .cover { background: #fff; }
 .cover-in { position: absolute; left: 0; right: 0; top: 38mm; text-align: center; line-height: 0; }
 .cover-in .cv-title { font: 800 40pt/1.15 var(--f-display); margin: 12mm 0 4mm; line-height: 1.15; }

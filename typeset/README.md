@@ -18,9 +18,10 @@ SRC_DIR=/path/to/folder/with/the/original/docx   python run_all.py     # (Window
 → `tint_ornaments.py` + `compose_ornaments.py` (grey ornaments, header rule, frames) → `build.js` + `engine.js` + `template.html` (layout + PDF) → `make_docx.py` (Word).
 
 ## Fonts (config.json)
-* `fonts`: role → CSS family: `body` (text, footnotes), `lead` (bold first word, sub-headings, footnote title), `display` (article titles, dividers, ToC).
+* `fonts`: role → CSS family: `body` (running text), `lead` (bold first word, sub-headings, footnote title, page numbers), `display` (article titles, dividers, ToC, book name in the header), `notes` (footnote text; set `type.foot.weight` e.g. 300 for a light cut), `author` (author name under the title and in the ToC). `notes`/`author` default to `body`/`lead`.
 * A font **installed on the computer** can be used by just writing its family name in `fonts` (no files needed when this runs locally). Otherwise add the files to `assets/fonts/` and list them in `fontFaces` (see the existing entries; give regular + bold).
-* `wordFonts`: the names Word should use (must be installed on the Word machine; Windows built-ins `FrankRuehl`, `David` today).
+* `wordFonts`: the names Word should use for the same five roles (must be installed on the Word machine; Windows built-ins `FrankRuehl`, `David` today).
+* Do **not** commit font files that are not under a free licence (Windows fonts such as David/Miriam/Narkisim are Microsoft's): use them by installed family name only; the PDF embeds the glyphs it needs.
 * After changing fonts run `python run_all.py` and read the numbers: page count and `loose lines` change with font metrics.
 
 ## Design decisions (cumulative, from the client)

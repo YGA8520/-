@@ -101,7 +101,9 @@
   "fonts": {
     "body": "Frank Ruhl Libre",
     "lead": "David Libre",
-    "display": "Frank Ruhl Libre"
+    "display": "Frank Ruhl Libre",
+    "notes": "Frank Ruhl Libre",
+    "author": "David Libre"
   },
   "fontFaces": [
     {
@@ -128,6 +130,8 @@
   "wordFonts": {
     "body": "FrankRuehl",
     "lead": "David",
-    "display": "FrankRuehl"
+    "display": "FrankRuehl",
+    "notes": "FrankRuehl",
+    "author": "David"
   }
 }
