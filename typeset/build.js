@@ -12,7 +12,7 @@ try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = requ
   F.notes = F.notes || F.body; F.author = F.author || F.lead;
   const WD = (cfg.fontWeights || {}).display || 800;                 // weight of the display (title) role: 800 for a variable family, 400 for a single-weight calligraphic face
   const WL = (cfg.fontWeights || {}).lead || 700;
-  cfg.titleFrame.weight = WD; cfg.dividerFrame.weight = WD; cfg.type.h2.weight = WD; cfg.fontWeights = { display: WD, lead: WL };      // roles: body, lead (first word / sub-headings), display (titles), notes (footnotes), author (author names)
+  cfg.titleFrame.weight = WD; cfg.dividerFrame.weight = WD; cfg.type.h2.weight = WD; cfg.type.h3.weight = WL; cfg.fontWeights = { display: WD, lead: WL };      // roles: body, lead (first word / sub-headings), display (titles), notes (footnotes), author (author names)
   Object.assign(cfg.type.body, { family: F.body }); Object.assign(cfg.type.foot, { family: F.notes });
   Object.assign(cfg.type.h2, { family: F.display }); Object.assign(cfg.type.h3, { family: F.lead });
   Object.assign(cfg.type.lead, { family: F.lead }); Object.assign(cfg.type.abstract, { family: F.lead });
@@ -69,6 +69,33 @@ try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = requ
   });
   console.log('vertical overflow: lines below the page text area:', vover.length);
   if (vover.length) console.log(vover.slice(0, 8));
+  // stray lines: one line of a paragraph alone at the top / foot of a column; a last line holding a single word
+  const stray = await page.evaluate(() => {
+    const widow = [], orphan = [], oneword = [];
+    document.querySelectorAll('.page').forEach((pg, pi) => {
+      const ls = [...pg.querySelectorAll('.ln[data-pn]')];
+      ls.forEach((el, i) => {
+        const pn = +el.dataset.pn, idx = +el.dataset.pi, tp = parseFloat(el.style.top);
+        const prev = ls[i - 1], next = ls[i + 1];
+        const firstInCol = !prev || parseFloat(prev.style.top) >= tp;
+        const lastInCol = !next || parseFloat(next.style.top) <= tp;
+        if (pn > 1 && idx === pn - 1 && firstInCol && el.dataset.lw && !el.classList.contains('c-foot')) widow.push('pdf p.' + (pi + 1) + ': ' + el.textContent.slice(0, 24));
+        if (pn > 1 && idx === 0 && lastInCol && !el.classList.contains('c-foot')) orphan.push('pdf p.' + (pi + 1) + ': ' + el.textContent.slice(0, 24));
+        if (pn > 1 && idx === pn - 1 && +el.dataset.lw === 1 && !el.classList.contains('c-foot')) oneword.push('pdf p.' + (pi + 1) + ': ' + el.textContent.slice(0, 24));
+      });
+    });
+    return { widow, orphan, oneword };
+  });
+  console.log('stray lines: widows at column top', stray.widow.length, ' orphans at column foot', stray.orphan.length, ' one-word last lines', stray.oneword.length);
+  for (const k of ['widow', 'orphan', 'oneword']) if (stray[k].length) console.log(k, stray[k].slice(0, 6));
+  if (process.env.DUMP_PAGES) {            // debugging aid: DUMP_PAGES=223,287 prints the lines of those pdf pages
+    const want = process.env.DUMP_PAGES.split(',').map(Number);
+    const dump = await page.evaluate((want) => want.map((p) => {
+      const pg = document.querySelectorAll('.page')[p - 1];
+      return 'pdf page ' + p + '\n' + [...pg.querySelectorAll('.ln')].map((el) => (el.dataset.pn ? el.dataset.pi + '/' + el.dataset.pn + ' w' + el.dataset.lw : '-') + ' y' + Math.round(parseFloat(el.style.top)) + ' x' + Math.round(parseFloat(el.style.left)) + ' ' + el.textContent.slice(0, 28)).join('\n');
+    }), want);
+    console.log(dump.join('\n'));
+  }
   // hanging indent: line 2 must start exactly where the regular text of line 1 starts, and must never open a column
   const hang = await page.evaluate(() => {
     let ok = 0, off = [], orphan = 0, maxDev = 0;

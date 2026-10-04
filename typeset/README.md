@@ -24,18 +24,18 @@ SRC_DIR=/path/to/folder/with/the/original/docx   python run_all.py     # (Window
 Duplicates are decided on the text (6-word shingles), never by file name. `python new_articles.py` lists every new article with its heading count.
 
 ## Fonts (config.json)
-Current set (all can be changed in `config.json`; the previous set is in `config.frank-david.json`):
-`body` Frank Ruhl Libre · `lead` Keter YG (bold first word, sub-headings) · `display` Stam Ashkenaz CLM (calligraphic titles; Frank Ruhl Libre supplies the geresh/gershayim it lacks via `unicode-range`) ·
-`notes` Frank Ruhl Libre weight 300 · `author` Shofar. Word needs these installed: Frank Ruhl Libre, Frank Ruhl Libre Light, Keter YG, Stam Ashkenaz CLM, Shofar (Culmus fonts are GPL with the font-embedding exception, see `assets/fonts/CULMUS-LICENSE.txt`).
-`fontWeights` sets the weight of the display / lead roles (400 for a single-weight calligraphic face).
-* `fonts`: role → CSS family: `body` (running text), `lead` (bold first word, sub-headings, footnote title, page numbers), `display` (article titles, dividers, ToC, book name in the header), `notes` (footnote text; set `type.foot.weight` e.g. 300 for a light cut), `author` (author name under the title and in the ToC). `notes`/`author` default to `body`/`lead`.
-* A font **installed on the computer** can be used by just writing its family name in `fonts` (no files needed when this runs locally). Otherwise add the files to `assets/fonts/` and list them in `fontFaces` (see the existing entries; give regular + bold).
-* `wordFonts`: the names Word should use for the same five roles (must be installed on the Word machine; Windows built-ins `FrankRuehl`, `David` today).
-* Do **not** commit font files that are not under a free licence (Windows fonts such as David/Miriam/Narkisim are Microsoft's): use them by installed family name only; the PDF embeds the glyphs it needs.
-* After changing fonts run `python run_all.py` and read the numbers: page count and `loose lines` change with font metrics.
+Current set (all can be changed in `config.json`; the previous set is in `config.keter-stam.json`, the first one in `config.frank-david.json`):
+`body` FrankRuehl DP · `lead` Livorna (bold first word and sub-headings; Livorna has only a regular cut, so the engine / Word thicken it) ·
+`display` Drogolin Bold (article titles, dividers, ToC headings, cover) · `notes` Frank Ruhl Libre Light · `author` Shofar.
+The client's proprietary fonts are **not in git**; `prepare_fonts.py <folder with the original files>` builds what the engine needs from them:
+Drogolin is an old cp1255-encoded font (a Unicode copy `DrogolinU-*.ttf` is made), FrankRuehl DP draws U+05F3/U+05F4 empty (copy `FrankRuehlDP-Q-*.otf` maps them onto its own ' and " glyphs).
+In Word the text uses plain ASCII ' and " instead of ׳ ״ (`wordAsciiQuotes`) and × √ are set in Arial (`wordFallbackChars`) because FrankRuehl DP draws them empty.
+Word needs these installed: FrankRuehl DP, Livorna, Drogolin, Frank Ruhl Libre Light, Shofar.
+`fontWeights` sets the weight of the display / lead roles. Free fonts (Culmus Keter YG / Stam Ashkenaz / Shofar, Frank Ruhl Libre) stay in `assets/fonts` (`CULMUS-LICENSE.txt`).
 
 ## Design decisions (cumulative, from the client)
 * B5 176×250 mm, margins 19.4 mm, two columns; body 12/17 pt; columns aligned top and bottom (vertical justification by stretching paragraph gaps, then leading; never ragged).
+* No stray lines: never a single line of a paragraph at the top or foot of a column, and the last (centred) line of a paragraph never holds a single word (`build.js` checks this and must report 0). Page-break rules are in `engine.js` (`allowedBreak`, `paginateArticle`).
 * Every paragraph: first word bold in the *lead* font; **only line 2 is indented, exactly to where the regular text of line 1 starts** (line 2 may never open a column – no indent artefacts at column tops); last line centred; one blank line between paragraphs.
 * Footnotes: Hebrew letters, continuous per article, one per line, full width under a plain double-line separator with the title "הערות וציונים".
 * Article title inside the framed ornament; **no** siman label per article – instead a divider page wherever the siman changes (also in the ToC). Ornaments grey with slight transparency; end-of-article ornament flipped down; mirrored running header with an ornament rule; Hebrew page numbers; ToC; cover (placeholder until the client sends the cover file).

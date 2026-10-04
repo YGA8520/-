@@ -38,12 +38,18 @@ def heb_label(s):
     return s.strip()
 
 
+TITLE_WORDS = ('הרב', 'הרה״ג', 'הרה"ג', 'הגאון', 'נשיא', 'האברך', 'האה״ח', 'האה"ח', 'ר׳', "ר'", 'מכלל', 'שיעורו')
+
+
 def honorific(name):
+    """"הרב" in front of an author who has no title yet, "שליט״א" after the name"""
     name = re.sub(r'\s+', ' ', name.replace('\t', ' ')).strip()
     name = name.replace('פריבשטיין', 'פרבשטיין').replace('נהור', 'נאור')
     name = fix_quotes(name)
     if not name:
         return name
+    if not name.startswith(TITLE_WORDS):
+        name = 'הרב ' + name
     if name.endswith('שליט' + GERSH + 'א'):
         return name
     return name + ' שליט' + GERSH + 'א'
@@ -308,6 +314,11 @@ def siman_of(label):
     return SIMAN_NUM.get(N(m.group(1)), 0) if m else 0
 
 
+SHORT_TITLES = {   # N(title prefix) -> text for the running head
+    N('בביאור האיסור הוצאת שם שמים ללא כוונה'): 'בביאור האיסור הוצאת שם שמים ללא כוונה',
+}
+
+
 def build():
     big = split_big()
     for k, a in enumerate(big):
@@ -324,6 +335,10 @@ def build():
         print('WARNING: additional חבורות not added:', e)
     # order: by siman, then se'if, then (existing articles first) the order they came in
     ordered = sorted(allarts, key=lambda a: (a['siman'] or 0, a['seif'], a['idx']))
+    for a in ordered:                       # running-head versions of long titles (no ellipsis; the client wants a clean cut)
+        for pre, short in SHORT_TITLES.items():
+            if N(a['title']).startswith(pre):
+                a['shortTitle'] = short
     # typing slips: a space in front of , . ; :
     for a in ordered:
         for blk in a['blocks']:

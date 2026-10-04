@@ -14,7 +14,7 @@ body { font-kerning: normal; font-feature-settings: "kern" 1; text-rendering: ge
 .c-body { font-family: var(--f-body); font-size: calc(12 * 96px / 72); }
 .c-foot { font-family: var(--f-notes); font-weight: var(--w-notes); font-size: calc(10 * 96px / 72); }
 .c-h2   { font-family: var(--f-display); font-size: calc(14.5 * 96px / 72); font-weight: var(--w-display); }
-.c-h3   { font-family: var(--f-lead); font-size: calc(11.5 * 96px / 72); font-weight: 700; }
+.c-h3   { font-family: var(--f-lead); font-size: calc(11.5 * 96px / 72); font-weight: var(--w-lead); }
 .b, .smb { font-weight: 700; }
 .ld { font-family: var(--f-lead); font-weight: var(--w-lead); font-size: 0.95em; }
 .sm, .smb { font-size: 0.84em; }
@@ -23,14 +23,14 @@ body { font-kerning: normal; font-feature-settings: "kern" 1; text-rendering: ge
 .hrule { position: absolute; }
 .header .grow { flex: 1; }
 .header span { direction: rtl; unicode-bidi: isolate; }
-.hnum { font: 700 13pt var(--f-lead); }
-.hbook { font: 700 15pt var(--f-lead); font-weight: var(--w-lead); }
+.hnum { font: var(--w-lead) 13pt var(--f-lead); }
+.hbook { font: var(--w-lead) 15pt var(--f-lead); }
 .hchap { font: 400 10pt var(--f-lead); }
 .hdot { font-size: 6pt; margin: 0 7px; position: relative; top: -1px; }
 .bannerWrap { position: absolute; }
 .banner { text-align: center; direction: rtl; }
 .banner .basad { font: 400 9pt var(--f-lead); text-align: right; margin-bottom: 1mm; }
-.banner .label { font: 700 11pt var(--f-display); letter-spacing: 0.02em; margin: 3mm 0 0; }
+.banner .label { font: var(--w-display) 11pt var(--f-display); letter-spacing: 0.02em; margin: 3mm 0 0; }
 .banner .orn-row { text-align: center; line-height: 0; }
 .banner .orn-row.top { margin-top: 2mm; }
 .banner .orn-row.bot { margin-bottom: 1mm; }
@@ -41,29 +41,29 @@ img.orn { display: inline-block; }
 .banner .author { font: 700 11.5pt var(--f-author); margin-top: 2.5mm; }
 .banner .abstract { font: 400 10pt/15pt var(--f-lead); width: 100mm; margin: 4mm auto 0; text-align: justify; text-align-last: center; }
 .fnhead { position: absolute; display: flex; align-items: center; direction: rtl; line-height: 0; }
-.fnhead .fntitle { font-family: var(--f-lead); font-weight: 700; line-height: normal; white-space: nowrap; position: relative; top: 0.2mm; }
-.fnmark { position: absolute; direction: rtl; text-align: right; font: 700 9.5pt var(--f-lead); white-space: pre; padding-left: 0; }
+.fnhead .fntitle { font-family: var(--f-lead); font-weight: var(--w-lead); line-height: normal; white-space: nowrap; position: relative; top: 0.2mm; }
+.fnmark { position: absolute; direction: rtl; text-align: right; font: var(--w-lead) 9.5pt var(--f-lead); white-space: pre; padding-left: 0; }
 .endorn { position: absolute; text-align: center; }
 .endorn { line-height: 0; }
 
 .tblwrap { direction: rtl; text-align: center; margin: 0 auto; }
 table.bt { border-collapse: collapse; margin: 0 auto; font-family: var(--f-body); font-size: 9.5pt; line-height: 12.5pt; }
 .bt th, .bt td { border: 0.6pt solid #000; padding: 0.45mm 2mm; text-align: center; vertical-align: middle; }
-.bt th { font-weight: 700; font-family: var(--f-lead); }
+.bt th { font-weight: var(--w-lead); font-family: var(--f-lead); }
 .bt .b, .bt .smb { font-weight: 700; }
 .tblband { position: absolute; }
 .tocwrap { position: absolute; direction: rtl; }
 .toc-title { text-align: center; margin-bottom: 5mm; }
 .toc-title .orn-row { line-height: 0; }
 .toc-title .tt { font-family: var(--f-display); font-weight: var(--w-display); font-size: 21pt; padding: 2mm 0 1mm; }
-.toc-group { margin: 4.2mm 0 1.4mm; font: 700 12pt var(--f-display); font-weight: var(--w-display); display: flex; align-items: center; gap: 3mm; }
+.toc-group { margin: 4.2mm 0 1.4mm; font: var(--w-display) 12pt var(--f-display); display: flex; align-items: center; gap: 3mm; }
 .toc-group span { white-space: nowrap; }
 .toc-group::after { content: ""; flex: 1; height: 0.6pt; background: #000; }
 .toc-entry { margin: 0 0 1.5mm; }
 .toc-entry .t1 { display: flex; align-items: flex-end; gap: 1.6mm; font: 400 11.5pt/15pt var(--f-body); }
 .toc-entry .tt { font-weight: 500; max-width: 82%; }
 .toc-entry .dots { flex: 1; border-bottom: 1.2pt dotted #000; margin-bottom: 4px; min-width: 6mm; }
-.toc-entry .pn { font: 700 11pt var(--f-lead); white-space: nowrap; }
+.toc-entry .pn { font: var(--w-lead) 11pt var(--f-lead); white-space: nowrap; }
 .toc-entry .t2 { font: 400 9pt/12pt var(--f-author); color: #222; padding-right: 3mm; }
 .cover { background: #fff; }
 .cover-in { position: absolute; left: 0; right: 0; top: 38mm; text-align: center; line-height: 0; }
@@ -71,7 +71,7 @@ table.bt { border-collapse: collapse; margin: 0 auto; font-family: var(--f-body)
 .cover-in .cv-sub { font: 400 16pt/1.4 var(--f-lead); margin: 0 0 12mm; line-height: 1.4; }
 .banner .lframe { position: relative; margin: 1mm auto 0; line-height: 0; }
 .banner .lframe img { position: absolute; left: 0; top: 0; }
-.banner .lframe span { position: absolute; left: 0; right: 0; top: 0; bottom: 0; display: flex; align-items: center; justify-content: center; font: 700 13pt var(--f-lead); line-height: 1; padding-top: 0.3mm; }
+.banner .lframe span { position: absolute; left: 0; right: 0; top: 0; bottom: 0; display: flex; align-items: center; justify-content: center; font: var(--w-lead) 13pt var(--f-lead); line-height: 1; padding-top: 0.3mm; }
 .tbox { display: flex; justify-content: center; margin: 2mm auto 0; line-height: 0; }
 .tframe { position: relative; flex: none; }
 .fcap, .fmid { position: absolute; top: 0; height: 100%; background-size: 100% 100%; background-repeat: no-repeat; }
@@ -82,7 +82,7 @@ table.bt { border-collapse: collapse; margin: 0 auto; font-family: var(--f-body)
 .divwrap img.orn { display: block; margin: 7mm auto; }
 .toc-group .gl { flex: 1; height: 0.6pt; background: #8a8a8a; }
 .toc-group::after { display: none; }
-.toc-group .gpn { font: 700 11pt var(--f-lead); }
+.toc-group .gpn { font: var(--w-lead) 11pt var(--f-lead); }
 </style>
 </head>
 <body>

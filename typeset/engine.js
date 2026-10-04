@@ -143,8 +143,7 @@
           const nat = Ww + n * S;
           if (nat > L + 0.01) return nat > L + 0.5 && n === 0 ? 1e9 : INF; // overfull
           let c = 0;
-          if (i > 0 && n === 0 && Ww < L * 0.22) c += 6e5;  // lonely short last word
-          else if (i > 0 && n === 0) c += 3000;
+          if (i > 0 && n === 0) c += 1e10;                  // a single word alone on the last line: only if there is no other way
           return c;
         }
         if (n === 0) return Ww > L ? 1e9 : 1.5e8;
@@ -349,7 +348,7 @@
       if (b.hang) return false;                   // line 2 is indented to the regular text of line 1: it cannot open a column
       if (a.para === b.para) {
         const before = a.idx + 1, after = a.n - before;
-        if (before < (relax ? 1 : orph) || after < (relax ? 1 : wid)) return false;
+        if (before < orph || after < wid) return false;      // never one stray line at the foot / top of a column (relax is ignored)
       }
       return true;
     }
@@ -376,12 +375,13 @@
       let b = e + 1;
       // choose the break that wastes the least space: every line pulled back to column 2 costs 1, a single-line widow/orphan costs 0.7
       let bestT = -1, bestCost = 1e9;
-      for (let t = b; t >= Math.max(1, b - 3); t--) {
+      for (let t = b; t >= Math.max(1, b - 12); t--) {
         if (!allowedBreak(lines[t - 1], lines[t], true)) continue;           // never strand a heading
-        const cst = (b - t) + (allowedBreak(lines[t - 1], lines[t], false) ? 0 : 0.7);
+        const cst = b - t;
         if (cst < bestCost) { bestCost = cst; bestT = t; }
       }
       if (bestT > 0) b = bestT;
+      else if (!allowedBreak(lines[b - 1], lines[b], true)) return null;     // no break that respects the rules: do not force a stray line
       const c1 = lines.slice(0, b), c2 = lines.slice(b);
       if (colUnits(c2) > C) return null;
       return [c1, c2];
@@ -445,6 +445,8 @@
             let ok = false;
             for (let k = total - 1; k >= 2; k--) {
               const C2 = capOf(entriesFor(trial, k));
+              // the page break that follows this line must respect the widow / orphan rules as well
+              if (queue.length > 1 && !allowedBreak(ln, queue[1], true)) break;
               if (C2 >= 1 && splitCols(trial, C2, 'full')) { closeSplit = { key: lastE.key, k, total }; page.open = trial; queue.shift(); ok = true; progressed = true; break; }
             }
             if (ok) break;
@@ -454,20 +456,21 @@
         }
         if (queue.length && !closeSplit) {
           let p = -1, bestCost = 1e9;
-          for (let q = 0; q <= 3; q++) {
+          const minKeep = page.bands.length ? 0 : 1;           // a page that already holds a table may end right after it
+          for (let q = 0; q <= 12; q++) {
             const n = page.open.length - q;
-            if (n <= 8) break;
+            if (n < minKeep || (n < 2 && !page.bands.length)) break;
             const nxt = q ? page.open[n] : queue[0];
-            if (!allowedBreak(page.open[n - 1], nxt, true)) continue;
+            if (n > 0 && !allowedBreak(page.open[n - 1], nxt, true)) continue;
             const rest = queue.length + q;                       // lines that will be left for the next (possibly last) page
-            const cst = q + (allowedBreak(page.open[n - 1], nxt, false) ? 0 : 0.7) + (rest < 4 ? (4 - rest) * 3 : 0);   // never leave a page with 1-3 stray lines
+            const cst = q + (rest < 4 ? (4 - rest) * 3 : 0);   // never leave a page with 1-3 stray lines
             if (cst < bestCost) { bestCost = cst; p = q; }
           }
           if (p < 0) {                       // e.g. a long heading chain: pull back as far as needed
             for (let q = 4; q <= 16; q++) {
               const n = page.open.length - q;
-              if (n <= 8) break;
-              if (allowedBreak(page.open[n - 1], page.open[n], false)) { p = q; break; }
+              if (n < minKeep || (n < 2 && !page.bands.length)) break;
+              if (n === 0 || allowedBreak(page.open[n - 1], page.open[n], false)) { p = q; break; }
             }
           }
           if (p < 0) p = 0;
@@ -541,6 +544,7 @@
       const { html, ws } = wordsHTML(ln.words, ctxName, gap, ln.leadN);
       const d = document.createElement('div');
       d.className = 'ln c-' + ctxName + (ln.leadN ? ' leadln' : '') + (ln.hang ? ' hangln' : '');
+      if (ln.n) { d.dataset.pi = ln.idx; d.dataset.pn = ln.n; d.dataset.lw = ln.words.length; }
       const nat = Ww + n * gap;
       const left = ln.align === 'center' ? x + (Lw - nat) / 2 : x;
       d.style.cssText = `left:${left.toFixed(2)}px;top:${y.toFixed(2)}px;width:${(ln.align === 'center' ? nat + 2 : Lw).toFixed(2)}px;height:${lh}px;line-height:${lh}px;word-spacing:${(ws - ls).toFixed(3)}px;` + (ls ? `letter-spacing:${ls.toFixed(3)}px;` : '');
@@ -706,8 +710,11 @@
       const f = '400 ' + pt(10) + 'px "' + (cfg.fonts || {}).lead + '"';
       let words = full.split(/\s+/), out = full;
       if (textW(full, f) > room) {
-        while (words.length > 1 && textW(words.join(' ') + '…', f) > room) words.pop();
-        out = words.join(' ').replace(/[\s,.:;\-–]+$/, '') + '…';
+        while (words.length > 1 && textW(words.join(' '), f) > room) words.pop();
+        // a shortened title must not end on a dangling word ("ו…", "של", "את" ...) and carries no ellipsis
+        const DANGLE = /^(ו.+|של|את|אם|או|על|עם|גם|אף|כי|בין|מן|לא|יש|אין|כל|האם)$/;
+        while (words.length > 1 && DANGLE.test(words[words.length - 1].replace(/[^\u05d0-\u05ea]/g, ''))) words.pop();
+        out = words.join(' ').replace(/[\s,.:;\-–]+$/, '');
       }
       hdrCache.set(full, out);
       return out;
@@ -819,7 +826,7 @@
           hd.className = 'fnhead';
           hd.style.cssText = `left:${marginL}px;top:${fy}px;width:${textW0}px;height:${fnHeadH}px;`;
           const tsize = FN.titleSize || 10.5;
-          const titleW = textW(FN.title, `700 ${pt(tsize)}px "${FN.titleFamily}"`);
+          const titleW = textW(FN.title, `${(cfg.fontWeights || {}).lead || 700} ${pt(tsize)}px "${FN.titleFamily}"`);
           const gapmm = FN.titleGap || 4;
           const sw = Math.min(FN.sideMax || 60, (textW0 - titleW - mm(2 * gapmm)) / 2 / MM);
           const ln = (flip) => `<img class="orn fnside" src="${ORN['fn-lines'].src}" style="width:${sw.toFixed(2)}mm;height:${FN.linesH || 1.9}mm">`;

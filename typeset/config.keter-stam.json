@@ -100,82 +100,27 @@
     "maxEm": 0.03
   },
   "fonts": {
-    "body": "FrankRuehl DP",
-    "lead": "Livorna",
-    "display": "Drogolin Title",
+    "body": "Frank Ruhl Libre",
+    "lead": "Keter YG",
+    "display": "Stam Title",
     "notes": "Frank Ruhl Libre",
     "author": "Shofar"
   },
   "fontFaces": [
     {
-      "family": "FrankRuehl DP",
-      "file": "FrankRuehlDP-Regular.otf",
-      "weight": "400",
-      "unicodeRange": "U+0000-00D6,U+00D8-05F2,U+05F5-2219,U+221B-10FFFF"
-    },
-    {
-      "family": "FrankRuehl DP",
-      "file": "FrankRuehlDP-Q-Regular.otf",
-      "weight": "400",
-      "unicodeRange": "U+05F3-05F4"
-    },
-    {
-      "family": "FrankRuehl DP",
-      "file": "FrankRuehlDP-Bold.otf",
-      "weight": "700",
-      "unicodeRange": "U+0000-00D6,U+00D8-05F2,U+05F5-2219,U+221B-10FFFF"
-    },
-    {
-      "family": "FrankRuehl DP",
-      "file": "FrankRuehlDP-Q-Bold.otf",
-      "weight": "700",
-      "unicodeRange": "U+05F3-05F4"
-    },
-    {
-      "family": "Drogolin Title",
-      "file": "DrogolinU-Regular.ttf",
-      "weight": "400",
-      "unicodeRange": "U+05D0-05EA"
-    },
-    {
-      "family": "Drogolin Title",
-      "file": "FrankRuehlDP-Regular.otf",
-      "weight": "400",
-      "unicodeRange": "U+0000-00D6,U+00D8-05F2,U+05F5-2219,U+221B-10FFFF"
-    },
-    {
-      "family": "Drogolin Title",
-      "file": "FrankRuehlDP-Q-Regular.otf",
-      "weight": "400",
-      "unicodeRange": "U+05F3-05F4"
-    },
-    {
-      "family": "Drogolin Title",
-      "file": "DrogolinU-Bold.ttf",
-      "weight": "700",
-      "unicodeRange": "U+05D0-05EA"
-    },
-    {
-      "family": "Drogolin Title",
-      "file": "FrankRuehlDP-Bold.otf",
-      "weight": "700",
-      "unicodeRange": "U+0000-00D6,U+00D8-05F2,U+05F5-2219,U+221B-10FFFF"
-    },
-    {
-      "family": "Drogolin Title",
-      "file": "FrankRuehlDP-Q-Bold.otf",
-      "weight": "700",
-      "unicodeRange": "U+05F3-05F4"
-    },
-    {
-      "family": "Livorna",
-      "file": "Livorna-Regular.ttf",
-      "weight": "400"
-    },
-    {
       "family": "Frank Ruhl Libre",
       "file": "FrankRuhlLibre.ttf",
       "weight": "300 900"
+    },
+    {
+      "family": "Keter YG",
+      "file": "KeterYG-Medium.ttf",
+      "weight": "400"
+    },
+    {
+      "family": "Keter YG",
+      "file": "KeterYG-Bold.ttf",
+      "weight": "700"
     },
     {
       "family": "Shofar",
@@ -186,19 +131,29 @@
       "family": "Shofar",
       "file": "ShofarDemi-Bold.ttf",
       "weight": "700"
+    },
+    {
+      "family": "Stam Title",
+      "file": "StamAshkenazCLM.ttf",
+      "weight": "400",
+      "unicodeRange": "U+0590-05F2,U+FB1D-FB4F"
+    },
+    {
+      "family": "Stam Title",
+      "file": "FrankRuhlLibre.ttf",
+      "weight": "400",
+      "unicodeRange": "U+0000-058F,U+05F3-05F4,U+0600-FB1C,U+FB50-10FFFF"
     }
   ],
   "wordFonts": {
-    "body": "FrankRuehl DP",
-    "lead": "Livorna",
-    "display": "Drogolin",
+    "body": "Frank Ruhl Libre",
+    "lead": "Keter YG",
+    "display": "Stam Ashkenaz CLM",
     "notes": "Frank Ruhl Libre Light",
     "author": "Shofar"
   },
   "fontWeights": {
-    "display": 700,
+    "display": 400,
     "lead": 700
-  },
-  "wordAsciiQuotes": true,
-  "wordFallbackChars": "×√"
+  }
 }

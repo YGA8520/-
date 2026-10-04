@@ -84,18 +84,51 @@ def sz(pt):
     return f'<w:sz w:val="{v}"/><w:szCs w:val="{v}"/>'
 
 
-def run(text, rstyle=None, bold=False, direct=''):
-    """a run that takes its look from a named character style (no direct formatting unless asked)."""
-    if not text:
-        return ''
+ASCII_Q = bool(_CFG.get('wordAsciiQuotes'))
+FALLBACK_CH = _CFG.get('wordFallbackChars', '')
+
+
+def wtxt(t):
+    """FrankRuehl DP has empty glyphs for the Unicode geresh / gershayim; its ASCII ' and \" are the right marks"""
+    return t.replace('׳', "'").replace('״', '"') if ASCII_Q else t
+
+
+_xml_escape = escape
+
+
+def escape(t, *a):
+    """every piece of text that goes into the Word file passes here: geresh / gershayim become ASCII marks for FrankRuehl DP / Drogolin"""
+    return _xml_escape(wtxt(t), *a)
+
+
+def _r(text, rstyle=None, bold=False, direct='', fnt=''):
     pr = ''
     if rstyle:
         pr += f'<w:rStyle w:val="{rstyle}"/>'
+    pr += fnt                                   # schema order: rStyle, rFonts, b, ...
     if bold:
         pr += '<w:b/><w:bCs/>'
     pr += direct
     pr = f'<w:rPr>{pr}</w:rPr>' if pr else ''
     return f'<w:r>{pr}<w:t xml:space="preserve">{escape(text)}</w:t></w:r>'
+
+
+def run(text, rstyle=None, bold=False, direct=''):
+    """a run that takes its look from a named character style (no direct formatting unless asked)."""
+    if not text:
+        return ''
+    text = wtxt(text)
+    if FALLBACK_CH and any(c in FALLBACK_CH for c in text):          # characters the body font cannot draw -> Arial
+        out, buf, cur = '', '', None
+        for ch in text:
+            fb = ch in FALLBACK_CH
+            if cur is not None and fb != cur:
+                out += _r(buf, rstyle, bold, direct, fonts('Arial') if cur else '')
+                buf = ''
+            buf += ch
+            cur = fb
+        return out + _r(buf, rstyle, bold, direct, fonts('Arial') if cur else '')
+    return _r(text, rstyle, bold, direct)
 
 
 def styled_run(text, st):
@@ -206,7 +239,7 @@ def header_xml(book, chap, even):
            fld('<w:fldChar w:fldCharType="separate"/>') + fld('<w:t>1</w:t>') + fld('<w:fldChar w:fldCharType="end"/>'))
     b = f'<w:r><w:rPr>{fonts(LEAD_FONT)}<w:b/><w:bCs/>{sz(15)}</w:rPr><w:t xml:space="preserve">{escape(book)}</w:t></w:r>'
     dot = f'<w:r><w:rPr>{sz(6)}</w:rPr><w:t xml:space="preserve">  ●  </w:t></w:r>'
-    c = f'<w:r><w:rPr>{sz(10)}</w:rPr><w:t xml:space="preserve">{escape(chap)}</w:t></w:r>'
+    c = f'<w:r><w:rPr>{sz(10)}</w:rPr><w:t xml:space="preserve">{escape(wtxt(chap))}</w:t></w:r>'
     narrow = round(TEXT_W * 0.12)
     w1, w2 = (narrow, TEXT_W - narrow) if even else (TEXT_W - narrow, narrow)   # first cell = right-hand cell
     if even:   # right-hand page: number at the outer (right) edge, book name at the inner (left) edge
@@ -440,7 +473,7 @@ def build(doc_json, layout_json, cfg_json, out):
                '<w:r><w:fldChar w:fldCharType="separate"/></w:r>') if k == 0 else ''
         post = '<w:r><w:fldChar w:fldCharType="end"/></w:r>' if k == len(entries) - 1 else ''
         sect = sectpr('nextPage', 1, empty_ids) if k == len(entries) - 1 else ''
-        toc.append(para(f'{pre}<w:r><w:t xml:space="preserve">{escape(title)}</w:t></w:r><w:r><w:tab/></w:r><w:r><w:t>{heb(pg)}</w:t></w:r>{post}', 'TOC1', sect=sect))
+        toc.append(para(f'{pre}<w:r><w:t xml:space="preserve">{escape(wtxt(title))}</w:t></w:r><w:r><w:tab/></w:r><w:r><w:t>{heb(pg)}</w:t></w:r>{post}', 'TOC1', sect=sect))
     parts.append(''.join(toc))
 
     first = True

@@ -3,3 +3,7 @@ typeset/*.doc.json
 typeset/__pycache__/
 *.pyc
 typeset/assets/ornaments/composed/
+# proprietary fonts supplied by the client (kept locally only)
+typeset/assets/fonts/DrogolinU-*.ttf
+typeset/assets/fonts/FrankRuehlDP-*.otf
+typeset/assets/fonts/Livorna-*.ttf
