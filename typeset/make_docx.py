@@ -519,13 +519,17 @@ def build(doc_json, layout_json, cfg_json, out):
     for ai, art in enumerate(data['articles']):
         hid = add_header((lay['headerTitles'][ai] if (lay and lay.get('headerTitles')) else (art.get('shortTitle') or art['title'])), f'A{ai}',
                          (lay['headerAuthors'][ai] if (lay and lay.get('headerAuthors')) else art.get('author')))
-        # internal divider page where the siman changes
-        if art.get('divider') and lay:
-            db = lay['dividerBoxes'][art['divider']]
-            parts.append(para('', spacing='<w:spacing w:before="4200" w:after="0" w:line="240" w:lineRule="auto"/>') +
-                         para(picture('flourish-wide-2.png', 46), jc='center', keep=True, spacing='<w:spacing w:before="0" w:after="200" w:line="240" w:lineRule="auto"/>') +
-                         frame_paragraph(db['lines'], db, ST['siman'], 38, 5.5) +
-                         para(picture('flourish-wide-2.png', 46, 'v'), jc='center', spacing='<w:spacing w:before="200" w:after="0" w:line="240" w:lineRule="auto"/>', sect=sectpr('nextPage', 1, empty_ids)))
+        # internal divider page where the siman changes: the artwork picture (build.js writes out/dividers/div-<n>.jpg), else the plain frame page
+        div_jpg = os.path.join(os.path.dirname(os.path.abspath(out)), 'dividers', f'div-{ai}.jpg')
+        if art.get('divider') and lay and os.path.exists(div_jpg):
+            MEDIA.add(f'div-{ai}.jpg', open(div_jpg, 'rb').read())
+            parts.append(para(picture_page(f'div-{ai}.jpg', 176, 250), spacing='<w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/>', sect=sectpr('nextPage', 1, empty_ids)))
+        elif art.get('divider') and lay:
+                db = lay['dividerBoxes'][art['divider']]
+                parts.append(para('', spacing='<w:spacing w:before="4200" w:after="0" w:line="240" w:lineRule="auto"/>') +
+                             para(picture('flourish-wide-2.png', 46), jc='center', keep=True, spacing='<w:spacing w:before="0" w:after="200" w:line="240" w:lineRule="auto"/>') +
+                             frame_paragraph(db['lines'], db, ST['siman'], 38, 5.5) +
+                             para(picture('flourish-wide-2.png', 46, 'v'), jc='center', spacing='<w:spacing w:before="200" w:after="0" w:line="240" w:lineRule="auto"/>', sect=sectpr('nextPage', 1, empty_ids)))
         tb = ''
         if lay:
             tbx = lay['titleBoxes'][str(ai)]

@@ -36,14 +36,16 @@
   // ---------------------------------------------------------------- cover
   // The cover is the client's artwork (assets/cover/cover-bg.jpg, made by make_cover.py) with live text on top: title and "קונטרס" in EFT Algebra,
   // the two curved lines and the two lines under the circle in FrankRuehl DP.  Everything is laid out in a 1408 x 2000 unit grid (= the page, 8 units per mm).
-  function coverHTML(cfg, bookName) {
-    const C = cfg.cover, G = C.geometry, T = C.texts || {}, col = C.colors;
+  function coverHTML(cfg, bookName, opt) {
+    opt = opt || {};
+    const C = cfg.cover, G = C.geometry, T = Object.assign({}, C.texts || {}, opt.texts || {}), col = C.colors, dy = opt.dy || 0;
+    const image = opt.image || C.image;
     const words = bookName.split(/\s+/).filter(Boolean);
     const title1 = T.title1 || words[0] || bookName, title2 = T.title2 || words.slice(1).join(' ');
     const fT = C.fontTitle, fA = C.fontArc, fL = C.fontLines;
     const fit = (txt, size, maxW) => { const w = textW(txt, `${size}px "${fT}"`); return w > maxW ? size * maxW / w : size; };
     const arc = (g, sweep) => {
-      const p = (a) => [g.cx + g.r * Math.cos(a * Math.PI / 180), g.cy - g.r * Math.sin(a * Math.PI / 180)];
+      const p = (a) => [g.cx + g.r * Math.cos(a * Math.PI / 180), g.cy + dy - g.r * Math.sin(a * Math.PI / 180)];
       const s = p(g.a0), e = p(g.a1);
       return `M ${s[0].toFixed(2)} ${s[1].toFixed(2)} A ${g.r} ${g.r} 0 ${Math.abs(g.a1 - g.a0) > 180 ? 1 : 0} ${sweep} ${e[0].toFixed(2)} ${e[1].toFixed(2)}`;
     };
@@ -57,7 +59,7 @@
     const bottomTxt = botParts.map(esc).join(bulletAt(sBot));
     const topTxt = T.arcTop ? (T.arcTopBullets ? bulletAt(sTop).trimStart() + ' ' + esc(T.arcTop) + ' ' + bulletAt(sTop).trimEnd() : esc(T.arcTop)) : '';
     const st = 'direction:rtl;unicode-bidi:isolate;';
-    const s1 = fit(title1, G.title.size, G.title.maxW1), s2 = fit(title2, G.title.size, G.title.maxW2);
+    const s1 = fit(title1, opt.titleSize || G.title.size, G.title.maxW1), s2 = fit(title2, opt.titleSize2 || opt.titleSize || G.title.size, G.title.maxW2);
     // a touch of gold at both ends of every title line: dark core, gradual change to gold in the outer `titleFade` part
     let gradDefs = '';
     const titleFill = (id, txt, size, cx) => {
@@ -68,19 +70,33 @@
       return `url(#${id})`;
     };
     const fill1 = titleFill('cvT1', title1, s1, G.title.x1), fill2 = title2 ? titleFill('cvT2', title2, s2, G.title.x2) : col.title;
-    const lg = C.logo && G.logo ? G.logo : null, lw = lg ? lg.h * C.logo.w / C.logo.h : 0;
-    return `<img src="${C.image}" style="position:absolute;left:0;top:0;width:100%;height:100%">` +
+    const lg = C.logo && G.logo && opt.logo !== false ? G.logo : null, lw = lg ? lg.h * C.logo.w / C.logo.h : 0;
+    return `<img src="${image}" style="position:absolute;left:0;top:0;width:100%;height:100%">` +
       `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1408 2000" style="position:absolute;left:0;top:0;width:100%;height:100%">` +
       `<defs><path id="cvTop" d="${arc(G.top, 1)}"/><path id="cvBot" d="${arc(G.bottom, 0)}"/>${gradDefs}</defs>` +
-      (T.kuntres ? `<text x="${G.kuntres.x}" y="${G.kuntres.y}" text-anchor="middle" font-family="${fT}" font-size="${G.kuntres.size}" fill="${col.dark}" style="${st}">${esc(T.kuntres)}</text>` : '') +
-      `<text x="${G.title.x1}" y="${G.title.y1}" text-anchor="middle" font-family="${fT}" font-size="${s1.toFixed(2)}" fill="${fill1}" style="${st}">${esc(title1)}</text>` +
-      (title2 ? `<text x="${G.title.x2}" y="${G.title.y2}" text-anchor="middle" font-family="${fT}" font-size="${s2.toFixed(2)}" fill="${fill2}" style="${st}">${esc(title2)}</text>` : '') +
+      (T.kuntres ? `<text x="${G.kuntres.x}" y="${G.kuntres.y + dy}" text-anchor="middle" font-family="${fT}" font-size="${G.kuntres.size}" fill="${col.dark}" style="${st}">${esc(T.kuntres)}</text>` : '') +
+      `<text x="${G.title.x1}" y="${G.title.y1 + dy}" text-anchor="middle" font-family="${fT}" font-size="${s1.toFixed(2)}" fill="${fill1}" style="${st}">${esc(title1)}</text>` +
+      (title2 ? `<text x="${G.title.x2}" y="${G.title.y2 + dy}" text-anchor="middle" font-family="${fT}" font-size="${s2.toFixed(2)}" fill="${fill2}" style="${st}">${esc(title2)}</text>` : '') +
       (topPlain ? `<text font-family="${fA}" font-size="${sTop.toFixed(2)}" fill="${col.arc}" style="${st}"><textPath href="#cvTop" startOffset="${G.top.off}" text-anchor="middle">${topTxt}</textPath></text>` : '') +
       (botPlain.trim() ? `<text font-family="${fA}" font-size="${sBot.toFixed(2)}" fill="${col.arc}" style="${st}"><textPath href="#cvBot" startOffset="${G.bottom.off}" text-anchor="middle">${bottomTxt}</textPath></text>` : '') +
-      (T.line1 ? `<text x="${G.line1.x}" y="${G.line1.y}" text-anchor="middle" font-family="${fL}" font-weight="700" font-size="${G.line1.size}" fill="${col.dark}" style="${st}">${esc(T.line1)}</text>` : '') +
-      (T.line2 ? `<text x="${G.line2.x}" y="${G.line2.y}" text-anchor="middle" font-family="${fL}" font-weight="700" font-size="${G.line2.size}" fill="${col.dark}" style="${st}">${esc(T.line2)}</text>` : '') +
+      (T.line1 ? `<text x="${G.line1.x}" y="${G.line1.y + dy}" text-anchor="middle" font-family="${fL}" font-weight="700" font-size="${G.line1.size}" fill="${col.dark}" style="${st}">${esc(T.line1)}</text>` : '') +
+      (T.line2 ? `<text x="${G.line2.x}" y="${G.line2.y + dy}" text-anchor="middle" font-family="${fL}" font-weight="700" font-size="${G.line2.size}" fill="${col.dark}" style="${st}">${esc(T.line2)}</text>` : '') +
       (lg ? `<image href="${C.logo.image}" x="${(lg.x - lw / 2).toFixed(1)}" y="${lg.top}" width="${lw.toFixed(1)}" height="${lg.h}"/>` : '') +
       `</svg>`;
+  }
+
+  // internal title page of a siman: the artwork of the cover (medallion moved to the middle of the page), book name small on top,
+  // "סימן" on the first line and the siman on the second; the introductions get "פתיחות" / "לקונטרס"
+  function dividerLines(label) {
+    if (label === 'פתיחות') return ['פתיחות', 'לקונטרס'];
+    const m = label.match(/^(.*?סימן)\s+(.+)$/);
+    return m ? [m[1], m[2]] : [label, ''];
+  }
+  function dividerHTML(cfg, label, bookName) {
+    const [l1, l2] = dividerLines(label);
+    const short = l2.replace(/[^\u05d0-\u05ea]/g, '').length <= 3;         // a short siman letter group is set larger
+    return coverHTML(cfg, bookName, { dy: cfg.divider.dy, image: cfg.divider.image, logo: false, titleSize2: short ? cfg.divider.numeralSize : 0,
+      texts: { kuntres: bookName, title1: l1, title2: l2, line1: '', line2: '' } });
   }
 
   // ---------------------------------------------------------------- engine
@@ -862,6 +878,12 @@
     seq.forEach((it) => {
       if (it.kind === 'div') {
         const pg = newPage();
+        if (cfg.divider && cfg.divider.enabled && cfg.cover && cfg.cover.enabled) {
+          pg.classList.add('cover');
+          pg.innerHTML = dividerHTML(cfg, it.label, bookName);
+          root.appendChild(pg);
+          return;
+        }
         const b = dividerBoxes[it.label];
         const fb = frameBox(it.label, DV, textW0 * 0.9);
         pg.innerHTML = `<div class="divwrap" style="top:${(pageH * 0.31).toFixed(1)}px">${oimg('flourish-wide-2', 46, '', '')}<div class="tbox big">${frameHTML(fb, 'dv')}</div>${oimg('flourish-wide-2', 46, '', 'transform:scaleY(-1);')}</div>`;
@@ -964,10 +986,11 @@
       });
     });
     curPage = null;
-    return { stats: STATS, pages: root.children.length, toc: articles.map((a, i) => ({ title: a.title, page: startNo[i], pages: artPages[i].length })), tocPages: nToc, titleBoxes, dividerBoxes, dividerPages: divNo, headerTitles: articles.map((a) => headerTitle(a)), headerAuthors: articles.map((a) => headerAuthor(a)) };
+    return { stats: STATS, pages: root.children.length, toc: articles.map((a, i) => ({ title: a.title, page: startNo[i], pages: artPages[i].length })), tocPages: nToc, titleBoxes, dividerBoxes, dividerPages: divNo, dividers: articles.map((a, i) => (a.divider ? { ai: i, label: a.divider } : null)).filter(Boolean), headerTitles: articles.map((a) => headerTitle(a)), headerAuthors: articles.map((a) => headerAuthor(a)) };
   }
 
   window.typeset = typeset;
   window.coverHTML = coverHTML;
+  window.dividerHTML = dividerHTML;
   window.hebNum = heb;
 })();

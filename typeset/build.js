@@ -25,6 +25,7 @@ try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = requ
     cfg.cover.colors = (cfg.cover.palettes || {})[cfg.cover.palette] || Object.values(cfg.cover.palettes || {})[0];
     if (!cfg.cover.enabled) console.log('note: cover background', cfg.cover.image, 'not found (run make_cover.py) - placeholder cover used');
   }
+  if (cfg.divider) cfg.divider.enabled = !!(cfg.cover && cfg.cover.enabled) && fs.existsSync(path.join(__dirname, cfg.divider.image));
   cfg.ornaments = {};
   const odir = path.join(__dirname, 'assets', 'ornaments');
   for (const f of fs.readdirSync(odir)) {
@@ -182,6 +183,24 @@ try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = requ
     await cp.evaluate(() => Promise.all([...document.images].map((i) => i.decode().catch(() => {}))));
     await cp.locator('#cv').screenshot({ path: path.join(outDir, 'cover.jpg'), type: 'jpeg', quality: 93 });
     await cp.pdf({ path: path.join(outDir, 'cover.pdf'), width: '176mm', height: '250mm', printBackground: true, preferCSSPageSize: true });
+  }
+  if (cfg.divider && cfg.divider.enabled && res.dividers && res.dividers.length) {          // one picture per internal title page (used in the Word file)
+    const outDir = path.join(path.dirname(outPdf), 'dividers');
+    fs.mkdirSync(outDir, { recursive: true });
+    for (const f of fs.readdirSync(outDir)) if (/^div-\d+\.jpg$/.test(f)) fs.unlinkSync(path.join(outDir, f));        // no stale pictures of earlier builds
+    const dp = await browser.newPage({ viewport: { width: 700, height: 1000 }, deviceScaleFactor: 1450 / (176 * 96 / 25.4) });
+    await dp.goto('file://' + path.join(__dirname, 'template.html'));
+    await dp.addStyleTag({ content: styleCss });
+    await dp.addScriptTag({ path: path.join(__dirname, 'engine.js') });
+    await dp.evaluate(async (fams) => { await Promise.all(fams.flatMap((f) => [400, 700].map((w) => document.fonts.load(w + ' 16px "' + f + '"', 'אבג')))); await document.fonts.ready; }, [cfg.cover.fontTitle, cfg.cover.fontArc, cfg.cover.fontLines]);
+    for (const d of res.dividers) {
+      await dp.evaluate(([c, label, name]) => {
+        document.body.style.margin = '0';
+        document.body.innerHTML = '<div id="cv" class="page cover" style="width:176mm;height:250mm;position:relative;overflow:hidden">' + window.dividerHTML(c, label, name) + '</div>';
+      }, [cfg, d.label, doc.book.name]);
+      await dp.evaluate(() => Promise.all([...document.images].map((i) => i.decode().catch(() => {}))));
+      await dp.locator('#cv').screenshot({ path: path.join(outDir, `div-${d.ai}.jpg`), type: 'jpeg', quality: 86 });
+    }
   }
   await browser.close();
 })();

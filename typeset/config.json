@@ -317,5 +317,10 @@
       "w": 971,
       "h": 912
     }
+  },
+  "divider": {
+    "image": "assets/cover/divider-bg.jpg",
+    "dy": 230,
+    "numeralSize": 195
   }
 }

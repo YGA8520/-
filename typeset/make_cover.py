@@ -93,7 +93,7 @@ def gold_ramp(lum, ramp=None):
     return out
 
 
-def gold_masks(img):
+def gold_masks(img, dy=0):
     """soft masks on the original-size artwork: `frame` = the whole gilded frame (band + ornaments), `swash` = the left swash of the title"""
     rgb = np.asarray(img.convert('RGB')).astype(np.float32) / 255.0
     h, s, v = rgb_to_hsv(rgb)
@@ -109,7 +109,7 @@ def gold_masks(img):
     cross = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]])
     near = (xx < ox0 + 262) | (xx > ox1 - 262) | (yy < oy0 + 262) | (yy > oy1 - 262)
     zone = (xx > ox0 - 2) & (xx < ox1 + 2) & (yy > oy0 - 2) & (yy < oy1 + 2) & near
-    zone &= ~((xx >= 925) & (xx <= 1170) & (yy >= 755) & (yy <= 860))      # the black ink flourish right of the title is not part of the frame
+    zone &= ~((xx >= 925) & (xx <= 1170) & (yy >= 755 + dy) & (yy <= 860 + dy))      # the black ink flourish right of the title is not part of the frame
 
     def unreached(iters):       # what cannot be reached from the middle of the page without crossing a (widened) dark outline
         lab, _ = ndimage.label(~ndimage.binary_dilation(dark, structure=np.ones((3, 3)), iterations=iters), structure=cross)
@@ -125,10 +125,11 @@ def gold_masks(img):
     # the swash: everything dark / coloured inside its box, except the thin rings and anything right of the title rule
     lum = rgb @ np.array([0.299, 0.587, 0.114], dtype=np.float32)
     x0, y0, x1, y1 = SWASH_BOX
+    y0, y1 = y0 + dy, y1 + dy
     dark = (xx >= x0) & (xx <= x1) & (yy >= y0) & (yy <= y1) & (lum < 0.93)
     box = dark.copy()
     for cx, cy, r in RING_CIRCLES:
-        box &= np.abs(np.hypot(xx - cx, yy - cy) - r) > 2.6
+        box &= np.abs(np.hypot(xx - cx, yy - (cy + dy)) - r) > 2.6
     from scipy import ndimage
     box |= ndimage.binary_opening(dark, structure=np.ones((7, 7)))      # thick strokes keep the pixels where a thin ring crosses them                                      # drop dust specks, bridge the gaps where the thin rings cross the strokes
     lab, n = ndimage.label(box, structure=np.ones((3, 3)))
@@ -190,19 +191,56 @@ def recolor_hue(img, p, masks):
     return Image.fromarray((np.clip(out, 0, 1) * 255 + 0.5).astype(np.uint8), 'RGB')
 
 
-def build(palette='navy', out=None, scale=2):
+MEDALLION_BOX = (270, 380, 1190, 1130)      # everything of the title medallion lives in this box of the empty cover
+
+
+def frame_only(src):
+    """the empty cover without the medallion (rings, rules, swashes, flourishes) - they are thin ink / thin metal on the cloud, filled in from the cloud around them"""
+    from scipy import ndimage
+    a = np.asarray(src.convert('RGB')).astype(np.float32) / 255.0
+    lum = a @ np.array([0.299, 0.587, 0.114], dtype=np.float32)
+    x0, y0, x1, y1 = MEDALLION_BOX
+    box = np.zeros(lum.shape, dtype=bool)
+    box[y0:y1, x0:x1] = True
+    elem = ((lum < ndimage.gaussian_filter(lum, 10) - 0.07) | (lum < 0.6)) & box
+    elem = ndimage.binary_dilation(elem, structure=np.ones((3, 3)), iterations=3)
+    idx = ndimage.distance_transform_edt(elem, return_distances=False, return_indices=True)
+    out = a[idx[0], idx[1]]
+    for _ in range(80):
+        sm = np.stack([ndimage.uniform_filter(out[..., c], size=9) for c in range(3)], axis=-1)
+        out = np.where(elem[..., None], sm, a)
+    return np.where(elem[..., None], out, a), a, elem
+
+
+def divider_source(src, dy):
+    """frame + the medallion moved `dy` px down (to the middle of the page): ink and swashes are multiplied onto the clean cloud"""
+    clean, a, elem = frame_only(src)
+    x0, y0, x1, y1 = MEDALLION_BOX
+    ink = np.where(elem[..., None], np.clip(a / np.maximum(clean, 1e-3), 0, 1), 1.0)
+    out = clean.copy()
+    out[y0 + dy:y1 + dy, x0:x1] *= ink[y0:y1, x0:x1]
+    return Image.fromarray((np.clip(out, 0, 1) * 255 + 0.5).astype(np.uint8), 'RGB')
+
+
+def build(palette='navy', out=None, scale=2, divider_dy=None):
     img = Image.open(SRC).convert('RGB')
+    if divider_dy is not None:                                  # the artwork of the internal title pages
+        img = divider_source(img, divider_dy)
     p = PALETTES[palette]
-    masks = (gold_masks(img) if p.get('gold') else frame_masks(img)) if p else None
+    masks = (gold_masks(img, divider_dy or 0) if p.get('gold') else frame_masks(img)) if p else None
     img = img.resize((img.width * scale, img.height * scale), Image.LANCZOS).filter(ImageFilter.UnsharpMask(radius=2.2, percent=60, threshold=2))
     if p:
         img = (recolor if p.get('gold') else recolor_hue)(img, p, masks)
-    out = out or os.path.join(HERE, 'assets', 'cover', 'cover-bg.jpg')
+    out = out or os.path.join(HERE, 'assets', 'cover', 'cover-bg.jpg' if divider_dy is None else 'divider-bg.jpg')
     img.save(out, quality=92, subsampling=0, optimize=True)
     return out
 
 
 if __name__ == '__main__':
     import json
-    pal = sys.argv[1] if len(sys.argv) > 1 else (json.load(open(os.path.join(HERE, 'config.json'), encoding='utf8')).get('cover') or {}).get('palette', 'navy')
-    print('cover background:', build(pal, sys.argv[2] if len(sys.argv) > 2 else None), pal)
+    cfg = json.load(open(os.path.join(HERE, 'config.json'), encoding='utf8'))
+    pal = sys.argv[1] if len(sys.argv) > 1 else (cfg.get('cover') or {}).get('palette', 'navy')
+    out = sys.argv[2] if len(sys.argv) > 2 else None
+    print('cover background:', build(pal, out), pal)
+    if len(sys.argv) <= 2 and cfg.get('divider'):               # also the artwork of the internal title pages (siman dividers)
+        print('divider background:', build(pal, None, divider_dy=cfg['divider']['dy']), pal)
