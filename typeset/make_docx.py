@@ -27,10 +27,13 @@ TW = 56.6929  # twips per mm
 _CFG = json.load(open(os.path.join(HERE, 'config.json')))
 _WF = _CFG.get('wordFonts', {})
 BODY_FONT, LEAD_FONT, DISPLAY_FONT = _WF.get('body', 'FrankRuehl'), _WF.get('lead', 'David'), _WF.get('display', 'FrankRuehl')
+HSHIFT = (_CFG.get('header') or {}).get('shift', 0)      # mm the running head is raised (as in the PDF)
 NOTES_FONT, AUTHOR_FONT = _WF.get('notes', BODY_FONT), _WF.get('author', LEAD_FONT)
 DB = '<w:b/><w:bCs/>' if (_CFG.get('fontWeights') or {}).get('display', 800) >= 600 else ''     # a single-weight calligraphic display face must not be faux-bolded
 TITLE_PT = (_CFG.get('titleFrame') or {}).get('size', 16.5)
-BODY_PT, FOOT_PT, SMALL_PT, FOOT_SMALL_PT, LEAD_PT = 12, 10, 10, 8.5, 11.4
+_FT = (_CFG.get('type') or {}).get('foot', {})
+BODY_PT, FOOT_PT, SMALL_PT, FOOT_SMALL_PT, LEAD_PT = 12, _FT.get('size', 10), 10, round(_FT.get('size', 10) * 0.85, 1), 11.4
+FOOT_LEAD = _FT.get('leading', 14.6)
 
 NS = ('xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" '
       'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" '
@@ -88,9 +91,12 @@ ASCII_Q = bool(_CFG.get('wordAsciiQuotes'))
 FALLBACK_CH = _CFG.get('wordFallbackChars', '')
 
 
+KEEP_GERESH = [False]       # footnotes are set in Asher, which draws the Unicode geresh / gershayim properly
+
+
 def wtxt(t):
     """FrankRuehl DP has empty glyphs for the Unicode geresh / gershayim; its ASCII ' and \" are the right marks"""
-    return t.replace('׳', "'").replace('״', '"') if ASCII_Q else t
+    return t.replace('׳', "'").replace('״', '"') if ASCII_Q and not KEEP_GERESH[0] else t
 
 
 _xml_escape = escape
@@ -229,7 +235,7 @@ def sectpr(kind='continuous', cols=1, header_ids=None, footnote_restart=False, s
     pg = '<w:pgNumType w:fmt="hebrew1"' + (f' w:start="{start_page}"' if start_page else '') + '/>'
     c = (f'<w:cols w:num="2" w:space="{COL_GAP}" w:equalWidth="1"/>' if cols == 2 else '<w:cols w:space="708"/>')
     return (f'<w:sectPr>{h}{fn}<w:type w:val="{kind}"/><w:pgSz w:w="{PAGE_W}" w:h="{PAGE_H}"/>'
-            f'<w:pgMar w:top="{M_TOP}" w:right="{M_SIDE}" w:bottom="{M_BOT}" w:left="{M_SIDE}" w:header="{round(17 * TW)}" w:footer="{round(8 * TW)}" w:gutter="0"/>'
+            f'<w:pgMar w:top="{M_TOP}" w:right="{M_SIDE}" w:bottom="{M_BOT}" w:left="{M_SIDE}" w:header="{round((17 - HSHIFT) * TW)}" w:footer="{round(8 * TW)}" w:gutter="0"/>'
             f'{pg}{c}<w:bidi/></w:sectPr>')
 
 
@@ -313,7 +319,9 @@ class Doc:
     def footnote_ref(self, runs):
         self.fn_n += 1
         n = self.fn_n
+        KEEP_GERESH[0] = True
         body = ''.join(run(r['t'], ST['footSmall'] if r.get('sm') else None) for r in runs if 'fn' not in r)
+        KEEP_GERESH[0] = False
         self.footnotes.append(
             f'<w:footnote w:id="{n}"><w:p><w:pPr><w:pStyle w:val="FootnoteText"/><w:bidi/><w:jc w:val="both"/></w:pPr>'
             f'<w:r><w:rPr><w:rStyle w:val="{ST["footNum"]}"/></w:rPr><w:footnoteRef/></w:r><w:r><w:t xml:space="preserve">. </w:t></w:r>{body}</w:p></w:footnote>')
@@ -395,7 +403,7 @@ def styles_xml():
     s += pst('CoverTitle', '<w:bidi/><w:spacing w:before="0" w:after="200" w:line="900" w:lineRule="exact"/><w:jc w:val="center"/>', fonts(DISPLAY_FONT) + DB + sz(40))
     s += pst('CoverSubtitle', '<w:bidi/><w:spacing w:before="0" w:after="200" w:line="480" w:lineRule="exact"/><w:jc w:val="center"/>', fonts(LEAD_FONT) + sz(16))
     # built-in styles keep their English ids/names (Hebrew Word shows them in Hebrew by itself)
-    s += pst('FootnoteText', '<w:bidi/><w:spacing w:after="30" w:line="292" w:lineRule="exact"/><w:jc w:val="both"/>', fonts(NOTES_FONT) + sz(FOOT_PT), name='footnote text')
+    s += pst('FootnoteText', f'<w:bidi/><w:spacing w:after="30" w:line="{round(FOOT_LEAD * 20)}" w:lineRule="exact"/><w:jc w:val="both"/>', fonts(NOTES_FONT) + sz(FOOT_PT), name='footnote text')
     s += pst('Header', '<w:bidi/><w:spacing w:after="0" w:line="300" w:lineRule="exact"/>', '', name='header')
     s += pst('TOC1', f'<w:tabs><w:tab w:val="right" w:leader="dot" w:pos="{TEXT_W}"/></w:tabs><w:bidi/><w:spacing w:after="60" w:line="300" w:lineRule="exact"/>', sz(11.5), name='toc 1')
     # character styles

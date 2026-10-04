@@ -12,7 +12,7 @@ body { font-kerning: normal; font-feature-settings: "kern" 1; text-rendering: ge
 .page { position: relative; overflow: hidden; page-break-after: always; break-after: page; background: #fff; direction: ltr; }
 .ln { position: absolute; white-space: pre; direction: rtl; unicode-bidi: plaintext; overflow: visible; font-kerning: normal; }
 .c-body { font-family: var(--f-body); font-size: calc(12 * 96px / 72); }
-.c-foot { font-family: var(--f-notes); font-weight: var(--w-notes); font-size: calc(10 * 96px / 72); }
+.c-foot { font-family: var(--f-notes); font-weight: var(--w-notes); font-size: calc(var(--s-foot) * 96px / 72); }
 .c-h2   { font-family: var(--f-display); font-size: calc(14.5 * 96px / 72); font-weight: var(--w-display); }
 .c-h3   { font-family: var(--f-lead); font-size: calc(11.5 * 96px / 72); font-weight: var(--w-lead); }
 .b, .smb { font-weight: 700; }
@@ -41,8 +41,8 @@ img.orn { display: inline-block; }
 .banner .author { font: 700 11.5pt var(--f-author); margin-top: 2.5mm; }
 .banner .abstract { font: 400 10pt/15pt var(--f-lead); width: 100mm; margin: 4mm auto 0; text-align: justify; text-align-last: center; }
 .fnhead { position: absolute; display: flex; align-items: center; direction: rtl; line-height: 0; }
-.fnhead .fntitle { font-family: var(--f-lead); font-weight: var(--w-lead); line-height: normal; white-space: nowrap; position: relative; top: 0.2mm; }
-.fnmark { position: absolute; direction: rtl; text-align: right; font: var(--w-lead) 9.5pt var(--f-lead); white-space: pre; padding-left: 0; }
+.fnhead .fntitle { font-family: var(--f-notes); font-weight: 700; line-height: normal; white-space: nowrap; position: relative; top: 0.2mm; }
+.fnmark { position: absolute; direction: rtl; text-align: right; font: 700 9.5pt var(--f-notes); white-space: pre; padding-left: 0; }
 .endorn { position: absolute; text-align: center; }
 .endorn { line-height: 0; }
 

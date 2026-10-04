@@ -17,7 +17,7 @@ try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = requ
   Object.assign(cfg.type.h2, { family: F.display }); Object.assign(cfg.type.h3, { family: F.lead });
   Object.assign(cfg.type.lead, { family: F.lead }); Object.assign(cfg.type.abstract, { family: F.lead });
   Object.assign(cfg.titleFrame, { family: F.display }); Object.assign(cfg.dividerFrame, { family: F.display });
-  cfg.footnotes.titleFamily = F.lead;
+  cfg.footnotes.titleFamily = F.notes;
   const faces = cfg.fontFaces || [];
   cfg.ornaments = {};
   const odir = path.join(__dirname, 'assets', 'ornaments');
@@ -37,7 +37,7 @@ try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = requ
   page.on('console', (m) => console.log('[page]', m.text()));
   page.on('pageerror', (e) => console.log('[pageerror]', e.message));
   await page.goto('file://' + path.join(__dirname, 'template.html'));
-  await page.addStyleTag({ content: `:root{--f-body:"${F.body}";--f-lead:"${F.lead}";--f-display:"${F.display}";--f-notes:"${F.notes}";--f-author:"${F.author}";--w-notes:${cfg.type.foot.weight || 400};--w-display:${WD};--w-lead:${WL};}\n` +
+  await page.addStyleTag({ content: `:root{--f-body:"${F.body}";--f-lead:"${F.lead}";--f-display:"${F.display}";--f-notes:"${F.notes}";--f-author:"${F.author}";--w-notes:${cfg.type.foot.weight || 400};--s-foot:${cfg.type.foot.size};--w-display:${WD};--w-lead:${WL};}\n` +
     faces.map((f) => `@font-face{font-family:"${f.family}";font-weight:${f.weight || 400};font-style:${f.style || 'normal'};${f.unicodeRange ? 'unicode-range:' + f.unicodeRange + ';' : ''}src:url("assets/fonts/${f.file}");}`).join('\n') });
   await page.addScriptTag({ path: path.join(__dirname, 'engine.js') });
   await page.evaluate(async (fontSpecs) => {

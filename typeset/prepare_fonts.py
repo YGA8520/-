@@ -5,7 +5,8 @@
                                      DrogolinU-*.ttf = a copy with a Unicode cmap (U+05D0..U+05EA -> the same glyphs)
   FrankRuehl DP (FRANK.OTF / ...)    draws U+05F3 / U+05F4 empty (its ASCII ' and " are the geresh / gershayim);
                                      FrankRuehlDP-Q-*.otf = a copy that maps U+05F3 / U+05F4 onto those two glyphs
-  Livorna                            used as is
+  Ashcnz (ASHCNZ.TTF / ASHCNZB.TTF) same legacy encoding as Drogolin: AshcnzU-*.ttf
+  Asher, Livorna                     used as is
 
 usage: python prepare_fonts.py <folder with the original font files>   (the names are matched by the family name inside the files)
 """
@@ -53,10 +54,12 @@ if __name__ == '__main__':
             continue
         fam, sub, t = info(f)
         kind = 'Bold' if 'Bold' in (sub or '') else 'Regular'
-        if fam == 'Drogolin':
-            drogolin_unicode(t, os.path.join(OUT, f'DrogolinU-{kind}.ttf')); print('Drogolin', kind)
+        if fam in ('Drogolin', 'Ashcnz'):                    # both: legacy cp1255-encoded fonts of the same maker
+            drogolin_unicode(t, os.path.join(OUT, f'{fam}U-{kind}.ttf')); print(fam, kind)
         elif fam == 'FrankRuehl DP':
             shutil.copy(f, os.path.join(OUT, f'FrankRuehlDP-{kind}.otf'))
             frank_quotes(TTFont(f), os.path.join(OUT, f'FrankRuehlDP-Q-{kind}.otf')); print('FrankRuehl DP', kind)
+        elif fam == 'Asher':
+            shutil.copy(f, os.path.join(OUT, f'Asher-{kind}.ttf')); print('Asher', kind)
         elif fam == 'Livorna':
             shutil.copy(f, os.path.join(OUT, 'Livorna-Regular.ttf')); print('Livorna')

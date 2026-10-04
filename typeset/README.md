@@ -24,14 +24,15 @@ SRC_DIR=/path/to/folder/with/the/original/docx   python run_all.py     # (Window
 Duplicates are decided on the text (6-word shingles), never by file name. `python new_articles.py` lists every new article with its heading count.
 
 ## Fonts (config.json)
-Current set (all can be changed in `config.json`; the previous set is in `config.keter-stam.json`, the first one in `config.frank-david.json`):
+Current set (all can be changed in `config.json`; earlier sets: `config.drogolin.json`, `config.keter-stam.json`, `config.frank-david.json`):
 `body` FrankRuehl DP · `lead` Livorna (bold first word and sub-headings; Livorna has only a regular cut, so the engine / Word thicken it) ·
-`display` Drogolin Bold (article titles, dividers, ToC headings, cover) · `notes` Frank Ruhl Libre Light · `author` Shofar.
+`display` Ashcnz Bold (article titles, dividers, ToC headings, cover) · `notes` Asher (footnotes, their title and letters; size 9.4 / 13.8 pt) · `author` Shofar.
 The client's proprietary fonts are **not in git**; `prepare_fonts.py <folder with the original files>` builds what the engine needs from them:
-Drogolin is an old cp1255-encoded font (a Unicode copy `DrogolinU-*.ttf` is made), FrankRuehl DP draws U+05F3/U+05F4 empty (copy `FrankRuehlDP-Q-*.otf` maps them onto its own ' and " glyphs).
-In Word the text uses plain ASCII ' and " instead of ׳ ״ (`wordAsciiQuotes`) and × √ are set in Arial (`wordFallbackChars`) because FrankRuehl DP draws them empty.
-Word needs these installed: FrankRuehl DP, Livorna, Drogolin, Frank Ruhl Libre Light, Shofar.
-`fontWeights` sets the weight of the display / lead roles. Free fonts (Culmus Keter YG / Stam Ashkenaz / Shofar, Frank Ruhl Libre) stay in `assets/fonts` (`CULMUS-LICENSE.txt`).
+Ashcnz (like Drogolin) is an old cp1255-encoded font (a Unicode copy `AshcnzU-*.ttf` is made), FrankRuehl DP draws U+05F3/U+05F4 empty (copy `FrankRuehlDP-Q-*.otf` maps them onto its own ' and " glyphs), Asher / Livorna are used as is.
+In Word the text uses plain ASCII ' and " instead of ׳ ״ (`wordAsciiQuotes`, not in the footnotes: Asher draws them) and × √ are set in Arial (`wordFallbackChars`) because FrankRuehl DP draws them empty.
+Word needs these installed: FrankRuehl DP, Livorna, Ashcnz, Asher, Shofar.
+`fontWeights` sets the weight of the display / lead roles. Titles are centred in the frame by the ink of their letters (`inkShiftPx` in `engine.js`), not by the line box of the font.
+`header.shift` (mm) raises the running head and its rule, `endOrnament.gap` (lines) sets the space above the end ornament. Free fonts (Culmus Keter YG / Stam Ashkenaz / Shofar, Frank Ruhl Libre) stay in `assets/fonts` (`CULMUS-LICENSE.txt`).
 
 ## Design decisions (cumulative, from the client)
 * B5 176×250 mm, margins 19.4 mm, two columns; body 12/17 pt; columns aligned top and bottom (vertical justification by stretching paragraph gaps, then leading; never ragged).

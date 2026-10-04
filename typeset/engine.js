@@ -557,6 +557,13 @@
     const TF = cfg.titleFrame || { size: 16.5, lead: 22, padV: 3.0, padH: 4.5, family: 'Frank Ruhl Libre', weight: 800, minW: 62 };
     const DV = cfg.dividerFrame || { size: 30, lead: 38, padV: 5.5, padH: 8, family: 'Frank Ruhl Libre', weight: 800, minW: 80 };
     const boxCache = new Map();
+    // The letters of a title are centred in the frame by their ink, not by the line box of the font: the vertical offset between the two
+    // (font ascent / descent against the real height of the letters) is measured once per font and removed.
+    function inkShiftPx(font) {
+      cv.font = font;
+      const m = cv.measureText('אבגדהוזחטיכמנסעפצרשת');
+      return ((m.fontBoundingBoxAscent - m.actualBoundingBoxAscent) - (m.fontBoundingBoxDescent - m.actualBoundingBoxDescent)) / 2;
+    }
     function frameBox(text, P2, maxW) {
       const key = text + '|' + P2.size;
       if (boxCache.has(key)) return boxCache.get(key);
@@ -572,7 +579,7 @@
         const H = lines.length * lineH + 2 * padV;
         const cw = H * capL.w / capL.h, crw = H * capR.w / capR.h;
         const W = Math.max(mm(P2.minW), Math.max(...lw) + 2 * padH + cw + crw);
-        res = { lines, H, W, cw, crw, lineH };
+        res = { lines, H, W, cw, crw, lineH, shift: inkShiftPx(font) };
         if (W <= maxW + 0.5) break;
         limit -= (W - maxW) + 4;
       }
@@ -585,7 +592,7 @@
         `<div class="fcap" style="left:0;width:${b.cw.toFixed(2)}px;background-image:url(${capL.src})"></div>` +
         `<div class="fmid" style="left:${b.cw.toFixed(2)}px;width:${(b.W - b.cw - b.crw).toFixed(2)}px;background-image:url(${capM.src})"></div>` +
         `<div class="fcap" style="right:0;width:${b.crw.toFixed(2)}px;background-image:url(${capR.src})"></div>` +
-        `<div class="ftext" style="line-height:${b.lineH}px">${b.lines.map((l) => `<div class="fl" style="height:${b.lineH}px">${esc(l)}</div>`).join('')}</div></div>`;
+        `<div class="ftext" style="line-height:${b.lineH}px;top:${(-b.shift).toFixed(2)}px;bottom:${b.shift.toFixed(2)}px">${b.lines.map((l) => `<div class="fl" style="height:${b.lineH}px">${esc(l)}</div>`).join('')}</div></div>`;
     }
 
     // banner (title block) ----------------------------------------------------
@@ -719,6 +726,7 @@
       hdrCache.set(full, out);
       return out;
     }
+    const HSHIFT = (cfg.header && cfg.header.shift) || 0;      // mm the running head (and its rule) is raised
     function headerHTML(p) {
       // Hebrew book: even pages are the right-hand page.  Page number sits on the outer edge, book name on the inner edge.
       const even = p.no % 2 === 0;
@@ -729,8 +737,8 @@
       const html = even ? `${book}${dot}${chap}<span class="grow"></span>${num}` : `${num}<span class="grow"></span>${chap}${dot}${book}`;
       const ml = even ? mm(P.marginInner) : mm(P.marginOuter);
       const hr = ORN['header-rule'];
-      const rule = hr ? `<img class="orn hrule" src="${hr.src}" style="left:${ml}px;top:${mm((cfg.header && cfg.header.ruleTop) || 25.2)}px;width:${textW0}px;height:${(textW0 * hr.h / hr.w).toFixed(2)}px">` : '';
-      return `<div class="header ${even ? 'even' : 'odd'}" style="left:${ml}px;width:${textW0}px">${html}</div>${rule}`;
+      const rule = hr ? `<img class="orn hrule" src="${hr.src}" style="left:${ml}px;top:${mm(((cfg.header && cfg.header.ruleTop) || 25.2) - HSHIFT)}px;width:${textW0}px;height:${(textW0 * hr.h / hr.w).toFixed(2)}px">` : '';
+      return `<div class="header ${even ? 'even' : 'odd'}" style="left:${ml}px;width:${textW0}px;top:${mm(18.2 - HSHIFT)}px">${html}</div>${rule}`;
     }
 
     // vertical justification of one column: stretch the paragraph gaps (then, slightly, the leading) so that the column ends at `Ht`
@@ -826,7 +834,7 @@
           hd.className = 'fnhead';
           hd.style.cssText = `left:${marginL}px;top:${fy}px;width:${textW0}px;height:${fnHeadH}px;`;
           const tsize = FN.titleSize || 10.5;
-          const titleW = textW(FN.title, `${(cfg.fontWeights || {}).lead || 700} ${pt(tsize)}px "${FN.titleFamily}"`);
+          const titleW = textW(FN.title, `700 ${pt(tsize)}px "${FN.titleFamily}"`);
           const gapmm = FN.titleGap || 4;
           const sw = Math.min(FN.sideMax || 60, (textW0 - titleW - mm(2 * gapmm)) / 2 / MM);
           const ln = (flip) => `<img class="orn fnside" src="${ORN['fn-lines'].src}" style="width:${sw.toFixed(2)}mm;height:${FN.linesH || 1.9}mm">`;
@@ -857,7 +865,7 @@
         if (p.endOrn) {      // end-of-article ornament, turned upside down so that it points down
           const o = document.createElement('div');
           o.className = 'endorn';
-          o.style.cssText = `left:${marginL}px;top:${(p._endY || y) + lh * 0.5}px;width:${textW0}px;`;
+          o.style.cssText = `left:${marginL}px;top:${(p._endY || y) + lh * ((cfg.endOrnament && cfg.endOrnament.gap) || 0.5)}px;width:${textW0}px;`;
           o.innerHTML = oimg((cfg.endOrnament && cfg.endOrnament.name) || 'fleuron-small', (cfg.endOrnament && cfg.endOrnament.w) || 18, '', 'transform:scaleY(-1);');
           pg.appendChild(o);
         }
