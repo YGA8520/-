@@ -64,6 +64,11 @@ def prep_runs(runs, D, small_ratio=0.8):
     return out
 
 
+CONTEXT_HEADINGS = {      # lines typed as plain text that are headings only by context (title of a quoted source / section)
+    N('ראב״ד - תשובות ופסקים סימן מד'), N('באר שבע מסכת סוטה דף לב עמוד א'), N('שו״ת משנה הלכות חלק ג סימן פג'), N('תפלה בכל לשון'),
+}
+
+
 def classify_items(items, fns, D, title_norm=None):
     """items: ingest items for ONE article body -> blocks."""
     # explicit small runs present?
@@ -100,6 +105,21 @@ def classify_items(items, fns, D, title_norm=None):
         text = runs_text(runs).strip()
         n = len(text)
         align = it['align']
+        # headings the author marked with a Word heading style, or with underline only (short line, every letter underlined)
+        letters = sum(len(re.findall(r'[\u05d0-\u05ea]', r['t'])) for r in it['runs'] if 'fn' not in r)
+        ul_letters = sum(len(re.findall(r'[\u05d0-\u05ea]', r['t'])) for r in it['runs'] if 'fn' not in r and r.get('u'))
+        style_head = it['style'].lower().startswith('heading') or it['style'].startswith('כותרת')
+        underline_head = n <= 110 and letters >= 3 and ul_letters >= 0.85 * letters
+        context_head = N(text) in CONTEXT_HEADINGS and n <= 60
+        if (style_head and n <= 220) or underline_head or context_head:
+            m = SECTION.match(text.replace(GER, "'"))
+            if m and not any('fn' in r for r in runs):
+                blocks.append({'t': 'h2', 'runs': [{'t': ('%s %s' % (m.group(1), m.group(2))).replace("'", GER).strip()}]})
+                if m.group(3).strip():
+                    blocks.append({'t': 'h3', 'runs': [{'t': m.group(3).strip().rstrip('.'), 'b': True}]})
+            else:
+                blocks.append({'t': 'h3', 'runs': as_heading_runs(runs)})
+            continue
         if re.fullmatch(r"[\u05d0-\u05ea]{1,2}[׳'.:]?", text):      # a lone section letter ("א", "ב") -> small centred heading
             blocks.append({'t': 'h3', 'runs': [{'t': text.rstrip('.:'), 'b': True}]})
             continue

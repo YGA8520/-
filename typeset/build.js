@@ -6,6 +6,14 @@ const { chromium } = require('/opt/node22/lib/node_modules/playwright');
   const [,, docPath, outPdf, cfgPath = path.join(__dirname, 'config.json')] = process.argv;
   const cfg = JSON.parse(fs.readFileSync(cfgPath, 'utf8'));
   const doc = JSON.parse(fs.readFileSync(docPath, 'utf8'));
+  // ---- fonts: roles (body / lead / display) and the font files that provide them -> config.json "fonts" and "fontFaces"
+  const F = cfg.fonts = Object.assign({ body: 'Frank Ruhl Libre', lead: 'David Libre', display: 'Frank Ruhl Libre' }, cfg.fonts || {});
+  Object.assign(cfg.type.body, { family: F.body }); Object.assign(cfg.type.foot, { family: F.body });
+  Object.assign(cfg.type.h2, { family: F.display }); Object.assign(cfg.type.h3, { family: F.lead });
+  Object.assign(cfg.type.lead, { family: F.lead }); Object.assign(cfg.type.abstract, { family: F.lead });
+  Object.assign(cfg.titleFrame, { family: F.display }); Object.assign(cfg.dividerFrame, { family: F.display });
+  cfg.footnotes.titleFamily = F.lead;
+  const faces = cfg.fontFaces || [];
   cfg.ornaments = {};
   const odir = path.join(__dirname, 'assets', 'ornaments');
   for (const f of fs.readdirSync(odir)) {
@@ -24,11 +32,13 @@ const { chromium } = require('/opt/node22/lib/node_modules/playwright');
   page.on('console', (m) => console.log('[page]', m.text()));
   page.on('pageerror', (e) => console.log('[pageerror]', e.message));
   await page.goto('file://' + path.join(__dirname, 'template.html'));
+  await page.addStyleTag({ content: `:root{--f-body:"${F.body}";--f-lead:"${F.lead}";--f-display:"${F.display}";}\n` +
+    faces.map((f) => `@font-face{font-family:"${f.family}";font-weight:${f.weight || 400};font-style:${f.style || 'normal'};src:url("assets/fonts/${f.file}");}`).join('\n') });
   await page.addScriptTag({ path: path.join(__dirname, 'engine.js') });
-  await page.evaluate(async () => {
-    await Promise.all(['400 16px "David Libre"', '700 16px "David Libre"', '800 16px "Frank Ruhl Libre"', '700 16px "Frank Ruhl Libre"'].map((f) => document.fonts.load(f, 'אבג')));
+  await page.evaluate(async (fontSpecs) => {
+    await Promise.all(fontSpecs.map((f) => document.fonts.load(f, 'אבג')));
     await document.fonts.ready;
-  });
+  }, [400, 700, 800].flatMap((w) => [F.body, F.lead, F.display].map((fam) => `${w} 16px "${fam}"`)));
   const res = await page.evaluate(([c, d]) => window.typeset(c, d), [cfg, doc]);
   await page.evaluate(async () => {
     const urls = new Set([...document.body.innerHTML.matchAll(/url\(([^)]+)\)/g)].map((m) => m[1]));

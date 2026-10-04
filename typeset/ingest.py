@@ -32,7 +32,9 @@ def read_runs_sz(p_el):
             elif x.tag in (qn('w:tab'), qn('w:br')):
                 t += ' '
         if t:
-            out.append({'t': t, 'b': bool(b), 'sz': sz})
+            u = rpr is not None and rpr.find(qn('w:u')) is not None and rpr.find(qn('w:u')).get(qn('w:val')) not in ('none',)
+            ital = rpr is not None and rpr.find(qn('w:i')) is not None and rpr.find(qn('w:i')).get(qn('w:val')) not in ('0', 'false')
+            out.append({'t': t, 'b': bool(b), 'sz': sz, 'u': bool(u), 'i': bool(ital)})
     return out
 
 

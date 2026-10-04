@@ -24,7 +24,9 @@ ORN = os.path.join(HERE, 'assets', 'ornaments')
 MM_EMU = 36000
 TW = 56.6929  # twips per mm
 
-BODY_FONT, LEAD_FONT, DISPLAY_FONT = 'FrankRuehl', 'David', 'FrankRuehl'
+_CFG = json.load(open(os.path.join(HERE, 'config.json')))
+_WF = _CFG.get('wordFonts', {})
+BODY_FONT, LEAD_FONT, DISPLAY_FONT = _WF.get('body', 'FrankRuehl'), _WF.get('lead', 'David'), _WF.get('display', 'FrankRuehl')
 BODY_PT, FOOT_PT, SMALL_PT, FOOT_SMALL_PT, LEAD_PT = 12, 10, 10, 8.5, 11.4
 
 NS = ('xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" '

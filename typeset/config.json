@@ -97,5 +97,37 @@
     "share": 0.5,
     "minEm": -0.02,
     "maxEm": 0.03
+  },
+  "fonts": {
+    "body": "Frank Ruhl Libre",
+    "lead": "David Libre",
+    "display": "Frank Ruhl Libre"
+  },
+  "fontFaces": [
+    {
+      "family": "David Libre",
+      "file": "DavidLibre-Regular.ttf",
+      "weight": "400"
+    },
+    {
+      "family": "David Libre",
+      "file": "DavidLibre-Medium.ttf",
+      "weight": "500"
+    },
+    {
+      "family": "David Libre",
+      "file": "DavidLibre-Bold.ttf",
+      "weight": "700"
+    },
+    {
+      "family": "Frank Ruhl Libre",
+      "file": "FrankRuhlLibre.ttf",
+      "weight": "300 900"
+    }
+  ],
+  "wordFonts": {
+    "body": "FrankRuehl",
+    "lead": "David",
+    "display": "FrankRuehl"
   }
 }

@@ -673,9 +673,9 @@
     function headerTitle(art) {
       const full = art.shortTitle || art.title;
       if (hdrCache.has(full)) return hdrCache.get(full);
-      const bookW = textW(bookName, '800 ' + pt(15) + 'px "Frank Ruhl Libre"');
+      const bookW = textW(bookName, '800 ' + pt(15) + 'px "' + (cfg.fonts || {}).display + '"');
       const room = textW0 - bookW - mm(13) - mm(12);            // minus page number, bullet and gaps
-      const f = '400 ' + pt(10) + 'px "David Libre"';
+      const f = '400 ' + pt(10) + 'px "' + (cfg.fonts || {}).lead + '"';
       let words = full.split(/\s+/), out = full;
       if (textW(full, f) > room) {
         while (words.length > 1 && textW(words.join(' ') + '…', f) > room) words.pop();
@@ -791,7 +791,7 @@
           hd.className = 'fnhead';
           hd.style.cssText = `left:${marginL}px;top:${fy}px;width:${textW0}px;height:${fnHeadH}px;`;
           const tsize = FN.titleSize || 10.5;
-          const titleW = textW(FN.title, `700 ${pt(tsize)}px "${FN.titleFamily || 'David Libre'}"`);
+          const titleW = textW(FN.title, `700 ${pt(tsize)}px "${FN.titleFamily}"`);
           const gapmm = FN.titleGap || 4;
           const sw = Math.min(FN.sideMax || 60, (textW0 - titleW - mm(2 * gapmm)) / 2 / MM);
           const ln = (flip) => `<img class="orn fnside" src="${ORN['fn-lines'].src}" style="width:${sw.toFixed(2)}mm;height:${FN.linesH || 1.9}mm">`;
