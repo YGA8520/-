@@ -30,7 +30,11 @@ const { chromium } = require('/opt/node22/lib/node_modules/playwright');
     await document.fonts.ready;
   });
   const res = await page.evaluate(([c, d]) => window.typeset(c, d), [cfg, doc]);
-  await page.evaluate(async () => { await Promise.all([...document.images].map((i) => i.decode().catch(() => {}))); });
+  await page.evaluate(async () => {
+    const urls = new Set([...document.body.innerHTML.matchAll(/url\(([^)]+)\)/g)].map((m) => m[1]));
+    await Promise.all([...urls].map((u) => new Promise((r) => { const i = new Image(); i.onload = i.onerror = r; i.src = u; })));
+    await Promise.all([...document.images].map((i) => i.decode().catch(() => {})));
+  });
   const check = await page.evaluate(() => {
     const bad = [];
     document.querySelectorAll('.ln').forEach((el) => { if (el.scrollWidth > el.clientWidth + 1.5) bad.push(el.textContent.slice(0, 40) + ' ' + el.scrollWidth + '>' + el.clientWidth); });

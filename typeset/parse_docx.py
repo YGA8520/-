@@ -17,15 +17,20 @@ GERESH, GERSHAYIM = '׳', '״'
 
 
 # ---------------------------------------------------------------- text cleaning
-def fix_quotes(s):
-    """ASCII quotes -> geresh / gershayim (only next to Hebrew letters)."""
-    s = s.replace('“', '"').replace('”', '"').replace('‘', "'").replace('’', "'").replace('״', '"').replace('׳', "'")
+def _fix_quotes_len(s):
+    """ASCII / typographic quotes -> geresh (׳) and gershayim (״). No ASCII quote is left in the output."""
+    s = s.replace('\u201c', '"').replace('\u201d', '"').replace('\u2018', "'").replace('\u2019', "'").replace('\u05f4', '"').replace('\u05f3', "'")
+    s = re.sub(r'(?<=[%s\u05f4"])F(?![A-Za-z])' % HEB, '\u05db', s)         # a Latin F typed on a Hebrew keyboard = כ
     s = re.sub(r'(?<=[%s])"(?=[%s])' % (HEB, HEB), GERSHAYIM, s)           # ש"ס  -> ש״ס
     s = re.sub(r'(?<=[%s\.\)\]:,])"(?=[\s\.,;:\)\]]|$)' % HEB, GERSHAYIM, s)  # closing quote
     s = re.sub(r'(?:(?<=^)|(?<=[\s\(\[]))"(?=[%s])' % HEB, GERSHAYIM, s)       # opening quote
     s = re.sub(r"(?<=[%s])'" % HEB, GERESH, s)                                # ה' -> ה׳
     s = re.sub(r"(?:(?<=^)|(?<=[\s\(\[]))'(?=[%s])" % HEB, GERESH, s)         # 'פתיחה
-    return s
+    return s.replace('"', GERSHAYIM).replace("'", GERESH)                      # whatever is left
+
+
+def fix_quotes(s):
+    return _fix_quotes_len(s.replace("''", '"'))                            # two apostrophes typed as one double quote (ק''ש)
 
 
 def clean_ws(s):
@@ -104,7 +109,7 @@ def normalize_runs(runs):
             spans.append((len(text), len(text) + len(r['t'])))
             text += r['t']
     text = re.sub(r' {2,}', lambda m: ' ', text) if False else text
-    fixed = fix_quotes(text)
+    fixed = _fix_quotes_len(text)
     assert len(fixed) == len(text)
     for r, sp in zip(merged, spans):
         if sp:

@@ -43,7 +43,7 @@
     "fnrefScale": 0.62,
     "spaceEm": 0.27,
     "stretchEm": 0.2,
-    "shrinkEm": 0.07,
+    "shrinkEm": 0.09,
     "leadMaxWords": 3,
     "lead": {
       "family": "David Libre",
@@ -56,21 +56,11 @@
     "topGap": 3.2,
     "headGap": 1.4,
     "itemGap": 0.9,
-    "headH": 6.2,
-    "ornament": "line-scroll",
-    "titleSize": 9.5,
-    "titleGap": 3.5,
-    "sideMax": 60,
-    "ornamentW": 50,
-    "titleRatio": 0.72,
-    "gapRatio": 0.75
-  },
-  "banner": {
-    "style": "flourish",
-    "flourish": "flourish-wide-2",
-    "flourishW": 34,
-    "divider": "divider-long",
-    "dividerW": 100
+    "headH": 4.8,
+    "titleSize": 10.5,
+    "titleGap": 4,
+    "linesH": 1.9,
+    "sideMax": 60
   },
   "endOrnament": {
     "name": "fleuron-small",
@@ -78,5 +68,34 @@
   },
   "header": {
     "ruleTop": 25.2
+  },
+  "titleFrame": {
+    "size": 16.5,
+    "lead": 22,
+    "padV": 3.0,
+    "padH": 4.5,
+    "family": "Frank Ruhl Libre",
+    "weight": 800,
+    "minW": 62
+  },
+  "dividerFrame": {
+    "size": 30,
+    "lead": 38,
+    "padV": 5.5,
+    "padH": 8,
+    "family": "Frank Ruhl Libre",
+    "weight": 800,
+    "minW": 80
+  },
+  "verticalJustify": {
+    "softGap": 0.35,
+    "softLead": 0.035,
+    "maxGap": 0.9,
+    "maxLead": 0.06
+  },
+  "tracking": {
+    "share": 0.5,
+    "minEm": -0.02,
+    "maxEm": 0.03
   }
 }

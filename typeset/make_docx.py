@@ -139,12 +139,12 @@ def _graphic(name, rid, cx, cy, i):
             f'</pic:pic></a:graphicData></a:graphic>')
 
 
-def picture(name, width_mm, flip=None, raise_pt=None):
+def picture(name, width_mm, flip=None, height_mm=None):
     """inline picture"""
     if flip:
         name = MEDIA.flipped(name, flip)
     rid, (w, h) = MEDIA.add(name)
-    cx = round(width_mm * MM_EMU); cy = round(cx * h / w)
+    cx = round(width_mm * MM_EMU); cy = round(height_mm * MM_EMU) if height_mm else round(cx * h / w)
     _ids[0] += 1; i = _ids[0]
     return (f'<w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="{cx}" cy="{cy}"/>'
             f'<wp:effectExtent l="0" t="0" r="0" b="0"/><wp:docPr id="{i}" name="Ornament {i}"/>'
@@ -342,14 +342,14 @@ def styles_xml():
     s += '<w:style w:type="character" w:default="1" w:styleId="DefaultParagraphFont"><w:name w:val="Default Paragraph Font"/><w:uiPriority w:val="1"/><w:semiHidden/></w:style>'
     # paragraph styles
     s += pst('Body', '<w:widowControl/><w:bidi/><w:spacing w:after="340" w:line="340" w:lineRule="exact"/><w:jc w:val="both"/>', '')
-    s += pst('ArticleTitle', '<w:keepNext/><w:bidi/><w:spacing w:before="120" w:after="120" w:line="400" w:lineRule="exact"/><w:jc w:val="center"/><w:outlineLvl w:val="0"/>',
-             fonts(DISPLAY_FONT) + f'<w:b/><w:bCs/>{sz(17)}', nxt='Body')
+    s += pst('ArticleTitle', '<w:keepNext/><w:bidi/><w:spacing w:before="170" w:after="170" w:line="440" w:lineRule="exact"/><w:jc w:val="center"/><w:outlineLvl w:val="0"/>',
+             fonts(DISPLAY_FONT) + f'<w:b/><w:bCs/>{sz(16.5)}', nxt='Body')
     s += pst('ArticlePart', '<w:keepNext/><w:bidi/><w:spacing w:before="340" w:after="0" w:line="340" w:lineRule="exact"/><w:jc w:val="center"/><w:outlineLvl w:val="1"/>',
              fonts(DISPLAY_FONT) + f'<w:b/><w:bCs/>{sz(14.5)}', nxt='Body')
     s += pst('SubHeading', '<w:keepNext/><w:bidi/><w:spacing w:before="340" w:after="0" w:line="340" w:lineRule="exact"/><w:jc w:val="center"/>',
              fonts(LEAD_FONT) + f'<w:b/><w:bCs/>{sz(11.5)}', nxt='Body')
-    s += pst('SimanTitle', '<w:keepNext/><w:bidi/><w:spacing w:before="0" w:after="0" w:line="300" w:lineRule="exact"/><w:jc w:val="center"/>',
-             fonts(LEAD_FONT) + f'<w:b/><w:bCs/>{sz(13)}')
+    s += pst('SimanTitle', '<w:keepNext/><w:bidi/><w:spacing w:before="312" w:after="312" w:line="760" w:lineRule="exact"/><w:jc w:val="center"/>',
+             fonts(DISPLAY_FONT) + f'<w:b/><w:bCs/>{sz(30)}')
     s += pst('ArticleAuthor', '<w:bidi/><w:spacing w:before="80" w:after="280" w:line="280" w:lineRule="exact"/><w:jc w:val="center"/>', fonts(LEAD_FONT) + f'<w:b/><w:bCs/>{sz(11.5)}')
     s += pst('ArticleSubtitle', '<w:bidi/><w:spacing w:before="0" w:after="40" w:line="280" w:lineRule="exact"/><w:jc w:val="center"/>', fonts(LEAD_FONT) + sz(11))
     s += pst('TableText', '<w:bidi/><w:spacing w:after="0" w:line="280" w:lineRule="exact"/><w:jc w:val="center"/>', sz(FOOT_PT))
@@ -377,37 +377,31 @@ def settings_xml():
 
 
 def footnotes_xml(doc, cfg, sep_title='הערות וציונים'):
-    # the separator follows the proportions of its ornament: ornament width fixed, title size and gaps derive from its height
+    # the separator: plain double lines on both sides of the title (no curled ends), title size / gaps as in the PDF
     FN = cfg.get('footnotes', {})
-    orn_w = FN.get('ornamentW', 50)
-    rid, (w, h) = MEDIA.add('line-scroll.png')
-    orn_h = orn_w * h / w
-    tsize = FN.get('titleRatio', 0.72) * orn_h / 0.352778
+    tsize = FN.get('titleSize', 10.5)
+    lines_h = FN.get('linesH', 1.9)
+    lines_w = 50
     gap = ' ' * 4
-    line_c = 0.47                                           # the double line sits at 47% of the ornament height
-    raise_hp = round(((1 - line_c) * orn_h - 0.33 * tsize * 0.352778) / 0.352778 * 2)   # raise the text onto the ornament lines (half-points)
+    rise = round((lines_h / 2 - 0.33 * tsize * 0.352778) / 0.352778 * 2)       # lines sit on the baseline: raise them to the middle of the title (half-points)
+    ln = lambda: picture('composed/fn-lines.png', lines_w, height_mm=lines_h)
     sep = (f'<w:footnote w:type="separator" w:id="-1"><w:p><w:pPr><w:bidi/><w:spacing w:before="40" w:after="40" w:line="240" w:lineRule="auto"/><w:jc w:val="center"/></w:pPr>'
-           f'{picture("line-scroll.png", orn_w, "h")}<w:r><w:rPr>{fonts(LEAD_FONT)}<w:b/><w:bCs/><w:position w:val="{raise_hp}"/>{sz(tsize)}</w:rPr>'
-           f'<w:t xml:space="preserve">{gap}{escape(sep_title)}{gap}</w:t></w:r>{picture("line-scroll.png", orn_w)}</w:p></w:footnote>')
+           f'{ln()}<w:r><w:rPr>{fonts(LEAD_FONT)}<w:b/><w:bCs/>{sz(tsize)}</w:rPr>'
+           f'<w:t xml:space="preserve">{gap}{escape(sep_title)}{gap}</w:t></w:r>{ln()}</w:p></w:footnote>')
     cont = '<w:footnote w:type="continuationSeparator" w:id="0"><w:p><w:pPr><w:bidi/><w:spacing w:after="0" w:line="240" w:lineRule="auto"/></w:pPr><w:r><w:continuationSeparator/></w:r></w:p></w:footnote>'
     return f'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:footnotes {NS}>{sep}{cont}{"".join(doc.footnotes)}</w:footnotes>'
 
 
 # ---------------------------------------------------------------- build
-def label_block(art):
-    """the "סימן" title: text sits inside the framed ornament, which is a picture anchored behind the text"""
-    lab = art['label']
-    f = art.get('labelFrame')
-    if not f:
-        return para(run(lab), ST['siman'])
-    name = os.path.basename(f['src'])
-    MEDIA.add('composed/' + name)
-    H = f['hmm'] * TW
-    line = 300
-    before = max(0, round((H - line) / 2))
-    after = max(0, round(H - line - before))
-    spacing = f'<w:spacing w:before="{before}" w:after="{after}" w:line="{line}" w:lineRule="exact"/>'
-    return para(picture_behind('composed/' + name, f['wmm']) + run(lab), ST['siman'], 'center', keep=True, spacing=spacing)
+def frame_paragraph(text_lines, box, style, line_pt, pad_mm):
+    """text sits inside a framed ornament: a PNG composed to the exact size, anchored BEHIND the text, centred on the column.
+    The paragraph is exactly as tall as the frame (before + lines + after), so the text is centred inside it."""
+    name = 'composed/' + box['png']
+    runs = ''
+    for i, t in enumerate(text_lines):
+        runs += ('<w:r><w:br/></w:r>' if i else '') + run(t)
+    spacing = f'<w:spacing w:before="{round(pad_mm * TW)}" w:after="{round(pad_mm * TW)}" w:line="{round(line_pt * 20)}" w:lineRule="exact"/>'
+    return para(picture_behind(name, box['wmm']) + runs, style, 'center', keep=True, spacing=spacing)
 
 
 def build(doc_json, layout_json, cfg_json, out):
@@ -446,13 +440,20 @@ def build(doc_json, layout_json, cfg_json, out):
 
     first = True
     for ai, art in enumerate(data['articles']):
-        hid = add_header(art.get('shortTitle') or art['title'], f'A{ai}')
+        hid = add_header((lay['headerTitles'][ai] if (lay and lay.get('headerTitles')) else (art.get('shortTitle') or art['title'])), f'A{ai}')
+        # internal divider page where the siman changes
+        if art.get('divider') and lay:
+            db = lay['dividerBoxes'][art['divider']]
+            parts.append(para('', spacing='<w:spacing w:before="4200" w:after="0" w:line="240" w:lineRule="auto"/>') +
+                         para(picture('flourish-wide-2.png', 46), jc='center', keep=True, spacing='<w:spacing w:before="0" w:after="200" w:line="240" w:lineRule="auto"/>') +
+                         frame_paragraph(db['lines'], db, ST['siman'], 38, 5.5) +
+                         para(picture('flourish-wide-2.png', 46, 'v'), jc='center', spacing='<w:spacing w:before="200" w:after="0" w:line="240" w:lineRule="auto"/>', sect=sectpr('nextPage', 1, empty_ids)))
         tb = ''
-        if art.get('label'):
-            tb += label_block(art)
-        tb += para(picture('flourish-wide-2.png', 32), jc='center', keep=True, spacing='<w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/>')
-        tb += para(run(art['title']), ST['title'])
-        tb += para(picture('flourish-wide-2.png', 32, 'v'), jc='center', keep=True, spacing='<w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/>')
+        if lay:
+            tbx = lay['titleBoxes'][str(ai)]
+            tb += frame_paragraph(tbx['lines'], tbx, ST['title'], 22, 3.0)
+        else:
+            tb += para(run(art['title']), ST['title'])
         if art.get('subtitle'):
             tb += para(run(art['subtitle']), ST['subtitle'])
         sp = (lay['tocPages'] + 1) if (lay and first) else None
@@ -479,6 +480,7 @@ def build(doc_json, layout_json, cfg_json, out):
             elif b['t'] == 'tbl':
                 flush()
                 parts.append(table_xml(art, b) + para('', spacing='<w:spacing w:before="0" w:after="0" w:line="40" w:lineRule="exact"/>', sect=sectpr('continuous', 1, None)))
+        chunk.append(para(picture('fleuron-small.png', 18, 'v'), jc='center', spacing='<w:spacing w:before="120" w:after="0" w:line="240" w:lineRule="auto"/>'))
         flush()
     document = f'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document {NS}><w:body>{"".join(parts)}{sectpr("continuous", 2, None)}</w:body></w:document>'
     footnotes = footnotes_xml(D, cfg)          # adds the separator pictures to MEDIA

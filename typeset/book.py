@@ -113,8 +113,8 @@ def classify_items(items, fns, D, title_norm=None):
             else:
                 blocks.append({'t': 'h3', 'runs': as_heading_runs(runs)})
             continue
-        if all_bold(runs):
-            blocks.append({'t': 'h3', 'runs': as_heading_runs(runs)})
+        if all_bold(runs):   # a long bold paragraph that is not centred is the author's emphasis, not a heading: keep it a paragraph
+            blocks.append({'t': 'p', 'runs': mark_sources([dict(r) for r in runs], heuristic=heuristic)})
             continue
         blocks.append({'t': 'p', 'runs': mark_sources(runs, heuristic=heuristic)})
     # footnotes
@@ -280,6 +280,13 @@ def build():
             if a['siman'] <= ex['siman'] and a['siman'] != 0:
                 pos = i + 1
         ordered.insert(pos, ex)
+    # internal divider page wherever the siman changes (label of the first article of the group)
+    cur = 0
+    for a in ordered:
+        a['divider'] = None
+        if a['siman'] and a['siman'] != cur:
+            a['divider'] = re.split(r'\s+סעי', a['label'])[0]
+            cur = a['siman']
     return ordered
 
 
