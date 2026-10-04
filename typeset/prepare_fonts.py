@@ -6,7 +6,7 @@
   FrankRuehl DP (FRANK.OTF / ...)    draws U+05F3 / U+05F4 empty (its ASCII ' and " are the geresh / gershayim);
                                      FrankRuehlDP-Q-*.otf = a copy that maps U+05F3 / U+05F4 onto those two glyphs
   Ashcnz (ASHCNZ.TTF / ASHCNZB.TTF) same legacy encoding as Drogolin: AshcnzU-*.ttf
-  Asher, Livorna, HadasaNew          used as is
+  Asher, Livorna, HadasaNew, Ashkenazy used as is
 
 usage: python prepare_fonts.py <folder with the original font files>   (the names are matched by the family name inside the files)
 """
@@ -61,6 +61,8 @@ if __name__ == '__main__':
             frank_quotes(TTFont(f), os.path.join(OUT, f'FrankRuehlDP-Q-{kind}.otf')); print('FrankRuehl DP', kind)
         elif fam == 'Asher':
             shutil.copy(f, os.path.join(OUT, f'Asher-{kind}.ttf')); print('Asher', kind)
+        elif fam == 'Ashkenazy':
+            shutil.copy(f, os.path.join(OUT, 'Ashkenazy-Regular.ttf')); print('Ashkenazy')
         elif fam == 'HadasaNew':
             shutil.copy(f, os.path.join(OUT, f'HadasaNew-{kind}.ttf')); print('HadasaNew', kind)
         elif fam == 'Livorna':

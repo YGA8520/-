@@ -26,10 +26,10 @@ Duplicates are decided on the text (6-word shingles), never by file name. `pytho
 ## Fonts (config.json)
 Current set (all can be changed in `config.json`; earlier sets: `config.drogolin.json`, `config.keter-stam.json`, `config.frank-david.json`):
 `body` FrankRuehl DP · `lead` Livorna (bold first word and sub-headings; Livorna has only a regular cut, so the engine / Word thicken it) ·
-`display` Ashcnz Regular (article titles, dividers, ToC heading, cover) · `toc` HadasaNew (ToC entries, group lines and page numbers) · `notes` Asher (footnotes, their title and letters; size 9.4 / 13.8 pt) · `author` Shofar.
+`display` Ashkenazy Regular (article titles, dividers, ToC heading, cover; a single-weight face, so display weight 400) · `toc` HadasaNew (ToC entries, group lines and page numbers) · `notes` Asher (footnotes, their title and letters; size 9.4 / 13.8 pt) · `author` Shofar.
 The client's proprietary fonts are **not in git**; `prepare_fonts.py <folder with the original files>` builds what the engine needs from them:
 Ashcnz (like Drogolin) is an old cp1255-encoded font (a Unicode copy `AshcnzU-*.ttf` is made), FrankRuehl DP draws U+05F3/U+05F4 empty (copy `FrankRuehlDP-Q-*.otf` maps them onto its own ' and " glyphs), Asher / Livorna are used as is.
-The composite family "Ashcnz Title" (Ashcnz letters + FrankRuehl DP for everything else) must NOT let the FrankRuehl face cover U+05D0-05EA: when unicode-ranges overlap, the face declared last wins and the titles silently fall back to FrankRuehl. Check with `pdffonts out/book.pdf` (Ashcnz-Normal must be listed) or `DUMP_FONTS=1 node build.js ...`.
+(`config.ashcnz.json` keeps the earlier Ashcnz setup. Its composite family "Ashcnz Title" (Ashcnz letters + FrankRuehl DP for everything else) must NOT let the FrankRuehl face cover U+05D0-05EA: when unicode-ranges overlap, the face declared last wins and the titles silently fall back to FrankRuehl. Check with `pdffonts out/book.pdf` (Ashcnz-Normal must be listed) or `DUMP_FONTS=1 node build.js ...`.)
 In Word the text uses plain ASCII ' and " instead of ׳ ״ (`wordAsciiQuotes`, not in the footnotes: Asher draws them) and × √ are set in Arial (`wordFallbackChars`) because FrankRuehl DP draws them empty.
 Word needs these installed: FrankRuehl DP, Livorna, Ashcnz, Asher, Shofar.
 `fontWeights` sets the weight of the display / lead roles. Titles are centred in the frame by the ink of their letters (`inkShiftPx` in `engine.js`), not by the line box of the font.
