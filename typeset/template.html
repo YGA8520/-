@@ -25,7 +25,8 @@ body { font-kerning: normal; font-feature-settings: "kern" 1; text-rendering: ge
 .ld { font-family: "David Libre"; font-weight: 700; font-size: 0.95em; }
 .sm, .smb { font-size: 0.84em; }
 .fnref { font-weight: 700; font-size: 0.62em; position: relative; top: -0.55em; }
-.header { position: absolute; top: calc(18.2mm); height: 9mm; direction: ltr; display: flex; align-items: baseline; border-bottom: 0.6pt solid #000; }
+.header { position: absolute; top: calc(18.2mm); height: 9mm; direction: ltr; display: flex; align-items: baseline; }
+.hrule { position: absolute; }
 .header .grow { flex: 1; }
 .header span { direction: rtl; unicode-bidi: isolate; }
 .hnum { font: 700 13pt "David Libre"; }
@@ -46,7 +47,7 @@ img.orn { display: inline-block; }
 .banner .author { font: 700 11.5pt "David Libre"; margin-top: 2.5mm; }
 .banner .abstract { font: 400 10pt/15pt "David Libre"; width: 100mm; margin: 4mm auto 0; text-align: justify; text-align-last: center; }
 .fnhead { position: absolute; display: flex; align-items: center; direction: rtl; line-height: 0; }
-.fnhead .fntitle { font: 700 9.5pt "David Libre"; line-height: normal; white-space: nowrap; }
+.fnhead .fntitle { font-family: "David Libre"; font-weight: 700; line-height: normal; white-space: nowrap; position: relative; top: 0.2mm; }
 .fnmark { position: absolute; direction: rtl; text-align: right; font: 700 9.5pt "David Libre"; white-space: pre; padding-left: 0; }
 .endorn { position: absolute; text-align: center; }
 .endorn { line-height: 0; }
@@ -74,6 +75,9 @@ table.bt { border-collapse: collapse; margin: 0 auto; font-family: "Frank Ruhl L
 .cover-in { position: absolute; left: 0; right: 0; top: 38mm; text-align: center; line-height: 0; }
 .cover-in .cv-title { font: 800 40pt/1.15 "Frank Ruhl Libre"; margin: 12mm 0 4mm; line-height: 1.15; }
 .cover-in .cv-sub { font: 400 16pt/1.4 "David Libre"; margin: 0 0 12mm; line-height: 1.4; }
+.banner .lframe { position: relative; margin: 1mm auto 0; line-height: 0; }
+.banner .lframe img { position: absolute; left: 0; top: 0; }
+.banner .lframe span { position: absolute; left: 0; right: 0; top: 0; bottom: 0; display: flex; align-items: center; justify-content: center; font: 700 13pt "David Libre"; line-height: 1; padding-top: 0.3mm; }
 </style>
 </head>
 <body>

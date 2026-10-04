@@ -1,0 +1,33 @@
+{
+ "header-rule": {
+  "src": "assets/ornaments/composed/header-rule.png",
+  "wmm": 137.2,
+  "hmm": 5.0
+ },
+ "frames": {
+  "label-frame-46.png": {
+   "src": "assets/ornaments/composed/label-frame-46.png",
+   "wmm": 46.0,
+   "hmm": 13.0,
+   "capmm": 5.757333333333333
+  },
+  "label-frame-50.png": {
+   "src": "assets/ornaments/composed/label-frame-50.png",
+   "wmm": 50,
+   "hmm": 13.0,
+   "capmm": 5.757333333333333
+  },
+  "label-frame-58.png": {
+   "src": "assets/ornaments/composed/label-frame-58.png",
+   "wmm": 58,
+   "hmm": 13.0,
+   "capmm": 5.757333333333333
+  },
+  "label-frame-48.png": {
+   "src": "assets/ornaments/composed/label-frame-48.png",
+   "wmm": 48,
+   "hmm": 13.0,
+   "capmm": 5.757333333333333
+  }
+ }
+}

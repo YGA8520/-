@@ -278,7 +278,7 @@
 
     // ------------------------------------------------------------ pagination
     const FN = cfg.footnotes;
-    const fnTop = mm(FN.topGap), fnHeadH = mm(FN.headH || 6), fnHeadGap = mm(FN.headGap), fnItemGap = mm(FN.itemGap);
+    const fnTop = mm(FN.topGap), fnHeadH = mm((FN.ornamentW || 50) * (cfg.ornaments[FN.ornament || 'line-scroll'].h / cfg.ornaments[FN.ornament || 'line-scroll'].w) + 0.6), fnHeadGap = mm(FN.headGap), fnItemGap = mm(FN.itemGap);
     const ORN = cfg.ornaments || {};
     const oimg = (name, wmm, cls, extra) => { const o = ORN[name]; if (!o) return ''; const h = wmm * o.h / o.w; return `<img class="orn ${cls || ''}" src="${o.src}" style="width:${wmm}mm;height:${h.toFixed(3)}mm;${extra || ''}">`; };
     function fnBlockH(entries) {
@@ -477,7 +477,10 @@
       const B = cfg.banner || {};
       let h = '<div class="banner">';
       if (art.basad) h += `<div class="basad">${esc(art.basad)}</div>`;
-      if (art.label) h += `<div class="label">${esc(art.label)}</div>`;
+      if (art.label && art.labelFrame) {
+        const f = art.labelFrame;
+        h += `<div class="lframe" style="width:${f.wmm}mm;height:${f.hmm}mm"><img class="orn" src="${f.src}" style="width:${f.wmm}mm;height:${f.hmm}mm"><span>${esc(art.label)}</span></div>`;
+      } else if (art.label) h += `<div class="label">${esc(art.label)}</div>`;
       if (B.style === 'divider') {
         h += `<div class="orn-row top">${oimg(B.divider || 'divider-long', B.dividerW || 100, '', '')}</div>`;
         h += `<div class="title">${esc(art.title)}</div>`;
@@ -580,7 +583,9 @@
       const chap = `<span class="hchap">${esc(p.article.shortTitle || p.article.title)}</span>`;
       const html = even ? `${book}${dot}${chap}<span class="grow"></span>${num}` : `${num}<span class="grow"></span>${chap}${dot}${book}`;
       const ml = even ? mm(P.marginInner) : mm(P.marginOuter);
-      return `<div class="header ${even ? 'even' : 'odd'}" style="left:${ml}px;width:${textW0}px">${html}</div>`;
+      const hr = ORN['header-rule'];
+      const rule = hr ? `<img class="orn hrule" src="${hr.src}" style="left:${ml}px;top:${mm((cfg.header && cfg.header.ruleTop) || 25.2)}px;width:${textW0}px;height:${(textW0 * hr.h / hr.w).toFixed(2)}px">` : '';
+      return `<div class="header ${even ? 'even' : 'odd'}" style="left:${ml}px;width:${textW0}px">${html}</div>${rule}`;
     }
 
     artPages.forEach((pages) => pages.forEach((p) => {
@@ -625,11 +630,14 @@
         const hd = document.createElement('div');
         hd.className = 'fnhead';
         hd.style.cssText = `left:${marginL}px;top:${fy}px;width:${textW0}px;height:${fnHeadH}px;`;
-        const titleW = textW(FN.title, `700 ${pt(FN.titleSize || 9.5)}px "${FN.titleFamily || 'David Libre'}"`);
-        const sideW = Math.max(10, (textW0 - titleW - mm(2 * (FN.titleGap || 3.5))) / 2) / MM;
-        const sw = Math.min(sideW, FN.sideMax || 60);
-        hd.innerHTML = `${oimg(FN.ornament || 'line-scroll', sw, 'fnside', 'transform:scaleX(-1);')}<span class="fntitle">${esc(FN.title)}</span>${oimg(FN.ornament || 'line-scroll', sw, 'fnside', '')}`;
-        hd.style.justifyContent = 'center'; hd.style.gap = (FN.titleGap || 3.5) + 'mm';
+        const orn = ORN[FN.ornament || 'line-scroll'];
+        const swmm = FN.ornamentW || 50;                           // ornament width (mm)
+        const ohmm = swmm * orn.h / orn.w;                         // ornament height (mm)
+        const tsize = (FN.titleRatio || 0.72) * ohmm / 0.352778;   // title size follows the ornament height (pt)
+        const titleW = textW(FN.title, `700 ${pt(tsize)}px "${FN.titleFamily || 'David Libre'}"`);
+        const gapmm = (FN.gapRatio || 0.75) * ohmm;
+        hd.innerHTML = `${oimg(FN.ornament || 'line-scroll', swmm, 'fnside', 'transform:scaleX(-1);')}<span class="fntitle" style="font-size:${tsize.toFixed(2)}pt">${esc(FN.title)}</span>${oimg(FN.ornament || 'line-scroll', swmm, 'fnside', '')}`;
+        hd.style.justifyContent = 'center'; hd.style.gap = gapmm.toFixed(2) + 'mm';
         pg.appendChild(hd);
         fy += fnHeadH + fnHeadGap;
         const gutter = mm(FN.gutter);

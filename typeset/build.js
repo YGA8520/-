@@ -13,6 +13,12 @@ const { chromium } = require('/opt/node22/lib/node_modules/playwright');
     const buf = fs.readFileSync(path.join(odir, f));
     cfg.ornaments[f.replace(/\.png$/, '')] = { src: 'assets/ornaments/' + f, w: buf.readUInt32BE(16), h: buf.readUInt32BE(20) };
   }
+  const cdir = path.join(odir, 'composed');
+  if (fs.existsSync(cdir)) for (const f of fs.readdirSync(cdir)) {
+    if (!f.endsWith('.png')) continue;
+    const buf = fs.readFileSync(path.join(cdir, f));
+    cfg.ornaments[f.replace(/\.png$/, '')] = { src: 'assets/ornaments/composed/' + f, w: buf.readUInt32BE(16), h: buf.readUInt32BE(20) };
+  }
   const browser = await chromium.launch();
   const page = await browser.newPage();
   page.on('console', (m) => console.log('[page]', m.text()));

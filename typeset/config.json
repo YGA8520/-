@@ -60,7 +60,10 @@
     "ornament": "line-scroll",
     "titleSize": 9.5,
     "titleGap": 3.5,
-    "sideMax": 60
+    "sideMax": 60,
+    "ornamentW": 50,
+    "titleRatio": 0.72,
+    "gapRatio": 0.75
   },
   "banner": {
     "style": "flourish",
@@ -72,5 +75,8 @@
   "endOrnament": {
     "name": "fleuron-small",
     "w": 18
+  },
+  "header": {
+    "ruleTop": 25.2
   }
 }
