@@ -38,9 +38,6 @@ class Metrics:
 
     def nib(self):
         n = box(-self.a / 2, -self.b / 2, self.a / 2, self.b / 2)
-        # a pen with softly rounded corners gives smoother curves than a razor-sharp one
-        r = self.b * 0.42
-        n = n.buffer(-r, join_style=1, resolution=6).buffer(r, join_style=1, resolution=6)
         return affinity.rotate(n, self.angle, origin=(0, 0))
 
 
@@ -50,6 +47,7 @@ def lerp(p, q, t):
 
 
 def bez(p0, p1, p2, p3, n=24):
+    n = int(n * 1.8)
     pts = []
     for i in range(n + 1):
         t = i / n
@@ -62,6 +60,7 @@ def bez(p0, p1, p2, p3, n=24):
 
 def arc(cx, cy, rx, ry, a0, a1, n=28):
     """Elliptical arc, angles in degrees (counter-clockwise, 0 = +x)."""
+    n = int(n * 1.6)
     pts = []
     for i in range(n + 1):
         a = math.radians(a0 + (a1 - a0) * i / n)
@@ -118,11 +117,11 @@ def diamond(cx, cy, rx, ry):
     return Polygon([(cx - rx, cy), (cx, cy + ry), (cx + rx, cy), (cx, cy - ry)])
 
 
-def finish(geom, rnd, simplify=0.7):
-    """Soften corners a little (printed-type feel) and clean the outline."""
+def finish(geom, rnd, simplify=0.2):
+    """Close pinholes between strokes and clean the outline (pointed tips stay pointed)."""
     if rnd > 0:
-        geom = geom.buffer(rnd, join_style=1, resolution=8).buffer(-2 * rnd, join_style=1, resolution=8) \
-                   .buffer(rnd, join_style=1, resolution=8)
+        r = 1.5
+        geom = geom.buffer(r, join_style=1, resolution=8).buffer(-r, join_style=1, resolution=8)
     geom = geom.simplify(simplify, preserve_topology=True)
     return geom
 
@@ -188,3 +187,99 @@ def reach(path, ys=None, ye=None):
     if ye is not None:
         pts.append(_reach(pts[-2], pts[-1], ye))
     return pts
+
+
+# ---------------------------------------------------------------- variable-width strokes
+def _smooth(t):
+    t = max(0.0, min(1.0, t))
+    return t * t * (3 - 2 * t)
+
+
+_nib_cache = {}
+
+
+def _scaled_nib(nib, k):
+    key = (tuple(round(c, 1) for c in nib.bounds), round(k, 3))
+    if key not in _nib_cache:
+        n = affinity.scale(nib, k, k, origin=(0, 0))
+        _nib_cache[key] = list(n.exterior.coords)[:-1]
+    return _nib_cache[key]
+
+
+def W(pts, s_len=0.0, s_k=1.0, e_len=0.0, e_k=1.0, clip=None, ks=None, prof=None):
+    """Stroke description whose pen shrinks towards the start / end (pointed tips).
+
+    ks - optional [(distance_from_end, scale), ...] profile (nearest to the end first is
+    not required); lets a stem be thin near the shoulder and swell towards the foot."""
+    return {"pts": list(pts), "s_len": s_len, "s_k": s_k, "e_len": e_len, "e_k": e_k, "clip": clip, "ks": ks, "prof": prof}
+
+
+def sweep_var(spec, nib, step=4.0):
+    pts = densify(spec["pts"], step)
+    cum = [0.0]
+    for p, q in zip(pts, pts[1:]):
+        cum.append(cum[-1] + math.hypot(q[0] - p[0], q[1] - p[1]))
+    total = cum[-1] or 1.0
+
+    def sc(d):
+        k = 1.0
+        if spec["s_len"] > 0 and d < spec["s_len"]:
+            k = min(k, spec["s_k"] + (1 - spec["s_k"]) * _smooth(d / spec["s_len"]))
+        e = total - d
+        if spec["e_len"] > 0 and e < spec["e_len"]:
+            k = min(k, spec["e_k"] + (1 - spec["e_k"]) * _smooth(e / spec["e_len"]))
+        ks = spec.get("ks")
+        if ks:
+            # ks = (top_k, foot_k, ramp_start, ramp_end): scale is top_k far from the end and
+            # rises smoothly to foot_k as the distance to the end shrinks from ramp_start to ramp_end
+            top_k, foot_k, r0, r1 = ks
+            if e >= r0:
+                f = top_k
+            elif e <= r1:
+                f = foot_k
+            else:
+                f = top_k + (foot_k - top_k) * _smooth((r0 - e) / (r0 - r1))
+            k *= f
+        prof = spec.get("prof")
+        if prof:                           # [(distance_from_start, scale), ...] ascending
+            if d <= prof[0][0]:
+                f = prof[0][1]
+            elif d >= prof[-1][0]:
+                f = prof[-1][1]
+            else:
+                f = prof[-1][1]
+                for (d0, k0), (d1, k1) in zip(prof, prof[1:]):
+                    if d0 <= d <= d1:
+                        f = k0 + (k1 - k0) * _smooth((d - d0) / (d1 - d0))
+                        break
+            k *= f
+        return max(k, 0.06)
+
+    if len(pts) == 1:
+        pts = pts + pts
+        cum = [0.0, 0.0]
+    parts = []
+    for i in range(len(pts) - 1):
+        n0 = _scaled_nib(nib, sc(cum[i]))
+        n1 = _scaled_nib(nib, sc(cum[i + 1]))
+        p, q = pts[i], pts[i + 1]
+        cloud = [(x + p[0], y + p[1]) for x, y in n0] + [(x + q[0], y + q[1]) for x, y in n1]
+        parts.append(MultiPoint(cloud).convex_hull)
+    g = unary_union(parts)
+    if spec["clip"] is not None:
+        g = g.intersection(box(-INF, spec["clip"][0], INF, spec["clip"][1]))
+    return g
+
+
+def plen(pts):
+    return sum(math.hypot(q[0] - p[0], q[1] - p[1]) for p, q in zip(pts, pts[1:]))
+
+
+def polyfrom(*segs):
+    """Build a filled polygon from point lists / bezier-sampled lists."""
+    pts = []
+    for sgm in segs:
+        for p in sgm:
+            if not pts or abs(pts[-1][0] - p[0]) > 1e-6 or abs(pts[-1][1] - p[1]) > 1e-6:
+                pts.append(p)
+    return Polygon(pts).buffer(0)

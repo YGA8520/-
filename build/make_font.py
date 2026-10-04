@@ -24,11 +24,11 @@ OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "fonts")
 
 # name, wght, nib long side, nib short side, nib angle, corner rounding, dot radius
 WEIGHTS = [
-    Metrics("Light", 300, 77, 28, 68, 4, 32),
-    Metrics("Regular", 400, 105, 38, 68, 5, 38),
-    Metrics("Medium", 500, 124, 49, 68, 6, 43),
-    Metrics("Bold", 700, 147, 67, 68, 7, 50),
-    Metrics("Black", 900, 173, 89, 68, 8, 58),
+    Metrics("Light", 300, 78, 27, 68, 4, 34),
+    Metrics("Regular", 400, 108, 38, 68, 5, 40),
+    Metrics("Medium", 500, 126, 49, 68, 6, 45),
+    Metrics("Bold", 700, 148, 66, 68, 7, 52),
+    Metrics("Black", 900, 172, 88, 68, 8, 60),
 ]
 
 
@@ -38,11 +38,13 @@ def glyph_geometry(m, paths, shapes):
     nib = m.nib()
     parts = []
     for p in paths:
-        if isinstance(p, tuple):
+        if isinstance(p, dict):
+            g = gl.sweep_var(p, nib)
+        elif isinstance(p, tuple):
             pts, (y0, y1) = p
-            g = sweep(gl.densify(pts, 9.0), nib).intersection(box(-gl.INF, y0, gl.INF, y1))
+            g = sweep(gl.densify(pts, 5.0), nib).intersection(box(-gl.INF, y0, gl.INF, y1))
         else:
-            g = sweep(gl.densify(p, 9.0), nib)
+            g = sweep(gl.densify(p, 5.0), nib)
         parts.append(g)
     parts += shapes
     return finish(unary_union(parts), m.rnd)
