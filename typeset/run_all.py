@@ -13,6 +13,7 @@ STEPS = [
     [PY, 'book.py', 'book.doc.json'],
     [PY, 'tint_ornaments.py'],
     [PY, 'compose_ornaments.py'],
+    [PY, 'make_cover.py'],
     ['node', 'build.js', 'book.doc.json', os.path.join('out', 'book.pdf')],
     [PY, 'compose_ornaments.py', os.path.join('out', 'book.layout.json')],
     [PY, 'make_docx.py', 'book.doc.json', os.path.join('out', 'book.layout.json'), os.path.join('out', 'book.docx')],

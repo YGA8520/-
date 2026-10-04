@@ -173,6 +173,11 @@
       "family": "Ashkenazy",
       "file": "Ashkenazy-Regular.ttf",
       "weight": "400"
+    },
+    {
+      "family": "EFT Algebra",
+      "file": "EFT_Algebra-Regular.ttf",
+      "weight": "400"
     }
   ],
   "wordFonts": {
@@ -188,5 +193,94 @@
     "lead": 700
   },
   "wordAsciiQuotes": true,
-  "wordFallbackChars": "×√"
+  "wordFallbackChars": "×√",
+  "cover": {
+    "image": "assets/cover/cover-bg.jpg",
+    "palette": "navy",
+    "fontTitle": "EFT Algebra",
+    "fontText": "FrankRuehl DP",
+    "texts": {
+      "kuntres": "קונטרס",
+      "arcTop": "קובץ חבורא מאברכי כולל ברומו של עולם",
+      "arcBottom": [
+        "חבורות",
+        "שיעורים",
+        "סוגיות",
+        "הלכה למעשה"
+      ],
+      "line1": "אוסף חבורות ושיעורים",
+      "line2": "בעניני ברכות ותפילה"
+    },
+    "geometry": {
+      "kuntres": {
+        "x": 712.5,
+        "y": 511,
+        "size": 56.45
+      },
+      "title": {
+        "size": 165,
+        "x1": 888.5,
+        "y1": 718,
+        "maxW1": 520,
+        "x2": 627,
+        "y2": 873,
+        "maxW2": 575
+      },
+      "top": {
+        "cx": 733,
+        "cy": 751,
+        "r": 349,
+        "a0": 150,
+        "a1": 10,
+        "off": "60%",
+        "size": 36
+      },
+      "bottom": {
+        "cx": 714,
+        "cy": 757,
+        "r": 309,
+        "a0": -150,
+        "a1": -10,
+        "off": "52%",
+        "size": 36
+      },
+      "line1": {
+        "x": 703.5,
+        "y": 1284,
+        "size": 59.3
+      },
+      "line2": {
+        "x": 704,
+        "y": 1363,
+        "size": 59.3
+      }
+    },
+    "palettes": {
+      "original": {
+        "title": "#595959",
+        "arc": "#7e7e7e",
+        "dark": "#262626"
+      },
+      "navy": {
+        "title": "#27375c",
+        "arc": "#4d5f86",
+        "dark": "#1d2a4a"
+      },
+      "burgundy": {
+        "title": "#5e2231",
+        "arc": "#86505c",
+        "dark": "#3c1620"
+      },
+      "purple": {
+        "title": "#43305f",
+        "arc": "#6c5a86",
+        "dark": "#2b1d40"
+      },
+      "sepia": {
+        "title": "#5a4128",
+        "arc": "#7d6a55",
+        "dark": "#36261a"
+      }
+    }
+  }
 }

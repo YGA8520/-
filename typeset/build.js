@@ -20,6 +20,11 @@ try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = requ
   Object.assign(cfg.titleFrame, { family: F.display }); Object.assign(cfg.dividerFrame, { family: F.display });
   cfg.footnotes.titleFamily = F.notes;
   const faces = cfg.fontFaces || [];
+  if (cfg.cover) {            // the artwork cover (make_cover.py writes the background); without it the plain placeholder cover is used
+    cfg.cover.enabled = fs.existsSync(path.join(__dirname, cfg.cover.image));
+    cfg.cover.colors = (cfg.cover.palettes || {})[cfg.cover.palette] || Object.values(cfg.cover.palettes || {})[0];
+    if (!cfg.cover.enabled) console.log('note: cover background', cfg.cover.image, 'not found (run make_cover.py) - placeholder cover used');
+  }
   cfg.ornaments = {};
   const odir = path.join(__dirname, 'assets', 'ornaments');
   for (const f of fs.readdirSync(odir)) {
@@ -38,13 +43,14 @@ try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = requ
   page.on('console', (m) => console.log('[page]', m.text()));
   page.on('pageerror', (e) => console.log('[pageerror]', e.message));
   await page.goto('file://' + path.join(__dirname, 'template.html'));
-  await page.addStyleTag({ content: `:root{--f-body:"${F.body}";--f-lead:"${F.lead}";--f-display:"${F.display}";--f-notes:"${F.notes}";--f-author:"${F.author}";--f-toc:"${F.toc}";--w-notes:${cfg.type.foot.weight || 400};--s-foot:${cfg.type.foot.size};--w-display:${WD};--w-lead:${WL};}\n` +
-    faces.map((f) => `@font-face{font-family:"${f.family}";font-weight:${f.weight || 400};font-style:${f.style || 'normal'};${f.unicodeRange ? 'unicode-range:' + f.unicodeRange + ';' : ''}src:url("assets/fonts/${f.file}");}`).join('\n') });
+  const styleCss = `:root{--f-body:"${F.body}";--f-lead:"${F.lead}";--f-display:"${F.display}";--f-notes:"${F.notes}";--f-author:"${F.author}";--f-toc:"${F.toc}";--w-notes:${cfg.type.foot.weight || 400};--s-foot:${cfg.type.foot.size};--w-display:${WD};--w-lead:${WL};}\n` +
+    faces.map((f) => `@font-face{font-family:"${f.family}";font-weight:${f.weight || 400};font-style:${f.style || 'normal'};${f.unicodeRange ? 'unicode-range:' + f.unicodeRange + ';' : ''}src:url("assets/fonts/${f.file}");}`).join('\n');
+  await page.addStyleTag({ content: styleCss });
   await page.addScriptTag({ path: path.join(__dirname, 'engine.js') });
   await page.evaluate(async (fontSpecs) => {
     await Promise.all(fontSpecs.map((f) => document.fonts.load(f, 'אבג')));
     await document.fonts.ready;
-  }, [400, 700, 800].flatMap((w) => [F.body, F.lead, F.display, F.notes, F.author, F.toc].map((fam) => `${w} 16px "${fam}"`)));
+  }, [400, 700, 800].flatMap((w) => [F.body, F.lead, F.display, F.notes, F.author, F.toc, ...(cfg.cover ? [cfg.cover.fontTitle, cfg.cover.fontText] : [])].map((fam) => `${w} 16px "${fam}"`)));
   const res = await page.evaluate(([c, d]) => window.typeset(c, d), [cfg, doc]);
   await page.evaluate(async () => {
     const urls = new Set([...document.body.innerHTML.matchAll(/url\(([^)]+)\)/g)].map((m) => m[1]));
@@ -162,5 +168,20 @@ try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = requ
   if (check.length) console.log(check.slice(0, 8));
   fs.writeFileSync(outPdf.replace(/\.pdf$/, '.layout.json'), JSON.stringify(res, null, 1));
   await page.pdf({ path: outPdf, width: '176mm', height: '250mm', printBackground: true, preferCSSPageSize: true });
+  if (cfg.cover && cfg.cover.enabled && !doc.noCover) {          // the cover alone: a 300 dpi picture (used in the Word file) and a one-page pdf
+    const outDir = path.dirname(outPdf);
+    const cp = await browser.newPage({ viewport: { width: 700, height: 1000 }, deviceScaleFactor: 2079 / (176 * 96 / 25.4) });
+    await cp.goto('file://' + path.join(__dirname, 'template.html'));
+    await cp.addStyleTag({ content: styleCss });
+    await cp.addScriptTag({ path: path.join(__dirname, 'engine.js') });
+    await cp.evaluate(async (fams) => { await Promise.all(fams.flatMap((f) => [400, 700].map((w) => document.fonts.load(w + ' 16px "' + f + '"', 'אבג')))); await document.fonts.ready; }, [cfg.cover.fontTitle, cfg.cover.fontText]);
+    await cp.evaluate(([c, name]) => {
+      document.body.style.margin = '0';
+      document.body.innerHTML = '<div id="cv" class="page cover" style="width:176mm;height:250mm;position:relative;overflow:hidden">' + window.coverHTML(c, name) + '</div>';
+    }, [cfg, doc.book.name]);
+    await cp.evaluate(() => Promise.all([...document.images].map((i) => i.decode().catch(() => {}))));
+    await cp.locator('#cv').screenshot({ path: path.join(outDir, 'cover.jpg'), type: 'jpeg', quality: 93 });
+    await cp.pdf({ path: path.join(outDir, 'cover.pdf'), width: '176mm', height: '250mm', printBackground: true, preferCSSPageSize: true });
+  }
   await browser.close();
 })();

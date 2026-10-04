@@ -33,6 +33,37 @@
     return w;
   }
 
+  // ---------------------------------------------------------------- cover
+  // The cover is the client's artwork (assets/cover/cover-bg.jpg, made by make_cover.py) with live text on top: title and "קונטרס" in EFT Algebra,
+  // the two curved lines and the two lines under the circle in FrankRuehl DP.  Everything is laid out in a 1408 x 2000 unit grid (= the page, 8 units per mm).
+  function coverHTML(cfg, bookName) {
+    const C = cfg.cover, G = C.geometry, T = C.texts || {}, col = C.colors;
+    const words = bookName.split(/\s+/).filter(Boolean);
+    const title1 = T.title1 || words[0] || bookName, title2 = T.title2 || words.slice(1).join(' ');
+    const fT = C.fontTitle, fX = C.fontText;
+    const fit = (txt, size, maxW) => { const w = textW(txt, `${size}px "${fT}"`); return w > maxW ? size * maxW / w : size; };
+    const arc = (g, sweep) => {
+      const p = (a) => [g.cx + g.r * Math.cos(a * Math.PI / 180), g.cy - g.r * Math.sin(a * Math.PI / 180)];
+      const s = p(g.a0), e = p(g.a1);
+      return `M ${s[0].toFixed(2)} ${s[1].toFixed(2)} A ${g.r} ${g.r} 0 ${Math.abs(g.a1 - g.a0) > 180 ? 1 : 0} ${sweep} ${e[0].toFixed(2)} ${e[1].toFixed(2)}`;
+    };
+    const bullet = ` <tspan font-family="'Times New Roman','Liberation Serif',serif" font-size="${(G.bottom.size * 0.6).toFixed(1)}">&#9679;</tspan> `;
+    const bottomTxt = (Array.isArray(T.arcBottom) ? T.arcBottom.map(esc).join(bullet) : esc(T.arcBottom || ''));
+    const st = 'direction:rtl;unicode-bidi:isolate;';
+    const s1 = fit(title1, G.title.size, G.title.maxW1), s2 = fit(title2, G.title.size, G.title.maxW2);
+    return `<img src="${C.image}" style="position:absolute;left:0;top:0;width:100%;height:100%">` +
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1408 2000" style="position:absolute;left:0;top:0;width:100%;height:100%">` +
+      `<defs><path id="cvTop" d="${arc(G.top, 1)}"/><path id="cvBot" d="${arc(G.bottom, 0)}"/></defs>` +
+      (T.kuntres ? `<text x="${G.kuntres.x}" y="${G.kuntres.y}" text-anchor="middle" font-family="${fT}" font-size="${G.kuntres.size}" fill="${col.dark}" style="${st}">${esc(T.kuntres)}</text>` : '') +
+      `<text x="${G.title.x1}" y="${G.title.y1}" text-anchor="middle" font-family="${fT}" font-size="${s1.toFixed(2)}" fill="${col.title}" style="${st}">${esc(title1)}</text>` +
+      (title2 ? `<text x="${G.title.x2}" y="${G.title.y2}" text-anchor="middle" font-family="${fT}" font-size="${s2.toFixed(2)}" fill="${col.title}" style="${st}">${esc(title2)}</text>` : '') +
+      (T.arcTop ? `<text font-family="${fX}" font-size="${G.top.size}" fill="${col.arc}" style="${st}"><textPath href="#cvTop" startOffset="${G.top.off}" text-anchor="middle">${esc(T.arcTop)}</textPath></text>` : '') +
+      (bottomTxt ? `<text font-family="${fX}" font-size="${G.bottom.size}" fill="${col.arc}" style="${st}"><textPath href="#cvBot" startOffset="${G.bottom.off}" text-anchor="middle">${bottomTxt}</textPath></text>` : '') +
+      (T.line1 ? `<text x="${G.line1.x}" y="${G.line1.y}" text-anchor="middle" font-family="${fX}" font-weight="700" font-size="${G.line1.size}" fill="${col.dark}" style="${st}">${esc(T.line1)}</text>` : '') +
+      (T.line2 ? `<text x="${G.line2.x}" y="${G.line2.y}" text-anchor="middle" font-family="${fX}" font-weight="700" font-size="${G.line2.size}" fill="${col.dark}" style="${st}">${esc(T.line2)}</text>` : '') +
+      `</svg>`;
+  }
+
   // ---------------------------------------------------------------- engine
   function typeset(cfg, doc) {
     const P = cfg.page;
@@ -724,7 +755,7 @@
     if (!doc.noCover) {                      // placeholder cover until the real one is supplied
       const pg = newPage();
       pg.classList.add('cover');
-      pg.innerHTML = `<div class="cover-in">${oimg('flourish-wide-1', 70, '', '')}<div class="cv-title">${esc(bookName)}</div>${doc.book.subtitle ? `<div class="cv-sub">${esc(doc.book.subtitle)}</div>` : ''}${oimg('flourish-wide-1', 70, '', 'transform:scaleY(-1);')}</div>`;
+      pg.innerHTML = (cfg.cover && cfg.cover.enabled) ? coverHTML(cfg, bookName) : `<div class="cover-in">${oimg('flourish-wide-1', 70, '', '')}<div class="cv-title">${esc(bookName)}</div>${doc.book.subtitle ? `<div class="cv-sub">${esc(doc.book.subtitle)}</div>` : ''}${oimg('flourish-wide-1', 70, '', 'transform:scaleY(-1);')}</div>`;
       root.appendChild(pg);
     }
     const hdrCache = new Map();
@@ -918,5 +949,6 @@
   }
 
   window.typeset = typeset;
+  window.coverHTML = coverHTML;
   window.hebNum = heb;
 })();

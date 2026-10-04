@@ -196,6 +196,20 @@ def picture(name, width_mm, flip=None, height_mm=None):
             f'{_graphic(os.path.basename(name), rid, cx, cy, i)}</wp:inline></w:drawing></w:r>')
 
 
+def picture_page(name, width_mm, height_mm):
+    """picture anchored to the PAGE (top-left corner, full page size) behind the text: the cover artwork"""
+    rid, (w, h) = MEDIA.add(name)
+    cx, cy = round(width_mm * MM_EMU), round(height_mm * MM_EMU)
+    _ids[0] += 1; i = _ids[0]
+    return (f'<w:r><w:drawing><wp:anchor distT="0" distB="0" distL="0" distR="0" simplePos="0" relativeHeight="{251640000 + i}" '
+            f'behindDoc="1" locked="0" layoutInCell="1" allowOverlap="1"><wp:simplePos x="0" y="0"/>'
+            f'<wp:positionH relativeFrom="page"><wp:posOffset>0</wp:posOffset></wp:positionH>'
+            f'<wp:positionV relativeFrom="page"><wp:posOffset>0</wp:posOffset></wp:positionV>'
+            f'<wp:extent cx="{cx}" cy="{cy}"/><wp:effectExtent l="0" t="0" r="0" b="0"/><wp:wrapNone/>'
+            f'<wp:docPr id="{i}" name="עמוד שער"/><wp:cNvGraphicFramePr><a:graphicFrameLocks noChangeAspect="1"/></wp:cNvGraphicFramePr>'
+            f'{_graphic(os.path.basename(name), rid, cx, cy, i)}</wp:anchor></w:drawing></w:r>')
+
+
 def picture_behind(name, width_mm):
     """picture anchored to the paragraph, centred on the text column, position = behind the text (wrapNone, behindDoc)"""
     rid, (w, h) = MEDIA.add(name)
@@ -471,12 +485,18 @@ def build(doc_json, layout_json, cfg_json, out):
     toc_ids = add_header('תוכן עניינים', 'TOC')
     headers.append(('headerEd.xml', empty_header())); headers.append(('headerEe.xml', empty_header()))
 
-    # cover (placeholder until the real cover is supplied)
-    parts.append(para('', spacing='<w:spacing w:before="2600" w:after="0" w:line="240" w:lineRule="auto"/>') +
-                 para(picture('flourish-wide-1.png', 70), jc='center') +
-                 para(run(book['name']), ST['coverTitle']) +
-                 (para(run(book['subtitle']), ST['coverSub']) if book.get('subtitle') else '') +
-                 para(picture('flourish-wide-1.png', 70, 'v'), jc='center', sect=sectpr('continuous', 1, empty_ids)))
+    # cover: the artwork (build.js writes out/cover.jpg: background + text) as one page-size picture; without it a plain placeholder cover
+    cover_jpg = os.path.join(os.path.dirname(os.path.abspath(out)), 'cover.jpg')
+    if cfg.get('cover') and os.path.exists(cover_jpg):
+        MEDIA.add('cover.jpg', open(cover_jpg, 'rb').read())
+        parts.append(para(picture_page('cover.jpg', 176, 250), spacing='<w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/>', sect=sectpr('continuous', 1, empty_ids)))
+    else:
+        parts.append(para('', spacing='<w:spacing w:before="2600" w:after="0" w:line="240" w:lineRule="auto"/>') +
+                     para(picture('flourish-wide-1.png', 70), jc='center') +
+                     para(run(book['name']), ST['coverTitle']) +
+                     (para(run(book['subtitle']), ST['coverSub']) if book.get('subtitle') else '') +
+                     para(picture('flourish-wide-1.png', 70, 'v'), jc='center', sect=sectpr('continuous', 1, empty_ids)))
+
 
     # table of contents: a real TOC field (outline levels: siman title = 1, article title = 2), with cached entries; running head like the rest of the booklet
     items = []
@@ -556,7 +576,7 @@ def build(doc_json, layout_json, cfg_json, out):
     hdr_rels = fn_rels
     ct = ('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
           '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>'
-          '<Default Extension="png" ContentType="image/png"/>'
+          '<Default Extension="png" ContentType="image/png"/><Default Extension="jpg" ContentType="image/jpeg"/>'
           '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>'
           '<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>'
           '<Override PartName="/word/settings.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml"/>'

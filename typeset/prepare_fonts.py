@@ -61,6 +61,8 @@ if __name__ == '__main__':
             frank_quotes(TTFont(f), os.path.join(OUT, f'FrankRuehlDP-Q-{kind}.otf')); print('FrankRuehl DP', kind)
         elif fam == 'Asher':
             shutil.copy(f, os.path.join(OUT, f'Asher-{kind}.ttf')); print('Asher', kind)
+        elif fam == 'EFT_Algebra':
+            shutil.copy(f, os.path.join(OUT, 'EFT_Algebra-Regular.ttf')); print('EFT Algebra (cover)')
         elif fam == 'Ashkenazy':
             shutil.copy(f, os.path.join(OUT, 'Ashkenazy-Regular.ttf')); print('Ashkenazy')
         elif fam == 'HadasaNew':
