@@ -23,8 +23,7 @@
     "foot": {
       "family": "Frank Ruhl Libre",
       "size": 10,
-      "leading": 14.6,
-      "weight": 300
+      "leading": 14.6
     },
     "h2": {
       "family": "Frank Ruhl Libre",
@@ -71,8 +70,8 @@
     "ruleTop": 25.2
   },
   "titleFrame": {
-    "size": 18.5,
-    "lead": 24,
+    "size": 16.5,
+    "lead": 22,
     "padV": 3.0,
     "padH": 4.5,
     "family": "Frank Ruhl Libre",
@@ -101,59 +100,38 @@
   },
   "fonts": {
     "body": "Frank Ruhl Libre",
-    "lead": "Keter YG",
-    "display": "Stam Title",
+    "lead": "David Libre",
+    "display": "Frank Ruhl Libre",
     "notes": "Frank Ruhl Libre",
-    "author": "Shofar"
+    "author": "David Libre"
   },
   "fontFaces": [
+    {
+      "family": "David Libre",
+      "file": "DavidLibre-Regular.ttf",
+      "weight": "400"
+    },
+    {
+      "family": "David Libre",
+      "file": "DavidLibre-Medium.ttf",
+      "weight": "500"
+    },
+    {
+      "family": "David Libre",
+      "file": "DavidLibre-Bold.ttf",
+      "weight": "700"
+    },
     {
       "family": "Frank Ruhl Libre",
       "file": "FrankRuhlLibre.ttf",
       "weight": "300 900"
-    },
-    {
-      "family": "Keter YG",
-      "file": "KeterYG-Medium.ttf",
-      "weight": "400"
-    },
-    {
-      "family": "Keter YG",
-      "file": "KeterYG-Bold.ttf",
-      "weight": "700"
-    },
-    {
-      "family": "Shofar",
-      "file": "ShofarRegular.ttf",
-      "weight": "400"
-    },
-    {
-      "family": "Shofar",
-      "file": "ShofarDemi-Bold.ttf",
-      "weight": "700"
-    },
-    {
-      "family": "Stam Title",
-      "file": "StamAshkenazCLM.ttf",
-      "weight": "400",
-      "unicodeRange": "U+0590-05F2,U+FB1D-FB4F"
-    },
-    {
-      "family": "Stam Title",
-      "file": "FrankRuhlLibre.ttf",
-      "weight": "400",
-      "unicodeRange": "U+0000-058F,U+05F3-05F4,U+0600-FB1C,U+FB50-10FFFF"
     }
   ],
   "wordFonts": {
-    "body": "Frank Ruhl Libre",
-    "lead": "Keter YG",
-    "display": "Stam Ashkenaz CLM",
-    "notes": "Frank Ruhl Libre Light",
-    "author": "Shofar"
-  },
-  "fontWeights": {
-    "display": 400,
-    "lead": 700
+    "body": "FrankRuehl",
+    "lead": "David",
+    "display": "FrankRuehl",
+    "notes": "FrankRuehl",
+    "author": "David"
   }
 }

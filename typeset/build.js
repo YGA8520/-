@@ -9,7 +9,10 @@ try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = requ
   const doc = JSON.parse(fs.readFileSync(docPath, 'utf8'));
   // ---- fonts: roles (body / lead / display) and the font files that provide them -> config.json "fonts" and "fontFaces"
   const F = cfg.fonts = Object.assign({ body: 'Frank Ruhl Libre', lead: 'David Libre', display: 'Frank Ruhl Libre' }, cfg.fonts || {});
-  F.notes = F.notes || F.body; F.author = F.author || F.lead;      // roles: body, lead (first word / sub-headings), display (titles), notes (footnotes), author (author names)
+  F.notes = F.notes || F.body; F.author = F.author || F.lead;
+  const WD = (cfg.fontWeights || {}).display || 800;                 // weight of the display (title) role: 800 for a variable family, 400 for a single-weight calligraphic face
+  const WL = (cfg.fontWeights || {}).lead || 700;
+  cfg.titleFrame.weight = WD; cfg.dividerFrame.weight = WD; cfg.type.h2.weight = WD; cfg.fontWeights = { display: WD, lead: WL };      // roles: body, lead (first word / sub-headings), display (titles), notes (footnotes), author (author names)
   Object.assign(cfg.type.body, { family: F.body }); Object.assign(cfg.type.foot, { family: F.notes });
   Object.assign(cfg.type.h2, { family: F.display }); Object.assign(cfg.type.h3, { family: F.lead });
   Object.assign(cfg.type.lead, { family: F.lead }); Object.assign(cfg.type.abstract, { family: F.lead });
@@ -34,8 +37,8 @@ try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = requ
   page.on('console', (m) => console.log('[page]', m.text()));
   page.on('pageerror', (e) => console.log('[pageerror]', e.message));
   await page.goto('file://' + path.join(__dirname, 'template.html'));
-  await page.addStyleTag({ content: `:root{--f-body:"${F.body}";--f-lead:"${F.lead}";--f-display:"${F.display}";--f-notes:"${F.notes}";--f-author:"${F.author}";--w-notes:${cfg.type.foot.weight || 400};}\n` +
-    faces.map((f) => `@font-face{font-family:"${f.family}";font-weight:${f.weight || 400};font-style:${f.style || 'normal'};src:url("assets/fonts/${f.file}");}`).join('\n') });
+  await page.addStyleTag({ content: `:root{--f-body:"${F.body}";--f-lead:"${F.lead}";--f-display:"${F.display}";--f-notes:"${F.notes}";--f-author:"${F.author}";--w-notes:${cfg.type.foot.weight || 400};--w-display:${WD};--w-lead:${WL};}\n` +
+    faces.map((f) => `@font-face{font-family:"${f.family}";font-weight:${f.weight || 400};font-style:${f.style || 'normal'};${f.unicodeRange ? 'unicode-range:' + f.unicodeRange + ';' : ''}src:url("assets/fonts/${f.file}");}`).join('\n') });
   await page.addScriptTag({ path: path.join(__dirname, 'engine.js') });
   await page.evaluate(async (fontSpecs) => {
     await Promise.all(fontSpecs.map((f) => document.fonts.load(f, 'אבג')));
@@ -52,6 +55,20 @@ try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = requ
     document.querySelectorAll('.ln').forEach((el) => { if (el.scrollWidth > el.clientWidth + 1.5) bad.push(el.textContent.slice(0, 40) + ' ' + el.scrollWidth + '>' + el.clientWidth); });
     return bad;
   });
+  // vertical overflow: no text line may end below the text area of its page (a column that did not fit would run off the page)
+  const vover = await page.evaluate(() => {
+    const bad = [];
+    document.querySelectorAll('.page').forEach((pg, i) => {
+      const H = pg.clientHeight;
+      pg.querySelectorAll('.ln').forEach((el) => {
+        const bottom = parseFloat(el.style.top) + parseFloat(el.style.height);
+        if (bottom > H - 14) bad.push('pdf page ' + (i + 1) + ': ' + el.textContent.slice(0, 30));
+      });
+    });
+    return bad;
+  });
+  console.log('vertical overflow: lines below the page text area:', vover.length);
+  if (vover.length) console.log(vover.slice(0, 8));
   // hanging indent: line 2 must start exactly where the regular text of line 1 starts, and must never open a column
   const hang = await page.evaluate(() => {
     let ok = 0, off = [], orphan = 0, maxDev = 0;

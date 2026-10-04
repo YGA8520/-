@@ -28,6 +28,8 @@ _CFG = json.load(open(os.path.join(HERE, 'config.json')))
 _WF = _CFG.get('wordFonts', {})
 BODY_FONT, LEAD_FONT, DISPLAY_FONT = _WF.get('body', 'FrankRuehl'), _WF.get('lead', 'David'), _WF.get('display', 'FrankRuehl')
 NOTES_FONT, AUTHOR_FONT = _WF.get('notes', BODY_FONT), _WF.get('author', LEAD_FONT)
+DB = '<w:b/><w:bCs/>' if (_CFG.get('fontWeights') or {}).get('display', 800) >= 600 else ''     # a single-weight calligraphic display face must not be faux-bolded
+TITLE_PT = (_CFG.get('titleFrame') or {}).get('size', 16.5)
 BODY_PT, FOOT_PT, SMALL_PT, FOOT_SMALL_PT, LEAD_PT = 12, 10, 10, 8.5, 11.4
 
 NS = ('xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" '
@@ -202,7 +204,7 @@ def header_xml(book, chap, even):
     fld = lambda t: f'<w:r><w:rPr><w:rStyle w:val="{ST["lead"]}"/><w:sz w:val="26"/><w:szCs w:val="26"/></w:rPr>{t}</w:r>'
     num = (fld('<w:fldChar w:fldCharType="begin"/>') + fld('<w:instrText xml:space="preserve"> PAGE </w:instrText>') +
            fld('<w:fldChar w:fldCharType="separate"/>') + fld('<w:t>1</w:t>') + fld('<w:fldChar w:fldCharType="end"/>'))
-    b = f'<w:r><w:rPr>{fonts(DISPLAY_FONT)}<w:b/><w:bCs/>{sz(15)}</w:rPr><w:t xml:space="preserve">{escape(book)}</w:t></w:r>'
+    b = f'<w:r><w:rPr>{fonts(LEAD_FONT)}<w:b/><w:bCs/>{sz(15)}</w:rPr><w:t xml:space="preserve">{escape(book)}</w:t></w:r>'
     dot = f'<w:r><w:rPr>{sz(6)}</w:rPr><w:t xml:space="preserve">  ●  </w:t></w:r>'
     c = f'<w:r><w:rPr>{sz(10)}</w:rPr><w:t xml:space="preserve">{escape(chap)}</w:t></w:r>'
     narrow = round(TEXT_W * 0.12)
@@ -346,18 +348,18 @@ def styles_xml():
     # paragraph styles
     s += pst('Body', '<w:widowControl/><w:bidi/><w:spacing w:after="340" w:line="340" w:lineRule="exact"/><w:jc w:val="both"/>', '')
     s += pst('ArticleTitle', '<w:keepNext/><w:bidi/><w:spacing w:before="170" w:after="170" w:line="440" w:lineRule="exact"/><w:jc w:val="center"/><w:outlineLvl w:val="0"/>',
-             fonts(DISPLAY_FONT) + f'<w:b/><w:bCs/>{sz(16.5)}', nxt='Body')
+             fonts(DISPLAY_FONT) + DB + sz(TITLE_PT), nxt='Body')
     s += pst('ArticlePart', '<w:keepNext/><w:bidi/><w:spacing w:before="340" w:after="0" w:line="340" w:lineRule="exact"/><w:jc w:val="center"/><w:outlineLvl w:val="1"/>',
-             fonts(DISPLAY_FONT) + f'<w:b/><w:bCs/>{sz(14.5)}', nxt='Body')
+             fonts(DISPLAY_FONT) + DB + sz(14.5), nxt='Body')
     s += pst('SubHeading', '<w:keepNext/><w:bidi/><w:spacing w:before="340" w:after="0" w:line="340" w:lineRule="exact"/><w:jc w:val="center"/>',
              fonts(LEAD_FONT) + f'<w:b/><w:bCs/>{sz(11.5)}', nxt='Body')
     s += pst('SimanTitle', '<w:keepNext/><w:bidi/><w:spacing w:before="312" w:after="312" w:line="760" w:lineRule="exact"/><w:jc w:val="center"/>',
-             fonts(DISPLAY_FONT) + f'<w:b/><w:bCs/>{sz(30)}')
+             fonts(DISPLAY_FONT) + DB + sz(30))
     s += pst('ArticleAuthor', '<w:bidi/><w:spacing w:before="80" w:after="280" w:line="280" w:lineRule="exact"/><w:jc w:val="center"/>', fonts(AUTHOR_FONT) + f'<w:b/><w:bCs/>{sz(11.5)}')
     s += pst('ArticleSubtitle', '<w:bidi/><w:spacing w:before="0" w:after="40" w:line="280" w:lineRule="exact"/><w:jc w:val="center"/>', fonts(LEAD_FONT) + sz(11))
     s += pst('TableText', '<w:bidi/><w:spacing w:after="0" w:line="280" w:lineRule="exact"/><w:jc w:val="center"/>', sz(FOOT_PT))
-    s += pst('TocTitle', '<w:bidi/><w:spacing w:before="0" w:after="240"/><w:jc w:val="center"/>', fonts(DISPLAY_FONT) + f'<w:b/><w:bCs/>{sz(21)}')
-    s += pst('CoverTitle', '<w:bidi/><w:spacing w:before="0" w:after="200" w:line="900" w:lineRule="exact"/><w:jc w:val="center"/>', fonts(DISPLAY_FONT) + f'<w:b/><w:bCs/>{sz(40)}')
+    s += pst('TocTitle', '<w:bidi/><w:spacing w:before="0" w:after="240"/><w:jc w:val="center"/>', fonts(DISPLAY_FONT) + DB + sz(21))
+    s += pst('CoverTitle', '<w:bidi/><w:spacing w:before="0" w:after="200" w:line="900" w:lineRule="exact"/><w:jc w:val="center"/>', fonts(DISPLAY_FONT) + DB + sz(40))
     s += pst('CoverSubtitle', '<w:bidi/><w:spacing w:before="0" w:after="200" w:line="480" w:lineRule="exact"/><w:jc w:val="center"/>', fonts(LEAD_FONT) + sz(16))
     # built-in styles keep their English ids/names (Hebrew Word shows them in Hebrew by itself)
     s += pst('FootnoteText', '<w:bidi/><w:spacing w:after="30" w:line="292" w:lineRule="exact"/><w:jc w:val="both"/>', fonts(NOTES_FONT) + sz(FOOT_PT), name='footnote text')

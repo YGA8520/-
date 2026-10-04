@@ -58,7 +58,7 @@
     const rel = { n: [400, 1], b: [700, 1], sm: [400, T.smallScale], smb: [700, T.smallScale], fnref: [700, T.fnrefScale], h: [700, 1], ld: [700, (T.lead && T.lead.scale) || 1] };
     function fontFor(ctxName, st) {
       const c = ctxs[ctxName];
-      if (st === 'ld') return `700 ${(c.size * rel.ld[1]).toFixed(3)}px "${T.lead.family}"`;
+      if (st === 'ld') return `${(cfg.fontWeights || {}).lead || 700} ${(c.size * rel.ld[1]).toFixed(3)}px "${T.lead.family}"`;
       let [w, r] = rel[st];
       if (ctxName === 'foot' && (st === 'n' || st === 'sm') && T.foot.weight) w = T.foot.weight;
       if (ctxName === 'h2' || ctxName === 'h3') { if (st === 'n') w = T[ctxName].weight; if (st === 'b') w = Math.max(w, T[ctxName].weight); }
@@ -354,13 +354,13 @@
       return true;
     }
     // split lines of one band into two columns; returns [col0,col1] or null.  mode: 'full' | 'balanced'
-    function splitCols(lines, C, mode) {
+    function splitCols(lines, C, mode, relax) {
       const n = lines.length;
       if (!n) return [[], []];
       if (mode === 'balanced') {
         let best = null;
         for (let b = 1; b <= n; b++) {
-          if (b < n && !allowedBreak(lines[b - 1], lines[b])) continue;
+          if (b < n && !allowedBreak(lines[b - 1], lines[b], !!relax)) continue;
           const c1 = lines.slice(0, b), c2 = lines.slice(b);
           const u1 = colUnits(c1), u2 = colUnits(c2);
           const mx = Math.max(u1, u2);
@@ -459,7 +459,8 @@
             if (n <= 8) break;
             const nxt = q ? page.open[n] : queue[0];
             if (!allowedBreak(page.open[n - 1], nxt, true)) continue;
-            const cst = q + (allowedBreak(page.open[n - 1], nxt, false) ? 0 : 0.7);
+            const rest = queue.length + q;                       // lines that will be left for the next (possibly last) page
+            const cst = q + (allowedBreak(page.open[n - 1], nxt, false) ? 0 : 0.7) + (rest < 4 ? (4 - rest) * 3 : 0);   // never leave a page with 1-3 stray lines
             if (cst < bestCost) { bestCost = cst; p = q; }
           }
           if (p < 0) {                       // e.g. a long heading chain: pull back as far as needed
@@ -491,7 +492,9 @@
           const C2 = Math.floor((textH - page.usedTop - page.fnH - (endOrnH || 0) + 0.01) / lh);
           cols = splitCols(page.open, C2, 'balanced');
           if (cols) page.endOrn = true; else cols = splitCols(page.open, C, 'balanced');
+          if (!cols) cols = splitCols(page.open, C, 'balanced', true);      // single-line widows/orphans accepted
         } else cols = splitCols(page.open, C, 'full');
+        if (!cols) cols = splitCols(page.open, C, 'full');                   // plain sequential fill (never one overflowing column)
         if (!cols) cols = splitCols(page.open, 999, 'full');
         page.bands.push({ type: 'cols', cols, lines: page.open, last: true });
         pages.push(page);
@@ -698,7 +701,7 @@
     function headerTitle(art) {
       const full = art.shortTitle || art.title;
       if (hdrCache.has(full)) return hdrCache.get(full);
-      const bookW = textW(bookName, '800 ' + pt(15) + 'px "' + (cfg.fonts || {}).display + '"');
+      const bookW = textW(bookName, (cfg.fontWeights || {}).lead + ' ' + pt(15) + 'px "' + (cfg.fonts || {}).lead + '"');
       const room = textW0 - bookW - mm(13) - mm(12);            // minus page number, bullet and gaps
       const f = '400 ' + pt(10) + 'px "' + (cfg.fonts || {}).lead + '"';
       let words = full.split(/\s+/), out = full;

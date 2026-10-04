@@ -79,12 +79,15 @@ def prep_runs(runs, D, small_ratio=0.8):
     return out
 
 
+HEAD_START = re.compile(r'^(שיטת|שיטות|דעת|פסק|חידושי|תשובת|ביאור|דברי)\s')
+
+
 CONTEXT_HEADINGS = {      # lines typed as plain text that are headings only by context (title of a quoted source / section)
-    N('ראב״ד - תשובות ופסקים סימן מד'), N('באר שבע מסכת סוטה דף לב עמוד א'), N('שו״ת משנה הלכות חלק ג סימן פג'), N('תפלה בכל לשון'),
+    N('ראב״ד - תשובות ופסקים סימן מד'), N('משנ״ב ובה״ל'), N('ב״ח ופרישה'), N('בענין הרנ״ב תיבות לאשה'), N('יש לדון'), N('באר שבע מסכת סוטה דף לב עמוד א'), N('שו״ת משנה הלכות חלק ג סימן פג'), N('תפלה בכל לשון'),
 }
 
 
-def classify_items(items, fns, D, title_norm=None):
+def classify_items(items, fns, D, title_norm=None, loose_heads=False):
     """items: ingest items for ONE article body -> blocks."""
     # explicit small runs present?
     small_chars = sum(len(r['t']) for it in items if it['k'] == 'p' for r in it['runs'] if D and r.get('sz') and r['sz'] <= D * 0.8)
@@ -126,7 +129,11 @@ def classify_items(items, fns, D, title_norm=None):
         style_head = it['style'].lower().startswith('heading') or it['style'].startswith('כותרת')
         underline_head = n <= 110 and letters >= 3 and ul_letters >= 0.85 * letters
         context_head = N(text) in CONTEXT_HEADINGS and n <= 60
-        if (style_head and n <= 220) or underline_head or context_head:
+        # (single-article files) a short centred line that is not bold, or a short "שיטת X." style line, is a sub-heading as well
+        loose_head = loose_heads and not any('fn' in r for r in runs) and (
+            (align == 'center' and n <= 100 and len(text.split()) <= 12) or
+            (len(text.split()) <= 7 and n <= 60 and HEAD_START.match(text) and not text.rstrip().endswith(',')))
+        if (style_head and n <= 220) or underline_head or context_head or loose_head:
             m = SECTION.match(text.replace(GER, "'"))
             if m and not any('fn' in r for r in runs):
                 blocks.append({'t': 'h2', 'runs': [{'t': ('%s %s' % (m.group(1), m.group(2))).replace("'", GER).strip()}]})
@@ -264,11 +271,11 @@ EXTRA = [
     dict(file='f02.docx', skip=2, title='בענין נטילת ידיים של שחרית', subtitle='שיעורי חבורת ברומו של עולם (בקצרה)', label="סימן ד'", author='מכלל האברכים', siman=4, after=True),
     dict(file='f03.docx', skip=1, title='בענין ברכת אשר יצר', label="סימן ו'", author='הרב נאור רוזין', siman=6, after=True),
     dict(file='f10.docx', skip=1, title='בענין ברכות קר"ש', label='סימן נא', author='הרב נאור רוזין', siman=51),
-    dict(file='f14.docx', skip=2, title='גדר רואין זה את זה בצירוף עשרה למנין', label="סימן נה סעיף ט\"ז", author="נשיא הכולל הגאון ר' דוד פוטאש", siman=55),
-    dict(file='f12.docx', skip=2, title='ענין הכוונה בקר"ש וענין המסירות נפש בקר"ש', label="סימן סא סעיפים א׳–ב׳", author='הרב נאור רוזין', siman=61, sub=1),
-    dict(file='f11.docx', skip=1, title='בענין אמירת ברוך שם כבוד מלכותו לעולם ועד', label="סימן סא סעיף ג׳", author='הרב נאור רוזין', siman=61, sub=2),
-    dict(file='f13.docx', skip=1, title='בענין כפילת שמע שמע', label="סימן סא סעיף ט׳", author='הרב נאור רוזין', siman=61, sub=3),
-    dict(file='f15.docx', skip=2, title='בענין תפלה וקר"ש בכל לשון', label="סימן סב סעיף ב׳", author='הרב נאור רוזין', siman=62),
+    dict(file='f14.docx', skip=2, title='גדר רואין זה את זה בצירוף עשרה למנין', label="סימן נה סעיף ט\"ז", author="נשיא הכולל הגאון ר' דוד פוטאש", siman=55, seif=16),
+    dict(file='f12.docx', skip=2, title='ענין הכוונה בקר"ש וענין המסירות נפש בקר"ש', label="סימן סא סעיפים א׳–ב׳", author='הרב נאור רוזין', siman=61, sub=1, seif=1),
+    dict(file='f11.docx', skip=1, title='בענין אמירת ברוך שם כבוד מלכותו לעולם ועד', label="סימן סא סעיף ג׳", author='הרב נאור רוזין', siman=61, sub=2, seif=3),
+    dict(file='f13.docx', skip=1, title='בענין כפילת שמע שמע', label="סימן סא סעיף ט׳", author='הרב נאור רוזין', siman=61, sub=3, seif=9),
+    dict(file='f15.docx', skip=2, title='בענין תפלה וקר"ש בכל לשון', label="סימן סב סעיף ב׳", author='הרב נאור רוזין', siman=62, seif=2),
     dict(file='f16.docx', skip=3, title='ספירת העומר מן התורה או מדרבנן', label='סימן תפ"ט', author='הרב נח קליין', siman=489),
 ]
 
@@ -303,18 +310,20 @@ def siman_of(label):
 
 def build():
     big = split_big()
-    for a in big:
+    for k, a in enumerate(big):
         a['siman'] = siman_of(a['label'])
+        a['seif'], a['idx'] = 0, k
     extras = [load_extra(m) for m in EXTRA]
-    # merge: extras go after the last big article of the same siman (or by order of siman)
-    ordered = list(big)
-    for ex in sorted(extras, key=lambda x: (x['siman'], x['sub'])):
-        # position: after last article with siman <= ex.siman  (stable)
-        pos = 0
-        for i, a in enumerate(ordered):
-            if a['siman'] <= ex['siman'] and a['siman'] != 0:
-                pos = i + 1
-        ordered.insert(pos, ex)
+    for k, (m, ex) in enumerate(zip(EXTRA, extras)):
+        ex['seif'], ex['idx'] = m.get('seif', 0), 1000 + k
+    allarts = big + extras
+    try:                                    # the additional חבורות (folder "חבורות"), see new_articles.py
+        import new_articles
+        allarts += new_articles.build_articles()
+    except SystemExit as e:
+        print('WARNING: additional חבורות not added:', e)
+    # order: by siman, then se'if, then (existing articles first) the order they came in
+    ordered = sorted(allarts, key=lambda a: (a['siman'] or 0, a['seif'], a['idx']))
     # typing slips: a space in front of , . ; :
     for a in ordered:
         for blk in a['blocks']:

@@ -2,3 +2,4 @@ typeset/out/
 typeset/*.doc.json
 typeset/__pycache__/
 *.pyc
+typeset/assets/ornaments/composed/

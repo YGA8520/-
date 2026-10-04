@@ -193,7 +193,7 @@ def mark_sources(runs, max_words=14, heuristic=True):
 
 
 # ---------------------------------------------------------------- paragraph classification
-SECTION = re.compile(r'^(חלק|פרק|חלק)\s+([א-ת][\'׳"״]?[א-ת]?)\s*[:.\-–]?\s*(.*)$')
+SECTION = re.compile(r'^(חלק|פרק|ענף)\s+([א-ת][\'׳"״]?[א-ת]?[\'׳]?)(?=[\s:.\-–]|$)\s*[:.\-–]?\s*(.*)$')
 
 
 SPACE_BEFORE_PUNCT = re.compile(r'[ \t\u00a0]+(?=[,.;:](?!\.))')   # " ," / " ." (an ellipsis " ..." is left alone)
