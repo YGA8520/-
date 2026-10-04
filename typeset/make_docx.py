@@ -28,7 +28,7 @@ _CFG = json.load(open(os.path.join(HERE, 'config.json')))
 _WF = _CFG.get('wordFonts', {})
 BODY_FONT, LEAD_FONT, DISPLAY_FONT = _WF.get('body', 'FrankRuehl'), _WF.get('lead', 'David'), _WF.get('display', 'FrankRuehl')
 HSHIFT = (_CFG.get('header') or {}).get('shift', 0)      # mm the running head is raised (as in the PDF)
-NOTES_FONT, AUTHOR_FONT = _WF.get('notes', BODY_FONT), _WF.get('author', LEAD_FONT)
+NOTES_FONT, AUTHOR_FONT, TOC_FONT = _WF.get('notes', BODY_FONT), _WF.get('author', LEAD_FONT), _WF.get('toc', BODY_FONT)
 DB = '<w:b/><w:bCs/>' if (_CFG.get('fontWeights') or {}).get('display', 800) >= 600 else ''     # a single-weight calligraphic display face must not be faux-bolded
 TITLE_PT = (_CFG.get('titleFrame') or {}).get('size', 16.5)
 _FT = (_CFG.get('type') or {}).get('foot', {})
@@ -405,7 +405,7 @@ def styles_xml():
     # built-in styles keep their English ids/names (Hebrew Word shows them in Hebrew by itself)
     s += pst('FootnoteText', f'<w:bidi/><w:spacing w:after="30" w:line="{round(FOOT_LEAD * 20)}" w:lineRule="exact"/><w:jc w:val="both"/>', fonts(NOTES_FONT) + sz(FOOT_PT), name='footnote text')
     s += pst('Header', '<w:bidi/><w:spacing w:after="0" w:line="300" w:lineRule="exact"/>', '', name='header')
-    s += pst('TOC1', f'<w:tabs><w:tab w:val="right" w:leader="dot" w:pos="{TEXT_W}"/></w:tabs><w:bidi/><w:spacing w:after="60" w:line="300" w:lineRule="exact"/>', sz(11.5), name='toc 1')
+    s += pst('TOC1', f'<w:tabs><w:tab w:val="right" w:leader="dot" w:pos="{TEXT_W}"/></w:tabs><w:bidi/><w:spacing w:after="60" w:line="300" w:lineRule="exact"/>', fonts(TOC_FONT) + sz(12), name='toc 1')
     # character styles
     s += cst('LeadWord', fonts(LEAD_FONT) + f'<w:b/><w:bCs/>{sz(LEAD_PT)}')
     s += cst('SmallSource', sz(SMALL_PT))

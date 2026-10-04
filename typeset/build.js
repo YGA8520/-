@@ -9,7 +9,7 @@ try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = requ
   const doc = JSON.parse(fs.readFileSync(docPath, 'utf8'));
   // ---- fonts: roles (body / lead / display) and the font files that provide them -> config.json "fonts" and "fontFaces"
   const F = cfg.fonts = Object.assign({ body: 'Frank Ruhl Libre', lead: 'David Libre', display: 'Frank Ruhl Libre' }, cfg.fonts || {});
-  F.notes = F.notes || F.body; F.author = F.author || F.lead;
+  F.notes = F.notes || F.body; F.author = F.author || F.lead; F.toc = F.toc || F.body;
   const WD = (cfg.fontWeights || {}).display || 800;                 // weight of the display (title) role: 800 for a variable family, 400 for a single-weight calligraphic face
   const WL = (cfg.fontWeights || {}).lead || 700;
   cfg.titleFrame.weight = WD; cfg.dividerFrame.weight = WD; cfg.type.h2.weight = WD; cfg.type.h3.weight = WL; cfg.fontWeights = { display: WD, lead: WL };      // roles: body, lead (first word / sub-headings), display (titles), notes (footnotes), author (author names)
@@ -37,13 +37,13 @@ try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = requ
   page.on('console', (m) => console.log('[page]', m.text()));
   page.on('pageerror', (e) => console.log('[pageerror]', e.message));
   await page.goto('file://' + path.join(__dirname, 'template.html'));
-  await page.addStyleTag({ content: `:root{--f-body:"${F.body}";--f-lead:"${F.lead}";--f-display:"${F.display}";--f-notes:"${F.notes}";--f-author:"${F.author}";--w-notes:${cfg.type.foot.weight || 400};--s-foot:${cfg.type.foot.size};--w-display:${WD};--w-lead:${WL};}\n` +
+  await page.addStyleTag({ content: `:root{--f-body:"${F.body}";--f-lead:"${F.lead}";--f-display:"${F.display}";--f-notes:"${F.notes}";--f-author:"${F.author}";--f-toc:"${F.toc}";--w-notes:${cfg.type.foot.weight || 400};--s-foot:${cfg.type.foot.size};--w-display:${WD};--w-lead:${WL};}\n` +
     faces.map((f) => `@font-face{font-family:"${f.family}";font-weight:${f.weight || 400};font-style:${f.style || 'normal'};${f.unicodeRange ? 'unicode-range:' + f.unicodeRange + ';' : ''}src:url("assets/fonts/${f.file}");}`).join('\n') });
   await page.addScriptTag({ path: path.join(__dirname, 'engine.js') });
   await page.evaluate(async (fontSpecs) => {
     await Promise.all(fontSpecs.map((f) => document.fonts.load(f, 'אבג')));
     await document.fonts.ready;
-  }, [400, 700, 800].flatMap((w) => [F.body, F.lead, F.display, F.notes, F.author].map((fam) => `${w} 16px "${fam}"`)));
+  }, [400, 700, 800].flatMap((w) => [F.body, F.lead, F.display, F.notes, F.author, F.toc].map((fam) => `${w} 16px "${fam}"`)));
   const res = await page.evaluate(([c, d]) => window.typeset(c, d), [cfg, doc]);
   await page.evaluate(async () => {
     const urls = new Set([...document.body.innerHTML.matchAll(/url\(([^)]+)\)/g)].map((m) => m[1]));

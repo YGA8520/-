@@ -106,7 +106,8 @@
     "lead": "Livorna",
     "display": "Ashcnz Title",
     "notes": "Asher",
-    "author": "Shofar"
+    "author": "Shofar",
+    "toc": "HadasaNew"
   },
   "fontFaces": [
     {
@@ -193,6 +194,16 @@
       "family": "Asher",
       "file": "Asher-Bold.ttf",
       "weight": "700"
+    },
+    {
+      "family": "HadasaNew",
+      "file": "HadasaNew-Regular.ttf",
+      "weight": "400"
+    },
+    {
+      "family": "HadasaNew",
+      "file": "HadasaNew-Bold.ttf",
+      "weight": "700"
     }
   ],
   "wordFonts": {
@@ -200,7 +211,8 @@
     "lead": "Livorna",
     "display": "Ashcnz",
     "notes": "Asher",
-    "author": "Shofar"
+    "author": "Shofar",
+    "toc": "HadasaNew"
   },
   "fontWeights": {
     "display": 400,
