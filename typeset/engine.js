@@ -71,32 +71,42 @@
     };
     const fill1 = titleFill('cvT1', title1, s1, G.title.x1), fill2 = title2 ? titleFill('cvT2', title2, s2, G.title.x2) : col.title;
     const lg = C.logo && G.logo && opt.logo !== false ? G.logo : null, lw = lg ? lg.h * C.logo.w / C.logo.h : 0;
-    return `<img src="${image}" style="position:absolute;left:0;top:0;width:100%;height:100%">` +
-      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1408 2000" style="position:absolute;left:0;top:0;width:100%;height:100%">` +
-      `<defs><path id="cvTop" d="${arc(G.top, 1)}"/><path id="cvBot" d="${arc(G.bottom, 0)}"/>${gradDefs}</defs>` +
-      (T.kuntres ? `<text x="${G.kuntres.x}" y="${G.kuntres.y + dy}" text-anchor="middle" font-family="${fT}" font-size="${G.kuntres.size}" fill="${col.dark}" style="${st}">${esc(T.kuntres)}</text>` : '') +
+    // live text outside the medallion (the siman of a divider), set like the title; x / y in the 1408 x 2000 grid of the page
+    const labels = (opt.labels || []).map((L, i) => {
+      const sz = fit(L.txt, L.size, L.maxW);
+      return `<text x="${L.x.toFixed(1)}" y="${L.y.toFixed(1)}" text-anchor="middle" font-family="${fT}" font-size="${sz.toFixed(2)}" fill="${titleFill('cvL' + i, L.txt, sz, L.x)}" style="${st}">${esc(L.txt)}</text>`;
+    }).join('');
+    const medal = (T.kuntres ? `<text x="${G.kuntres.x}" y="${G.kuntres.y + dy}" text-anchor="middle" font-family="${fT}" font-size="${G.kuntres.size}" fill="${col.dark}" style="${st}">${esc(T.kuntres)}</text>` : '') +
       `<text x="${G.title.x1}" y="${G.title.y1 + dy}" text-anchor="middle" font-family="${fT}" font-size="${s1.toFixed(2)}" fill="${fill1}" style="${st}">${esc(title1)}</text>` +
       (title2 ? `<text x="${G.title.x2}" y="${G.title.y2 + dy}" text-anchor="middle" font-family="${fT}" font-size="${s2.toFixed(2)}" fill="${fill2}" style="${st}">${esc(title2)}</text>` : '') +
       (topPlain ? `<text font-family="${fA}" font-size="${sTop.toFixed(2)}" fill="${col.arc}" style="${st}"><textPath href="#cvTop" startOffset="${G.top.off}" text-anchor="middle">${topTxt}</textPath></text>` : '') +
       (botPlain.trim() ? `<text font-family="${fA}" font-size="${sBot.toFixed(2)}" fill="${col.arc}" style="${st}"><textPath href="#cvBot" startOffset="${G.bottom.off}" text-anchor="middle">${bottomTxt}</textPath></text>` : '') +
       (T.line1 ? `<text x="${G.line1.x}" y="${G.line1.y + dy}" text-anchor="middle" font-family="${fL}" font-weight="700" font-size="${G.line1.size}" fill="${col.dark}" style="${st}">${esc(T.line1)}</text>` : '') +
-      (T.line2 ? `<text x="${G.line2.x}" y="${G.line2.y + dy}" text-anchor="middle" font-family="${fL}" font-weight="700" font-size="${G.line2.size}" fill="${col.dark}" style="${st}">${esc(T.line2)}</text>` : '') +
+      (T.line2 ? `<text x="${G.line2.x}" y="${G.line2.y + dy}" text-anchor="middle" font-family="${fL}" font-weight="700" font-size="${G.line2.size}" fill="${col.dark}" style="${st}">${esc(T.line2)}</text>` : '');
+    return `<img src="${image}" style="position:absolute;left:0;top:0;width:100%;height:100%">` +
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1408 2000" style="position:absolute;left:0;top:0;width:100%;height:100%">` +
+      `<defs><path id="cvTop" d="${arc(G.top, 1)}"/><path id="cvBot" d="${arc(G.bottom, 0)}"/>${gradDefs}</defs>` +
+      (opt.group ? `<g transform="${opt.group}">${medal}</g>` : medal) + labels +
       (lg ? `<image href="${C.logo.image}" x="${(lg.x - lw / 2).toFixed(1)}" y="${lg.top}" width="${lw.toFixed(1)}" height="${lg.h}"/>` : '') +
       `</svg>`;
   }
 
-  // internal title page of a siman: the artwork of the cover (medallion moved to the middle of the page), book name small on top,
-  // "סימן" on the first line and the siman on the second; the introductions get "פתיחות" / "לקונטרס"
+  // internal title page of a siman, in the style of a tab divider: the medallion of the cover shrunk and set on the left of the page, under it the frame of the
+  // cover (also shrunk, the artwork is made by make_divider.py) with "סימן" and the siman in it; grey / silver, no colours.  The introductions get "פתיחות" / "לקונטרס".
   function dividerLines(label) {
     if (label === 'פתיחות') return ['פתיחות', 'לקונטרס'];
     const m = label.match(/^(.*?סימן)\s+(.+)$/);
     return m ? [m[1], m[2]] : [label, ''];
   }
   function dividerHTML(cfg, label, bookName) {
-    const [l1, l2] = dividerLines(label);
+    const D = cfg.divider, [l1, l2] = dividerLines(label);
     const short = l2.replace(/[^\u05d0-\u05ea]/g, '').length <= 3;         // a short siman letter group is set larger
-    return coverHTML(cfg, bookName, { dy: cfg.divider.dy, image: cfg.divider.image, logo: false, titleSize2: short ? cfg.divider.numeralSize : 0,
-      texts: { kuntres: bookName, title1: l1, title2: l2, line1: '', line2: '' } });
+    const Lb = Object.assign({ size1: 100, numeral: 240, word: 150, y1: -85, y2: 115, maxW: 470 }, D.label || {});
+    const fx = D.frame.cx * 8, fy = D.frame.cy * 8, m = D.medal;
+    const c2 = Object.assign({}, cfg, { cover: Object.assign({}, cfg.cover, { colors: D.colors || cfg.cover.colors }) });
+    return coverHTML(c2, bookName, { image: D.image, logo: false, texts: { line1: '', line2: '' },
+      group: `translate(${m.cx * 8} ${m.cy * 8}) scale(${m.scale}) translate(-711 -749)`,
+      labels: [{ txt: l1, x: fx, y: fy + Lb.y1, size: Lb.size1, maxW: Lb.maxW }, { txt: l2, x: fx, y: fy + Lb.y2, size: short ? Lb.numeral : Lb.word, maxW: Lb.maxW }].filter((x) => x.txt) });
   }
 
   // ---------------------------------------------------------------- engine

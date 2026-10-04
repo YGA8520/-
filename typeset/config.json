@@ -318,9 +318,10 @@
       "h": 912
     }
   },
-  "divider": {
-    "image": "assets/cover/divider-bg.jpg",
-    "dy": 230,
-    "numeralSize": 195
-  }
+  "divider": {"image": "assets/cover/divider-bg.jpg",
+    "colors": {"title": "#262626", "arc": "#4a4a4a", "dark": "#1c1c1c", "titleEdge": "#8f9296", "titleCore": "#262626", "titleFade": 0.3},
+    "medal": {"cx": 60.3, "cy": 55, "scale": 0.58},
+    "frame": {"cx": 60.3, "cy": 155.4, "scale": 0.58},
+    "fleurons": {"scale": 1.25, "top": -235, "bottom": 215},
+    "label": {"size1": 115, "numeral": 270, "word": 170, "y1": -85, "y2": 135, "maxW": 540}}
 }

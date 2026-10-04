@@ -110,6 +110,7 @@ def gold_masks(img, dy=0):
     near = (xx < ox0 + 262) | (xx > ox1 - 262) | (yy < oy0 + 262) | (yy > oy1 - 262)
     zone = (xx > ox0 - 2) & (xx < ox1 + 2) & (yy > oy0 - 2) & (yy < oy1 + 2) & near
     zone &= ~((xx >= 925) & (xx <= 1170) & (yy >= 755 + dy) & (yy <= 860 + dy))      # the black ink flourish right of the title is not part of the frame
+    zone &= ~((xx >= 1050) & (xx <= 1140) & (yy >= 590 + dy) & (yy <= 620 + dy))      # nor are the right ends of the two rules above the title
 
     def unreached(iters):       # what cannot be reached from the middle of the page without crossing a (widened) dark outline
         lab, _ = ndimage.label(~ndimage.binary_dilation(dark, structure=np.ones((3, 3)), iterations=iters), structure=cross)
@@ -212,26 +213,14 @@ def frame_only(src):
     return np.where(elem[..., None], out, a), a, elem
 
 
-def divider_source(src, dy):
-    """frame + the medallion moved `dy` px down (to the middle of the page): ink and swashes are multiplied onto the clean cloud"""
-    clean, a, elem = frame_only(src)
-    x0, y0, x1, y1 = MEDALLION_BOX
-    ink = np.where(elem[..., None], np.clip(a / np.maximum(clean, 1e-3), 0, 1), 1.0)
-    out = clean.copy()
-    out[y0 + dy:y1 + dy, x0:x1] *= ink[y0:y1, x0:x1]
-    return Image.fromarray((np.clip(out, 0, 1) * 255 + 0.5).astype(np.uint8), 'RGB')
-
-
-def build(palette='navy', out=None, scale=2, divider_dy=None):
+def build(palette='navy', out=None, scale=2):
     img = Image.open(SRC).convert('RGB')
-    if divider_dy is not None:                                  # the artwork of the internal title pages
-        img = divider_source(img, divider_dy)
     p = PALETTES[palette]
-    masks = (gold_masks(img, divider_dy or 0) if p.get('gold') else frame_masks(img)) if p else None
+    masks = (gold_masks(img) if p.get('gold') else frame_masks(img)) if p else None
     img = img.resize((img.width * scale, img.height * scale), Image.LANCZOS).filter(ImageFilter.UnsharpMask(radius=2.2, percent=60, threshold=2))
     if p:
         img = (recolor if p.get('gold') else recolor_hue)(img, p, masks)
-    out = out or os.path.join(HERE, 'assets', 'cover', 'cover-bg.jpg' if divider_dy is None else 'divider-bg.jpg')
+    out = out or os.path.join(HERE, 'assets', 'cover', 'cover-bg.jpg')
     img.save(out, quality=92, subsampling=0, optimize=True)
     return out
 
@@ -242,5 +231,6 @@ if __name__ == '__main__':
     pal = sys.argv[1] if len(sys.argv) > 1 else (cfg.get('cover') or {}).get('palette', 'navy')
     out = sys.argv[2] if len(sys.argv) > 2 else None
     print('cover background:', build(pal, out), pal)
-    if len(sys.argv) <= 2 and cfg.get('divider'):               # also the artwork of the internal title pages (siman dividers)
-        print('divider background:', build(pal, None, divider_dy=cfg['divider']['dy']), pal)
+    if len(sys.argv) <= 2 and cfg.get('divider'):               # also the artwork of the internal title pages (siman dividers, grey / silver)
+        import make_divider
+        print('divider background:', make_divider.build())
