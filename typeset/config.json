@@ -178,6 +178,21 @@
       "family": "EFT Algebra",
       "file": "EFT_Algebra-Regular.ttf",
       "weight": "400"
+    },
+    {
+      "family": "Keren",
+      "file": "KerenU-Regular.ttf",
+      "weight": "400"
+    },
+    {
+      "family": "Keren",
+      "file": "KerenU-Bold.ttf",
+      "weight": "700"
+    },
+    {
+      "family": "Lulav CLM",
+      "file": "LulavCLM-Bold.otf",
+      "weight": "700"
     }
   ],
   "wordFonts": {
@@ -196,17 +211,14 @@
   "wordFallbackChars": "×√",
   "cover": {
     "image": "assets/cover/cover-bg.jpg",
-    "palette": "navy",
+    "palette": "brown",
     "fontTitle": "EFT Algebra",
-    "fontText": "FrankRuehl DP",
     "texts": {
       "kuntres": "קונטרס",
-      "arcTop": "קובץ חבורא מאברכי כולל ברומו של עולם",
+      "arcTop": "קודשא בריך הוא חדי בפלפולי דאורייתא",
       "arcBottom": [
-        "חבורות",
-        "שיעורים",
-        "סוגיות",
-        "הלכה למעשה"
+        "פלפולא - להבין דבר מתוך דבר (רש\"י נדרים, דף לח.)",
+        "פלפולא - שיטת חריפות והבינה (תוספות שם)"
       ],
       "line1": "אוסף חבורות ושיעורים",
       "line2": "בעניני ברכות ותפילה"
@@ -227,32 +239,37 @@
         "maxW2": 575
       },
       "top": {
-        "cx": 733,
-        "cy": 751,
-        "r": 349,
-        "a0": 150,
-        "a1": 10,
-        "off": "60%",
-        "size": 36
+        "cx": 711,
+        "cy": 749,
+        "r": 356,
+        "a0": 178,
+        "a1": 2,
+        "off": "50%",
+        "size": 40
       },
       "bottom": {
-        "cx": 714,
-        "cy": 757,
-        "r": 309,
-        "a0": -150,
-        "a1": -10,
-        "off": "52%",
-        "size": 36
+        "cx": 711,
+        "cy": 749,
+        "r": 396,
+        "a0": -160,
+        "a1": -20,
+        "off": "50%",
+        "size": 40
       },
       "line1": {
-        "x": 703.5,
-        "y": 1284,
-        "size": 59.3
+        "x": 704,
+        "y": 1290,
+        "size": 42
       },
       "line2": {
         "x": 704,
-        "y": 1363,
-        "size": 59.3
+        "y": 1362,
+        "size": 42
+      },
+      "logo": {
+        "x": 704,
+        "top": 1440,
+        "h": 380
       }
     },
     "palettes": {
@@ -280,7 +297,19 @@
         "title": "#5a4128",
         "arc": "#7d6a55",
         "dark": "#36261a"
+      },
+      "brown": {
+        "title": "#4a2d16",
+        "arc": "#6a4a2c",
+        "dark": "#2e1b0c"
       }
+    },
+    "fontArc": "Keren",
+    "fontLines": "Lulav CLM",
+    "logo": {
+      "image": "assets/cover/logo.png",
+      "w": 971,
+      "h": 912
     }
   }
 }

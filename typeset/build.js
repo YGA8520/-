@@ -50,7 +50,7 @@ try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = requ
   await page.evaluate(async (fontSpecs) => {
     await Promise.all(fontSpecs.map((f) => document.fonts.load(f, 'אבג')));
     await document.fonts.ready;
-  }, [400, 700, 800].flatMap((w) => [F.body, F.lead, F.display, F.notes, F.author, F.toc, ...(cfg.cover ? [cfg.cover.fontTitle, cfg.cover.fontText] : [])].map((fam) => `${w} 16px "${fam}"`)));
+  }, [400, 700, 800].flatMap((w) => [F.body, F.lead, F.display, F.notes, F.author, F.toc, ...(cfg.cover ? [cfg.cover.fontTitle, cfg.cover.fontArc, cfg.cover.fontLines] : [])].map((fam) => `${w} 16px "${fam}"`)));
   const res = await page.evaluate(([c, d]) => window.typeset(c, d), [cfg, doc]);
   await page.evaluate(async () => {
     const urls = new Set([...document.body.innerHTML.matchAll(/url\(([^)]+)\)/g)].map((m) => m[1]));
@@ -174,7 +174,7 @@ try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = requ
     await cp.goto('file://' + path.join(__dirname, 'template.html'));
     await cp.addStyleTag({ content: styleCss });
     await cp.addScriptTag({ path: path.join(__dirname, 'engine.js') });
-    await cp.evaluate(async (fams) => { await Promise.all(fams.flatMap((f) => [400, 700].map((w) => document.fonts.load(w + ' 16px "' + f + '"', 'אבג')))); await document.fonts.ready; }, [cfg.cover.fontTitle, cfg.cover.fontText]);
+    await cp.evaluate(async (fams) => { await Promise.all(fams.flatMap((f) => [400, 700].map((w) => document.fonts.load(w + ' 16px "' + f + '"', 'אבג')))); await document.fonts.ready; }, [cfg.cover.fontTitle, cfg.cover.fontArc, cfg.cover.fontLines]);
     await cp.evaluate(([c, name]) => {
       document.body.style.margin = '0';
       document.body.innerHTML = '<div id="cv" class="page cover" style="width:176mm;height:250mm;position:relative;overflow:hidden">' + window.coverHTML(c, name) + '</div>';

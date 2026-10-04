@@ -54,13 +54,15 @@ if __name__ == '__main__':
             continue
         fam, sub, t = info(f)
         kind = 'Bold' if 'Bold' in (sub or '') else 'Regular'
-        if fam in ('Drogolin', 'Ashcnz'):                    # both: legacy cp1255-encoded fonts of the same maker
+        if fam in ('Drogolin', 'Ashcnz', 'Keren'):           # legacy cp1255-encoded fonts of the same maker
             drogolin_unicode(t, os.path.join(OUT, f'{fam}U-{kind}.ttf')); print(fam, kind)
         elif fam == 'FrankRuehl DP':
             shutil.copy(f, os.path.join(OUT, f'FrankRuehlDP-{kind}.otf'))
             frank_quotes(TTFont(f), os.path.join(OUT, f'FrankRuehlDP-Q-{kind}.otf')); print('FrankRuehl DP', kind)
         elif fam == 'Asher':
             shutil.copy(f, os.path.join(OUT, f'Asher-{kind}.ttf')); print('Asher', kind)
+        elif fam == 'Lulav CLM':
+            shutil.copy(f, os.path.join(OUT, f'LulavCLM-{kind}.otf')); print('Lulav CLM', kind)
         elif fam == 'EFT_Algebra':
             shutil.copy(f, os.path.join(OUT, 'EFT_Algebra-Regular.ttf')); print('EFT Algebra (cover)')
         elif fam == 'Ashkenazy':

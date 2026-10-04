@@ -15,6 +15,9 @@ PALETTES = {
     'burgundy': dict(t1=350, s1=1.70, v1=0.80, t2=356, s2=1.00, v2=0.80, name='בורדו וזהב'),
     'purple':   dict(t1=272, s1=1.70, v1=0.80, t2=290, s2=1.00, v2=0.80, name='סגול וזהב'),
     'sepia':    dict(t1=30,  s1=1.25, v1=0.86, t2=18,  s2=0.90, v2=0.75, name='חום וזהב'),
+    # darker brown + a brighter, warmer gold (olive / grey casts of the old gilding pulled towards one golden hue, shadows and highlights kept)
+    'brown':    dict(t1=26,  s1=2.30, v1=0.52, t2=16,  s2=1.00, v2=0.50, name='חום כהה וזהב בוהק',
+                     gold=dict(hue=43, spread=0.30, sat=1.20, sat_add=0.05, gamma=0.80, contrast=1.16, bright=0.02)),
 }
 
 
@@ -79,7 +82,18 @@ def recolor(img, p, masks):
     gold = gold * (1 - red)
     rest = np.clip(1 - gold - red, 0, 1)
     tone = lambda t, sf, vf: hsv_to_rgb(np.full_like(h, t), np.clip(s * sf, 0, 1), np.clip(v * (1 + (vf - 1) * np.clip(s * 3.0, 0, 1)), 0, 1))     # white stays white
-    out = gold[..., None] * rgb + red[..., None] * tone(p['t2'], p['s2'], p['v2']) + rest[..., None] * tone(p['t1'], p['s1'], p['v1'])
+    g = p.get('gold')
+    if g:                       # brighter, more golden gilding
+        gh = np.where((h > 14) & (h < 80), g['hue'] + (np.clip(h, 20, 72) - 46) * g['spread'], h)
+        gs = np.clip(s * g['sat'] + g['sat_add'] * np.clip(s * 4, 0, 1), 0, 1)
+        gv = np.clip(0.5 + (np.power(v, g['gamma']) - 0.5) * g['contrast'] + g['bright'], 0, 1)
+        rgb_gold = hsv_to_rgb(gh, gs, gv)
+    else:
+        rgb_gold = rgb
+    if g:                       # reddish speckles inside the gilded area become the corner tone instead of staying crimson
+        rs = np.maximum(smooth(h, 318, 338), 1 - smooth(h, 12, 22)) * smooth(s, 0.28, 0.5)
+        rgb_gold = rgb_gold * (1 - rs[..., None]) + tone(p['t2'], p['s2'], p['v2']) * rs[..., None]
+    out = gold[..., None] * rgb_gold + red[..., None] * tone(p['t2'], p['s2'], p['v2']) + rest[..., None] * tone(p['t1'], p['s1'], p['v1'])
     return Image.fromarray((np.clip(out, 0, 1) * 255 + 0.5).astype(np.uint8), 'RGB')
 
 

@@ -17,7 +17,7 @@ try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = requ
     await p.goto('file://' + path.join(__dirname, 'template.html'));
     await p.addStyleTag({ content: css });
     await p.addScriptTag({ path: path.join(__dirname, 'engine.js') });
-    await p.evaluate(async (f) => { await Promise.all(f.flatMap((x) => [400, 700].map((w) => document.fonts.load(w + ' 16px "' + x + '"', 'אבג')))); }, [c.cover.fontTitle, c.cover.fontText]);
+    await p.evaluate(async (f) => { await Promise.all(f.flatMap((x) => [400, 700].map((w) => document.fonts.load(w + ' 16px "' + x + '"', 'אבג')))); }, [c.cover.fontTitle, c.cover.fontArc, c.cover.fontLines]);
     await p.evaluate(([cc, n]) => { document.body.style.margin = '0'; document.body.innerHTML = '<div id="cv" class="page cover" style="width:176mm;height:250mm;position:relative;overflow:hidden">' + window.coverHTML(cc, n) + '</div>'; }, [c, doc.book.name]);
     await p.evaluate(() => Promise.all([...document.images].map((i) => i.decode().catch(() => {}))));
     await p.locator('#cv').screenshot({ path: path.join(outDir, `cover-${pal}.png`) });

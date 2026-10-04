@@ -40,27 +40,35 @@
     const C = cfg.cover, G = C.geometry, T = C.texts || {}, col = C.colors;
     const words = bookName.split(/\s+/).filter(Boolean);
     const title1 = T.title1 || words[0] || bookName, title2 = T.title2 || words.slice(1).join(' ');
-    const fT = C.fontTitle, fX = C.fontText;
+    const fT = C.fontTitle, fA = C.fontArc, fL = C.fontLines;
     const fit = (txt, size, maxW) => { const w = textW(txt, `${size}px "${fT}"`); return w > maxW ? size * maxW / w : size; };
     const arc = (g, sweep) => {
       const p = (a) => [g.cx + g.r * Math.cos(a * Math.PI / 180), g.cy - g.r * Math.sin(a * Math.PI / 180)];
       const s = p(g.a0), e = p(g.a1);
       return `M ${s[0].toFixed(2)} ${s[1].toFixed(2)} A ${g.r} ${g.r} 0 ${Math.abs(g.a1 - g.a0) > 180 ? 1 : 0} ${sweep} ${e[0].toFixed(2)} ${e[1].toFixed(2)}`;
     };
-    const bullet = ` <tspan font-family="'Times New Roman','Liberation Serif',serif" font-size="${(G.bottom.size * 0.6).toFixed(1)}">&#9679;</tspan> `;
-    const bottomTxt = (Array.isArray(T.arcBottom) ? T.arcBottom.map(esc).join(bullet) : esc(T.arcBottom || ''));
+    // font size of an arc text: the configured size, smaller if the text would not fit on the arc
+    const arcSize = (g, plain) => Math.min(g.size, 0.97 * (g.r * Math.abs(g.a1 - g.a0) * Math.PI / 180) / (textW(plain, `100px "${fA}"`) / 100));
+    const topPlain = T.arcTop || '';
+    const botParts = Array.isArray(T.arcBottom) ? T.arcBottom : [T.arcBottom || ''];
+    const botPlain = botParts.join('   ●   ');
+    const sTop = arcSize(G.top, topPlain), sBot = arcSize(G.bottom, botPlain);
+    const bullet = ` <tspan font-family="'Times New Roman','Liberation Serif',serif" font-size="${(sBot * 0.7).toFixed(1)}">&#9679;</tspan> `;
+    const bottomTxt = botParts.map(esc).join(bullet);
     const st = 'direction:rtl;unicode-bidi:isolate;';
     const s1 = fit(title1, G.title.size, G.title.maxW1), s2 = fit(title2, G.title.size, G.title.maxW2);
+    const lg = C.logo && G.logo ? G.logo : null, lw = lg ? lg.h * C.logo.w / C.logo.h : 0;
     return `<img src="${C.image}" style="position:absolute;left:0;top:0;width:100%;height:100%">` +
       `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1408 2000" style="position:absolute;left:0;top:0;width:100%;height:100%">` +
       `<defs><path id="cvTop" d="${arc(G.top, 1)}"/><path id="cvBot" d="${arc(G.bottom, 0)}"/></defs>` +
       (T.kuntres ? `<text x="${G.kuntres.x}" y="${G.kuntres.y}" text-anchor="middle" font-family="${fT}" font-size="${G.kuntres.size}" fill="${col.dark}" style="${st}">${esc(T.kuntres)}</text>` : '') +
       `<text x="${G.title.x1}" y="${G.title.y1}" text-anchor="middle" font-family="${fT}" font-size="${s1.toFixed(2)}" fill="${col.title}" style="${st}">${esc(title1)}</text>` +
       (title2 ? `<text x="${G.title.x2}" y="${G.title.y2}" text-anchor="middle" font-family="${fT}" font-size="${s2.toFixed(2)}" fill="${col.title}" style="${st}">${esc(title2)}</text>` : '') +
-      (T.arcTop ? `<text font-family="${fX}" font-size="${G.top.size}" fill="${col.arc}" style="${st}"><textPath href="#cvTop" startOffset="${G.top.off}" text-anchor="middle">${esc(T.arcTop)}</textPath></text>` : '') +
-      (bottomTxt ? `<text font-family="${fX}" font-size="${G.bottom.size}" fill="${col.arc}" style="${st}"><textPath href="#cvBot" startOffset="${G.bottom.off}" text-anchor="middle">${bottomTxt}</textPath></text>` : '') +
-      (T.line1 ? `<text x="${G.line1.x}" y="${G.line1.y}" text-anchor="middle" font-family="${fX}" font-weight="700" font-size="${G.line1.size}" fill="${col.dark}" style="${st}">${esc(T.line1)}</text>` : '') +
-      (T.line2 ? `<text x="${G.line2.x}" y="${G.line2.y}" text-anchor="middle" font-family="${fX}" font-weight="700" font-size="${G.line2.size}" fill="${col.dark}" style="${st}">${esc(T.line2)}</text>` : '') +
+      (topPlain ? `<text font-family="${fA}" font-size="${sTop.toFixed(2)}" fill="${col.arc}" style="${st}"><textPath href="#cvTop" startOffset="${G.top.off}" text-anchor="middle">${esc(topPlain)}</textPath></text>` : '') +
+      (botPlain.trim() ? `<text font-family="${fA}" font-size="${sBot.toFixed(2)}" fill="${col.arc}" style="${st}"><textPath href="#cvBot" startOffset="${G.bottom.off}" text-anchor="middle">${bottomTxt}</textPath></text>` : '') +
+      (T.line1 ? `<text x="${G.line1.x}" y="${G.line1.y}" text-anchor="middle" font-family="${fL}" font-weight="700" font-size="${G.line1.size}" fill="${col.dark}" style="${st}">${esc(T.line1)}</text>` : '') +
+      (T.line2 ? `<text x="${G.line2.x}" y="${G.line2.y}" text-anchor="middle" font-family="${fL}" font-weight="700" font-size="${G.line2.size}" fill="${col.dark}" style="${st}">${esc(T.line2)}</text>` : '') +
+      (lg ? `<image href="${C.logo.image}" x="${(lg.x - lw / 2).toFixed(1)}" y="${lg.top}" width="${lw.toFixed(1)}" height="${lg.h}"/>` : '') +
       `</svg>`;
   }
 
