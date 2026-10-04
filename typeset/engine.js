@@ -661,12 +661,8 @@
     }
     function tocRows(pageOf, divOf) {
       const rows = [];
-      const gorn = oimg('divider-fleuron', 17, 'gorn', '');
       articles.forEach((art, i) => {
-        if (art.divider) {
-          const pn = divOf ? heb(divOf(i)) : 'תשצט';
-          rows.push({ kind: 'group', html: `<div class="toc-group"><span class="gname">${esc(art.divider)}</span>${gorn}<span class="gl"></span><span class="gpn">${pn}</span></div>` });
-        }
+        if (art.divider) rows.push({ kind: 'group', html: `<div class="toc-group"><span class="gname">${esc(art.divider)}</span></div>` });
         const pn = pageOf ? heb(pageOf(i)) : 'תשצט';
         const ls = tocTitleLines(art.title);
         const head = ls.slice(0, -1).map((l) => `<div class="tl">${esc(l)}</div>`).join('');

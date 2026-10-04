@@ -407,7 +407,7 @@ def styles_xml():
     s += pst('Header', '<w:bidi/><w:spacing w:after="0" w:line="300" w:lineRule="exact"/>', '', name='header')
     # TOC1 = the band that opens a siman (grey, ruled above and below), TOC2 = one article
     s += pst('TOC1', f'<w:keepNext/><w:pBdr><w:top w:val="single" w:sz="12" w:space="3" w:color="000000"/><w:bottom w:val="single" w:sz="4" w:space="3" w:color="000000"/></w:pBdr>'
-             f'<w:shd w:val="clear" w:color="auto" w:fill="E6E6E6"/><w:tabs><w:tab w:val="right" w:leader="underscore" w:pos="{TEXT_W}"/></w:tabs><w:bidi/><w:spacing w:before="300" w:after="110" w:line="340" w:lineRule="exact"/>',
+             f'<w:shd w:val="clear" w:color="auto" w:fill="E6E6E6"/><w:bidi/><w:spacing w:before="300" w:after="110" w:line="340" w:lineRule="exact"/>',
              fonts(TOC_FONT) + '<w:b/><w:bCs/>' + sz(14), name='toc 1')
     s += pst('TOC2', f'<w:tabs><w:tab w:val="right" w:leader="dot" w:pos="{TEXT_W}"/></w:tabs><w:bidi/><w:spacing w:after="60" w:line="300" w:lineRule="exact"/>', fonts(TOC_FONT) + sz(12), name='toc 2')
     # character styles
@@ -486,10 +486,11 @@ def build(doc_json, layout_json, cfg_json, out):
         items.append((2, a['title'], lay['toc'][k]['page'] if lay else k + 1))
     toc = [para(run('תוכן עניינים'), ST['tocTitle'])]
     for k, (lvl, title, pg) in enumerate(items):
-        pre = ('<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> TOC \\o "1-2" \\u </w:instrText></w:r>'
+        pre = ('<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> TOC \\o "1-2" \\u \\n 1-1 </w:instrText></w:r>'
                '<w:r><w:fldChar w:fldCharType="separate"/></w:r>') if k == 0 else ''
         post = '<w:r><w:fldChar w:fldCharType="end"/></w:r>' if k == len(items) - 1 else ''
-        toc.append(para(f'{pre}<w:r><w:t xml:space="preserve">{escape(wtxt(title))}</w:t></w:r><w:r><w:tab/></w:r><w:r><w:t>{heb(pg)}</w:t></w:r>{post}', f'TOC{lvl}'))
+        num = '' if lvl == 1 else f'<w:r><w:tab/></w:r><w:r><w:t>{heb(pg)}</w:t></w:r>'      # a siman band carries no page number
+        toc.append(para(f'{pre}<w:r><w:t xml:space="preserve">{escape(wtxt(title))}</w:t></w:r>{num}{post}', f'TOC{lvl}'))
     eo = cfg.get('endOrnament') or {}
     toc.append(para(picture(eo.get('name', 'fleuron-small') + '.png', eo.get('w', 18), 'v'), jc='center', spacing='<w:spacing w:before="240" w:after="0" w:line="240" w:lineRule="auto"/>', sect=sectpr('nextPage', 1, toc_ids, start_page=1)))
     parts.append(''.join(toc))
