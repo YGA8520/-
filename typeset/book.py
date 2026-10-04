@@ -42,14 +42,14 @@ TITLE_WORDS = ('הרב', 'הרה״ג', 'הרה"ג', 'הגאון', 'נשיא', '�
 
 
 LEADERS = [   # in the order they appear inside a siman: (core name, the title printed with it)
-    (re.compile(r'מרדכי\s+פוטא?ש'), "נשיא הכולל הגאון ר׳ מרדכי פוטש שליט״א"),
-    (re.compile(r'דוד\s+פוטא?ש'), "נשיא הכולל הגאון ר׳ דוד פוטש שליט״א"),
+    (re.compile(r'מרדכי\s+פוטא?ש'), "נשיא הכולל הגאון ר׳ מרדכי פוטאש שליט״א"),
+    (re.compile(r'דוד\s+פוטא?ש'), "נשיא הכולל הגאון ר׳ דוד פוטאש שליט״א"),
     (re.compile(r'משה\s+זאדה'), "ראש הכולל הרב ר׳ משה זאדה שליט״א"),
 ]
 
 
 def author_rank(author):
-    """0 מרדכי פוטש, 1 דוד פוטש, 2 משה זאדה, 3 everybody else (the order of the חבורות inside every siman)"""
+    """0 מרדכי פוטאש, 1 דוד פוטאש, 2 משה זאדה, 3 everybody else (the order of the חבורות inside every siman)"""
     for k, (rx, _) in enumerate(LEADERS):
         if rx.search(author or ''):
             return k
@@ -363,7 +363,7 @@ def build():
         allarts += new_articles.build_articles()
     except SystemExit as e:
         print('WARNING: additional חבורות not added:', e)
-    # order: by siman; inside a siman: מרדכי פוטש, דוד פוטש, משה זאדה, then everybody else; then se'if, then the order they came in
+    # order: by siman; inside a siman: מרדכי פוטאש, דוד פוטאש, משה זאדה, then everybody else; then se'if, then the order they came in
     ordered = sorted(allarts, key=lambda a: (a['siman'] or 0, author_rank(a['author']), a['seif'], a['idx']))
     for a in ordered:                       # running-head versions of long titles (no ellipsis; the client wants a clean cut)
         for pre, short in SHORT_TITLES.items():

@@ -49,12 +49,13 @@
     };
     // font size of an arc text: the configured size, smaller if the text would not fit on the arc
     const arcSize = (g, plain) => Math.min(g.size, 0.97 * (g.r * Math.abs(g.a1 - g.a0) * Math.PI / 180) / (textW(plain, `100px "${fA}"`) / 100));
-    const topPlain = T.arcTop || '';
+    const topPlain = T.arcTop ? (T.arcTopBullets ? '\u25cf  ' + T.arcTop + '  \u25cf' : T.arcTop) : '';
     const botParts = Array.isArray(T.arcBottom) ? T.arcBottom : [T.arcBottom || ''];
     const botPlain = botParts.join('   ●   ');
     const sTop = arcSize(G.top, topPlain), sBot = arcSize(G.bottom, botPlain);
-    const bullet = ` <tspan font-family="'Times New Roman','Liberation Serif',serif" font-size="${(sBot * 0.7).toFixed(1)}">&#9679;</tspan> `;
-    const bottomTxt = botParts.map(esc).join(bullet);
+    const bulletAt = (sz) => ` <tspan font-family="'Times New Roman','Liberation Serif',serif" font-size="${(sz * 0.7).toFixed(1)}">&#9679;</tspan> `;
+    const bottomTxt = botParts.map(esc).join(bulletAt(sBot));
+    const topTxt = T.arcTop ? (T.arcTopBullets ? bulletAt(sTop).trimStart() + ' ' + esc(T.arcTop) + ' ' + bulletAt(sTop).trimEnd() : esc(T.arcTop)) : '';
     const st = 'direction:rtl;unicode-bidi:isolate;';
     const s1 = fit(title1, G.title.size, G.title.maxW1), s2 = fit(title2, G.title.size, G.title.maxW2);
     const lg = C.logo && G.logo ? G.logo : null, lw = lg ? lg.h * C.logo.w / C.logo.h : 0;
@@ -64,7 +65,7 @@
       (T.kuntres ? `<text x="${G.kuntres.x}" y="${G.kuntres.y}" text-anchor="middle" font-family="${fT}" font-size="${G.kuntres.size}" fill="${col.dark}" style="${st}">${esc(T.kuntres)}</text>` : '') +
       `<text x="${G.title.x1}" y="${G.title.y1}" text-anchor="middle" font-family="${fT}" font-size="${s1.toFixed(2)}" fill="${col.title}" style="${st}">${esc(title1)}</text>` +
       (title2 ? `<text x="${G.title.x2}" y="${G.title.y2}" text-anchor="middle" font-family="${fT}" font-size="${s2.toFixed(2)}" fill="${col.title}" style="${st}">${esc(title2)}</text>` : '') +
-      (topPlain ? `<text font-family="${fA}" font-size="${sTop.toFixed(2)}" fill="${col.arc}" style="${st}"><textPath href="#cvTop" startOffset="${G.top.off}" text-anchor="middle">${esc(topPlain)}</textPath></text>` : '') +
+      (topPlain ? `<text font-family="${fA}" font-size="${sTop.toFixed(2)}" fill="${col.arc}" style="${st}"><textPath href="#cvTop" startOffset="${G.top.off}" text-anchor="middle">${topTxt}</textPath></text>` : '') +
       (botPlain.trim() ? `<text font-family="${fA}" font-size="${sBot.toFixed(2)}" fill="${col.arc}" style="${st}"><textPath href="#cvBot" startOffset="${G.bottom.off}" text-anchor="middle">${bottomTxt}</textPath></text>` : '') +
       (T.line1 ? `<text x="${G.line1.x}" y="${G.line1.y}" text-anchor="middle" font-family="${fL}" font-weight="700" font-size="${G.line1.size}" fill="${col.dark}" style="${st}">${esc(T.line1)}</text>` : '') +
       (T.line2 ? `<text x="${G.line2.x}" y="${G.line2.y}" text-anchor="middle" font-family="${fL}" font-weight="700" font-size="${G.line2.size}" fill="${col.dark}" style="${st}">${esc(T.line2)}</text>` : '') +

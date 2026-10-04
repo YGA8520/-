@@ -16,8 +16,8 @@ PALETTES = {
     'purple':   dict(t1=272, s1=1.70, v1=0.80, t2=290, s2=1.00, v2=0.80, name='סגול וזהב'),
     'sepia':    dict(t1=30,  s1=1.25, v1=0.86, t2=18,  s2=0.90, v2=0.75, name='חום וזהב'),
     # darker brown + a brighter, warmer gold (olive / grey casts of the old gilding pulled towards one golden hue, shadows and highlights kept)
-    'brown':    dict(t1=26,  s1=2.30, v1=0.52, t2=16,  s2=1.00, v2=0.50, name='חום כהה וזהב בוהק',
-                     gold=dict(hue=43, spread=0.30, sat=1.20, sat_add=0.05, gamma=0.80, contrast=1.16, bright=0.02)),
+    'brown':    dict(t1=26, s1=2.30, v1=0.52, name='חום כהה וזהב בוהק',
+                     gold=dict(gamma=0.90, contrast=1.10, bright=0.02)),
 }
 
 
@@ -72,7 +72,71 @@ def frame_masks(img):
     return gold, np.asarray(r).astype(np.float32) / 255.0
 
 
+# gold ramp (luminance -> colour): dark bronze .. rich gold .. bright highlight.  Applied to the whole gilded frame and to the swash,
+# so no hue of the old artwork (greens, reds, olive) can stain the gold
+GOLD_RAMP = [(0.00, (26, 14, 4)), (0.18, (84, 52, 12)), (0.38, (150, 102, 22)), (0.58, (208, 158, 40)),
+             (0.78, (244, 204, 84)), (0.92, (255, 236, 150)), (1.00, (255, 250, 222))]
+RING_RECT = ((79, 56, 1329, 1947), (140, 112, 1266, 1876))        # outer / inner rectangle of the frame band, in the 1408 x 2000 artwork
+RING_CIRCLES = ((711.0, 749.0, 329.0), (711.0, 749.0, 342.0))      # the two thin rings of the title medallion
+SWASH_BOX = (285, 560, 640, 800)                                  # the left swash (curl) next to the title
+
+
+def gold_ramp(lum):
+    xs = [x for x, _ in GOLD_RAMP]
+    out = np.zeros(lum.shape + (3,), dtype=np.float32)
+    for c in range(3):
+        out[..., c] = np.interp(lum, xs, [col[c] / 255.0 for _, col in GOLD_RAMP])
+    return out
+
+
+def gold_masks(img):
+    """soft masks on the original-size artwork: `frame` = the whole gilded frame (band + ornaments), `swash` = the left swash of the title"""
+    rgb = np.asarray(img.convert('RGB')).astype(np.float32) / 255.0
+    h, s, v = rgb_to_hsv(rgb)
+    H, W = h.shape
+    yy, xx = np.mgrid[0:H, 0:W]
+    (ox0, oy0, ox1, oy1), (ix0, iy0, ix1, iy1) = RING_RECT
+    ring = (xx >= ox0) & (xx <= ox1) & (yy >= oy0) & (yy <= oy1) & ~((xx >= ix0) & (xx <= ix1) & (yy >= iy0) & (yy <= iy1))
+    # ornaments reaching into the glow: gold-coloured pixels near the frame, closed so that pearls / shadows inside them are included
+    near = (xx > ox0 - 4) & (xx < ox1 + 4) & (yy > oy0 - 4) & (yy < oy1 + 4)
+    core = (h >= 25) & (h <= 68) & (s > 0.26) & (v > 0.22) & near
+    m = Image.fromarray((core * 255).astype(np.uint8)).filter(ImageFilter.MaxFilter(13)).filter(ImageFilter.MinFilter(9))
+    orn = np.asarray(m) > 127
+    frame = (ring | orn).astype(np.uint8) * 255
+    frame = np.asarray(Image.fromarray(frame).filter(ImageFilter.GaussianBlur(1.1))).astype(np.float32) / 255.0
+    # the swash: everything dark / coloured inside its box, except the thin rings and anything right of the title rule
+    lum = rgb @ np.array([0.299, 0.587, 0.114], dtype=np.float32)
+    x0, y0, x1, y1 = SWASH_BOX
+    dark = (xx >= x0) & (xx <= x1) & (yy >= y0) & (yy <= y1) & (lum < 0.93)
+    box = dark.copy()
+    for cx, cy, r in RING_CIRCLES:
+        box &= np.abs(np.hypot(xx - cx, yy - cy) - r) > 2.6
+    from scipy import ndimage
+    box |= ndimage.binary_opening(dark, structure=np.ones((7, 7)))      # thick strokes keep the pixels where a thin ring crosses them                                      # drop dust specks, bridge the gaps where the thin rings cross the strokes
+    lab, n = ndimage.label(box, structure=np.ones((3, 3)))
+    sizes = ndimage.sum(box, lab, range(1, n + 1))
+    box = np.isin(lab, [i + 1 for i, sz in enumerate(sizes) if sz >= 150])
+    sw = Image.fromarray((box * 255).astype(np.uint8)).filter(ImageFilter.MaxFilter(7)).filter(ImageFilter.MinFilter(7)).filter(ImageFilter.MaxFilter(3)).filter(ImageFilter.GaussianBlur(0.7))
+    return frame, np.asarray(sw).astype(np.float32) / 255.0
+
+
 def recolor(img, p, masks):
+    """frame + swash: pure gold from the luminance of the artwork; everything else a single-hue brown tone (t1); red corner panels inside
+    the frame band are part of the frame, hence gold as well"""
+    rgb = np.asarray(img.convert('RGB')).astype(np.float32) / 255.0
+    h, s, v = rgb_to_hsv(rgb)
+    frame, swash = [np.asarray(Image.fromarray((m * 255).astype(np.uint8)).resize(img.size, Image.BICUBIC)).astype(np.float32) / 255.0 for m in masks]
+    g = p['gold']
+    lum = rgb @ np.array([0.299, 0.587, 0.114], dtype=np.float32)
+    lg = np.clip(0.5 + (np.power(np.clip(lum, 0, 1), g['gamma']) - 0.5) * g['contrast'] + g['bright'], 0, 1)
+    rgb_gold = gold_ramp(lg)
+    tone = hsv_to_rgb(np.full_like(h, p['t1']), np.clip(s * p['s1'], 0, 1), np.clip(v * (1 + (p['v1'] - 1) * np.clip(s * 3.0, 0, 1)), 0, 1))     # white stays white
+    w = np.clip(np.maximum(frame, swash), 0, 1)[..., None]
+    out = w * rgb_gold + (1 - w) * tone
+    return Image.fromarray((np.clip(out, 0, 1) * 255 + 0.5).astype(np.uint8), 'RGB')
+
+
+def recolor_hue(img, p, masks):
     """gold frame keeps its colour; red corners -> t2; everything else (green / teal background, glow, speckles) becomes a single-hue t1 tone.
     The three versions are mixed in RGB (mixing hues would give magenta / green fringes)."""
     rgb = np.asarray(img.convert('RGB')).astype(np.float32) / 255.0
@@ -100,10 +164,10 @@ def recolor(img, p, masks):
 def build(palette='navy', out=None, scale=2):
     img = Image.open(SRC).convert('RGB')
     p = PALETTES[palette]
-    masks = frame_masks(img) if p else None
+    masks = (gold_masks(img) if p.get('gold') else frame_masks(img)) if p else None
     img = img.resize((img.width * scale, img.height * scale), Image.LANCZOS).filter(ImageFilter.UnsharpMask(radius=2.2, percent=60, threshold=2))
     if p:
-        img = recolor(img, p, masks)
+        img = (recolor if p.get('gold') else recolor_hue)(img, p, masks)
     out = out or os.path.join(HERE, 'assets', 'cover', 'cover-bg.jpg')
     img.save(out, quality=92, subsampling=0, optimize=True)
     return out
