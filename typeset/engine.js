@@ -58,13 +58,23 @@
     const topTxt = T.arcTop ? (T.arcTopBullets ? bulletAt(sTop).trimStart() + ' ' + esc(T.arcTop) + ' ' + bulletAt(sTop).trimEnd() : esc(T.arcTop)) : '';
     const st = 'direction:rtl;unicode-bidi:isolate;';
     const s1 = fit(title1, G.title.size, G.title.maxW1), s2 = fit(title2, G.title.size, G.title.maxW2);
+    // a touch of gold at both ends of every title line: dark core, gradual change to gold in the outer `titleFade` part
+    let gradDefs = '';
+    const titleFill = (id, txt, size, cx) => {
+      if (!col.titleEdge) return col.title;
+      const w = textW(txt, `${size}px "${fT}"`), f = col.titleFade || 0.3, core = col.titleCore || col.title;
+      gradDefs += `<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${(cx - w / 2).toFixed(1)}" y1="0" x2="${(cx + w / 2).toFixed(1)}" y2="0">` +
+        `<stop offset="0" stop-color="${col.titleEdge}"/><stop offset="${f}" stop-color="${core}"/><stop offset="${1 - f}" stop-color="${core}"/><stop offset="1" stop-color="${col.titleEdge}"/></linearGradient>`;
+      return `url(#${id})`;
+    };
+    const fill1 = titleFill('cvT1', title1, s1, G.title.x1), fill2 = title2 ? titleFill('cvT2', title2, s2, G.title.x2) : col.title;
     const lg = C.logo && G.logo ? G.logo : null, lw = lg ? lg.h * C.logo.w / C.logo.h : 0;
     return `<img src="${C.image}" style="position:absolute;left:0;top:0;width:100%;height:100%">` +
       `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1408 2000" style="position:absolute;left:0;top:0;width:100%;height:100%">` +
-      `<defs><path id="cvTop" d="${arc(G.top, 1)}"/><path id="cvBot" d="${arc(G.bottom, 0)}"/></defs>` +
+      `<defs><path id="cvTop" d="${arc(G.top, 1)}"/><path id="cvBot" d="${arc(G.bottom, 0)}"/>${gradDefs}</defs>` +
       (T.kuntres ? `<text x="${G.kuntres.x}" y="${G.kuntres.y}" text-anchor="middle" font-family="${fT}" font-size="${G.kuntres.size}" fill="${col.dark}" style="${st}">${esc(T.kuntres)}</text>` : '') +
-      `<text x="${G.title.x1}" y="${G.title.y1}" text-anchor="middle" font-family="${fT}" font-size="${s1.toFixed(2)}" fill="${col.title}" style="${st}">${esc(title1)}</text>` +
-      (title2 ? `<text x="${G.title.x2}" y="${G.title.y2}" text-anchor="middle" font-family="${fT}" font-size="${s2.toFixed(2)}" fill="${col.title}" style="${st}">${esc(title2)}</text>` : '') +
+      `<text x="${G.title.x1}" y="${G.title.y1}" text-anchor="middle" font-family="${fT}" font-size="${s1.toFixed(2)}" fill="${fill1}" style="${st}">${esc(title1)}</text>` +
+      (title2 ? `<text x="${G.title.x2}" y="${G.title.y2}" text-anchor="middle" font-family="${fT}" font-size="${s2.toFixed(2)}" fill="${fill2}" style="${st}">${esc(title2)}</text>` : '') +
       (topPlain ? `<text font-family="${fA}" font-size="${sTop.toFixed(2)}" fill="${col.arc}" style="${st}"><textPath href="#cvTop" startOffset="${G.top.off}" text-anchor="middle">${topTxt}</textPath></text>` : '') +
       (botPlain.trim() ? `<text font-family="${fA}" font-size="${sBot.toFixed(2)}" fill="${col.arc}" style="${st}"><textPath href="#cvBot" startOffset="${G.bottom.off}" text-anchor="middle">${bottomTxt}</textPath></text>` : '') +
       (T.line1 ? `<text x="${G.line1.x}" y="${G.line1.y}" text-anchor="middle" font-family="${fL}" font-weight="700" font-size="${G.line1.size}" fill="${col.dark}" style="${st}">${esc(T.line1)}</text>` : '') +

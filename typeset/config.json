@@ -304,7 +304,10 @@
       "brown": {
         "title": "#4a2d16",
         "arc": "#6a4a2c",
-        "dark": "#2e1b0c"
+        "dark": "#2e1b0c",
+        "titleEdge": "#b98a2a",
+        "titleCore": "#4a2d16",
+        "titleFade": 0.3
       }
     },
     "fontArc": "Keren",

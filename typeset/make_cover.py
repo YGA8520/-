@@ -17,7 +17,7 @@ PALETTES = {
     'sepia':    dict(t1=30,  s1=1.25, v1=0.86, t2=18,  s2=0.90, v2=0.75, name='חום וזהב'),
     # darker brown + a brighter, warmer gold (olive / grey casts of the old gilding pulled towards one golden hue, shadows and highlights kept)
     'brown':    dict(t1=26, s1=2.30, v1=0.52, name='חום כהה וזהב בוהק',
-                     gold=dict(gamma=0.90, contrast=1.10, bright=0.02)),
+                     gold=dict(gamma=1.06, contrast=1.04, bright=0.0, sheen=0.17, waves=1.5, phase=0.12)),
 }
 
 
@@ -74,8 +74,8 @@ def frame_masks(img):
 
 # gold ramp (luminance -> colour): dark bronze .. rich gold .. bright highlight.  Applied to the whole gilded frame and to the swash,
 # so no hue of the old artwork (greens, reds, olive) can stain the gold
-GOLD_RAMP = [(0.00, (26, 14, 4)), (0.18, (84, 52, 12)), (0.38, (150, 102, 22)), (0.58, (208, 158, 40)),
-             (0.78, (244, 204, 84)), (0.92, (255, 236, 150)), (1.00, (255, 250, 222))]
+GOLD_RAMP = [(0.00, (22, 12, 4)), (0.20, (68, 42, 10)), (0.40, (122, 82, 18)), (0.60, (168, 122, 32)),
+             (0.78, (204, 158, 54)), (0.92, (230, 194, 98)), (1.00, (244, 222, 148))]
 RING_RECT = ((79, 56, 1329, 1947), (140, 112, 1266, 1876))        # outer / inner rectangle of the frame band, in the 1408 x 2000 artwork
 RING_CIRCLES = ((711.0, 749.0, 329.0), (711.0, 749.0, 342.0))      # the two thin rings of the title medallion
 SWASH_BOX = (285, 560, 640, 800)                                  # the left swash (curl) next to the title
@@ -129,6 +129,11 @@ def recolor(img, p, masks):
     g = p['gold']
     lum = rgb @ np.array([0.299, 0.587, 0.114], dtype=np.float32)
     lg = np.clip(0.5 + (np.power(np.clip(lum, 0, 1), g['gamma']) - 0.5) * g['contrast'] + g['bright'], 0, 1)
+    if g.get('sheen'):          # slow diagonal waves of light and shade over the gilding (metal, not a flat colour)
+        Hh, Ww = lg.shape
+        yy, xx = np.mgrid[0:Hh, 0:Ww].astype(np.float32)
+        tt = (xx / Ww * 0.62 + yy / Hh * 0.38) * g.get('waves', 1.5) + g.get('phase', 0.12)
+        lg = np.clip(lg * (1 - g['sheen'] + 2 * g['sheen'] * (0.5 + 0.5 * np.cos(2 * np.pi * tt))), 0, 1)
     rgb_gold = gold_ramp(lg)
     tone = hsv_to_rgb(np.full_like(h, p['t1']), np.clip(s * p['s1'], 0, 1), np.clip(v * (1 + (p['v1'] - 1) * np.clip(s * 3.0, 0, 1)), 0, 1))     # white stays white
     w = np.clip(np.maximum(frame, swash), 0, 1)[..., None]
