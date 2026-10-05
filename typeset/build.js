@@ -27,6 +27,7 @@ try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = requ
   }
   if (cfg.divider) cfg.divider.enabled = !!(cfg.cover && cfg.cover.enabled) && fs.existsSync(path.join(__dirname, cfg.divider.image));
   if (cfg.innerCover) cfg.innerCover.enabled = !!(cfg.cover && cfg.cover.enabled) && fs.existsSync(path.join(__dirname, cfg.innerCover.image));          // inner title page (silver cover) and credits page
+  if (cfg.backCover) cfg.backCover.enabled = !!(cfg.cover && cfg.cover.enabled) && fs.existsSync(path.join(__dirname, cfg.backCover.image));
   if (cfg.credits) cfg.credits.enabled = !!(cfg.cover && cfg.cover.enabled) && fs.existsSync(path.join(__dirname, cfg.credits.image));
   if (cfg.innerCover && cfg.divider && cfg.divider.colors) cfg.innerCover.colors = cfg.innerCover.colors || cfg.divider.colors;
   cfg.ornaments = {};
@@ -187,14 +188,14 @@ try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = requ
     await cp.locator('#cv').screenshot({ path: path.join(outDir, 'cover.jpg'), type: 'jpeg', quality: 93 });
     await cp.pdf({ path: path.join(outDir, 'cover.pdf'), width: '176mm', height: '250mm', printBackground: true, preferCSSPageSize: true });
   }
-  if (cfg.cover && cfg.cover.enabled && !doc.noCover && ((cfg.innerCover && cfg.innerCover.enabled) || (cfg.credits && cfg.credits.enabled))) {          // inner title page and credits page as pictures (Word)
+  if (cfg.cover && cfg.cover.enabled && !doc.noCover && ((cfg.innerCover && cfg.innerCover.enabled) || (cfg.credits && cfg.credits.enabled) || (cfg.backCover && cfg.backCover.enabled))) {          // inner title page, credits page and back cover as pictures (Word)
     const outDir = path.dirname(outPdf);
     const ip = await browser.newPage({ viewport: { width: 700, height: 1000 }, deviceScaleFactor: 2079 / (176 * 96 / 25.4) });
     await ip.goto('file://' + path.join(__dirname, 'template.html'));
     await ip.addStyleTag({ content: styleCss });
     await ip.addScriptTag({ path: path.join(__dirname, 'engine.js') });
     await ip.evaluate(async (fams) => { await Promise.all(fams.flatMap((f) => [400, 700].map((w) => document.fonts.load(w + ' 16px "' + f + '"', 'אבג')))); await document.fonts.ready; }, [cfg.cover.fontTitle, cfg.cover.fontArc, cfg.cover.fontLines, cfg.fonts.body, cfg.fonts.display, cfg.fonts.lead, cfg.fonts.notes]);
-    for (const [key, fn, file] of [['innerCover', 'innerCoverHTML', 'inner-cover.jpg'], ['credits', 'creditsHTML', 'credits.jpg']]) {
+    for (const [key, fn, file] of [['innerCover', 'innerCoverHTML', 'inner-cover.jpg'], ['credits', 'creditsHTML', 'credits.jpg'], ['backCover', 'backCoverHTML', 'back-cover.jpg']]) {
       if (!(cfg[key] && cfg[key].enabled)) continue;
       await ip.evaluate(([c, name, f]) => {
         document.body.style.margin = '0';

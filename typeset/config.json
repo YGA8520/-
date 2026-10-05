@@ -318,6 +318,7 @@
       "h": 912
     }
   },
+  "backCover": {"image": "assets/cover/back-bg.jpg", "palette": "soft", "logo": "assets/cover/logo.png", "logoW": 971, "logoH": 912, "cx": 704, "cy": 1000, "height": 470},
   "innerCover": {"image": "assets/cover/inner-cover-bg.jpg", "logo": "assets/cover/logo-grey.png"},
   "credits": {
     "image": "assets/cover/credits-bg.jpg",

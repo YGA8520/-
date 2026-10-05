@@ -22,6 +22,16 @@ PALETTES = {
     # the inner title page: the same cover in black / white / grey / silver (no colour: the frame and the swash silver, everything else grey)
     'silver':   dict(t1=0, s1=0.0, v1=0.68, name='כסף', gold=dict(gamma=0.72, contrast=1.06, bright=0.08, sheen=0.10, waves=1.5, phase=0.12),
                      swash=dict(gamma=0.90, contrast=1.10, bright=0.02), frame_ramp='SILVER_RAMP', swash_ramp='SILVER_SWASH_RAMP'),
+    # the back cover: gentle colours instead of the strong brown / bright gold of the front (frame only, no medallion)
+    'soft':     dict(t1=32, s1=1.15, v1=0.80, name='חול ושמפניה עדין',
+                     gold=dict(gamma=0.80, contrast=0.96, bright=0.04, sheen=0.08, waves=1.5, phase=0.12),
+                     swash=dict(gamma=0.90, contrast=1.0, bright=0.02), frame_ramp='SOFT_GOLD_RAMP', swash_ramp='SOFT_SWASH_RAMP'),
+    'soft-blue': dict(t1=212, s1=1.0, v1=0.80, name='אפור כחלחל וכסף עדין',
+                     gold=dict(gamma=0.80, contrast=0.96, bright=0.04, sheen=0.08, waves=1.5, phase=0.12),
+                     swash=dict(gamma=0.90, contrast=1.0, bright=0.02), frame_ramp='SOFT_SILVER_RAMP', swash_ramp='SOFT_SILVER_RAMP'),
+    'soft-sage': dict(t1=95, s1=0.9, v1=0.80, name='ירקרק עדין ושמפניה',
+                     gold=dict(gamma=0.80, contrast=0.96, bright=0.04, sheen=0.08, waves=1.5, phase=0.12),
+                     swash=dict(gamma=0.90, contrast=1.0, bright=0.02), frame_ramp='SOFT_GOLD_RAMP', swash_ramp='SOFT_SWASH_RAMP'),
 }
 
 
@@ -86,6 +96,11 @@ SILVER_RAMP = [(0.00, (20, 20, 22)), (0.18, (62, 63, 67)), (0.38, (118, 120, 125
                (0.78, (214, 216, 220)), (0.92, (242, 244, 247)), (1.00, (255, 255, 255))]            # silver frame: dark steel .. bright silver
 SILVER_SWASH_RAMP = [(0.00, (14, 14, 16)), (0.18, (52, 53, 57)), (0.38, (104, 106, 111)), (0.58, (166, 168, 173)),
                      (0.78, (222, 224, 228)), (0.92, (248, 249, 251)), (1.00, (255, 255, 255))]       # silver swash: brilliant silver running into dark steel
+SOFT_GOLD_RAMP = [(0.00, (74, 62, 48)), (0.20, (122, 104, 80)), (0.40, (163, 142, 104)), (0.60, (197, 176, 136)),
+                  (0.78, (221, 204, 168)), (0.92, (240, 228, 200)), (1.00, (251, 246, 230))]            # the back cover: a muted champagne gilding
+SOFT_SWASH_RAMP = SOFT_GOLD_RAMP
+SOFT_SILVER_RAMP = [(0.00, (58, 62, 70)), (0.20, (96, 102, 112)), (0.40, (138, 146, 158)), (0.60, (176, 184, 195)),
+                    (0.78, (206, 213, 222)), (0.92, (233, 237, 243)), (1.00, (250, 251, 253))]          # a cool, gentle silver
 RING_RECT = ((79, 56, 1329, 1947), (140, 112, 1266, 1876))        # outer / inner rectangle of the frame band, in the 1408 x 2000 artwork
 RING_CIRCLES = ((711.0, 749.0, 329.0), (711.0, 749.0, 342.0))      # the two thin rings of the title medallion
 SWASH_BOX = (285, 560, 640, 800)                                  # the left swash (curl) next to the title
@@ -220,8 +235,11 @@ def frame_only(src):
     return np.where(elem[..., None], out, a), a, elem
 
 
-def build(palette='navy', out=None, scale=2):
+def build(palette='navy', out=None, scale=2, no_medallion=False):
     img = Image.open(SRC).convert('RGB')
+    if no_medallion:                                            # the back cover: the frame and the cloud only
+        clean, _, _ = frame_only(img)
+        img = Image.fromarray((np.clip(clean, 0, 1) * 255 + 0.5).astype(np.uint8), 'RGB')
     p = PALETTES[palette]
     masks = (gold_masks(img) if p.get('gold') else frame_masks(img)) if p else None
     img = img.resize((img.width * scale, img.height * scale), Image.LANCZOS).filter(ImageFilter.UnsharpMask(radius=2.2, percent=60, threshold=2))
@@ -238,6 +256,8 @@ if __name__ == '__main__':
     pal = sys.argv[1] if len(sys.argv) > 1 else (cfg.get('cover') or {}).get('palette', 'navy')
     out = sys.argv[2] if len(sys.argv) > 2 else None
     print('cover background:', build(pal, out), pal)
+    if len(sys.argv) <= 2 and cfg.get('backCover'):               # the back cover: the cover without the circle, in gentle colours, the logo of the organisation in the middle
+        print('back cover background:', build(cfg['backCover'].get('palette', 'soft'), os.path.join(HERE, 'assets', 'cover', 'back-bg.jpg'), no_medallion=True))
     if len(sys.argv) <= 2 and cfg.get('innerCover'):              # the inner title page: the same cover in black / white / grey / silver
         print('inner cover background:', build('silver', os.path.join(HERE, 'assets', 'cover', 'inner-cover-bg.jpg')))
     if len(sys.argv) <= 2 and cfg.get('divider'):               # also the artwork of the internal title pages (siman dividers, grey / silver) and of the credits page

@@ -570,7 +570,14 @@ def build(doc_json, layout_json, cfg_json, out):
                 parts.append(table_xml(art, b) + para('', spacing='<w:spacing w:before="0" w:after="0" w:line="40" w:lineRule="exact"/>', sect=sectpr('continuous', 1, None)))
         chunk.append(para(picture('fleuron-small.png', 18, 'v'), jc='center', spacing='<w:spacing w:before="120" w:after="0" w:line="240" w:lineRule="auto"/>'))
         flush()
-    document = f'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document {NS}><w:body>{"".join(parts)}{sectpr("continuous", 2, None)}</w:body></w:document>'
+    back_jpg = os.path.join(os.path.dirname(os.path.abspath(out)), 'back-cover.jpg')
+    if cfg.get('cover') and cfg.get('backCover') and os.path.exists(back_jpg):       # the back cover is the last page (its own section: one column, no running head)
+        MEDIA.add('back-cover.jpg', open(back_jpg, 'rb').read())
+        parts.append(para(picture_page('back-cover.jpg', 176, 250), spacing='<w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/>'))
+        last_sect = sectpr('nextPage', 1, empty_ids)
+    else:
+        last_sect = sectpr('continuous', 2, None)
+    document = f'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document {NS}><w:body>{"".join(parts)}{last_sect}</w:body></w:document>'
     footnotes = footnotes_xml(D, cfg)          # adds the separator pictures to MEDIA
 
     def img_rels():

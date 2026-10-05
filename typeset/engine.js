@@ -118,6 +118,13 @@
     return coverHTML(cfg, bookName, { uid: 'ic', image: IC.image, colors: IC.colors || (cfg.divider && cfg.divider.colors) || cfg.cover.colors, logoImage: IC.logo });
   }
 
+  // the back cover: the cover without the circle (artwork by make_cover.py, gentle palette) and the logo of the organisation in the middle
+  function backCoverHTML(cfg) {
+    const B = cfg.backCover, w = B.height * B.logoW / B.logoH;
+    return `<img src="${B.image}" style="position:absolute;left:0;top:0;width:100%;height:100%">` +
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1408 2000" style="position:absolute;left:0;top:0;width:100%;height:100%"><image href="${B.logo}" x="${(B.cx - w / 2).toFixed(1)}" y="${(B.cy - B.height / 2).toFixed(1)}" width="${w.toFixed(1)}" height="${B.height}"/></svg>`;
+  }
+
   // the credits page: the two ornamented pillars of the dividers (artwork by make_divider.py, kind 'credits'), all the details between them, the small flourish between the
   // details; the items (texts, logos, separators) are listed in config.json -> credits.items
   function creditsHTML(cfg) {
@@ -1038,6 +1045,12 @@
         root.appendChild(pg);
       });
     });
+    if (cfg.backCover && cfg.backCover.enabled && !doc.noCover) {          // the back cover closes the booklet (not numbered)
+      const bc = newPage();
+      bc.classList.add('cover');
+      bc.innerHTML = backCoverHTML(cfg);
+      root.appendChild(bc);
+    }
     curPage = null;
     return { stats: STATS, pages: root.children.length, toc: articles.map((a, i) => ({ title: a.title, page: startNo[i], pages: artPages[i].length })), tocPages: nToc, titleBoxes, dividerBoxes, dividerPages: divNo, blankPages: blanks, dividers: articles.map((a, i) => (a.divider ? { ai: i, label: a.divider } : null)).filter(Boolean), headerTitles: articles.map((a) => headerTitle(a)), headerAuthors: articles.map((a) => headerAuthor(a)) };
   }
@@ -1047,5 +1060,6 @@
   window.dividerHTML = dividerHTML;
   window.innerCoverHTML = innerCoverHTML;
   window.creditsHTML = creditsHTML;
+  window.backCoverHTML = backCoverHTML;
   window.hebNum = heb;
 })();
