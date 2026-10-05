@@ -1,44 +1,46 @@
 #!/usr/bin/env python3
-"""Front matter and back cover of the previous booklet put around the rendered text pages of the Ritcha booklet:
+"""Front matter and back cover of the previous booklet put around the rendered text pages of the Ritcha booklet, everything in B5 (176 x 250 mm):
 
-    cover (make_cover_ritcha.py)  |  credits page (output/credits.jpg)  |  the text pages  |  [empty page]  |  back cover (output/back-cover.pdf)
+    cover (make_cover_ritcha.py)  |  credits page (output/credits.jpg)  |  the text pages  |  empty page  |  back cover (output/back-cover.pdf)
 
-All three artworks are 176 x 250 mm; they are stretched to the page size of the booklet (A4, the proportions differ by 0.5 %, not visible).
-Neither the cover, the credits page nor the back cover is numbered: the page numbers of the text pages still start with א on the first text page.
-The back cover has to be an odd page: when it would come out as an even page an empty page is put in front of it.
+The cover, the credits page and the back cover are B5 artwork and are used as they are.  The text pages are designed and rendered on A4
+(render.sh); here every page is scaled to B5 with everything on it - text, borders, header, page number - so the page count and the layout
+are the same and only the size changes (x 0.838 across, x 0.842 down: the proportions of A4 and B5 differ by 0.5 %, not visible).
+None of the pages around the text is numbered: the page numbers of the text pages still start with א on the first text page.
 
-usage: python3 assemble_pdf.py cover.pdf credits.jpg body.pdf back.pdf out_booklet.pdf out_cover_a4.pdf"""
+usage: python3 assemble_pdf.py cover.pdf credits.jpg body.pdf back.pdf out_booklet.pdf out_cover.pdf"""
+import shutil
 import sys
 import pymupdf as fitz
 
 cover_src, credits_img, body_src, back_src, out_booklet, out_cover = sys.argv[1:7]
 
-body = fitz.open(body_src)
-R = body[0].rect                                           # exactly the page size of the booklet
+W, H = 498.96, 708.96                                      # B5: 176 x 250 mm
 
 
-def pdf_page(path):
-    d = fitz.open(); p = d.new_page(width=R.width, height=R.height)
-    p.show_pdf_page(p.rect, fitz.open(path), 0, keep_proportion=False)
-    return d
+def new_page(doc):
+    return doc.new_page(width=W, height=H)
 
-
-cover = pdf_page(cover_src)
-cover.set_metadata({'title': 'ריתחא דאורייתא – עמוד שער'})
-cover.save(out_cover, garbage=3, deflate=True)
-
-credits = fitz.open(); cp = credits.new_page(width=R.width, height=R.height)
-cp.insert_image(cp.rect, filename=credits_img, keep_proportion=False)
 
 book = fitz.open()
+
+cover = fitz.open(cover_src)
+assert abs(cover[0].rect.width - W) < 0.1 and abs(cover[0].rect.height - H) < 0.1
 book.insert_pdf(cover)
-book.insert_pdf(credits)
-book.insert_pdf(body)
-blank = ''
-if (book.page_count + 1) % 2 == 0:                          # the back cover would be an even page
-    book.new_page(width=R.width, height=R.height); blank = ' (+ empty page before the back cover)'
-book.insert_pdf(pdf_page(back_src))
+
+new_page(book).insert_image(fitz.Rect(0, 0, W, H), filename=credits_img, keep_proportion=False)      # credits page
+
+body = fitz.open(body_src)
+for n in range(body.page_count):                           # text pages: A4 -> B5
+    new_page(book).show_pdf_page(fitz.Rect(0, 0, W, H), body, n, keep_proportion=False)
+
+new_page(book)                                             # empty page in front of the back cover
+back = fitz.open(back_src)
+assert abs(back[0].rect.width - W) < 0.1 and abs(back[0].rect.height - H) < 0.1
+book.insert_pdf(back)
+
 md = dict(body.metadata or {}); md['title'] = 'ריתחא דאורייתא'
 book.set_metadata(md)
 book.save(out_booklet, garbage=3, deflate=True)
-print('pages: %d%s, back cover = page %d' % (book.page_count, blank, book.page_count))
+shutil.copyfile(cover_src, out_cover)
+print('pages: %d (cover, credits, %d text pages, empty page, back cover), page size %.2f x %.2f pt' % (book.page_count, body.page_count, W, H))

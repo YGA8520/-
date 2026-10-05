@@ -3,14 +3,12 @@
 
 What changes (everything else - background, medallion, "קונטרס", logo - is kept byte for byte):
   * title, first line: "פלפולא" -> "ריתחא" in EFT Algebra (fonts/EFT_ALGEBRA_OTS.TTF, the client's font, not in git).  The word is as wide as the
-    straight double rule above it: the roof of the ת is stretched (only the roof, the strokes keep their thickness).
+    straight double rule above it: the roof of the ר is stretched (only the roof, the stem keeps its shape and thickness).
   * the curved text on top of the medallion (Keren, outside the rings): the quotation from the Yaaros Devash, no bullets at the ends,
     the source in brackets in a smaller size
   * the curved text inside the medallion at the bottom (Keren): שאלות • קושיות • נידונים • הלכה למעשה
   * the two lines under the medallion (Lulav CLM Bold): the new subtitle.
-The Keren glyphs are the outlines embedded in the old cover (only the letters of the old texts); Keren has no ט, נ, comma and brackets
-in that subset, they are taken from Miriam CLM Bold scaled to the height of Keren (assets/cover_fallback_glyphs.json) until the Keren
-font itself is at hand.
+The curved texts are set in Keren Normal (fonts/KEREN.TTF, the client's font, not in git; the old cover used the same face).
 
 usage: python3 make_cover_ritcha.py [src_cover.pdf] [out_cover.pdf]
 """
@@ -26,7 +24,7 @@ SRC = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, '..', '..', 'outp
 OUT = sys.argv[2] if len(sys.argv) > 2 else 'cover_176x250.pdf'
 EFT = os.path.join(HERE, 'fonts', 'EFT_ALGEBRA_OTS.TTF')
 LULAV = os.path.join(HERE, '..', '..', 'typeset', 'assets', 'fonts', 'LulavCLM-Bold.otf')
-FALLBACK = os.path.join(HERE, 'assets', 'cover_fallback_glyphs.json')
+KEREN = os.path.join(HERE, 'fonts', 'KEREN.TTF')
 
 # ---- geometry of the old cover (1408 x 2000 grid, config.json -> cover)
 CX, CY = 711.0, 749.0                       # centre of the medallion
@@ -77,31 +75,15 @@ def font_glyph(font, ch, warp=None):
     return dict(contours=pen.contours, adv=font['hmtx'][name][0] * 1000.0 / upm)
 
 
-def keren_glyphs(doc, font_xref=11):
-    """the outlines of the Keren subset embedded in the old cover (Type 3 char procs), by Unicode"""
-    obj = doc.xref_object(font_xref, compressed=False)
-    procs = {m.group(1): int(m.group(2)) for m in re.finditer(r'/g([0-9A-F]+) (\d+) 0 R', obj)}
-    codes = {}
-    for a, b, u in ((0x5F, 0x64, 0x5D0), (0x68, 0x6D, 0x5D9), (0x70, 0x71, 0x5E1), (0x76, 0x79, 0x5E7)):
-        for c in range(a, b + 1): codes[c] = u + c - a
-    codes[0x66] = 0x5D7; codes[0x73] = 0x5E4; codes[0x03] = 0x20
-    out = {}
-    for c, u in codes.items():
-        if '%X' % c not in procs: continue
-        lines = doc.xref_stream(procs['%X' % c]).decode('latin-1').split('\n')
-        adv = float(lines[0].split()[0]); contours = []; cur = None
-        for line in lines[1:]:
-            p = line.split()
-            if not p: continue
-            if p[-1] == 'm':
-                if cur: contours.append(cur)
-                cur = [('m', (float(p[0]), float(p[1])))]
-            elif p[-1] == 'l': cur.append(('l', (float(p[0]), float(p[1]))))
-            elif p[-1] == 'c': cur.append(('c', tuple(float(v) for v in p[:6])))
-        if cur: contours.append(cur)
-        out[chr(u)] = dict(contours=contours, adv=adv)
-    for ch, g in json.load(open(FALLBACK, encoding='utf8')).items():        # ט נ , ( ) from Miriam CLM Bold
-        out[ch] = dict(adv=g['adv'], contours=[[(op, tuple(a)) for op, a in c] for c in g['contours']])
+def keren_glyphs(text):
+    """outlines of Keren Normal for every character of text.  Keren is a legacy font: the Hebrew letters sit at the cp1255 positions of its
+    symbol map (U+F0E0..F0FA), punctuation and the space at U+F000 + ASCII."""
+    font = TTFont(KEREN); cmap = [t for t in font['cmap'].tables if t.platformID == 3][0].cmap
+    gs = font.getGlyphSet(); hm = font['hmtx']; out = {}
+    for ch in set(text):
+        g = cmap[0xF000 + ch.encode('cp1255')[0]]
+        pen = PathPen(gs, font['head'].unitsPerEm); gs[g].draw(pen)
+        out[ch] = dict(contours=pen.contours, adv=hm[g][0] * 1000.0 / font['head'].unitsPerEm)
     return out
 
 
@@ -127,12 +109,10 @@ def smooth(x, a, b):
     t = min(1.0, max(0.0, (x - a) / float(b - a))); return t * t * (3 - 2 * t)
 
 
-def stretch_tav(delta):
-    """stretch the roof of the ת by delta font units.  The roof (y > 334) is cut at x ~ 260 and its right part, with the hook at its end,
-    moves right; the diagonal and the foot (y < 300) stay as they are."""
-    def warp(x, y):
-        w = max(smooth(x, 410, 430), smooth(y, 300, 335) * smooth(x, 220, 300))
-        return (x + delta * w, y)
+def stretch_resh(delta):
+    """stretch the roof of the ר by delta font units: everything right of x ~ 200 (the end of the roof with the whole stem) moves right,
+    the flick at the left end stays; the roof is a straight bar there, so only its length changes"""
+    def warp(x, y): return (x + delta * smooth(x, 150, 250), y)
     return warp
 
 
@@ -147,7 +127,7 @@ def title_line(font):
     target = (RULE_R - INK_MARGIN) - (RULE_L + INK_MARGIN)
     delta = (target - natural) / s
     glyphs = {c: base[c] for c in base}
-    glyphs['ת'] = font_glyph(font, 'ת', stretch_tav(delta)); glyphs['ת']['adv'] = base['ת']['adv'] + delta
+    glyphs['ר'] = font_glyph(font, 'ר', stretch_resh(delta)); glyphs['ר']['adv'] = base['ר']['adv'] + delta
     ink_l = (RULE_L + INK_MARGIN); x0 = ink_l - first * s
     ops = []; x = x0
     for c in visual:
@@ -238,10 +218,10 @@ def main():
     doc.xref_set_key(7, 'Shading/Coords', '[%.2f 0 %.2f 0]' % (ink_l, ink_r))
 
     # 2. the two curved lines: remove every glyph of the old ones, put the new ones where the first one stood
-    K = keren_glyphs(doc)
+    bot_text = ' • '.join(BOT_ITEMS)
+    K = keren_glyphs(TOP_TEXT + bot_text.replace('•', ''))
     bullet = font_glyph(TTFont(io.BytesIO(doc.extract_font(10)[3])), '●')
     top = lambda sz: visual_items(TOP_TEXT, K, sz, sz * BRACKET_SCALE)
-    bot_text = ' • '.join(BOT_ITEMS)
     bot = lambda sz: visual_items(bot_text, K, sz, None, bullet, sz * BULLET_SCALE)
     top_size = fit(top, TOP_MAX, TOP_SPAN, TOP_R); bot_size = fit(bot, BOT_SIZE, BOT_SPAN, BOT_R)
     top_ops, top_len = arc_text(top(top_size), TOP_R, TOP_CENTRE, TOP_SPAN, True, K)
@@ -264,7 +244,7 @@ def main():
     doc.update_stream(xref, s.encode('latin-1'))
     doc.save(OUT, garbage=3, deflate=True)
     print('wrote', OUT)
-    print('title line 1: ink %.1f .. %.1f, ת stretched by %.0f units' % (ink_l, ink_r, delta))
+    print('title line 1: ink %.1f .. %.1f, ר stretched by %.0f units' % (ink_l, ink_r, delta))
     print('top arc: size %.1f (old 40), length %.0f of %.0f; bottom arc: size %.1f, length %.0f of %.0f'
           % (top_size, top_len, math.radians(TOP_SPAN) * TOP_R, bot_size, bot_len, math.radians(BOT_SPAN) * BOT_R))
 
