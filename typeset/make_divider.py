@@ -101,21 +101,24 @@ def stretch(arr, w, h):
 
 def orn_piece(a, frame, kind):
     """a vertical ornament of the cover frame, at twice the size: 'scroll' = the acanthus scroll that hangs from the top-left corner along the rail (without the horizontal
-    part of the corner), 'curl' = the curl in the middle of the left rail.  Returns (luminance, alpha); the rail columns fade out at both ends, so that no seam shows."""
-    box = (79, 112, 211, 412) if kind == 'scroll' else (100, 585, 205, 690)
+    part of the corner), 'curl' = the curl in the middle of the left rail.  Returns (luminance, alpha); the pieces include the rail they sit on and fade in and out over 24
+    units, so that neighbouring pieces overlap without a seam (the ornaments of the cover frame cast their shadow on the rail)."""
+    box = (79, 112, 211, 412) if kind == 'scroll' else (79, 585, 205, 690)
     l, m = piece2(a, frame, box)
+    m = m.copy()
     if kind == 'scroll':
-        m = m.copy()
-        m[:2 * 53, 2 * 96:] = 0                                            # the thin tendril that belongs to the horizontal part of the corner
-    rail = 2 * (140 - box[0])                                              # columns of the rail itself
+        m[:50, 146:] = 0                                                   # what belongs to the horizontal part of the corner (leaf and tendril right of the bead)
+        m[:72, 196:] = 0
+        m[480:, 165:] = 0                                                  # a speck
     n = 2 * 24
     ramp = np.ones(m.shape[0], np.float32)
     ramp[:n] = np.arange(n) / n
     ramp[-n:] = np.minimum(ramp[-n:], np.arange(n)[::-1] / n)
+    rail = 2 * (141 - box[0])                                              # columns of the rail itself
     if kind == 'scroll':
         m[:, :rail] *= ramp[:, None]                                       # (the bead at the top of the scroll stays)
     else:
-        m[:, :max(rail, 0)] *= ramp[:, None]
+        m = m * ramp[:, None]
     return l, m
 
 
@@ -130,6 +133,12 @@ def assemble_metal(a, frame, Wb, Hb, orns=()):
 
     def over(l, m, x, y):
         h, w = l.shape
+        y0, y1, x0, x1 = max(y, 0), min(y + h, lum.shape[0]), max(x, 0), min(x + w, lum.shape[1])        # what leaves the frame is cut
+        if y1 <= y0 or x1 <= x0:
+            return
+        l, m = l[y0 - y:y1 - y, x0 - x:x1 - x], m[y0 - y:y1 - y, x0 - x:x1 - x]
+        x, y = x0, y0
+        h, w = l.shape
         sl = (slice(y, y + h), slice(x, x + w))
         na = m + al[sl] * (1 - m)
         lum[sl] = (l * m + lum[sl] * al[sl] * (1 - m)) / np.maximum(na, 1e-4)
@@ -143,6 +152,8 @@ def assemble_metal(a, frame, Wb, Hb, orns=()):
         over(stretch(rl, 2 * w, 2 * h), stretch(ra, 2 * w, 2 * h), 2 * x, 2 * y)
     for kind, y, flip in orns:                                                           # ornaments of the cover along both rails: y = top of the piece (frame units)
         ol, om = orn_piece(a, frame, kind)
+        if y < C or y + ol.shape[0] / 2 > Hb - C:                                         # keep clear of the corner blocks (outside the page)
+            continue
         if flip:
             ol, om = ol[::-1], om[::-1]
         over(ol, om, 0, int(round(2 * y)))                                               # left rail
@@ -273,9 +284,18 @@ def build(out=None, layout=None):
     del xx, yy, dd, tt
     pw = int(round(P['w'] * MM))
     ph = int(round((PAGE_U[1] / 8 + 2 * P['bleed']) * MM))
-    og = L['ornaments']                                                   # mm on the page: the scrolls hang from the circle and rise from the siman, a curl between them
+    og = L['ornaments']                                                   # the ornaments of the cover frame along the whole length of the pillars
     u = lambda mm_: (mm_ + P['bleed']) * 8 / fs                            # page mm -> units of the frame (top of the frame = -bleed)
-    pieces = [('scroll', u(og['from']), False), ('curl', u(og['curl']) - 105 / 2, False), ('scroll', u(og['to']) - 300, True)]
+    sc, cu = 300 * fs / 8, 105 * fs / 8                                    # mm: height of the scroll and of the curl
+    cycle = [('scroll', False, sc), ('curl', False, cu), ('scroll', True, sc), ('curl', True, cu)]       # scroll hanging down, curl, scroll rising, curl
+    pieces, y, i = [], og['anchor'], 0
+    while y < PAGE_U[1] / 8 + P['bleed']:                                  # from the anchor downwards ...
+        kind, flip, h = cycle[i % 4]
+        pieces.append((kind, u(y), flip)); y += h + og['gap']; i += 1
+    y, i = og['anchor'], -1
+    while y > -P['bleed']:                                                 # ... and upwards
+        kind, flip, h = cycle[i % 4]
+        y -= h + og['gap']; pieces.append((kind, u(y), flip)); i -= 1
     draw_frame(page, bg, a, frame, (int(round(lcx * MM)) - pw // 2, -int(round(P['bleed'] * MM)), pw, ph, 0), L, 2, lighten=lighten, orns=pieces)
 
     # ---- the title block of the medallion: black ink (multiplied onto the page, without the rings) + silver swash

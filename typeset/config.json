@@ -324,10 +324,10 @@
     "pillars": {"w": 72, "bleed": 32},
     "medal": {"cx": 55.1, "cy": 58, "scale": 0.95, "titleCentre": 733, "rings": true, "arcs": true},
     "lighten": {"r": 46, "feather": 10, "alpha": 0.92},
-    "ornaments": {"from": 101, "curl": 133, "to": 165},
+    "ornaments": {"anchor": 101, "gap": -2.0},
     "paper": 0.35,
     "edge": 0.55,
     "halo": {"depth": 100, "strength": 0.3},
     "fleurons": {"scale": 1.0, "top": -195, "bottom": 185},
-    "label": {"cy": 198, "font": "Lulav CLM", "weight": 700, "color": "#1c1c1c", "size1": 96, "numeral": 225, "word": 130, "y1": -75, "y2": 105, "maxW": 420}}
+    "label": {"cy": 198, "font": "Lulav CLM", "weight": 700, "color": "#1c1c1c", "size1": 96, "numeral": 225, "word": 130, "y1": -75, "y2": 105, "maxW": 372}}
 }
