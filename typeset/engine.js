@@ -40,6 +40,7 @@
     opt = opt || {};
     const C = cfg.cover, G = C.geometry, T = Object.assign({}, C.texts || {}, opt.texts || {}), col = C.colors, dy = opt.dy || 0;
     const image = opt.image || C.image;
+    const uid = opt.uid || '';          // ids of the gradients / arcs must be unique in the document (the book holds the cover and all the dividers)
     const words = bookName.split(/\s+/).filter(Boolean);
     const title1 = T.title1 || words[0] || bookName, title2 = T.title2 || words.slice(1).join(' ');
     const fT = C.fontTitle, fA = C.fontArc, fL = C.fontLines;
@@ -69,24 +70,24 @@
         `<stop offset="0" stop-color="${col.titleEdge}"/><stop offset="${f}" stop-color="${core}"/><stop offset="${1 - f}" stop-color="${core}"/><stop offset="1" stop-color="${col.titleEdge}"/></linearGradient>`;
       return `url(#${id})`;
     };
-    const fill1 = titleFill('cvT1', title1, s1, G.title.x1), fill2 = title2 ? titleFill('cvT2', title2, s2, G.title.x2) : col.title;
+    const fill1 = titleFill('cvT1' + uid, title1, s1, G.title.x1), fill2 = title2 ? titleFill('cvT2' + uid, title2, s2, G.title.x2) : col.title;
     const lg = C.logo && G.logo && opt.logo !== false ? G.logo : null, lw = lg ? lg.h * C.logo.w / C.logo.h : 0;
     // live text outside the medallion (the siman of a divider), set like the title; x / y in the 1408 x 2000 grid of the page
     const labels = (opt.labels || []).map((L, i) => {
       const fam = L.font || fT, wt = L.weight || 400, w = textW(L.txt, `${wt} ${L.size}px "${fam}"`), sz = w > L.maxW ? L.size * L.maxW / w : L.size;
-      const fill = L.font ? (L.color || col.dark) : titleFill('cvL' + i, L.txt, sz, L.x);
+      const fill = L.font ? (L.color || col.dark) : titleFill('cvL' + uid + i, L.txt, sz, L.x);
       return `<text x="${L.x.toFixed(1)}" y="${L.y.toFixed(1)}" text-anchor="middle" font-family="${fam}" font-weight="${wt}" font-size="${sz.toFixed(2)}" fill="${fill}" style="${st}">${esc(L.txt)}</text>`;
     }).join('');
     const medal = (T.kuntres ? `<text x="${G.kuntres.x}" y="${G.kuntres.y + dy}" text-anchor="middle" font-family="${fT}" font-size="${G.kuntres.size}" fill="${col.dark}" style="${st}">${esc(T.kuntres)}</text>` : '') +
       `<text x="${G.title.x1}" y="${G.title.y1 + dy}" text-anchor="middle" font-family="${fT}" font-size="${s1.toFixed(2)}" fill="${fill1}" style="${st}">${esc(title1)}</text>` +
       (title2 ? `<text x="${G.title.x2}" y="${G.title.y2 + dy}" text-anchor="middle" font-family="${fT}" font-size="${s2.toFixed(2)}" fill="${fill2}" style="${st}">${esc(title2)}</text>` : '') +
-      (topPlain ? `<text font-family="${fA}" font-size="${sTop.toFixed(2)}" fill="${col.arc}" style="${st}"><textPath href="#cvTop" startOffset="${G.top.off}" text-anchor="middle">${topTxt}</textPath></text>` : '') +
-      (botPlain.trim() ? `<text font-family="${fA}" font-size="${sBot.toFixed(2)}" fill="${col.arc}" style="${st}"><textPath href="#cvBot" startOffset="${G.bottom.off}" text-anchor="middle">${bottomTxt}</textPath></text>` : '') +
+      (topPlain ? `<text font-family="${fA}" font-size="${sTop.toFixed(2)}" fill="${col.arc}" style="${st}"><textPath href="#cvTop${uid}" startOffset="${G.top.off}" text-anchor="middle">${topTxt}</textPath></text>` : '') +
+      (botPlain.trim() ? `<text font-family="${fA}" font-size="${sBot.toFixed(2)}" fill="${col.arc}" style="${st}"><textPath href="#cvBot${uid}" startOffset="${G.bottom.off}" text-anchor="middle">${bottomTxt}</textPath></text>` : '') +
       (T.line1 ? `<text x="${G.line1.x}" y="${G.line1.y + dy}" text-anchor="middle" font-family="${fL}" font-weight="700" font-size="${G.line1.size}" fill="${col.dark}" style="${st}">${esc(T.line1)}</text>` : '') +
       (T.line2 ? `<text x="${G.line2.x}" y="${G.line2.y + dy}" text-anchor="middle" font-family="${fL}" font-weight="700" font-size="${G.line2.size}" fill="${col.dark}" style="${st}">${esc(T.line2)}</text>` : '');
     return `<img src="${image}" style="position:absolute;left:0;top:0;width:100%;height:100%">` +
       `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1408 2000" style="position:absolute;left:0;top:0;width:100%;height:100%">` +
-      `<defs><path id="cvTop" d="${arc(G.top, 1)}"/><path id="cvBot" d="${arc(G.bottom, 0)}"/>${gradDefs}</defs>` +
+      `<defs><path id="cvTop${uid}" d="${arc(G.top, 1)}"/><path id="cvBot${uid}" d="${arc(G.bottom, 0)}"/>${gradDefs}</defs>` +
       (opt.group ? `<g transform="${opt.group}">${medal}</g>` : medal) + labels +
       (lg ? `<image href="${C.logo.image}" x="${(lg.x - lw / 2).toFixed(1)}" y="${lg.top}" width="${lw.toFixed(1)}" height="${lg.h}"/>` : '') +
       `</svg>`;
@@ -106,7 +107,7 @@
     const lx = Lb.cx * 8, ly = Lb.cy * 8, m = D.medal;
     const c2 = Object.assign({}, cfg, { cover: Object.assign({}, cfg.cover, { colors: D.colors || cfg.cover.colors }) });
     const mk = (txt, y, size) => ({ txt, x: lx, y: ly + y, size, maxW: Lb.maxW, font: Lb.font, weight: Lb.weight, color: Lb.color });
-    return coverHTML(c2, bookName, { image: D.image, logo: false, texts: { line1: '', line2: '' },
+    return coverHTML(c2, bookName, { uid: 'd' + (dividerHTML.n = (dividerHTML.n || 0) + 1), image: D.image, logo: false, texts: { line1: '', line2: '' },
       group: `translate(${m.cx * 8} ${m.cy * 8}) scale(${m.scale}) translate(-711 -749)`,
       labels: [mk(l1, Lb.y1, Lb.size1), mk(l2, Lb.y2, short ? Lb.numeral : Lb.word)].filter((x) => x.txt) });
   }
