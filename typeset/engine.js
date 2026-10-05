@@ -104,7 +104,7 @@
     const D = cfg.divider, [l1, l2x] = dividerLines(label), l2 = l2x.replace(/[\u05f3\u05f4'"]/g, '');          // the siman is written without geresh / gershayim
     const short = l2.replace(/[^\u05d0-\u05ea]/g, '').length <= 3;         // a short siman letter group is set larger
     const Lb = Object.assign({ font: 'Lulav CLM', weight: 700, size1: 100, numeral: 240, word: 150, y1: -85, y2: 115, maxW: 470 }, D.label || {});
-    const m = D.medal, lx = (m.cx + ((m.titleCentre || 711) - 711) * m.scale / 8) * 8, ly = Lb.cy * 8;      // the siman is centred under the middle of the title
+    const m = D.medal, lx = D.axis * 8, ly = Lb.cy * 8;      // the siman is centred on the axis of the pillars (as is the circle)
     const c2 = Object.assign({}, cfg, { cover: Object.assign({}, cfg.cover, { colors: D.colors || cfg.cover.colors }) });
     const mk = (txt, y, size) => ({ txt, x: lx, y: ly + y, size, maxW: Lb.maxW, font: Lb.font, weight: Lb.weight, color: Lb.color });
     return coverHTML(c2, bookName, { uid: 'd' + (dividerHTML.n = (dividerHTML.n || 0) + 1), image: D.image, logo: false, texts: Object.assign({ line1: '', line2: '' }, m.arcs === false ? { arcTop: '', arcBottom: [] } : {}),

@@ -274,7 +274,7 @@ def build(out=None, layout=None):
     # the title block stands over them and the pillars are lightened where they meet
     fs = L['scale']
     ms = L['medal']['scale']
-    lcx = L['medal']['cx'] + (L['medal'].get('titleCentre', RING_C[0]) - RING_C[0]) * ms / 8      # mm: the middle of the title, the siman is centred under it
+    lcx = L['axis']                                                       # mm: the axis of the pillars; the circle and the siman are centred on it
     P = L['pillars']
     lt = L['lighten']
     yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
