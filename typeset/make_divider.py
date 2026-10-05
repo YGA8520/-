@@ -99,7 +99,27 @@ def stretch(arr, w, h):
     return np.asarray(Image.fromarray(arr.astype(np.float32), 'F').resize((w, h), Image.BILINEAR))
 
 
-def assemble_metal(a, frame, Wb, Hb):
+def orn_piece(a, frame, kind):
+    """a vertical ornament of the cover frame, at twice the size: 'scroll' = the acanthus scroll that hangs from the top-left corner along the rail (without the horizontal
+    part of the corner), 'curl' = the curl in the middle of the left rail.  Returns (luminance, alpha); the rail columns fade out at both ends, so that no seam shows."""
+    box = (79, 112, 211, 412) if kind == 'scroll' else (100, 585, 205, 690)
+    l, m = piece2(a, frame, box)
+    if kind == 'scroll':
+        m = m.copy()
+        m[:2 * 53, 2 * 96:] = 0                                            # the thin tendril that belongs to the horizontal part of the corner
+    rail = 2 * (140 - box[0])                                              # columns of the rail itself
+    n = 2 * 24
+    ramp = np.ones(m.shape[0], np.float32)
+    ramp[:n] = np.arange(n) / n
+    ramp[-n:] = np.minimum(ramp[-n:], np.arange(n)[::-1] / n)
+    if kind == 'scroll':
+        m[:, :rail] *= ramp[:, None]                                       # (the bead at the top of the scroll stays)
+    else:
+        m[:, :max(rail, 0)] *= ramp[:, None]
+    return l, m
+
+
+def assemble_metal(a, frame, Wb, Hb, orns=()):
     """a frame of any size (Wb x Hb artwork units, at twice the size): the four corner blocks of the cover frame, the rails made of its straight left rail.
     Returns (luminance, alpha)."""
     C, T = CORNER, RAIL_T
@@ -121,6 +141,12 @@ def assemble_metal(a, frame, Wb, Hb):
                               ((ox0, 440, ox0 + T, 586), (T, lv + 2 * F, 0, C - F)), ((ox1 - T, 405, ox1, 586), (T, lv + 2 * F, Wb - T, C - F))):
         rl, ra = piece2(a, frame, box)
         over(stretch(rl, 2 * w, 2 * h), stretch(ra, 2 * w, 2 * h), 2 * x, 2 * y)
+    for kind, y, flip in orns:                                                           # ornaments of the cover along both rails: y = top of the piece (frame units)
+        ol, om = orn_piece(a, frame, kind)
+        if flip:
+            ol, om = ol[::-1], om[::-1]
+        over(ol, om, 0, int(round(2 * y)))                                               # left rail
+        over(ol[:, ::-1], om[:, ::-1], 2 * Wb - ol.shape[1], int(round(2 * y)))            # right rail (mirrored)
     ramp = np.clip((np.arange(2 * C) - 2 * (C - F)) / (2 * F), 0, 1)                    # 0 .. 1 over the last F units towards the inside of a corner block
     for (bx, by), (x, y), (fx, fy) in (((ox0, oy0), (0, 0), (False, False)), ((ox1 - C, oy0), (Wb - C, 0), (True, False)),
                                        ((ox0, oy1 - C), (0, Hb - C), (False, True)), ((ox1 - C, oy1 - C), (Wb - C, Hb - C), (True, True))):
@@ -155,7 +181,7 @@ def smoke(shape, rect, tpx, depth, strength, seed):
     return 1 - keep
 
 
-def draw_frame(page, bg, a, frame, geom, L, seed, fade_x=None, lighten=None):
+def draw_frame(page, bg, a, frame, geom, L, seed, fade_x=None, lighten=None, orns=()):
     """one silver frame on the page: geom = (x, y, w, h, fade) in canvas px (x may be negative and the frame may leave the page below: what is outside is cut),
     fade = fraction of the height over which the frame fades in from its top edge; fade_x = (x0, x1) in px: opaque left of x0, gone right of x1;
     lighten = (H, W) mask 0..1 where the rails and the smoke are lightened (something stands over them)"""
@@ -163,7 +189,7 @@ def draw_frame(page, bg, a, frame, geom, L, seed, fade_x=None, lighten=None):
     x, y, w, h, fade = geom
     fs = L['scale']
     Wb, Hb = int(round(w / (2 * fs))), int(round(h / (2 * fs)))
-    lum, al = assemble_metal(a, frame, Wb, Hb)
+    lum, al = assemble_metal(a, frame, Wb, Hb, orns)
     rgb = silver(None, lum, SILVER_RAMP, FRAME_GRADE, True)
     metal = np.asarray(to_img(rgb).resize((w, h), Image.LANCZOS)).astype(np.float32) / 255.0
     malpha = np.asarray(Image.fromarray((al * 255).astype(np.uint8)).resize((w, h), Image.LANCZOS)).astype(np.float32) / 255.0
@@ -247,7 +273,10 @@ def build(out=None, layout=None):
     del xx, yy, dd, tt
     pw = int(round(P['w'] * MM))
     ph = int(round((PAGE_U[1] / 8 + 2 * P['bleed']) * MM))
-    draw_frame(page, bg, a, frame, (int(round(lcx * MM)) - pw // 2, -int(round(P['bleed'] * MM)), pw, ph, 0), L, 2, lighten=lighten)
+    og = L['ornaments']                                                   # mm on the page: the scrolls hang from the circle and rise from the siman, a curl between them
+    u = lambda mm_: (mm_ + P['bleed']) * 8 / fs                            # page mm -> units of the frame (top of the frame = -bleed)
+    pieces = [('scroll', u(og['from']), False), ('curl', u(og['curl']) - 105 / 2, False), ('scroll', u(og['to']) - 300, True)]
+    draw_frame(page, bg, a, frame, (int(round(lcx * MM)) - pw // 2, -int(round(P['bleed'] * MM)), pw, ph, 0), L, 2, lighten=lighten, orns=pieces)
 
     # ---- the title block of the medallion: black ink (multiplied onto the page, without the rings) + silver swash
     bx0, by0m, bx1, by1m = mc.MEDALLION_BOX
