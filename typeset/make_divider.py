@@ -3,8 +3,9 @@
 
 Made from the client's empty cover (assets/cover/empty-cover.webp) but in black / white / grey / silver, as it sits inside the book:
   - page background: the cloud of the cover (frame and medallion taken out) stretched over the whole page, in grey - the brown smoke becomes dark grey smoke
-  - the title medallion (rings, rules, flourishes, swash) shrunk and placed on the left of the page (silver swash, black ink)
-  - below it the frame of the cover, shrunk by the same factor and made silver, with the cloud of the cover inside it; the siman is set in it (live text, engine.js)
+  - top: a landscape frame, silver, assembled from the corners and rails of the cover frame, whose left part is outside the page; inside it the title block of the
+    medallion (rules, swash, flourishes - without the rings and the curved texts), set on paper with a soft smoke edge
+  - bottom: the same kind of frame rising from the bottom edge of the page up to a third of the page, fading out upwards; the siman is set in it (live text, engine.js)
 The layout (millimetres on the 176 x 250 page) is read from config.json -> divider; engine.js places the live text with the same numbers."""
 import os, sys, json
 import numpy as np
@@ -21,6 +22,8 @@ FRAME_INNER = (140, 112, 1266, 1876)
 RING_C = (711.0, 749.0)                 # centre of the title medallion
 FLEURON_TOP = (630, 538, 792, 580)      # the small flourishes of the medallion, above and below the title
 FLEURON_BOTTOM = (630, 948, 792, 988)
+CORNER = 335                            # the corner blocks (ornaments + rails) of the cover frame, in artwork units
+RAIL_T = 62                             # thickness of the rails of the frame
 
 SILVER_RAMP = [(0.00, (20, 20, 22)), (0.18, (62, 63, 67)), (0.38, (118, 120, 125)), (0.58, (170, 172, 177)),
                (0.78, (214, 216, 220)), (0.92, (242, 244, 247)), (1.00, (255, 255, 255))]            # the frame: dark steel .. bright silver
@@ -70,7 +73,7 @@ def to_img(a):
 
 
 def clip_box(shape, x, y, w, h):
-    """(canvas slice, sprite slice) of a w x h sprite at (x, y) on a canvas, cut where it leaves the canvas"""
+    """(canvas slice, sprite slice) of a w x h sprite at (x, y) on a canvas, cut where it leaves the canvas; None if nothing is left"""
     H, W = shape[:2]
     cx0, cy0, cx1, cy1 = max(x, 0), max(y, 0), min(x + w, W), min(y + h, H)
     if cx1 <= cx0 or cy1 <= cy0:
@@ -85,15 +88,124 @@ def up2(arr, resample=Image.LANCZOS):
     return np.asarray(im).astype(np.float32) / 255.0
 
 
+def piece2(a, frame, box):
+    """a piece of the cover frame at twice the size: (luminance, alpha)"""
+    x0, y0, x1, y1 = box
+    rgb = np.asarray(to_img(a[y0:y1, x0:x1]).resize(((x1 - x0) * 2, (y1 - y0) * 2), Image.LANCZOS).filter(ImageFilter.UnsharpMask(radius=2.2, percent=60, threshold=2))).astype(np.float32) / 255.0
+    return lum_of(rgb), np.clip(up2(frame[y0:y1, x0:x1], Image.BICUBIC), 0, 1)
+
+
+def stretch(arr, w, h):
+    return np.asarray(Image.fromarray(arr.astype(np.float32), 'F').resize((w, h), Image.BILINEAR))
+
+
+def assemble_metal(a, frame, Wb, Hb):
+    """a frame of any size (Wb x Hb artwork units, at twice the size): the four corner blocks of the cover frame, the rails made of its straight left rail.
+    Returns (luminance, alpha)."""
+    C, T = CORNER, RAIL_T
+    ox0, oy0, ox1, oy1 = FRAME_OUTER[0], FRAME_OUTER[1], FRAME_OUTER[2] + 1, FRAME_OUTER[3] + 1
+    assert Wb >= 2 * C and Hb >= 2 * C, (Wb, Hb)
+    lum = np.zeros((2 * Hb, 2 * Wb), np.float32)
+    al = np.zeros_like(lum)
+
+    def over(l, m, x, y):
+        h, w = l.shape
+        sl = (slice(y, y + h), slice(x, x + w))
+        na = m + al[sl] * (1 - m)
+        lum[sl] = (l * m + lum[sl] * al[sl] * (1 - m)) / np.maximum(na, 1e-4)
+        al[sl] = na
+    lv, lh = Hb - 2 * C, Wb - 2 * C
+    F = 40                                                                              # rails run F units under the corner blocks, which fade out over them (no seam)
+    # every rail is stretched from a straight, ornament-free stretch of the same rail of the cover next to its corners (so that the light matches)
+    for box, (w, h, x, y) in (((500, oy0, 606, oy0 + T), (lh + 2 * F, T, C - F, 0)), ((410, oy1 - T, 600, oy1), (lh + 2 * F, T, C - F, Hb - T)),
+                              ((ox0, 440, ox0 + T, 586), (T, lv + 2 * F, 0, C - F)), ((ox1 - T, 405, ox1, 586), (T, lv + 2 * F, Wb - T, C - F))):
+        rl, ra = piece2(a, frame, box)
+        over(stretch(rl, 2 * w, 2 * h), stretch(ra, 2 * w, 2 * h), 2 * x, 2 * y)
+    ramp = np.clip((np.arange(2 * C) - 2 * (C - F)) / (2 * F), 0, 1)                    # 0 .. 1 over the last F units towards the inside of a corner block
+    for (bx, by), (x, y), (fx, fy) in (((ox0, oy0), (0, 0), (False, False)), ((ox1 - C, oy0), (Wb - C, 0), (True, False)),
+                                       ((ox0, oy1 - C), (0, Hb - C), (False, True)), ((ox1 - C, oy1 - C), (Wb - C, Hb - C), (True, True))):
+        l, m = piece2(a, frame, (bx, by, bx + C, by + C))
+        rx = ramp[::-1] if fx else ramp                                                  # distance to the rail seam along x (the seam of the horizontal rails)
+        ry = ramp[::-1] if fy else ramp
+        rows = slice(2 * (C - T), 2 * C) if fy else slice(0, 2 * T)                      # the band of the horizontal rail inside the block
+        cols = slice(2 * (C - T), 2 * C) if fx else slice(0, 2 * T)                      # the band of the vertical rail inside the block
+        m = m.copy()
+        m[rows, :] *= (1 - rx)[None, :]
+        m[:, cols] *= (1 - ry)[:, None]
+        over(l, m, 2 * x, 2 * y)
+    return lum, al
+
+
+def smoke(shape, rect, tpx, depth, strength, seed):
+    """soft dark smoke inside a frame (rect = x, y, w, h in px, tpx = thickness of its rails): strongest at the rails, with an irregular edge like the cloud of the cover"""
+    H, W = shape
+    rng = np.random.default_rng(seed)
+    n = np.zeros((H // 8 + 1, W // 8 + 1), np.float32)
+    for sg, wt in ((14, 1.0), (6, 0.6), (3, 0.35)):
+        g = ndimage.gaussian_filter(rng.standard_normal(n.shape).astype(np.float32), sg)
+        n += wt * g / g.std()
+    n = ndimage.zoom(n, 8, order=1)[:H, :W]
+    n = np.clip(0.5 + n / 5.0, 0, 1)
+    D = depth * (0.55 + 0.9 * n)
+    x, y, w, h = rect
+    yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
+    keep = np.ones((H, W), np.float32)
+    for d in (xx - (x + tpx), (x + w - tpx) - xx, yy - (y + tpx), (y + h - tpx) - yy):
+        keep *= 1 - strength * np.clip(1 - d / D, 0, 1) ** 1.6
+    return 1 - keep
+
+
+def draw_frame(page, bg, a, frame, geom, L, seed):
+    """one silver frame on the page: geom = (x, y, w, h) in canvas px (x may be negative: the part left of the page is cut), fade = rows fading in from the top (fraction)"""
+    H, W = page.shape[:2]
+    x, y, w, h, fade = geom
+    fs = L['scale']
+    Wb, Hb = int(round(w / (2 * fs))), int(round(h / (2 * fs)))
+    lum, al = assemble_metal(a, frame, Wb, Hb)
+    rgb = silver(None, lum, SILVER_RAMP, FRAME_GRADE, True)
+    metal = np.asarray(to_img(rgb).resize((w, h), Image.LANCZOS)).astype(np.float32) / 255.0
+    malpha = np.asarray(Image.fromarray((al * 255).astype(np.uint8)).resize((w, h), Image.LANCZOS)).astype(np.float32) / 255.0
+    fy = np.ones(H, np.float32)                                           # vertical fade of the whole frame (rails, ornaments and paper)
+    if fade:
+        t = np.clip((np.arange(H) - y) / (fade * h), 0, 1)
+        fy = t * t * (3 - 2 * t)
+    foot = np.zeros((H, W), np.float32)
+    box = clip_box(foot.shape, x, y, w, h)
+    foot[box[0]] = 1.0
+    A = foot * (fy ** 2)[:, None]                                          # the paper fades quicker than the rails, so that no edge of it shows where the frame is gone
+    sh = ndimage.gaussian_filter(np.roll(np.roll(foot, 9, axis=0), 7, axis=1), 10)                 # a soft shadow so that the frame stands on the page
+    page *= (1 - L.get('shadow', 0.30) * sh * fy[:, None])[..., None]
+    tpx = RAIL_T * 2 * fs
+    hz = L.get('halo', {})
+    halo = smoke((H, W), (x, y, w, h), tpx, hz.get('depth', 150) * 2 * fs, hz.get('strength', 0.6), seed)
+    paper = (1 - (1 - bg) * L.get('paper', 0.35)) * (1 - halo)[..., None]
+    page[:] = page * (1 - A[..., None]) + paper * A[..., None]
+    am = np.zeros((H, W), np.float32)
+    cm = np.zeros((H, W, 3), np.float32)
+    am[box[0]] = malpha[box[1]]
+    cm[box[0]] = metal[box[1]]
+    Am = (am * fy[:, None])[..., None]
+    page[:] = page * (1 - Am) + cm * Am
+
+
 def build(out=None, layout=None):
     cfg = json.load(open(os.path.join(HERE, 'config.json'), encoding='utf8'))
     L = layout or cfg['divider']
-    src = Image.open(mc.SRC).convert('RGB')
-    clean, a, elem = mc.frame_only(src)                                   # the cover without the medallion
-    frame, swash = mc.gold_masks(src)                                     # soft masks: the gilded frame, the swash of the medallion
+    cache = os.environ.get('DIVIDER_CACHE')
+    if cache and os.path.exists(cache):                                   # development: the slow steps below are kept in a pickle
+        import pickle
+        clean, a, elem, frame, swash = pickle.load(open(cache, 'rb'))
+    else:
+        src = Image.open(mc.SRC).convert('RGB')
+        clean, a, elem = mc.frame_only(src)                               # the cover without the medallion
+        frame, swash = mc.gold_masks(src)                                 # soft masks: the gilded frame, the swash of the medallion
+        if cache:
+            import pickle
+            pickle.dump((clean.astype(np.float32), a.astype(np.float32), elem, frame.astype(np.float32), swash.astype(np.float32)), open(cache, 'wb'))
     frame = np.clip(frame, 0, 1).astype(np.float32)
     swash = np.clip(swash, 0, 1).astype(np.float32)
     W, H = PAGE_U[0] * PX, PAGE_U[1] * PX
+    MM = 8 * PX                                                           # canvas px per mm
 
     # ---- page background: the cloud inside the frame, ornaments filled in, stretched over the page
     hole = ndimage.binary_dilation(frame > 0.01, structure=np.ones((3, 3)), iterations=5)
@@ -104,60 +216,52 @@ def build(out=None, layout=None):
     crop = cloud[iy0 + pady:iy1 - pady, ix0 + padx:ix1 - padx]
     bg = Image.fromarray((np.clip(grey_cloud(crop), 0, 1) * 255 + 0.5).astype(np.uint8), 'RGB').resize((W, H), Image.LANCZOS)
     bg = np.asarray(bg).astype(np.float32) / 255.0
+    flat = np.stack([ndimage.gaussian_filter(bg[..., c], 14) for c in range(3)], axis=-1)           # the near-white parts of the cloud keep faint ghosts of the old artwork: flatten them
+    w = np.clip((flat - 0.86) / 0.08, 0, 1)
+    bg = bg * (1 - w) + flat * w
     page = bg.copy()
 
-    # ---- frame: the frame of the cover in silver with the grey cloud inside, made at twice the size of the artwork, scaled, and set so that its left part leaves the page
-    fs = L['frame']['scale']
-    x0, y0, x1, y1 = FRAME_OUTER
-    sl = (slice(y0, y1 + 1), slice(x0, x1 + 1))
-    a_up = np.asarray(to_img(a[sl]).resize(((x1 - x0 + 1) * 2, (y1 - y0 + 1) * 2), Image.LANCZOS).filter(ImageFilter.UnsharpMask(radius=2.2, percent=60, threshold=2))).astype(np.float32) / 255.0
-    fa = np.clip(up2(frame[sl], Image.BICUBIC), 0, 1)[..., None]
-    cl = np.stack([ndimage.gaussian_filter(clean[..., c], 1.0)[sl] for c in range(3)], axis=-1)
-    panel = grey_cloud(up2(cl, Image.BICUBIC))
-    panel = 1 - (1 - panel) * (1 - L['frame'].get('light', 0.0))          # a lighter cloud inside the frame, if wanted
-    fr = silver(None, lum_of(a_up), SILVER_RAMP, FRAME_GRADE, True)
-    panel = panel * (1 - fa) + fr * fa
-    pw, ph = int(round((x1 - x0 + 1) * fs * PX)), int(round((y1 - y0 + 1) * fs * PX))
-    panel = np.asarray(to_img(panel).resize((pw, ph), Image.LANCZOS)).astype(np.float32) / 255.0
-    fx = int(round((L['frame']['cx'] * 8 - (x1 - x0 + 1) * fs / 2) * PX))
-    fy = int(round((L['frame']['cy'] * 8 - (y1 - y0 + 1) * fs / 2) * PX))
-    shadow = np.zeros((H, W), np.float32)                                 # a soft shadow so that the frame stands on the page
-    sx, sy = L['frame'].get('shadow', [7, 9])
-    box = clip_box(shadow.shape, fx + sx, fy + sy, pw, ph)
-    if box:
-        shadow[box[0]] = 1.0
-    shadow = ndimage.gaussian_filter(shadow, 10)
-    page = page * (1 - L['frame'].get('shadow_strength', 0.30) * shadow[..., None])
-    box = clip_box(page.shape, fx, fy, pw, ph)
-    page[box[0]] = panel[box[1]]
+    # ---- the two frames: left part outside the page
+    fs = L['scale']
+    bleed = int(CORNER * fs * 2 + 40)
+    t, b = L['top'], L['bottom']
+    th = int(round(t['h'] * MM))
+    draw_frame(page, bg, a, frame, (-bleed, int(round(t['cy'] * MM)) - th // 2, int(round(t['right'] * MM)) + bleed, th, 0), L, 1)
+    by0 = int(round(b['top'] * MM))
+    bh = int(round((PAGE_U[1] / 8 + b.get('bleed', 3) - b['top']) * MM))
+    draw_frame(page, bg, a, frame, (-bleed, by0, int(round(b['right'] * MM)) + bleed, bh, b.get('fade', 0.6)), L, 2)
 
-    # ---- the paper under the medallion: the frame fades into it where the two meet
+    # ---- the title block of the medallion: black ink (multiplied onto the page, without the rings) + silver swash
     ms = L['medal']['scale']
-    d = L.get('disc')
-    mcx, mcy = L['medal']['cx'] * 8 * PX, L['medal']['cy'] * 8 * PX
-    if d:
-        r0, fe = d['r'] * 8 * PX, d['feather'] * 8 * PX
-        yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
-        rr = np.hypot(xx - mcx, yy - mcy)
-        t = np.clip((rr - r0) / fe, 0, 1)
-        alpha = d.get('alpha', 0.93) * (1 - t * t * (3 - 2 * t))
-        paper = 1 - (1 - bg) * d.get('texture', 0.35)                     # the cloud of the page, much lighter
-        page = page * (1 - alpha[..., None]) + paper * alpha[..., None]
-
-    # ---- medallion: black ink (multiplied onto the page) + silver swash, scaled and placed
-    bx0, by0, bx1, by1 = mc.MEDALLION_BOX
-    ink = np.where(elem[..., None], np.clip(a / np.maximum(clean, 1e-3), 0, 1), 1.0)[by0:by1, bx0:bx1]
-    ink_l = np.clip(lum_of(ink), 0, 1) ** L['medal'].get('ink', 1.0)
-    sw = swash[by0:by1, bx0:bx1]
-    sw_rgb = silver(None, lum_of(a[by0:by1, bx0:bx1]), SWASH_SILVER_RAMP, SWASH)
-    bw, bh = int(round((bx1 - bx0) * ms * PX)), int(round((by1 - by0) * ms * PX))
-    rs = lambda im: np.asarray(im.resize((bw, bh), Image.LANCZOS)).astype(np.float32) / 255.0
+    bx0, by0m, bx1, by1m = mc.MEDALLION_BOX
+    ink = np.where(elem[..., None], np.clip(a / np.maximum(clean, 1e-3), 0, 1), 1.0)
+    ink_full = np.clip(lum_of(ink), 0, 1)
+    yy, xx = np.mgrid[0:ink_full.shape[0], 0:ink_full.shape[1]].astype(np.float32)
+    r = np.hypot(xx - RING_C[0], yy - RING_C[1])
+    ring = ndimage.binary_dilation((np.abs(r - 329) <= 3.2) | (np.abs(r - 342) <= 3.2), iterations=1)
+    inkmask = ink_full < 0.85
+    rules = np.zeros(ink_full.shape, bool)                                # the straight rules next to the title keep their pixels where a ring crosses them
+    for (ya, yb, xa, xb, pa, pb) in ((585, 625, 660, 1000, 640, 1130), (900, 940, 380, 900, 350, 940)):
+        cnt = inkmask[ya:yb, xa:xb].sum(1)
+        for k in np.where(cnt > 0.5 * (xb - xa))[0]:
+            rules[ya + k - 1:ya + k + 2, pa:pb] = True
+    protect = rules | ndimage.binary_opening(inkmask, structure=np.ones((5, 5))) | (swash > 0.3)
+    ink_full = np.where(ring & ~protect, 1.0, ink_full)                   # the rings are gone, the rest of the medallion stays
+    lab, n = ndimage.label(ink_full < 0.85, structure=np.ones((3, 3)))     # bits of the rings that are left over
+    sizes = ndimage.sum(np.ones_like(lab), lab, range(1, n + 1))
+    small = np.isin(lab, [i + 1 for i, sz in enumerate(sizes) if sz < 90]) & ~protect
+    ink_full = np.where(ndimage.binary_dilation(small, iterations=2), 1.0, ink_full)
+    ink_l = ink_full[by0m:by1m, bx0:bx1] ** L['medal'].get('ink', 1.0)
+    sw = swash[by0m:by1m, bx0:bx1]
+    sw_rgb = silver(None, lum_of(a[by0m:by1m, bx0:bx1]), SWASH_SILVER_RAMP, SWASH)
+    bw, bh2 = int(round((bx1 - bx0) * ms * PX)), int(round((by1m - by0m) * ms * PX))
+    rs = lambda im: np.asarray(im.resize((bw, bh2), Image.LANCZOS)).astype(np.float32) / 255.0
     ink_s = rs(Image.fromarray((ink_l * 255).astype(np.uint8)))
     sw_s = rs(Image.fromarray((sw * 255).astype(np.uint8)))
     rgb_s = rs(to_img(sw_rgb))
-    mx = int(round(mcx + (bx0 - RING_C[0]) * ms * PX))
-    my = int(round(mcy + (by0 - RING_C[1]) * ms * PX))
-    box = clip_box(page.shape, mx, my, bw, bh)
+    mx = int(round(L['medal']['cx'] * MM + (bx0 - RING_C[0]) * ms * PX))
+    my = int(round(L['medal']['cy'] * MM + (by0m - RING_C[1]) * ms * PX))
+    box = clip_box(page.shape, mx, my, bw, bh2)
     reg = page[box[0]] * ink_s[box[1]][..., None]
     page[box[0]] = reg * (1 - sw_s[box[1]][..., None]) + rgb_s[box[1]] * sw_s[box[1]][..., None]
 

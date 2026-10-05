@@ -101,13 +101,13 @@
     return m ? [m[1], m[2]] : [label, ''];
   }
   function dividerHTML(cfg, label, bookName) {
-    const D = cfg.divider, [l1, l2] = dividerLines(label);
+    const D = cfg.divider, [l1, l2x] = dividerLines(label), l2 = l2x.replace(/[\u05f3\u05f4'"]/g, '');          // the siman is written without geresh / gershayim
     const short = l2.replace(/[^\u05d0-\u05ea]/g, '').length <= 3;         // a short siman letter group is set larger
     const Lb = Object.assign({ font: 'Lulav CLM', weight: 700, size1: 100, numeral: 240, word: 150, y1: -85, y2: 115, maxW: 470 }, D.label || {});
     const lx = Lb.cx * 8, ly = Lb.cy * 8, m = D.medal;
     const c2 = Object.assign({}, cfg, { cover: Object.assign({}, cfg.cover, { colors: D.colors || cfg.cover.colors }) });
     const mk = (txt, y, size) => ({ txt, x: lx, y: ly + y, size, maxW: Lb.maxW, font: Lb.font, weight: Lb.weight, color: Lb.color });
-    return coverHTML(c2, bookName, { uid: 'd' + (dividerHTML.n = (dividerHTML.n || 0) + 1), image: D.image, logo: false, texts: { line1: '', line2: '' },
+    return coverHTML(c2, bookName, { uid: 'd' + (dividerHTML.n = (dividerHTML.n || 0) + 1), image: D.image, logo: false, texts: { line1: '', line2: '', arcTop: '', arcBottom: [] },
       group: `translate(${m.cx * 8} ${m.cy * 8}) scale(${m.scale}) translate(-711 -749)`,
       labels: [mk(l1, Lb.y1, Lb.size1), mk(l2, Lb.y2, short ? Lb.numeral : Lb.word)].filter((x) => x.txt) });
   }
