@@ -107,7 +107,7 @@
     const m = D.medal, lx = (m.cx + ((m.titleCentre || 711) - 711) * m.scale / 8) * 8, ly = Lb.cy * 8;      // the siman is centred under the middle of the title
     const c2 = Object.assign({}, cfg, { cover: Object.assign({}, cfg.cover, { colors: D.colors || cfg.cover.colors }) });
     const mk = (txt, y, size) => ({ txt, x: lx, y: ly + y, size, maxW: Lb.maxW, font: Lb.font, weight: Lb.weight, color: Lb.color });
-    return coverHTML(c2, bookName, { uid: 'd' + (dividerHTML.n = (dividerHTML.n || 0) + 1), image: D.image, logo: false, texts: { line1: '', line2: '', arcTop: '', arcBottom: [] },
+    return coverHTML(c2, bookName, { uid: 'd' + (dividerHTML.n = (dividerHTML.n || 0) + 1), image: D.image, logo: false, texts: Object.assign({ line1: '', line2: '' }, m.arcs === false ? { arcTop: '', arcBottom: [] } : {}),
       group: `translate(${m.cx * 8} ${m.cy * 8}) scale(${m.scale}) translate(-711 -749)`,
       labels: [mk(l1, Lb.y1, Lb.size1), mk(l2, Lb.y2, short ? Lb.numeral : Lb.word)].filter((x) => x.txt) });
   }

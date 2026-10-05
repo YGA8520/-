@@ -230,6 +230,7 @@ def build(out=None, layout=None):
     flat = np.stack([ndimage.gaussian_filter(bg[..., c], 14) for c in range(3)], axis=-1)           # the near-white parts of the cloud keep faint ghosts of the old artwork: flatten them
     w = np.clip((flat - 0.86) / 0.08, 0, 1)
     bg = bg * (1 - w) + flat * w
+    bg = 1 - (1 - bg) * L.get('edge', 1.0)                                # lighter smoke at the edges of the page (less heavy)
     page = bg.copy()
 
     # ---- the two pillars: the rails of a frame centred under the title, running over the whole height of the page (its top and bottom are outside the page), with no fade;
@@ -238,13 +239,10 @@ def build(out=None, layout=None):
     ms = L['medal']['scale']
     lcx = L['medal']['cx'] + (L['medal'].get('titleCentre', RING_C[0]) - RING_C[0]) * ms / 8      # mm: the middle of the title, the siman is centred under it
     P = L['pillars']
-    ccx = L['medal']['cx'] + (725 - RING_C[0]) * ms / 8                                          # the title block (rules, swash, flourishes, texts) spans x 300..1150, y 455..990 of the cover
-    ccy = L['medal']['cy'] + (722 - RING_C[1]) * ms / 8
     lt = L['lighten']
-    rx, ry = (425 * ms / 8 + lt['pad']) * MM, (267 * ms / 8 + lt['pad']) * MM
     yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
-    dd = (np.abs((xx - ccx * MM) / rx) ** 3 + np.abs((yy - ccy * MM) / ry) ** 3) ** (1 / 3)
-    tt = np.clip((dd - 1) * min(rx, ry) / (lt['feather'] * MM), 0, 1)
+    dd = np.hypot(xx - L['medal']['cx'] * MM, yy - L['medal']['cy'] * MM)                          # a soft round zone around the medallion
+    tt = np.clip((dd - lt['r'] * MM) / (lt['feather'] * MM), 0, 1)
     lighten = 1 - tt * tt * (3 - 2 * tt)
     del xx, yy, dd, tt
     pw = int(round(P['w'] * MM))
@@ -265,11 +263,13 @@ def build(out=None, layout=None):
         for k in np.where(cnt > 0.5 * (xb - xa))[0]:
             rules[ya + k - 1:ya + k + 2, pa:pb] = True
     protect = rules | ndimage.binary_opening(inkmask, structure=np.ones((5, 5))) | (swash > 0.3)
-    ink_full = np.where(ring & ~protect, 1.0, ink_full)                   # the rings are gone, the rest of the medallion stays
-    lab, n = ndimage.label(ink_full < 0.85, structure=np.ones((3, 3)))     # bits of the rings that are left over
-    sizes = ndimage.sum(np.ones_like(lab), lab, range(1, n + 1))
-    small = np.isin(lab, [i + 1 for i, sz in enumerate(sizes) if sz < 90]) & ~protect
-    ink_full = np.where(ndimage.binary_dilation(small, iterations=2), 1.0, ink_full)
+    if not L['medal'].get('rings', True):
+        ink_full = np.where(ring & ~protect, 1.0, ink_full)               # the rings are gone, the rest of the medallion stays
+    if not L['medal'].get('rings', True):
+        lab, n = ndimage.label(ink_full < 0.85, structure=np.ones((3, 3)))     # bits of the rings that are left over
+        sizes = ndimage.sum(np.ones_like(lab), lab, range(1, n + 1))
+        small = np.isin(lab, [i + 1 for i, sz in enumerate(sizes) if sz < 90]) & ~protect
+        ink_full = np.where(ndimage.binary_dilation(small, iterations=2), 1.0, ink_full)
     ink_l = ink_full[by0m:by1m, bx0:bx1] ** L['medal'].get('ink', 1.0)
     sw = swash[by0m:by1m, bx0:bx1]
     sw_rgb = silver(None, lum_of(a[by0m:by1m, bx0:bx1]), SWASH_SILVER_RAMP, SWASH)
