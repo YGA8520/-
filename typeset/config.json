@@ -326,6 +326,7 @@
       "h": 912
     }
   },
+  "print": {"bleed": 3, "margin": 10, "markOffset": 4, "markLen": 5, "markWidth": 0.25, "padMultiple": 4, "bulkMm": 0.10, "spineMm": null, "spineDirection": "down", "spineFont": "assets/fonts/Ashkenazy-Regular.ttf", "spineTitle": "פלפולא דאורייתא", "slug": true},
   "backCover": {"image": "assets/cover/back-bg.jpg", "palette": "soft", "logo": "assets/cover/logo.png", "logoW": 971, "logoH": 912, "cx": 704, "cy": 1000, "height": 470},
   "innerCover": {"image": "assets/cover/inner-cover-bg.jpg", "logo": "assets/cover/logo-grey.png"},
   "credits": {

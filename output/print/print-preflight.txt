@@ -1,0 +1,6 @@
+pilpula-interior-print.pdf: 632 page(s), sheet 196.0 x 270.0 mm, trim 176.0 x 250.0 mm, bleed box 182.0 x 256.0 mm, fonts 11 (all embedded: True), lowest artwork resolution 155 dpi, image colour spaces ['1', '3'], 18.3 MB
+pilpula-cover-spread-print.pdf: 1 page(s), sheet 403.5 x 270.0 mm, trim 383.5 x 250.0 mm, bleed box 389.5 x 256.0 mm, fonts 5 (all embedded: True), lowest artwork resolution 394 dpi, image colour spaces ['3'], 6.8 MB
+pilpula-cover-pages-print.pdf: 2 page(s), sheet 196.0 x 270.0 mm, trim 176.0 x 250.0 mm, bleed box 182.0 x 256.0 mm, fonts 4 (all embedded: True), lowest artwork resolution 394 dpi, image colour spaces ['3'], 6.5 MB
+
+inside: 631 pages of the book + 1 empty page(s) = 632 pages (a multiple of 4); it starts with the inner title page (an odd page) and ends with an empty / last page
+cover: spine estimated 31.5 mm = 632 pages / 2 x 0.1 mm per leaf (80 g/m2 uncoated paper) - THE PRINTING HOUSE MUST CONFIRM THE SPINE FOR ITS PAPER AND BINDING

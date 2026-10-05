@@ -828,25 +828,28 @@
     if (tocPages.length !== nToc) console.log('warning: toc page count changed');
 
     // ------------------------------------------------------------ DOM: pages
-    function newPage() {
+    function newPage(kind, bg) {                     // kind / bg: what the page is and which artwork lies under it (the print version needs them for the bleed)
       const pg = document.createElement('div');
       pg.className = 'page';
       pg.style.width = pageW + 'px'; pg.style.height = pageH + 'px';
+      pg.dataset.kind = kind || 'art';
+      if (bg) pg.dataset.bg = bg;
       return pg;
     }
     if (!doc.noCover) {                      // placeholder cover until the real one is supplied
-      const pg = newPage();
+      const pg = newPage('cover', cfg.cover && cfg.cover.enabled ? cfg.cover.image : null);
       pg.classList.add('cover');
       pg.innerHTML = (cfg.cover && cfg.cover.enabled) ? coverHTML(cfg, bookName) : `<div class="cover-in">${oimg('flourish-wide-1', 70, '', '')}<div class="cv-title">${esc(bookName)}</div>${doc.book.subtitle ? `<div class="cv-sub">${esc(doc.book.subtitle)}</div>` : ''}${oimg('flourish-wide-1', 70, '', 'transform:scaleY(-1);')}</div>`;
       root.appendChild(pg);
       if (cfg.innerCover && cfg.innerCover.enabled) {          // the inner title page and the credits page follow the cover; neither is numbered or counted
-        const ic = newPage();
+        if (root.children.length % 2 === 1) root.appendChild(newPage('blank'));       // the inside of the cover: the inner title page is always an odd page
+        const ic = newPage('inner', cfg.innerCover.image);
         ic.classList.add('cover');
         ic.innerHTML = innerCoverHTML(cfg, bookName);
         root.appendChild(ic);
       }
       if (cfg.credits && cfg.credits.enabled) {
-        const cr = newPage();
+        const cr = newPage('credits', cfg.credits.image);
         cr.classList.add('cover');
         cr.innerHTML = creditsHTML(cfg);
         root.appendChild(cr);
@@ -927,7 +930,7 @@
 
     const tocHeadTitle = (doc.toc && doc.toc.title) || 'תוכן עניינים';
     tocPages.forEach((rows, ti) => {
-      const pg = newPage();
+      const pg = newPage('toc');
       const no = (doc.firstPageNumber || 1) + ti;
       const ml = (no % 2 === 0) ? mm(P.marginInner) : mm(P.marginOuter);
       pg.innerHTML = headerHTML({ no, headChap: tocHeadTitle }) + `<div class="tocwrap" style="left:${ml}px;top:${topM - mm(2)}px;width:${textW0}px">${ti === 0 ? tocTitleHTML : ''}${rows.map((r) => r.html).join('')}</div>`;
@@ -935,9 +938,9 @@
     });
 
     seq.forEach((it) => {
-      if (it.kind === 'blank') { root.appendChild(newPage()); return; }
+      if (it.kind === 'blank') { root.appendChild(newPage('blank')); return; }
       if (it.kind === 'div') {
-        const pg = newPage();
+        const pg = newPage('div', cfg.divider && cfg.divider.enabled ? cfg.divider.image : null);
         if (cfg.divider && cfg.divider.enabled && cfg.cover && cfg.cover.enabled) {
           pg.classList.add('cover');
           pg.innerHTML = dividerHTML(cfg, it.label, bookName);
@@ -1046,13 +1049,13 @@
       });
     });
     if (cfg.backCover && cfg.backCover.enabled && !doc.noCover) {          // the back cover closes the booklet (not numbered)
-      const bc = newPage();
+      const bc = newPage('back', cfg.backCover.image);
       bc.classList.add('cover');
       bc.innerHTML = backCoverHTML(cfg);
       root.appendChild(bc);
     }
     curPage = null;
-    return { stats: STATS, pages: root.children.length, toc: articles.map((a, i) => ({ title: a.title, page: startNo[i], pages: artPages[i].length })), tocPages: nToc, titleBoxes, dividerBoxes, dividerPages: divNo, blankPages: blanks, dividers: articles.map((a, i) => (a.divider ? { ai: i, label: a.divider } : null)).filter(Boolean), headerTitles: articles.map((a) => headerTitle(a)), headerAuthors: articles.map((a) => headerAuthor(a)) };
+    return { stats: STATS, pages: root.children.length, toc: articles.map((a, i) => ({ title: a.title, page: startNo[i], pages: artPages[i].length })), tocPages: nToc, titleBoxes, dividerBoxes, dividerPages: divNo, blankPages: blanks, pageKinds: [...root.children].map((c) => ({ k: c.dataset.kind || 'art', bg: c.dataset.bg || null })), dividers: articles.map((a, i) => (a.divider ? { ai: i, label: a.divider } : null)).filter(Boolean), headerTitles: articles.map((a) => headerTitle(a)), headerAuthors: articles.map((a) => headerAuthor(a)) };
   }
 
   window.typeset = typeset;

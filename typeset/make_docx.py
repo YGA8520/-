@@ -501,7 +501,8 @@ def build(doc_json, layout_json, cfg_json, out):
         pth = os.path.join(os.path.dirname(os.path.abspath(out)), jpg)
         if cfg.get('cover') and cfg.get(key) and os.path.exists(pth):
             MEDIA.add(jpg, open(pth, 'rb').read())
-            parts.append(para(picture_page(jpg, 176, 250), spacing='<w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/>', sect=sectpr('nextPage', 1, empty_ids)))
+            # the inner title page is an odd page (Word adds the empty page - the inside of the cover - itself), the credits page follows it
+            parts.append(para(picture_page(jpg, 176, 250), spacing='<w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/>', sect=sectpr('oddPage' if key == 'innerCover' else 'nextPage', 1, empty_ids)))
 
 
     # table of contents: a real TOC field (outline levels: siman title = 1, article title = 2), with cached entries; running head like the rest of the booklet

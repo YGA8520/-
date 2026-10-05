@@ -17,8 +17,9 @@ STEPS = [
     ['node', 'build.js', 'book.doc.json', os.path.join('out', 'book.pdf')],
     [PY, 'compose_ornaments.py', os.path.join('out', 'book.layout.json')],
     [PY, 'make_docx.py', 'book.doc.json', os.path.join('out', 'book.layout.json'), os.path.join('out', 'book.docx')],
+    [PY, 'make_print.py'],
 ]
 for cmd in STEPS:
     print('>>', ' '.join(cmd), flush=True)
     subprocess.run(cmd, check=True)
-print('done: out/book.pdf  out/book.docx')
+print('done: out/book.pdf  out/book.docx  out/print/*.pdf (for the printing house)')
