@@ -3,21 +3,29 @@ import json, zipfile, os, sys, datetime, re
 from xml.sax.saxutils import escape
 from PIL import Image
 from model import build, heb_num
+import fontmetrics as FM
 
 OUT = sys.argv[1] if len(sys.argv) > 1 else 'out.docx'
 
 # ------------------------------------------------------------------ design constants (pt unless noted)
 PAGE_W, PAGE_H = 595.32, 841.92
-M_TOP, M_BOTTOM, M_SIDE = 90, 56, 54       # top margin leaves room for the running title + siman line
+M_TOP, M_BOTTOM, M_SIDE = 70, 56, 54       # top margin leaves room for the one-line running header
 INK = '404040'
-F_BODY, F_HEAD, F_NOTE = 'Times New Roman', 'Narkisim', 'Gisha'
-BODY_SZ, NOTE_SZ, EMPH_SZ = 14, 11, 13
+F_BODY, F_HEAD, F_NOTE, F_NUM = 'Tehila', 'RimonMF', 'Gisha', 'Times New Roman'   # running text / headings + letters / askers' names / page numbers
+BODY_SZ, NOTE_SZ, EMPH_SZ = 16, 11, 13
+PREVIEW = True            # RimonMF is a legacy symbol-encoded font: its text is stored the way Word stores symbol-font text (see fontmetrics.to_rimon)
+def R(text):
+    # symbol-font code points have no right-to-left property, so the string is stored in visual order (drawn left to right)
+    return FM.to_rimon(text)[::-1] if PREVIEW else text
+MARK_SZ, SQ_W, SQ_H, SQ_GAP, SQ_BLUR = 20, 8.5, 6.0, 5.0, 0.9     # marker letter size and the two side squares (pt)
+HDR_SCALE, HDR_SIMAN_SZ = 0.72, 24
 LINE_BODY = 19.4          # line pitch measured on the example
 FRAME_H = 57.19
-HDR_LINE_Y = 52           # top of the siman line in the header
-HDR_TITLE_Y = 12          # running title row, pt from the top edge
+HDR_LINE_Y = 14           # top of the header line, pt from the top edge
+HDR_LINE_H = 30           # exact height of the header line
+MK_BEFORE, MK_AFTER = 14.5, 0.0   # spacing around the marker line
 HEAD_LINE = 46            # exact line height of the heading paragraph
-SHORT_CHARS = 76          # questions up to this length (one line) are centred
+SHORT_W = 470             # a question that is at most this wide (pt) fits one line and is centred
 
 EMU = 12700
 tw = lambda pt: int(round(pt * 20))
@@ -73,16 +81,16 @@ def anchor_pic(fn, w_pt, h_pt, name, *, x=None, y=None, h_rel='page', v_rel='pag
             ) % (_rel[0] - 250000000 + 100, 1 if behind else 0, ph, pv, emu(w_pt), emu(h_pt), i, name, escape(descr), g)
 
 # ------------------------------------------------------------------ run / paragraph helpers
-def rpr(font=F_BODY, sz=BODY_SZ, b=True, i=False, color=INK, u=False, scale=None, pos=None):
+def rpr(font=F_BODY, sz=BODY_SZ, b=False, i=False, color=INK, u=False, scale=None, pos=None, rtl=True):
     x = '<w:rFonts w:ascii="%s" w:hAnsi="%s" w:eastAsia="%s" w:cs="%s"/>' % (font, font, font, font)
     if b: x += '<w:b/><w:bCs/>'
     if i: x += '<w:i/><w:iCs/>'
     x += '<w:color w:val="%s"/>' % color
     if scale: x += '<w:w w:val="%d"/>' % scale
     if pos: x += '<w:position w:val="%d"/>' % int(pos * 2)
-    x += '<w:sz w:val="%d"/><w:szCs w:val="%d"/>' % (sz * 2, sz * 2)
+    x += '<w:sz w:val="%d"/><w:szCs w:val="%d"/>' % (round(sz * 2), round(sz * 2))
     if u: x += '<w:u w:val="single"/>'
-    x += '<w:rtl/><w:lang w:bidi="he-IL"/>'
+    x += ('<w:rtl/>' if rtl else '') + '<w:lang w:bidi="he-IL"/>'
     return '<w:rPr>' + x + '</w:rPr>'
 
 def run(text, **kw):
@@ -123,7 +131,7 @@ def style_xml():
             'w:default="1" ' if default else '', sid, name,
             ('<w:basedOn w:val="%s"/>' % based) if based else '',
             ('<w:next w:val="%s"/>' % nxt) if nxt else '', '', ppr, rp)
-    rp_body = ('<w:rFonts w:ascii="%s" w:hAnsi="%s" w:eastAsia="%s" w:cs="%s"/><w:b/><w:bCs/><w:color w:val="%s"/>'
+    rp_body = ('<w:rFonts w:ascii="%s" w:hAnsi="%s" w:eastAsia="%s" w:cs="%s"/><w:color w:val="%s"/>'
                '<w:sz w:val="%d"/><w:szCs w:val="%d"/><w:lang w:val="he-IL" w:eastAsia="he-IL" w:bidi="he-IL"/>'
                % (F_BODY, F_BODY, F_BODY, F_BODY, INK, BODY_SZ * 2, BODY_SZ * 2))
     s = ('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles %s>'
@@ -134,11 +142,11 @@ def style_xml():
     s += pst('Normal', 'Normal', based=None, default=True, ppr='<w:bidi/><w:spacing w:after="0" w:line="%d" w:lineRule="atLeast"/><w:jc w:val="both"/>' % tw(LINE_BODY), rp=rp_body)
     s += pst('Question', 'Rithcha Question', ppr='<w:widowControl/><w:bidi/><w:jc w:val="both"/>')
     s += pst('Marker', 'Rithcha Marker', nxt='Question',
-             ppr='<w:keepNext/><w:bidi/><w:spacing w:before="%d" w:after="%d" w:line="%d" w:lineRule="atLeast"/><w:jc w:val="center"/>' % (tw(15.7), tw(1.3), tw(22)),
-             rp='<w:rFonts w:ascii="%s" w:hAnsi="%s" w:eastAsia="%s" w:cs="%s"/><w:b/><w:bCs/><w:i/><w:iCs/><w:sz w:val="34"/><w:szCs w:val="34"/>' % ((F_HEAD,) * 4))
+             ppr='<w:keepNext/><w:bidi/><w:spacing w:before="%d" w:after="%d" w:line="%d" w:lineRule="atLeast"/><w:jc w:val="center"/>' % (tw(MK_BEFORE), tw(MK_AFTER), tw(22)),
+             rp='<w:rFonts w:ascii="%s" w:hAnsi="%s" w:eastAsia="%s" w:cs="%s"/><w:sz w:val="%d"/><w:szCs w:val="%d"/>' % ((F_HEAD,) * 4 + (MARK_SZ * 2, MARK_SZ * 2)))
     s += pst('Siman', 'Rithcha Siman', nxt='Marker',
              ppr='<w:keepNext/><w:bidi/><w:spacing w:before="0" w:after="0" w:line="%d" w:lineRule="exact"/><w:jc w:val="center"/>' % tw(HEAD_LINE),
-             rp='<w:rFonts w:ascii="%s" w:hAnsi="%s" w:eastAsia="%s" w:cs="%s"/><w:b/><w:bCs/><w:i/><w:iCs/><w:sz w:val="52"/><w:szCs w:val="52"/>' % ((F_HEAD,) * 4))
+             rp='<w:rFonts w:ascii="%s" w:hAnsi="%s" w:eastAsia="%s" w:cs="%s"/><w:sz w:val="56"/><w:szCs w:val="56"/>' % ((F_HEAD,) * 4))
     s += pst('Caption', 'Rithcha Caption', nxt='Marker',
              ppr='<w:keepNext/><w:bidi/><w:spacing w:before="%d" w:after="0" w:line="%d" w:lineRule="atLeast"/><w:jc w:val="center"/>' % (tw(8), tw(17)),
              rp='<w:rFonts w:ascii="%s" w:hAnsi="%s" w:eastAsia="%s" w:cs="%s"/><w:b/><w:bCs/><w:sz w:val="24"/><w:szCs w:val="24"/>' % ((F_NOTE,) * 4))
@@ -158,51 +166,83 @@ def borders():
     return (anchor_pic('border_left.png', w, h, 'Border L', x=0, y=0) +
             anchor_pic('border_right.png', w, h, 'Border R', x=PAGE_W - w, y=0))
 
-def styleref_siman(sz=18):
-    """'סימן X' of the siman heading that starts first on the page (Word STYLEREF; for pages that open mid-siman it carries over the last one)"""
-    rp = lambda: rpr(font=F_HEAD, sz=sz, b=True, i=True)
-    fc = lambda t: '<w:r>%s%s</w:r>' % (rp(), t)
-    return (fc('<w:fldChar w:fldCharType="begin"/>') +
-            fc('<w:instrText xml:space="preserve"> STYLEREF "Rithcha Siman" </w:instrText>') +
-            fc('<w:fldChar w:fldCharType="separate"/>') + run('סימן ד', font=F_HEAD, sz=sz, b=True, i=True) +
-            fc('<w:fldChar w:fldCharType="end"/>'))
+def styleref_siman(sz, raise_pt):
+    """'סימן X' of the siman heading that starts first on the page (Word STYLEREF; a page that opens mid-siman carries the previous one)"""
+    return ('<w:fldSimple w:instr=" STYLEREF &quot;Rithcha Siman&quot; ">%s</w:fldSimple>'
+            % run(R('סימן ד'), font=F_HEAD, sz=sz, pos=raise_pt, rtl=False))
 
 def header_xml():
-    tw_, th_ = px_pt('title_row.png', width_pt=401.5)
-    title = anchor_pic('title_row.png', tw_, th_, 'Title', x=(PAGE_W - tw_) / 2, y=HDR_TITLE_Y, descr='ריתחא דאורייתא')
-    sq = lambda: run('■', font='Arial', sz=11, b=False, color='C8C8C8', scale=130, pos=2.5)
-    sp = lambda: run(' ', font=F_NOTE, sz=6, b=False)
-    inner = borders() + title + sq() + sp() + styleref_siman() + sp() + sq()
-    ppr = ('<w:pPr><w:pStyle w:val="Header"/><w:bidi/><w:spacing w:before="0" w:after="0" w:line="%d" w:lineRule="exact"/><w:jc w:val="center"/></w:pPr>' % tw(22))
+    info = json.load(open('assets/hdr_title.json'))
+    tw_, th_ = info['w_pt'] * HDR_SCALE, info['h_pt'] * HDR_SCALE
+    title = inline_pic('hdr_title.png', tw_, th_, 'Title', 'ריתחא דאורייתא')
+    # RimonMF letters: x-height band is 0..457 -> its centre sits 0.2285*size above the baseline; put it on the centre of the title letters
+    raise_pt = info['title_center_from_bottom'] * HDR_SCALE - 0.2285 * HDR_SIMAN_SZ
+    sp = run(' ', font=F_NOTE, sz=9)
+    inner = borders() + title + sp + sp + styleref_siman(HDR_SIMAN_SZ, raise_pt)
+    ppr = ('<w:pPr><w:pStyle w:val="Header"/><w:bidi/><w:spacing w:before="0" w:after="0" w:line="%d" w:lineRule="exact"/><w:jc w:val="center"/></w:pPr>' % tw(HDR_LINE_H))
     return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:hdr %s><w:p>%s%s</w:p></w:hdr>' % (NS, ppr, inner)
 
 def footer_xml():
     bw, bh = 54.26, 47.98          # the example squeezes the plaque top horizontally to make the badge
     badge = anchor_pic('page_badge.png', bw, bh, 'Page badge', x=270.53, y=PAGE_H - bh)
-    fld = lambda t: '<w:r>%s%s</w:r>' % (rpr(font=F_HEAD, sz=15, b=True, i=True), t)
+    fld = lambda t: '<w:r>%s%s</w:r>' % (rpr(font=F_NUM, sz=14, b=True), t)
     num = (fld('<w:fldChar w:fldCharType="begin"/>') + fld('<w:instrText xml:space="preserve"> PAGE </w:instrText>') +
-           fld('<w:fldChar w:fldCharType="separate"/>') + run('א', font=F_HEAD, sz=15, b=True, i=True) + fld('<w:fldChar w:fldCharType="end"/>'))
+           fld('<w:fldChar w:fldCharType="separate"/>') + run('א', font=F_NUM, sz=14, b=True) + fld('<w:fldChar w:fldCharType="end"/>'))
     p = ('<w:p><w:pPr><w:pStyle w:val="Footer"/><w:bidi/><w:spacing w:before="0" w:after="0" w:line="%d" w:lineRule="exact"/><w:jc w:val="center"/></w:pPr>%s%s</w:p>'
          % (tw(18), badge, num))
     return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:ftr %s>%s</w:ftr>' % (NS, p)
 
 # ------------------------------------------------------------------ body
+def heading_layout(text):
+    for frame, fw in (('frame_std.png', 196.46), ('frame_mid.png', 290.0), ('frame_wide.png', 400.0)):
+        for size in (28, 26, 24, 22, 20, 18):
+            if FM.text_width(text, 'rimon', size) <= fw - 60: return frame, fw, size
+    return 'frame_wide.png', 400.0, 16
+
+HEAD_RAISE = 0.0
 def heading_xml(text, first_on_page=False, page_break=False):
-    n = len(text)
-    if n <= 9:   frame, fw, size = 'frame_std.png', 196.46, 28
-    elif n <= 16: frame, fw, size = 'frame_mid.png', 290.0, 24
-    else:        frame, fw, size = 'frame_wide.png', 400.0, 22
+    frame, fw, size = heading_layout(text)
     fh = FRAME_H
     spacer = para('Normal', '', keep_next=True, line=(8 if first_on_page else 30), rule='exact', jc='center', page_break=page_break)
     pic = anchor_pic(frame, fw, fh, 'Frame', h_rel='column', h_align='center', v_rel='paragraph', y=(HEAD_LINE - fh) / 2 - 1.0, descr='')
-    r = '<w:r>%s<w:t xml:space="preserve">%s</w:t></w:r>' % (
-        rpr(font=F_HEAD, sz=size, b=True, i=True, pos=5), escape(text))
+    r = '<w:r>%s<w:t xml:space="preserve">%s</w:t></w:r>' % (rpr(font=F_HEAD, sz=size, pos=HEAD_RAISE, rtl=False), escape(R(text)))
     return spacer + para('Siman', pic + r, keep_next=True)
 
-def marker_xml(letter):
-    sq = lambda: run('■', font='Arial', sz=11, b=False, color='C8C8C8', scale=130, pos=2.5)
-    sp = lambda: run(' ', font=F_NOTE, sz=6, b=False)
-    return para('Marker', sq() + sp() + run(letter, font=F_HEAD, sz=17, b=True, i=True) + sp() + sq(), keep_next=True)
+# ------------------------------------------------------------------ marker: [square][letter][square], the letter centred between the squares
+def marker_images(k, letters):
+    """two small soft squares as pictures. Their height above the baseline and the space between square and letter ink are computed
+    from the RimonMF glyph outlines of this very letter, so every letter sits exactly in the middle of the two squares."""
+    key = 'mk%d' % k
+    ink = FM.rimon_ink(letters); s = MARK_SZ / 1000.0
+    cy = (ink['ymin'] + ink['ymax']) / 2 * s                    # vertical centre of the letter above the baseline (pt)
+    pad_l = max(0.0, SQ_GAP - ink['left_off'] * s)              # space between left square and the letter's advance box
+    pad_r = max(0.0, SQ_GAP - ink['right_off'] * s)
+    PX = 16; m = 1.6                                            # px per pt, blur margin (pt)
+    below = max(0.0, cy - SQ_H / 2 - m)                          # empty canvas under the margin of the square
+    top_h = SQ_H + 2 * m
+    H = below + top_h
+    out = {}
+    for side, pad in (('L', pad_l), ('R', pad_r)):
+        W = m + SQ_W + m + pad
+        a = Image.new('L', (int(round(W * PX)), int(round(H * PX))), 0)
+        from PIL import ImageDraw, ImageFilter
+        d = ImageDraw.Draw(a)
+        x0 = m if side == 'L' else pad + m
+        yt = (H - below - m - SQ_H) * PX
+        d.rectangle([x0 * PX, yt, (x0 + SQ_W) * PX, yt + SQ_H * PX], fill=235)
+        a = a.filter(ImageFilter.GaussianBlur(SQ_BLUR * PX / 2.2))
+        im = Image.new("RGBA", a.size, (205, 205, 205, 0)); im.putalpha(a)
+        fn = '%s%s.png' % (key, side); im.save('assets/' + fn)
+        out[side] = (fn, W, H)
+    return out
+
+def marker_xml(k):
+    letters = heb_num(k)
+    im = marker_images(k, letters)
+    L, Rr = im['L'], im['R']
+    # right-to-left paragraph: the first object in the file is the one on the visual RIGHT
+    inner = (inline_pic(Rr[0], Rr[1], Rr[2], 'sq', '') + run(R(letters), font=F_HEAD, sz=MARK_SZ, rtl=False) + inline_pic(L[0], L[1], L[2], 'sq', ''))
+    return para('Marker', inner, keep_next=True)
 
 PREFIX = re.compile(r'^\s*הלכה\s+ו?למעשה\s*:?\s*')
 def drop_prefix(runs):
@@ -223,7 +263,7 @@ def emit_section(parts, sec, first_on_page, last_item=None, page_break=False):
     for e in sec['entries']:
         if e['type'] != 'item': continue          # sub-headings / captions are not used
         k += 1
-        parts.append(marker_xml(heb_num(k)))
+        parts.append(marker_xml(k))
         blocks = e['blocks']
         for bi, b in enumerate(blocks):
             kind = b['kind']
@@ -232,7 +272,7 @@ def emit_section(parts, sec, first_on_page, last_item=None, page_break=False):
             if kind == 'q':
                 prev_is_q = bi > 0 and blocks[bi - 1]['kind'] in ('q', 'sub')
                 qs = [x for x in blocks if x['kind'] in ('q', 'sub')]
-                short = len(qs) == 1 and len(''.join(t for t, _ in b['runs'])) <= SHORT_CHARS
+                short = len(qs) == 1 and FM.text_width(''.join(t for t, _ in b['runs']), 'tehila', BODY_SZ) <= SHORT_W
                 parts.append(para('Question', body_runs(b['runs'], {}), before=(5 if prev_is_q else None), jc=('center' if short else None),
                                   keep_next=kn or (not last and blocks[bi + 1]['kind'] == 'name') or False, keep_lines=kn))
             elif kind == 'sub':

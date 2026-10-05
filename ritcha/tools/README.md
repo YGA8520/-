@@ -13,4 +13,6 @@ python3 make_report.py report.docx        # Hebrew report: new questions, remove
 * `model.py` – reads the original compilation (`input_document.xml`).  `newsrc.py` – the questions of the additional files (`newfiles/`), file by file.
 * `merge.py` – word-trigram similarity decides what is the same question; the printed-issue wording wins over the raw one (see `SUPERSEDE`).
 * `build_docx.py` – styles: Rithcha Siman / Marker / Question / Note / Source.  The page header (title + "■ סימן X ■") uses a STYLEREF field on style "Rithcha Siman".
-* Fonts named in the file: Times New Roman (body), Narkisim (headings/letters), Gisha (notes).
+* Fonts: Tehila (running text), RimonMF (siman headings, question letters, siman in the page header), Gisha / Gisha Bold (askers' names, sources), Times New Roman (page numbers).
+  The four supplied .TTF files go into `fonts/` (used for measuring glyphs; not in git).  RimonMF is a legacy symbol-encoded font: its text is written as U+F0E0..F0FA codes in visual order (`fontmetrics.to_rimon`), exactly like Wingdings text.
+* Each question letter gets two small generated pictures (the squares) whose height and spacing are computed from the glyph outline of that letter (`marker_images`), so the letter is centred between them.

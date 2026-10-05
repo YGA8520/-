@@ -103,7 +103,7 @@ U('z2 זאדה מז', 'מז', item_rows(P, [1, 2, 3], 'dot'))
 U('z2 זאדה מז', 'מז', item_rows(P, [5, 6, 7, 8, 9], 'dot'))
 U('z2 זאדה מז', 'מז', item_rows(P, [11, 12, 13], 'dot'))
 U('z2 זאדה מז', 'מז', item_rows(P, [17, 18]))
-U('z2 זאדה מז', 'מז', item_rows(P, [21, 22], src_rows=list(range(25, 47))))   # the notes block that follows is kept as small source text
+U('z2 זאדה מז', 'מז', item_rows(P, [21, 22]))      # the block of notes that follows (rows 25-46) is NOT used
 
 f = 'z2/סימן ו-ז אשר יצר.docx'; P = load(f)
 for r in (4, 6, 8, 10): U('z2 סימן ו', 'ו', item_rows(P, [r]))

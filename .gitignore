@@ -16,3 +16,7 @@ typeset/assets/fonts/KerenU-*.ttf
 typeset/assets/cover/cover-bg.jpg
 typeset/chk/
 typeset/assets/cover/divider-bg.jpg
+
+# fonts supplied for the Ritcha booklet (kept locally only)
+ritcha/tools/fonts/*.TTF
+ritcha/tools/assets/mk*.png
