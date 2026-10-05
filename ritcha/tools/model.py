@@ -98,6 +98,7 @@ def marker_prefix_len(p, kind):
         'geresh': r'^(' + HEB_LETTER + r")'\s*:?\s*",           # א':
         'bare':  r'^(' + HEB_LETTER + r')\s+(?=\S)',             # "א למה"   (only used where the marker is a bold run)
         'bare!': r'^(' + HEB_LETTER + r')\s+(?=\S)',            # same, bold not required
+        'bare1': r'^([א-ת])\s+(?=\S)',                           # single typed letter, bold not required
     }
     m = re.match(pats[kind], t)
     if not m: return 0
@@ -105,7 +106,6 @@ def marker_prefix_len(p, kind):
         # must be a bold lone token
         n = len(m.group(1))
         if not all(c[1] for c in p.chars[:n]): return 0
-    if kind == 'bare!': kind = 'bare'
     return m.end()
 
 def blk(kind, p, **kw):

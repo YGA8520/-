@@ -1,5 +1,5 @@
 """Write the formatted .docx (hand-built OOXML, no template) from model.json."""
-import json, zipfile, os, sys, datetime
+import json, zipfile, os, sys, datetime, re
 from xml.sax.saxutils import escape
 from PIL import Image
 from model import build, heb_num
@@ -8,12 +8,14 @@ OUT = sys.argv[1] if len(sys.argv) > 1 else 'out.docx'
 
 # ------------------------------------------------------------------ design constants (pt unless noted)
 PAGE_W, PAGE_H = 595.32, 841.92
-M_TOP, M_BOTTOM, M_SIDE = 72, 56, 54
+M_TOP, M_BOTTOM, M_SIDE = 90, 56, 54       # top margin leaves room for the running title + siman line
 INK = '404040'
 F_BODY, F_HEAD, F_NOTE = 'Times New Roman', 'Narkisim', 'Gisha'
 BODY_SZ, NOTE_SZ, EMPH_SZ = 14, 11, 13
 LINE_BODY = 19.4          # line pitch measured on the example
 FRAME_H = 57.19
+HDR_LINE_Y = 52           # top of the siman line in the header
+HDR_TITLE_Y = 12          # running title row, pt from the top edge
 HEAD_LINE = 46            # exact line height of the heading paragraph
 SHORT_CHARS = 76          # questions up to this length (one line) are centred
 
@@ -96,10 +98,11 @@ def body_runs(runs, base):
         out += run(text, **kw)
     return out
 
-def para(style, inner, *, keep_next=False, keep_lines=False, before=None, after=None, jc=None, line=None, rule=None, ind=None, extra_ppr=''):
+def para(style, inner, *, keep_next=False, keep_lines=False, before=None, after=None, jc=None, line=None, rule=None, ind=None, extra_ppr='', page_break=False):
     p = '<w:pStyle w:val="%s"/>' % style
     if keep_next: p += '<w:keepNext/>'
     if keep_lines: p += '<w:keepLines/>'
+    if page_break: p += '<w:pageBreakBefore/>'
     p += '<w:bidi/>'
     if before is not None or after is not None or line is not None:
         p += '<w:spacing'
@@ -155,17 +158,23 @@ def borders():
     return (anchor_pic('border_left.png', w, h, 'Border L', x=0, y=0) +
             anchor_pic('border_right.png', w, h, 'Border R', x=PAGE_W - w, y=0))
 
-def header_xml(first):
-    inner = borders()
-    if first:
-        pw, ph = px_pt('logo_plaque.png', width_pt=242.36)
-        inner += anchor_pic('logo_plaque.png', pw, ph, 'Logo plaque', x=176.48, y=0)
-        lw, lh = px_pt('logo_text.png', width_pt=148.83)
-        inner += anchor_pic('logo_text.png', lw, lh, 'Logo', x=223.24, y=2.83, descr='ברומו של עולם')
-        mw, mh = px_pt('hdr_motto.png', width_pt=42.84)
-        inner += anchor_pic('hdr_motto.png', mw, mh, 'Motto', x=501.6, y=17.16, descr="ברצות ה'")
-    return ('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:hdr %s>%s</w:hdr>'
-            % (NS, '<w:p><w:pPr><w:pStyle w:val="Header"/><w:bidi/><w:spacing w:before="0" w:after="0" w:line="40" w:lineRule="exact"/></w:pPr>%s</w:p>' % inner))
+def styleref_siman(sz=18):
+    """'סימן X' of the siman heading that starts first on the page (Word STYLEREF; for pages that open mid-siman it carries over the last one)"""
+    rp = lambda: rpr(font=F_HEAD, sz=sz, b=True, i=True)
+    fc = lambda t: '<w:r>%s%s</w:r>' % (rp(), t)
+    return (fc('<w:fldChar w:fldCharType="begin"/>') +
+            fc('<w:instrText xml:space="preserve"> STYLEREF "Rithcha Siman" </w:instrText>') +
+            fc('<w:fldChar w:fldCharType="separate"/>') + run('סימן ד', font=F_HEAD, sz=sz, b=True, i=True) +
+            fc('<w:fldChar w:fldCharType="end"/>'))
+
+def header_xml():
+    tw_, th_ = px_pt('title_row.png', width_pt=401.5)
+    title = anchor_pic('title_row.png', tw_, th_, 'Title', x=(PAGE_W - tw_) / 2, y=HDR_TITLE_Y, descr='ריתחא דאורייתא')
+    sq = lambda: run('■', font='Arial', sz=11, b=False, color='C8C8C8', scale=130, pos=2.5)
+    sp = lambda: run(' ', font=F_NOTE, sz=6, b=False)
+    inner = borders() + title + sq() + sp() + styleref_siman() + sp() + sq()
+    ppr = ('<w:pPr><w:pStyle w:val="Header"/><w:bidi/><w:spacing w:before="0" w:after="0" w:line="%d" w:lineRule="exact"/><w:jc w:val="center"/></w:pPr>' % tw(22))
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:hdr %s><w:p>%s%s</w:p></w:hdr>' % (NS, ppr, inner)
 
 def footer_xml():
     bw, bh = 54.26, 47.98          # the example squeezes the plaque top horizontally to make the badge
@@ -178,13 +187,13 @@ def footer_xml():
     return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:ftr %s>%s</w:ftr>' % (NS, p)
 
 # ------------------------------------------------------------------ body
-def heading_xml(text, first_on_page=False):
+def heading_xml(text, first_on_page=False, page_break=False):
     n = len(text)
     if n <= 9:   frame, fw, size = 'frame_std.png', 196.46, 28
     elif n <= 16: frame, fw, size = 'frame_mid.png', 290.0, 24
     else:        frame, fw, size = 'frame_wide.png', 400.0, 22
     fh = FRAME_H
-    spacer = para('Normal', '', keep_next=True, line=(8 if first_on_page else 30), rule='exact', jc='center')
+    spacer = para('Normal', '', keep_next=True, line=(8 if first_on_page else 30), rule='exact', jc='center', page_break=page_break)
     pic = anchor_pic(frame, fw, fh, 'Frame', h_rel='column', h_align='center', v_rel='paragraph', y=(HEAD_LINE - fh) / 2 - 1.0, descr='')
     r = '<w:r>%s<w:t xml:space="preserve">%s</w:t></w:r>' % (
         rpr(font=F_HEAD, sz=size, b=True, i=True, pos=5), escape(text))
@@ -195,57 +204,70 @@ def marker_xml(letter):
     sp = lambda: run(' ', font=F_NOTE, sz=6, b=False)
     return para('Marker', sq() + sp() + run(letter, font=F_HEAD, sz=17, b=True, i=True) + sp() + sq(), keep_next=True)
 
-def build_body(model):
-    parts = []
-    tw_, th_ = px_pt('title_row.png', width_pt=401.5)
-    parts.append(para('Normal', inline_pic('title_row.png', tw_, th_, 'Title', 'ריתחא דאורייתא'), jc='center',
-                      before=M_TOP and (199.84 - M_TOP), after=0, line=40, rule='exact'))
-    first = True
-    last_item = [e for e in model[-1]['entries'] if e['type'] == 'item'][-1]
-    for sec in model:
-        text = ('סימן ' + sec['num']) if sec['num'] else sec['title']
-        parts.append(heading_xml(text, first_on_page=first)); first = False
-        k = 0
-        for e in sec['entries']:
-            if e['type'] == 'caption':
-                parts.append(para('Caption', run(''.join(t for t, _ in e['runs']), font=F_NOTE, sz=12, b=True), keep_next=True))
-                continue
-            k += 1
-            parts.append(marker_xml(heb_num(k)))
-            blocks = e['blocks']
-            for bi, b in enumerate(blocks):
-                kind = b['kind']
-                last = bi == len(blocks) - 1
-                kn = e is last_item      # last item of the document: chain it to the ornament
-                if kind == 'q':
-                    prev_is_q = bi > 0 and blocks[bi - 1]['kind'] in ('q', 'sub')
-                    # short single-paragraph questions are centred, as in the example (items ה, ו, ז, ח, ט ...)
-                    qs = [x for x in blocks if x['kind'] in ('q', 'sub')]
-                    short = len(qs) == 1 and len(''.join(t for t, _ in b['runs'])) <= SHORT_CHARS
-                    parts.append(para('Question', body_runs(b['runs'], {}), before=(5 if prev_is_q else None), jc=('center' if short else None),
-                                      keep_next=kn or (not last and blocks[bi + 1]['kind'] == 'name') or False, keep_lines=kn))
-                elif kind == 'sub':
-                    lab = run(b['label'] + '. ', font=F_NOTE, sz=EMPH_SZ, b=True)
-                    parts.append(para('Question', lab + body_runs(b['runs'], {}), before=5, keep_next=kn, keep_lines=kn))
-                elif kind == 'src':
-                    parts.append(para('Source', body_runs(b['runs'], dict(font=F_NOTE, sz=NOTE_SZ, b=False)), keep_next=kn, keep_lines=kn))
-                elif kind == 'name':
-                    runs = [('[', {})] + list(b['runs']) + [(']', {})]
-                    parts.append(para('Note', body_runs(runs, dict(font=F_NOTE, sz=NOTE_SZ, b=False)), keep_next=kn, keep_lines=kn))
+PREFIX = re.compile(r'^\s*הלכה\s+ו?למעשה\s*:?\s*')
+def drop_prefix(runs):
+    """remove the 'הלכה למעשה:' label from the front of a question"""
+    text = ''.join(t for t, _ in runs)
+    m = PREFIX.match(text)
+    if not m: return runs
+    cut = m.end(); out = []
+    for t, f in runs:
+        if cut >= len(t): cut -= len(t); continue
+        out.append((t[cut:], f)); cut = 0
+    return out
+
+def emit_section(parts, sec, first_on_page, last_item=None, page_break=False):
+    text = ('סימן ' + sec['num']) if sec['num'] else sec['title']
+    parts.append(heading_xml(text, first_on_page=first_on_page, page_break=page_break))
+    k = 0
+    for e in sec['entries']:
+        if e['type'] != 'item': continue          # sub-headings / captions are not used
+        k += 1
+        parts.append(marker_xml(heb_num(k)))
+        blocks = e['blocks']
+        for bi, b in enumerate(blocks):
+            kind = b['kind']
+            last = bi == len(blocks) - 1
+            kn = e is last_item      # last item before the closing ornament: chain it to the ornament
+            if kind == 'q':
+                prev_is_q = bi > 0 and blocks[bi - 1]['kind'] in ('q', 'sub')
+                qs = [x for x in blocks if x['kind'] in ('q', 'sub')]
+                short = len(qs) == 1 and len(''.join(t for t, _ in b['runs'])) <= SHORT_CHARS
+                parts.append(para('Question', body_runs(b['runs'], {}), before=(5 if prev_is_q else None), jc=('center' if short else None),
+                                  keep_next=kn or (not last and blocks[bi + 1]['kind'] == 'name') or False, keep_lines=kn))
+            elif kind == 'sub':
+                lab = run(b['label'] + '. ', font=F_NOTE, sz=EMPH_SZ, b=True)
+                parts.append(para('Question', lab + body_runs(b['runs'], {}), before=5, keep_next=kn, keep_lines=kn))
+            elif kind == 'src':
+                parts.append(para('Source', body_runs(b['runs'], dict(font=F_NOTE, sz=NOTE_SZ, b=False)), keep_next=kn, keep_lines=kn))
+            elif kind == 'name':
+                runs = [('[', {})] + list(b['runs']) + [(']', {})]
+                parts.append(para('Note', body_runs(runs, dict(font=F_NOTE, sz=NOTE_SZ, b=False)), keep_next=kn, keep_lines=kn))
+
+def ornament_xml():
     ow, oh = px_pt('end_ornament.png', width_pt=238.1)
-    parts.append(para('Normal', inline_pic('end_ornament.png', ow, oh, 'Ornament', ''), jc='center', before=30, line=None))
-    sect = ('<w:sectPr><w:headerReference w:type="default" r:id="rIdHdr"/><w:headerReference w:type="first" r:id="rIdHdrFirst"/>'
-            '<w:footerReference w:type="default" r:id="rIdFtr"/><w:footerReference w:type="first" r:id="rIdFtr"/>'
+    return para('Normal', inline_pic('end_ornament.png', ow, oh, 'Ornament', ''), jc='center', before=30, line=None)
+
+def build_body(part1, part2):
+    """part1: the questions by siman (ends with the ornament); part2: 'הלכה למעשה' – starts on a new page"""
+    parts = []
+    last_item = [e for e in part1[-1]['entries'] if e['type'] == 'item'][-1]
+    for i, sec in enumerate(part1):
+        emit_section(parts, sec, first_on_page=(i == 0), last_item=last_item if sec is part1[-1] else None)
+    parts.append(ornament_xml())
+    for i, sec in enumerate(part2):
+        emit_section(parts, sec, first_on_page=(i == 0), page_break=(i == 0))
+    sect = ('<w:sectPr><w:headerReference w:type="default" r:id="rIdHdr"/><w:footerReference w:type="default" r:id="rIdFtr"/>'
             '<w:pgSz w:w="11906" w:h="16838"/>'
-            '<w:pgMar w:top="%d" w:right="%d" w:bottom="%d" w:left="%d" w:header="0" w:footer="%d" w:gutter="0"/>'
-            '<w:pgNumType w:fmt="hebrew1" w:start="1"/><w:cols w:space="708"/><w:titlePg/><w:bidi/><w:docGrid w:linePitch="360"/></w:sectPr>'
-            % (tw(M_TOP), tw(M_SIDE), tw(M_BOTTOM), tw(M_SIDE), tw(6)))
+            '<w:pgMar w:top="%d" w:right="%d" w:bottom="%d" w:left="%d" w:header="%d" w:footer="%d" w:gutter="0"/>'
+            '<w:pgNumType w:fmt="hebrew1" w:start="1"/><w:cols w:space="708"/><w:bidi/><w:docGrid w:linePitch="360"/></w:sectPr>'
+            % (tw(M_TOP), tw(M_SIDE), tw(M_BOTTOM), tw(M_SIDE), tw(HDR_LINE_Y), tw(6)))
     return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document %s><w:body>%s%s</w:body></w:document>' % (NS, ''.join(parts), sect)
 
 # ------------------------------------------------------------------ package
-def package(model, out):
-    body = build_body(model)
-    hdr, hdr1, ftr = header_xml(False), header_xml(True), footer_xml()
+def package(part1, part2, out):
+    body = build_body(part1, part2)
+    hdr, ftr = header_xml(), footer_xml()
     rels_media = ''.join('<Relationship Id="%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/%s"/>' % (rid, fn)
                          for fn, rid in MEDIA.items())
     ct = ('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
@@ -255,8 +277,7 @@ def package(model, out):
           '<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>'
           '<Override PartName="/word/settings.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml"/>'
           '<Override PartName="/word/header1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml"/>'
-          '<Override PartName="/word/header2.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml"/>'
-          '<Override PartName="/word/footer1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/>'
+                    '<Override PartName="/word/footer1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/>'
           '<Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/>'
           '<Override PartName="/docProps/app.xml" ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml"/></Types>')
     root_rels = ('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
@@ -266,8 +287,8 @@ def package(model, out):
     R = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/'
     doc_rels = ('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
                 '<Relationship Id="rIdSty" Type="%sstyles" Target="styles.xml"/><Relationship Id="rIdSet" Type="%ssettings" Target="settings.xml"/>'
-                '<Relationship Id="rIdHdr" Type="%sheader" Target="header1.xml"/><Relationship Id="rIdHdrFirst" Type="%sheader" Target="header2.xml"/>'
-                '<Relationship Id="rIdFtr" Type="%sfooter" Target="footer1.xml"/>%s</Relationships>') % (R, R, R, R, R, rels_media)
+                '<Relationship Id="rIdHdr" Type="%sheader" Target="header1.xml"/>'
+                '<Relationship Id="rIdFtr" Type="%sfooter" Target="footer1.xml"/>%s</Relationships>') % (R, R, R, R, rels_media)
     part_rels = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">%s</Relationships>' % rels_media
     settings = ('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:settings %s><w:zoom w:percent="100"/><w:defaultTabStop w:val="720"/>'
                 '<w:characterSpacingControl w:val="doNotCompress"/><w:compat><w:compatSetting w:name="compatibilityMode" w:uri="http://schemas.microsoft.com/office/word" w:val="15"/></w:compat>'
@@ -282,13 +303,9 @@ def package(model, out):
         z.writestr('[Content_Types].xml', ct); z.writestr('_rels/.rels', root_rels)
         z.writestr('word/document.xml', body); z.writestr('word/_rels/document.xml.rels', doc_rels)
         z.writestr('word/styles.xml', style_xml()); z.writestr('word/settings.xml', settings)
-        z.writestr('word/header1.xml', hdr); z.writestr('word/header2.xml', hdr1); z.writestr('word/footer1.xml', ftr)
-        for n in ('header1', 'header2', 'footer1'):
+        z.writestr('word/header1.xml', hdr); z.writestr('word/footer1.xml', ftr)
+        for n in ('header1', 'footer1'):
             z.writestr('word/_rels/%s.xml.rels' % n, part_rels)
         for fn in MEDIA: z.write('assets/' + fn, 'word/media/' + fn)
         z.writestr('docProps/core.xml', core); z.writestr('docProps/app.xml', app)
 
-if __name__ == '__main__':
-    model = build('input_document.xml')
-    package(model, OUT)
-    print('wrote', OUT, os.path.getsize(OUT) // 1024, 'KB;', len(model), 'sections;', len(MEDIA), 'images')
