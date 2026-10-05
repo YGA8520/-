@@ -1,0 +1,139 @@
+{
+  "_comment": "קונטרס 'לחידודא דאורייתא': overlay on config.json for front_pages.js (outer cover, inner title page, credits page, back cover). Text taken from the client's old pages.",
+  "bookName": "לחידודא דאורייתא",
+  "fontFaces": [
+    {
+      "family": "Frank Ruhl Libre",
+      "file": "FrankRuhlLibre.ttf",
+      "weight": "300 900"
+    },
+    {
+      "family": "Arc Top",
+      "file": "FrankRuhlLibre.ttf",
+      "weight": "500"
+    },
+    {
+      "family": "Keren",
+      "file": "KerenU-Regular.ttf",
+      "fallback": "FrankRuhlLibre.ttf",
+      "fallbackWeight": "560",
+      "weight": "400"
+    },
+    {
+      "family": "Keren",
+      "file": "KerenU-Bold.ttf",
+      "fallback": "FrankRuhlLibre.ttf",
+      "weight": "700"
+    },
+    {
+      "family": "Asher",
+      "file": "Asher-Regular.ttf",
+      "fallback": "FrankRuhlLibre.ttf",
+      "fallbackWeight": "400",
+      "weight": "400"
+    },
+    {
+      "family": "Asher",
+      "file": "Asher-Bold.ttf",
+      "fallback": "FrankRuhlLibre.ttf",
+      "fallbackWeight": "620",
+      "weight": "700"
+    }
+  ],
+  "cover": {
+    "fontArcTop": "Arc Top",
+    "texts": {
+      "kuntres": "קונטרס",
+      "arcTop": "לְהָבִין מָשָׁל וּמְלִיצָה דִּבְרֵי חֲכָמִים וְחִידֹתָם",
+      "arcTopTail": "(משלי א, ו)",
+      "arcTopBullets": false,
+      "arcBottom": [
+        "חידודים",
+        "שאלות",
+        "קושיות",
+        "מראי מקומות"
+      ],
+      "line1": "",
+      "line2": ""
+    },
+    "geometry": {
+      "top": {
+        "size": 32,
+        "r": 362
+      }
+    }
+  },
+  "innerCover": {
+    "texts": {
+      "line1": "אוסף חידות ושאלות",
+      "line2": "בעניני תפילה"
+    }
+  },
+  "credits": {
+    "items": [
+      {
+        "logo": "assets/cover/logo-grey.png",
+        "w": 33,
+        "gap": 6.5
+      },
+      {
+        "html": "\"שגיאות מי יבין\"",
+        "size": 17,
+        "font": "notes",
+        "bold": true,
+        "gap": 2.6
+      },
+      {
+        "html": "כל הערה או הארה<br>תתקבל בברכה",
+        "size": 13,
+        "font": "notes",
+        "lh": 1.4,
+        "gap": 5.5
+      },
+      {
+        "sep": true
+      },
+      {
+        "html": "החומר נערך ונלקט<br>ע\"י ארגון <b>'ברומו של עולם'</b><br>לחיזוק רוממות התפילה",
+        "size": 11.5,
+        "font": "notes",
+        "lh": 1.45,
+        "gap": 3.2
+      },
+      {
+        "html": "<span dir=\"ltr\">b613515@gmail.com</span><br><span dir=\"ltr\">052-7616296</span>",
+        "size": 11,
+        "font": "notes",
+        "lh": 1.45,
+        "gap": 3.2
+      },
+      {
+        "html": "<span style=\"white-space:nowrap\">עימוד ועיצוב: י.א. <span dir=\"ltr\">0534185035</span></span>",
+        "size": 9.5,
+        "font": "notes",
+        "bold": true,
+        "gap": 5.5
+      },
+      {
+        "sep": true
+      },
+      {
+        "html": "לתרומות:",
+        "size": 12,
+        "font": "notes",
+        "bold": true,
+        "gap": 2.2
+      },
+      {
+        "logo": "assets/cover/nedarim.png",
+        "w": 17,
+        "gap": 2.2
+      },
+      {
+        "html": "בלשונית - 'ברומו של עולם'",
+        "size": 11,
+        "font": "notes"
+      }
+    ]
+  }
+}

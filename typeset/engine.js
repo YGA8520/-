@@ -43,7 +43,7 @@
     const uid = opt.uid || '';          // ids of the gradients / arcs must be unique in the document (the book holds the cover and all the dividers)
     const words = bookName.split(/\s+/).filter(Boolean);
     const title1 = T.title1 || words[0] || bookName, title2 = T.title2 || words.slice(1).join(' ');
-    const fT = C.fontTitle, fA = C.fontArc, fL = C.fontLines;
+    const fT = C.fontTitle, fA = C.fontArc, fL = C.fontLines, fA1 = C.fontArcTop || fA;          // fontArcTop: the top arc may be set in another face (a verse with niqqud)
     const fit = (txt, size, maxW) => { const w = textW(txt, `${size}px "${fT}"`); return w > maxW ? size * maxW / w : size; };
     const arc = (g, sweep) => {
       const p = (a) => [g.cx + g.r * Math.cos(a * Math.PI / 180), g.cy + dy - g.r * Math.sin(a * Math.PI / 180)];
@@ -51,14 +51,15 @@
       return `M ${s[0].toFixed(2)} ${s[1].toFixed(2)} A ${g.r} ${g.r} 0 ${Math.abs(g.a1 - g.a0) > 180 ? 1 : 0} ${sweep} ${e[0].toFixed(2)} ${e[1].toFixed(2)}`;
     };
     // font size of an arc text: the configured size, smaller if the text would not fit on the arc
-    const arcSize = (g, plain) => Math.min(g.size, 0.97 * (g.r * Math.abs(g.a1 - g.a0) * Math.PI / 180) / (textW(plain, `100px "${fA}"`) / 100));
+    const arcSize = (g, plain, fam, extraW) => Math.min(g.size, 0.97 * (g.r * Math.abs(g.a1 - g.a0) * Math.PI / 180) / ((textW(plain, `100px "${fam || fA}"`) + (extraW || 0)) / 100));
     const topPlain = T.arcTop ? (T.arcTopBullets ? '\u25cf  ' + T.arcTop + '  \u25cf' : T.arcTop) : '';
+    const tailScale = T.arcTopTailScale || 0.62, tailTxt = T.arcTop && T.arcTopTail ? ' ' + T.arcTopTail : '';          // arcTopTail: small text after the arc text (the source of a verse)
     const botParts = Array.isArray(T.arcBottom) ? T.arcBottom : [T.arcBottom || ''];
     const botPlain = botParts.join('   ●   ');
-    const sTop = arcSize(G.top, topPlain), sBot = arcSize(G.bottom, botPlain);
+    const sTop = arcSize(G.top, topPlain, fA1, tailTxt ? tailScale * textW(tailTxt, `100px "${fA1}"`) : 0), sBot = arcSize(G.bottom, botPlain);
     const bulletAt = (sz) => ` <tspan font-family="'Times New Roman','Liberation Serif',serif" font-size="${(sz * 0.7).toFixed(1)}">&#9679;</tspan> `;
     const bottomTxt = botParts.map(esc).join(bulletAt(sBot));
-    const topTxt = T.arcTop ? (T.arcTopBullets ? bulletAt(sTop).trimStart() + ' ' + esc(T.arcTop) + ' ' + bulletAt(sTop).trimEnd() : esc(T.arcTop)) : '';
+    const topTxt = T.arcTop ? (T.arcTopBullets ? bulletAt(sTop).trimStart() + ' ' + esc(T.arcTop) + ' ' + bulletAt(sTop).trimEnd() : esc(T.arcTop)) + (tailTxt ? `<tspan font-size="${(sTop * tailScale).toFixed(2)}">${esc(tailTxt)}</tspan>` : '') : '';
     const st = 'direction:rtl;unicode-bidi:isolate;';
     const s1 = fit(title1, opt.titleSize || G.title.size, G.title.maxW1), s2 = fit(title2, opt.titleSize2 || opt.titleSize || G.title.size, G.title.maxW2);
     // a touch of gold at both ends of every title line: dark core, gradual change to gold in the outer `titleFade` part
@@ -81,7 +82,7 @@
     const medal = (T.kuntres ? `<text x="${G.kuntres.x}" y="${G.kuntres.y + dy}" text-anchor="middle" font-family="${fT}" font-size="${G.kuntres.size}" fill="${col.dark}" style="${st}">${esc(T.kuntres)}</text>` : '') +
       `<text x="${G.title.x1}" y="${G.title.y1 + dy}" text-anchor="middle" font-family="${fT}" font-size="${s1.toFixed(2)}" fill="${fill1}" style="${st}">${esc(title1)}</text>` +
       (title2 ? `<text x="${G.title.x2}" y="${G.title.y2 + dy}" text-anchor="middle" font-family="${fT}" font-size="${s2.toFixed(2)}" fill="${fill2}" style="${st}">${esc(title2)}</text>` : '') +
-      (topPlain ? `<text font-family="${fA}" font-size="${sTop.toFixed(2)}" fill="${col.arc}" style="${st}"><textPath href="#cvTop${uid}" startOffset="${G.top.off}" text-anchor="middle">${topTxt}</textPath></text>` : '') +
+      (topPlain ? `<text font-family="${fA1}" font-size="${sTop.toFixed(2)}" fill="${col.arc}" style="${st}"><textPath href="#cvTop${uid}" startOffset="${G.top.off}" text-anchor="middle">${topTxt}</textPath></text>` : '') +
       (botPlain.trim() ? `<text font-family="${fA}" font-size="${sBot.toFixed(2)}" fill="${col.arc}" style="${st}"><textPath href="#cvBot${uid}" startOffset="${G.bottom.off}" text-anchor="middle">${bottomTxt}</textPath></text>` : '') +
       (T.line1 ? `<text x="${G.line1.x}" y="${G.line1.y + dy}" text-anchor="middle" font-family="${fL}" font-weight="700" font-size="${G.line1.size}" fill="${col.dark}" style="${st}">${esc(T.line1)}</text>` : '') +
       (T.line2 ? `<text x="${G.line2.x}" y="${G.line2.y + dy}" text-anchor="middle" font-family="${fL}" font-weight="700" font-size="${G.line2.size}" fill="${col.dark}" style="${st}">${esc(T.line2)}</text>` : '');
@@ -115,7 +116,7 @@
   // the inner title page: the cover again, in black / white / grey / silver (artwork by make_cover.py: the silver palette; logo in grey)
   function innerCoverHTML(cfg, bookName) {
     const IC = cfg.innerCover;
-    return coverHTML(cfg, bookName, { uid: 'ic', image: IC.image, colors: IC.colors || (cfg.divider && cfg.divider.colors) || cfg.cover.colors, logoImage: IC.logo });
+    return coverHTML(cfg, bookName, { uid: 'ic', image: IC.image, colors: IC.colors || (cfg.divider && cfg.divider.colors) || cfg.cover.colors, logoImage: IC.logo, texts: IC.texts });
   }
 
   // the back cover: the cover without the circle (artwork by make_cover.py, gentle palette) and the logo of the organisation in the middle
