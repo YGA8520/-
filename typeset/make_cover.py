@@ -18,7 +18,10 @@ PALETTES = {
     # darker brown + a brighter, warmer gold (olive / grey casts of the old gilding pulled towards one golden hue, shadows and highlights kept)
     'brown':    dict(t1=26, s1=2.30, v1=0.52, name='חום כהה וזהב בוהק',
                      gold=dict(gamma=0.96, contrast=1.04, bright=0.03, sheen=0.12, waves=1.5, phase=0.12),
-                     swash=dict(gamma=0.90, contrast=1.10, bright=0.02)),
+                                      swash=dict(gamma=0.90, contrast=1.10, bright=0.02)),
+    # the inner title page: the same cover in black / white / grey / silver (no colour: the frame and the swash silver, everything else grey)
+    'silver':   dict(t1=0, s1=0.0, v1=0.68, name='כסף', gold=dict(gamma=0.72, contrast=1.06, bright=0.08, sheen=0.10, waves=1.5, phase=0.12),
+                     swash=dict(gamma=0.90, contrast=1.10, bright=0.02), frame_ramp='SILVER_RAMP', swash_ramp='SILVER_SWASH_RAMP'),
 }
 
 
@@ -79,6 +82,10 @@ GOLD_RAMP = [(0.00, (46, 28, 8)), (0.20, (100, 66, 16)), (0.40, (152, 106, 26)),
              (0.78, (226, 180, 70)), (0.92, (244, 210, 112)), (1.00, (252, 236, 162))]            # the frame: rich, not heavy
 SWASH_RAMP = [(0.00, (26, 14, 4)), (0.18, (84, 52, 12)), (0.38, (150, 102, 22)), (0.58, (208, 158, 40)),
               (0.78, (244, 204, 84)), (0.92, (255, 236, 150)), (1.00, (255, 250, 222))]           # the swash: brilliant gold running into dark bronze
+SILVER_RAMP = [(0.00, (20, 20, 22)), (0.18, (62, 63, 67)), (0.38, (118, 120, 125)), (0.58, (170, 172, 177)),
+               (0.78, (214, 216, 220)), (0.92, (242, 244, 247)), (1.00, (255, 255, 255))]            # silver frame: dark steel .. bright silver
+SILVER_SWASH_RAMP = [(0.00, (14, 14, 16)), (0.18, (52, 53, 57)), (0.38, (104, 106, 111)), (0.58, (166, 168, 173)),
+                     (0.78, (222, 224, 228)), (0.92, (248, 249, 251)), (1.00, (255, 255, 255))]       # silver swash: brilliant silver running into dark steel
 RING_RECT = ((79, 56, 1329, 1947), (140, 112, 1266, 1876))        # outer / inner rectangle of the frame band, in the 1408 x 2000 artwork
 RING_CIRCLES = ((711.0, 749.0, 329.0), (711.0, 749.0, 342.0))      # the two thin rings of the title medallion
 SWASH_BOX = (285, 560, 640, 800)                                  # the left swash (curl) next to the title
@@ -157,8 +164,8 @@ def recolor(img, p, masks):
             tt = (xx / Ww * 0.62 + yy / Hh * 0.38) * gp.get('waves', 1.5) + gp.get('phase', 0.12)
             lg = np.clip(lg * (1 - gp['sheen'] + 2 * gp['sheen'] * (0.5 + 0.5 * np.cos(2 * np.pi * tt))), 0, 1)
         return lg
-    frame_rgb = gold_ramp(graded(g, True))
-    swash_rgb = gold_ramp(graded(p['swash'], False), SWASH_RAMP)
+    frame_rgb = gold_ramp(graded(g, True), globals()[p['frame_ramp']] if p.get('frame_ramp') else None)
+    swash_rgb = gold_ramp(graded(p['swash'], False), globals()[p['swash_ramp']] if p.get('swash_ramp') else SWASH_RAMP)
     tone = hsv_to_rgb(np.full_like(h, p['t1']), np.clip(s * p['s1'], 0, 1), np.clip(v * (1 + (p['v1'] - 1) * np.clip(s * 3.0, 0, 1)), 0, 1))     # white stays white
     wf, ws = np.clip(frame, 0, 1)[..., None], np.clip(swash, 0, 1)[..., None]
     out = tone
@@ -231,6 +238,11 @@ if __name__ == '__main__':
     pal = sys.argv[1] if len(sys.argv) > 1 else (cfg.get('cover') or {}).get('palette', 'navy')
     out = sys.argv[2] if len(sys.argv) > 2 else None
     print('cover background:', build(pal, out), pal)
-    if len(sys.argv) <= 2 and cfg.get('divider'):               # also the artwork of the internal title pages (siman dividers, grey / silver)
+    if len(sys.argv) <= 2 and cfg.get('innerCover'):              # the inner title page: the same cover in black / white / grey / silver
+        print('inner cover background:', build('silver', os.path.join(HERE, 'assets', 'cover', 'inner-cover-bg.jpg')))
+    if len(sys.argv) <= 2 and cfg.get('divider'):               # also the artwork of the internal title pages (siman dividers, grey / silver) and of the credits page
         import make_divider
         print('divider background:', make_divider.build())
+        if cfg.get('credits'):
+            print('credits background:', make_divider.build(kind='credits'))
+        make_divider.make_assets()

@@ -38,7 +38,7 @@
   // the two curved lines and the two lines under the circle in FrankRuehl DP.  Everything is laid out in a 1408 x 2000 unit grid (= the page, 8 units per mm).
   function coverHTML(cfg, bookName, opt) {
     opt = opt || {};
-    const C = cfg.cover, G = C.geometry, T = Object.assign({}, C.texts || {}, opt.texts || {}), col = C.colors, dy = opt.dy || 0;
+    const C = cfg.cover, G = C.geometry, T = Object.assign({}, C.texts || {}, opt.texts || {}), col = opt.colors || C.colors, dy = opt.dy || 0;
     const image = opt.image || C.image;
     const uid = opt.uid || '';          // ids of the gradients / arcs must be unique in the document (the book holds the cover and all the dividers)
     const words = bookName.split(/\s+/).filter(Boolean);
@@ -89,7 +89,7 @@
       `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1408 2000" style="position:absolute;left:0;top:0;width:100%;height:100%">` +
       `<defs><path id="cvTop${uid}" d="${arc(G.top, 1)}"/><path id="cvBot${uid}" d="${arc(G.bottom, 0)}"/>${gradDefs}</defs>` +
       (opt.group ? `<g transform="${opt.group}">${medal}</g>` : medal) + labels +
-      (lg ? `<image href="${C.logo.image}" x="${(lg.x - lw / 2).toFixed(1)}" y="${lg.top}" width="${lw.toFixed(1)}" height="${lg.h}"/>` : '') +
+      (lg ? `<image href="${opt.logoImage || C.logo.image}" x="${(lg.x - lw / 2).toFixed(1)}" y="${lg.top}" width="${lw.toFixed(1)}" height="${lg.h}"/>` : '') +
       `</svg>`;
   }
 
@@ -110,6 +110,27 @@
     return coverHTML(c2, bookName, { uid: 'd' + (dividerHTML.n = (dividerHTML.n || 0) + 1), image: D.image, logo: false, texts: Object.assign({ line1: '', line2: '' }, m.arcs === false ? { arcTop: '', arcBottom: [] } : {}),
       group: `translate(${m.cx * 8} ${m.cy * 8}) scale(${m.scale}) translate(-711 -749)`,
       labels: [mk(l1, Lb.y1, Lb.size1), mk(l2, Lb.y2, short ? Lb.numeral : Lb.word)].filter((x) => x.txt) });
+  }
+
+  // the inner title page: the cover again, in black / white / grey / silver (artwork by make_cover.py: the silver palette; logo in grey)
+  function innerCoverHTML(cfg, bookName) {
+    const IC = cfg.innerCover;
+    return coverHTML(cfg, bookName, { uid: 'ic', image: IC.image, colors: IC.colors || (cfg.divider && cfg.divider.colors) || cfg.cover.colors, logoImage: IC.logo });
+  }
+
+  // the credits page: the two ornamented pillars of the dividers (artwork by make_divider.py, kind 'credits'), all the details between them, the small flourish between the
+  // details; the items (texts, logos, separators) are listed in config.json -> credits.items
+  function creditsHTML(cfg) {
+    const K = cfg.credits, F = cfg.fonts || {}, axis = (cfg.divider && cfg.divider.axis) || 57.7, fam = { body: F.body, display: F.display, lead: F.lead };
+    const gapOf = (it) => (it.gap !== undefined ? it.gap : K.gap);
+    const items = K.items.map((it) => {
+      if (it.sep) return `<img src="${K.sep.image}" style="width:${K.sep.w}mm;display:block;margin:0 0 ${gapOf(it)}mm">`;
+      if (it.logo) return `<img src="${it.logo}" style="width:${it.w}mm;display:block;margin:0 0 ${gapOf(it)}mm">`;
+      return `<div style="font-family:'${fam[it.font || 'body']}';font-size:${it.size}pt;line-height:${it.lh || 1.3};${it.bold ? 'font-weight:700;' : ''}margin:0 0 ${gapOf(it)}mm">${it.html}</div>`;
+    }).join('');
+    return `<img src="${K.image}" style="position:absolute;left:0;top:0;width:100%;height:100%">` +
+      `<style>.crd b{font-weight:700}</style>` +
+      `<div class="crd" style="position:absolute;left:${(axis - K.box.w / 2).toFixed(2)}mm;width:${K.box.w}mm;top:${K.box.top}mm;bottom:${K.box.bottom}mm;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;direction:rtl;color:#1c1c1c">${items}</div>`;
   }
 
   // ---------------------------------------------------------------- engine
@@ -667,7 +688,9 @@
       return res;
     }
     function frameHTML(b, cls) {
+      const cl = ORN['title-cloud'];                                   // a faint cloud of aged paper behind the title (antique ornament style)
       return `<div class="tframe ${cls || ''}" style="width:${b.W.toFixed(2)}px;height:${b.H.toFixed(2)}px">` +
+        (cl && cls === 'ttl' ? `<div class="fcloud" style="left:${(b.cw * 0.45).toFixed(2)}px;right:${(b.crw * 0.45).toFixed(2)}px;top:-6%;bottom:-6%;background-image:url(${cl.src})"></div>` : '') +
         `<div class="fcap" style="left:0;width:${b.cw.toFixed(2)}px;background-image:url(${capL.src})"></div>` +
         `<div class="fmid" style="left:${b.cw.toFixed(2)}px;width:${(b.W - b.cw - b.crw).toFixed(2)}px;background-image:url(${capM.src})"></div>` +
         `<div class="fcap" style="right:0;width:${b.crw.toFixed(2)}px;background-image:url(${capR.src})"></div>` +
@@ -805,6 +828,18 @@
       pg.classList.add('cover');
       pg.innerHTML = (cfg.cover && cfg.cover.enabled) ? coverHTML(cfg, bookName) : `<div class="cover-in">${oimg('flourish-wide-1', 70, '', '')}<div class="cv-title">${esc(bookName)}</div>${doc.book.subtitle ? `<div class="cv-sub">${esc(doc.book.subtitle)}</div>` : ''}${oimg('flourish-wide-1', 70, '', 'transform:scaleY(-1);')}</div>`;
       root.appendChild(pg);
+      if (cfg.innerCover && cfg.innerCover.enabled) {          // the inner title page and the credits page follow the cover; neither is numbered or counted
+        const ic = newPage();
+        ic.classList.add('cover');
+        ic.innerHTML = innerCoverHTML(cfg, bookName);
+        root.appendChild(ic);
+      }
+      if (cfg.credits && cfg.credits.enabled) {
+        const cr = newPage();
+        cr.classList.add('cover');
+        cr.innerHTML = creditsHTML(cfg);
+        root.appendChild(cr);
+      }
     }
     const hdrCache = new Map();
     function headerTitle(art) {
@@ -1005,5 +1040,7 @@
   window.typeset = typeset;
   window.coverHTML = coverHTML;
   window.dividerHTML = dividerHTML;
+  window.innerCoverHTML = innerCoverHTML;
+  window.creditsHTML = creditsHTML;
   window.hebNum = heb;
 })();

@@ -25,10 +25,8 @@ FLEURON_BOTTOM = (630, 948, 792, 988)
 CORNER = 335                            # the corner blocks (ornaments + rails) of the cover frame, in artwork units
 RAIL_T = 62                             # thickness of the rails of the frame
 
-SILVER_RAMP = [(0.00, (20, 20, 22)), (0.18, (62, 63, 67)), (0.38, (118, 120, 125)), (0.58, (170, 172, 177)),
-               (0.78, (214, 216, 220)), (0.92, (242, 244, 247)), (1.00, (255, 255, 255))]            # the frame: dark steel .. bright silver
-SWASH_SILVER_RAMP = [(0.00, (14, 14, 16)), (0.18, (52, 53, 57)), (0.38, (104, 106, 111)), (0.58, (166, 168, 173)),
-                     (0.78, (222, 224, 228)), (0.92, (248, 249, 251)), (1.00, (255, 255, 255))]       # the swash: brilliant silver running into dark steel
+SILVER_RAMP = mc.SILVER_RAMP                         # the frame: dark steel .. bright silver
+SWASH_SILVER_RAMP = mc.SILVER_SWASH_RAMP                # the swash: brilliant silver running into dark steel
 FRAME_GRADE = dict(gamma=0.72, contrast=1.06, bright=0.08, sheen=0.10, waves=1.5, phase=0.12)         # grading of the frame: lighter than the gold of the cover, silver
 SWASH = dict(gamma=0.90, contrast=1.10, bright=0.02)
 
@@ -236,9 +234,13 @@ def draw_frame(page, bg, a, frame, geom, L, seed, fade_x=None, lighten=None, orn
     page[:] = page * (1 - Am) + cm * Am
 
 
-def build(out=None, layout=None):
+def build(out=None, layout=None, kind='divider'):
+    """kind 'divider': pillars + medallion + flourishes (siman divider); kind 'credits': the pillars alone (the credits page puts its text between them)"""
     cfg = json.load(open(os.path.join(HERE, 'config.json'), encoding='utf8'))
-    L = layout or cfg['divider']
+    variant = kind                                                        # (the loops below reuse the name `kind`)
+    L = dict(layout or cfg['divider'])
+    if variant == 'credits':
+        L.update((cfg.get('credits') or {}).get('layout') or {})
     cache = os.environ.get('DIVIDER_CACHE')
     if cache and os.path.exists(cache):                                   # development: the slow steps below are kept in a pickle
         import pickle
@@ -296,7 +298,11 @@ def build(out=None, layout=None):
     while y > -P['bleed']:                                                 # ... and upwards
         kind, flip, h = cycle[i % 4]
         y -= h + og['gap']; pieces.append((kind, u(y), flip)); i -= 1
-    draw_frame(page, bg, a, frame, (int(round(lcx * MM)) - pw // 2, -int(round(P['bleed'] * MM)), pw, ph, 0), L, 2, lighten=lighten, orns=pieces)
+    draw_frame(page, bg, a, frame, (int(round(lcx * MM)) - pw // 2, -int(round(P['bleed'] * MM)), pw, ph, 0), L, 2, lighten=(None if variant == 'credits' else lighten), orns=pieces)
+    if variant == 'credits':                                                  # nothing stands over the pillars on the credits page
+        out = out or os.path.join(HERE, 'assets', 'cover', 'credits-bg.jpg')
+        to_img(page).save(out, quality=92, subsampling=0, optimize=True)
+        return out
 
     # ---- the title block of the medallion: black ink (multiplied onto the page, without the rings) + silver swash
     bx0, by0m, bx1, by1m = mc.MEDALLION_BOX
@@ -349,6 +355,25 @@ def build(out=None, layout=None):
     out = out or os.path.join(HERE, 'assets', 'cover', 'divider-bg.jpg')
     to_img(page).save(out, quality=92, subsampling=0, optimize=True)
     return out
+
+
+def make_assets():
+    """the logo of the organisation in grey (the inner pages have no colour) and the small flourish of the medallion as a picture with alpha (the separator of the credits page)"""
+    logo = Image.open(os.path.join(HERE, 'assets', 'cover', 'logo.png')).convert('RGBA')
+    g = np.asarray(logo).astype(np.float32) / 255.0
+    lum = np.clip(g[..., :3] @ np.array([0.299, 0.587, 0.114], dtype=np.float32), 0, 1)
+    lum = np.clip((lum - 0.10) * 1.12, 0, 1) ** 0.9                          # a little contrast: the navy becomes near black, the gold a mid grey
+    out = np.stack([lum, lum, lum, g[..., 3]], axis=-1)
+    Image.fromarray((out * 255 + 0.5).astype(np.uint8), 'RGBA').save(os.path.join(HERE, 'assets', 'cover', 'logo-grey.png'), optimize=True)
+    src = Image.open(mc.SRC).convert('RGB')
+    clean, a, elem = mc.frame_only(src)
+    ux0, uy0, ux1, uy1 = FLEURON_TOP
+    ink = np.clip(lum_of(np.where(elem[..., None], np.clip(a / np.maximum(clean, 1e-3), 0, 1), 1.0)[uy0:uy1, ux0:ux1]), 0, 1)
+    al = Image.fromarray(((1 - ink) * 255).astype(np.uint8)).resize(((ux1 - ux0) * 4, (uy1 - uy0) * 4), Image.LANCZOS)
+    fl = Image.new('RGBA', al.size, (36, 36, 38, 0))
+    fl.putalpha(al)
+    fl.save(os.path.join(HERE, 'assets', 'cover', 'fleuron-sep.png'), optimize=True)
+    return 'logo-grey.png, fleuron-sep.png'
 
 
 if __name__ == '__main__':

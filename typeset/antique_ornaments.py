@@ -53,6 +53,28 @@ def antique(im, bevel=BEVEL, sheen=SHEEN, rim=RIM, scale=1.0):
     return Image.fromarray((np.clip(out, 0, 1) * 255 + 0.5).astype(np.uint8), 'RGBA')
 
 
+def title_cloud(path, seed=7, W=1800, H=300):
+    """a faint cloud of aged paper (soft, irregular edge, at most 12 % dark) that sits behind the title in its frame"""
+    rng = np.random.default_rng(seed)
+
+    def field(sig, scale=8):
+        n = rng.standard_normal((H // scale + 2, W // scale + 2)).astype(np.float32)
+        n = ndimage.gaussian_filter(n, sig / scale)
+        n = ndimage.zoom(n, scale, order=1)[:H, :W]
+        return (n - n.mean()) / n.std()
+    n = 0.9 * field(60) + 0.6 * field(26) + 0.35 * field(10)
+    n = (n - n.min()) / (n.max() - n.min())
+    yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
+    dx, dy = np.minimum(xx, W - 1 - xx) / (W * 0.30), np.minimum(yy, H - 1 - yy) / (H * 0.42)
+    edge = np.clip(np.minimum(dx, dy) + (n - 0.5) * 0.55, 0, 1)
+    edge = edge * edge * (3 - 2 * edge)
+    alpha = np.clip(0.03 + 0.09 * n, 0, 1) * edge
+    out = np.zeros((H, W, 4), np.uint8)
+    out[..., :3] = (90, 90, 90)
+    out[..., 3] = (alpha * 255).astype(np.uint8)
+    Image.fromarray(out, 'RGBA').save(path, optimize=True)
+
+
 def main(dst=None, **kw):
     dst = dst or os.path.join(HERE, 'assets', 'ornaments_antique')
     os.makedirs(dst, exist_ok=True)
@@ -61,7 +83,8 @@ def main(dst=None, **kw):
         if f.endswith('.png'):
             antique(Image.open(os.path.join(SRC, f)), **kw).save(os.path.join(dst, f), optimize=True)
             n += 1
-    print('antique silver', n, 'ornaments ->', dst)
+    title_cloud(os.path.join(dst, 'title-cloud.png'))
+    print('antique silver', n, 'ornaments + title cloud ->', dst)
     return dst
 
 

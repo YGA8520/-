@@ -496,6 +496,12 @@ def build(doc_json, layout_json, cfg_json, out):
                      para(run(book['name']), ST['coverTitle']) +
                      (para(run(book['subtitle']), ST['coverSub']) if book.get('subtitle') else '') +
                      para(picture('flourish-wide-1.png', 70, 'v'), jc='center', sect=sectpr('continuous', 1, empty_ids)))
+    # the inner title page (the cover in black / white / grey) and the credits page follow the cover as page-size pictures (build.js writes them), neither numbered
+    for key, jpg in (('innerCover', 'inner-cover.jpg'), ('credits', 'credits.jpg')):
+        pth = os.path.join(os.path.dirname(os.path.abspath(out)), jpg)
+        if cfg.get('cover') and cfg.get(key) and os.path.exists(pth):
+            MEDIA.add(jpg, open(pth, 'rb').read())
+            parts.append(para(picture_page(jpg, 176, 250), spacing='<w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/>', sect=sectpr('nextPage', 1, empty_ids)))
 
 
     # table of contents: a real TOC field (outline levels: siman title = 1, article title = 2), with cached entries; running head like the rest of the booklet

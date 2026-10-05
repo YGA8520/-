@@ -318,6 +318,32 @@
       "h": 912
     }
   },
+  "innerCover": {"image": "assets/cover/inner-cover-bg.jpg", "logo": "assets/cover/logo-grey.png"},
+  "credits": {
+    "image": "assets/cover/credits-bg.jpg",
+    "sep": {"image": "assets/cover/fleuron-sep.png", "w": 19},
+    "box": {"w": 50, "top": 16, "bottom": 14},
+    "gap": 3.4,
+    "items": [
+      {"html": "בסייעתא דשמיא", "size": 9.5, "font": "body", "gap": 3.5},
+      {"logo": "assets/cover/logo-grey.png", "w": 33, "gap": 5.5},
+      {"html": "\"שגיאות מי יבין\"", "size": 17, "font": "display", "gap": 2.4},
+      {"html": "כל הערה או הארה<br>תתקבל בברכה", "size": 13, "font": "body", "lh": 1.4, "gap": 4.2},
+      {"sep": true},
+      {"html": "החומר נערך ונלקט<br>ע\"י ארגון <b>'ברומו של עולם'</b><br>לחיזוק רוממות התפילה", "size": 11.5, "font": "body", "lh": 1.45, "gap": 2.6},
+      {"html": "<span dir=\"ltr\">b613515@gmail.com</span><br><span dir=\"ltr\">052-7616296</span>", "size": 11, "font": "body", "lh": 1.45, "gap": 3.6},
+      {"sep": true},
+      {"html": "קו בית הוראה לשאלות<br>בהלכות תפילה וברכות:", "size": 11, "font": "body", "lh": 1.4, "gap": 1.6},
+      {"html": "<span dir=\"ltr\">0772150094</span>", "size": 12.5, "font": "body", "bold": true, "gap": 3.6},
+      {"sep": true},
+      {"html": "לשמיעת השיעורים והשיחות:", "size": 11, "font": "body", "gap": 1.6},
+      {"html": "<span dir=\"ltr\">0733718376</span>", "size": 12.5, "font": "body", "bold": true, "gap": 3.6},
+      {"sep": true},
+      {"html": "לתרומות:", "size": 12, "font": "body", "bold": true, "gap": 1.8},
+      {"logo": "assets/cover/nedarim.png", "w": 17, "gap": 1.8},
+      {"html": "בלשונית - 'ברומו של עולם'", "size": 11, "font": "body"}
+    ]
+  },
   "divider": {"image": "assets/cover/divider-bg.jpg",
     "colors": {"title": "#262626", "arc": "#4a4a4a", "dark": "#1c1c1c", "titleEdge": "#8f9296", "titleCore": "#262626", "titleFade": 0.3},
     "scale": 0.70,

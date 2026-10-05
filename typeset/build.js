@@ -26,6 +26,9 @@ try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = requ
     if (!cfg.cover.enabled) console.log('note: cover background', cfg.cover.image, 'not found (run make_cover.py) - placeholder cover used');
   }
   if (cfg.divider) cfg.divider.enabled = !!(cfg.cover && cfg.cover.enabled) && fs.existsSync(path.join(__dirname, cfg.divider.image));
+  if (cfg.innerCover) cfg.innerCover.enabled = !!(cfg.cover && cfg.cover.enabled) && fs.existsSync(path.join(__dirname, cfg.innerCover.image));          // inner title page (silver cover) and credits page
+  if (cfg.credits) cfg.credits.enabled = !!(cfg.cover && cfg.cover.enabled) && fs.existsSync(path.join(__dirname, cfg.credits.image));
+  if (cfg.innerCover && cfg.divider && cfg.divider.colors) cfg.innerCover.colors = cfg.innerCover.colors || cfg.divider.colors;
   cfg.ornaments = {};
   const odir = path.join(__dirname, 'assets', 'ornaments');
   for (const f of fs.readdirSync(odir)) {
@@ -183,6 +186,23 @@ try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = requ
     await cp.evaluate(() => Promise.all([...document.images].map((i) => i.decode().catch(() => {}))));
     await cp.locator('#cv').screenshot({ path: path.join(outDir, 'cover.jpg'), type: 'jpeg', quality: 93 });
     await cp.pdf({ path: path.join(outDir, 'cover.pdf'), width: '176mm', height: '250mm', printBackground: true, preferCSSPageSize: true });
+  }
+  if (cfg.cover && cfg.cover.enabled && !doc.noCover && ((cfg.innerCover && cfg.innerCover.enabled) || (cfg.credits && cfg.credits.enabled))) {          // inner title page and credits page as pictures (Word)
+    const outDir = path.dirname(outPdf);
+    const ip = await browser.newPage({ viewport: { width: 700, height: 1000 }, deviceScaleFactor: 2079 / (176 * 96 / 25.4) });
+    await ip.goto('file://' + path.join(__dirname, 'template.html'));
+    await ip.addStyleTag({ content: styleCss });
+    await ip.addScriptTag({ path: path.join(__dirname, 'engine.js') });
+    await ip.evaluate(async (fams) => { await Promise.all(fams.flatMap((f) => [400, 700].map((w) => document.fonts.load(w + ' 16px "' + f + '"', 'אבג')))); await document.fonts.ready; }, [cfg.cover.fontTitle, cfg.cover.fontArc, cfg.cover.fontLines, cfg.fonts.body, cfg.fonts.display, cfg.fonts.lead]);
+    for (const [key, fn, file] of [['innerCover', 'innerCoverHTML', 'inner-cover.jpg'], ['credits', 'creditsHTML', 'credits.jpg']]) {
+      if (!(cfg[key] && cfg[key].enabled)) continue;
+      await ip.evaluate(([c, name, f]) => {
+        document.body.style.margin = '0';
+        document.body.innerHTML = '<div id="cv" class="page cover" style="width:176mm;height:250mm;position:relative;overflow:hidden">' + window[f](c, name) + '</div>';
+      }, [cfg, doc.book.name, fn]);
+      await ip.evaluate(() => Promise.all([...document.images].map((i) => i.decode().catch(() => {}))));
+      await ip.locator('#cv').screenshot({ path: path.join(outDir, file), type: 'jpeg', quality: 93 });
+    }
   }
   if (cfg.divider && cfg.divider.enabled && res.dividers && res.dividers.length) {          // one picture per internal title page (used in the Word file)
     const outDir = path.join(path.dirname(outPdf), 'dividers');

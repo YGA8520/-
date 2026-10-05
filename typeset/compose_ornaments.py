@@ -54,8 +54,9 @@ def frame_slices():
     return im.crop((0, 0, FRAME_CAP_L, im.height)), im.crop((FRAME_CAP_R, 0, im.width, im.height)), im.crop((FRAME_MID[0], 0, FRAME_MID[1], im.height))
 
 
-def frame_png(width_mm, height_mm):
-    """frame ornament of exactly width x height (mm): caps keep their shape, the middle line section is stretched."""
+def frame_png(width_mm, height_mm, cloud=False):
+    """frame ornament of exactly width x height (mm): caps keep their shape, the middle line section is stretched.  cloud: the faint cloud of aged paper behind the title
+    (assets/ornaments/title-cloud.png, if the antique ornament set made it) goes under the frame, as the PDF engine draws it."""
     capL, capR, mid = frame_slices()
     H = round(height_mm * PX_MM)
     s = H / capL.height
@@ -64,6 +65,13 @@ def frame_png(width_mm, height_mm):
     cr = capR.resize((max(1, round(capR.width * s)), H), Image.LANCZOS)
     rest = max(1, W - cl.width - cr.width)
     out = Image.new('RGBA', (cl.width + rest + cr.width, H), (0, 0, 0, 0))
+    cpath = os.path.join(SRC, 'title-cloud.png')
+    if cloud and os.path.exists(cpath):
+        x0, x1 = round(cl.width * 0.45), out.width - round(cr.width * 0.45)             # the same box as in the engine: 45 % of the caps in from both ends, 6 % beyond top and bottom
+        ch = round(H * 1.12)
+        c = Image.open(cpath).convert('RGBA').resize((max(1, x1 - x0), ch), Image.LANCZOS)
+        top = round(H * 0.06)
+        out.alpha_composite(c.crop((0, top, c.width, top + H)), (x0, 0))
     out.alpha_composite(cl, (0, 0))
     out.alpha_composite(mid.resize((rest, H), Image.BILINEAR), (cl.width, 0))
     out.alpha_composite(cr, (cl.width + rest, 0))
@@ -93,7 +101,7 @@ def word_frames(layout_path):
     for key, boxes in (('titleBoxes', lay.get('titleBoxes', {})), ('dividerBoxes', lay.get('dividerBoxes', {}))):
         for k, b in boxes.items():
             name = f'{key[:-5]}-{k}.png'
-            frame_png(b['wmm'], b['hmm']).save(os.path.join(OUT, name), optimize=True)
+            frame_png(b['wmm'], b['hmm'], cloud=(key == 'titleBoxes')).save(os.path.join(OUT, name), optimize=True)
             b['png'] = name
             n += 1
     json.dump(lay, open(layout_path, 'w'), ensure_ascii=False, indent=1)

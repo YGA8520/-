@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""All ornaments of the booklet are greyish with a very slight transparency.
-Black masters live in assets/ornaments/_black ; this writes the tinted versions next to them (used by everything else).
-Change GREY / OPACITY to restyle every ornament at once."""
+"""All ornaments of the booklet come from the black masters in assets/ornaments/_black ; this writes the versions that everything else uses next to them.
+Default: embossed antique silver (antique_ornaments.py, the style of the cover and the dividers) + the faint title cloud.
+`python tint_ornaments.py grey` writes the earlier flat grey ones instead (change GREY / OPACITY to restyle those)."""
 import os
 import numpy as np
 from PIL import Image
@@ -22,7 +22,14 @@ def tint(im, grey=GREY, opacity=OPACITY):
     return Image.fromarray(out, 'RGBA')
 
 
-def main():
+def main(style='antique'):
+    if style == 'antique':
+        import antique_ornaments
+        antique_ornaments.main(DST)
+        return
+    cloud = os.path.join(DST, 'title-cloud.png')
+    if os.path.exists(cloud):
+        os.remove(cloud)                                   # the grey set has no cloud behind the titles
     for f in sorted(os.listdir(SRC)):
         if f.endswith('.png'):
             tint(Image.open(os.path.join(SRC, f))).save(os.path.join(DST, f), optimize=True)
@@ -30,4 +37,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    import sys
+    main(sys.argv[1] if len(sys.argv) > 1 else 'antique')
