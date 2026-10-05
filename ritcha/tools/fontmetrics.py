@@ -52,3 +52,28 @@ def rimon_ink(letters):
         info.append((x0, x1, hm[g][0]))
     first, last = info[0], info[-1]               # first letter = visual right
     return dict(ymin=ymin, ymax=ymax, left_off=last[0], right_off=first[2] - first[1])
+
+
+def ink_shift_pt(text, size):
+    """how far (pt) the ink of the string, as drawn left to right in RimonMF (symbol codes in visual order), sits to the RIGHT of the
+    middle of its advance box; a negative value means to the left."""
+    t = font('rimon'); cm = _cmap('rimon'); hm = t['hmtx']; gs = t.getGlyphSet()
+    disp = to_rimon(text)[::-1].strip()
+    def info(ch):
+        g = cm[ord(ch)]; bp = BoundsPen(gs); gs[g].draw(bp); x0, y0, x1, y1 = bp.bounds; return x0, x1, hm[g][0]
+    first, last = info(disp[0]), info(disp[-1])
+    left_off = first[0]; right_off = last[2] - last[1]
+    return (left_off - right_off) / 2 * size / 1000.0
+
+
+def ink_vcentre(text):
+    """height (em) of the vertical middle of the whole ink of the string (descenders and ascenders included) above the baseline."""
+    t = font('rimon'); cm = _cmap('rimon'); gs = t.getGlyphSet()
+    ymin, ymax = 10 ** 6, -10 ** 6
+    for ch in to_rimon(text):
+        g = cm.get(ord(ch))
+        if not g: continue
+        bp = BoundsPen(gs); gs[g].draw(bp)
+        if bp.bounds is None: continue
+        ymin = min(ymin, bp.bounds[1]); ymax = max(ymax, bp.bounds[3])
+    return (ymin + ymax) / 2 / 1000.0

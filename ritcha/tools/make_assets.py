@@ -80,3 +80,37 @@ o_l, o_r = xobj(330), xobj(329).rotate(180)
 orn = Image.new('RGBA', (o_l.width * 2, o_l.height), (0, 0, 0, 0))
 orn.paste(o_l, (0, 0), o_l); orn.paste(o_r, (o_l.width, 0), o_r)
 save(orn, 'end_ornament.png')           # 238.1 x 52.9 pt
+
+# ---------------------------------------------------------------- derived assets (work from the PNGs above)
+def derived():
+    import json
+    import numpy as np
+    # (1) frames cut symmetrically around their VISIBLE box, so that the canvas centre is the visual centre of the frame
+    PXPT = 2542 / 196.46
+    info = {}
+    for name in ('frame_std', 'frame_mid', 'frame_wide'):
+        im = Image.open(OUT + name + '.png').convert('RGBA')
+        al = np.array(im)[:, :, 3]
+        ys, xs = np.where(al > 40)
+        x0, x1, y0, y1 = xs.min(), xs.max(), ys.min(), ys.max()
+        cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
+        hw, hh = (x1 - x0) / 2 + 40, (y1 - y0) / 2 + 40
+        box = (int(round(cx - hw)), int(round(cy - hh)), int(round(cx + hw)), int(round(cy + hh)))
+        c = im.crop(box); c.save(OUT + name + '_t.png')
+        info[name + '_t.png'] = dict(w=c.width / PXPT, h=c.height / PXPT, vis_w=(x1 - x0) / PXPT, vis_h=(y1 - y0) / PXPT)
+    json.dump(info, open(OUT + 'frames.json', 'w'))
+    # (2) header: right group ('ריתחא' + ornament) and left group (ornament + 'דאורייתא') cut from the title row
+    src = Image.open(OUT + 'title_row.png').convert('RGB'); a = np.array(src.convert('L'))
+    PX = 3346 / 401.5
+    rows = (a[:, 20:3330] < 200).any(axis=1); ys = np.where(rows)[0]
+    y0, y1 = max(0, ys.min() - 6), min(a.shape[0], ys.max() + 7)
+    left = src.crop((20, y0, 1800, y1)); left.save(OUT + 'hdr_left.png')
+    right = src.crop((1885, y0, 3330, y1)); right.save(OUT + 'hdr_right.png')
+    tr = (a[:, 719:2634] < 200).any(axis=1); ty = np.where(tr)[0]
+    H = (y1 - y0) / PX
+    json.dump(dict(h_pt=H, w_left=left.width / PX, w_right=right.width / PX,
+                   title_center_above_img_center=((y1 - ty.max()) + (y1 - ty.min())) / 2 / PX - H / 2), open(OUT + 'hdr_groups.json', 'w'))
+    print('derived assets written')
+
+if __name__ == '__main__' and len(sys.argv) > 1 and sys.argv[1] == '--derived':
+    derived()
