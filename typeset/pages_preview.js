@@ -15,7 +15,7 @@ try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = requ
   await p.goto('file://' + path.join(__dirname, 'template.html'));
   await p.addStyleTag({ content: css });
   await p.addScriptTag({ path: path.join(__dirname, 'engine.js') });
-  await p.evaluate(async (f) => { await Promise.all(f.flatMap((x) => [400, 700].map((w) => document.fonts.load(w + ' 16px "' + x + '"', 'אבג')))); }, [cfg.cover.fontTitle, cfg.cover.fontArc, cfg.cover.fontLines, cfg.fonts.body, cfg.fonts.display, cfg.fonts.lead]);
+  await p.evaluate(async (f) => { await Promise.all(f.flatMap((x) => [400, 700].map((w) => document.fonts.load(w + ' 16px "' + x + '"', 'אבג')))); }, [cfg.cover.fontTitle, cfg.cover.fontArc, cfg.cover.fontLines, cfg.fonts.body, cfg.fonts.display, cfg.fonts.lead, cfg.fonts.notes]);
   for (const [fn, file] of [['innerCoverHTML', 'inner-cover.png'], ['creditsHTML', 'credits.png']]) {
     await p.evaluate(([c, n, f]) => { document.body.style.margin = '0'; document.body.innerHTML = '<div id="cv" class="page cover" style="width:176mm;height:250mm;position:relative;overflow:hidden">' + window[f](c, n) + '</div>'; }, [cfg, doc.book.name, fn]);
     await p.evaluate(() => Promise.all([...document.images].map((im) => im.decode().catch(() => {}))));

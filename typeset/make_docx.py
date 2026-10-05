@@ -529,7 +529,7 @@ def build(doc_json, layout_json, cfg_json, out):
         div_jpg = os.path.join(os.path.dirname(os.path.abspath(out)), 'dividers', f'div-{ai}.jpg')
         if art.get('divider') and lay and os.path.exists(div_jpg):
             MEDIA.add(f'div-{ai}.jpg', open(div_jpg, 'rb').read())
-            parts.append(para(picture_page(f'div-{ai}.jpg', 176, 250), spacing='<w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/>', sect=sectpr('nextPage', 1, empty_ids)))
+            parts.append(para(picture_page(f'div-{ai}.jpg', 176, 250), spacing='<w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/>', sect=sectpr('oddPage', 1, empty_ids)))        # a divider always starts on an odd page (Word adds the empty page)
         elif art.get('divider') and lay:
                 db = lay['dividerBoxes'][art['divider']]
                 parts.append(para('', spacing='<w:spacing w:before="4200" w:after="0" w:line="240" w:lineRule="auto"/>') +

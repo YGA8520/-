@@ -193,7 +193,7 @@ try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = requ
     await ip.goto('file://' + path.join(__dirname, 'template.html'));
     await ip.addStyleTag({ content: styleCss });
     await ip.addScriptTag({ path: path.join(__dirname, 'engine.js') });
-    await ip.evaluate(async (fams) => { await Promise.all(fams.flatMap((f) => [400, 700].map((w) => document.fonts.load(w + ' 16px "' + f + '"', 'אבג')))); await document.fonts.ready; }, [cfg.cover.fontTitle, cfg.cover.fontArc, cfg.cover.fontLines, cfg.fonts.body, cfg.fonts.display, cfg.fonts.lead]);
+    await ip.evaluate(async (fams) => { await Promise.all(fams.flatMap((f) => [400, 700].map((w) => document.fonts.load(w + ' 16px "' + f + '"', 'אבג')))); await document.fonts.ready; }, [cfg.cover.fontTitle, cfg.cover.fontArc, cfg.cover.fontLines, cfg.fonts.body, cfg.fonts.display, cfg.fonts.lead, cfg.fonts.notes]);
     for (const [key, fn, file] of [['innerCover', 'innerCoverHTML', 'inner-cover.jpg'], ['credits', 'creditsHTML', 'credits.jpg']]) {
       if (!(cfg[key] && cfg[key].enabled)) continue;
       await ip.evaluate(([c, name, f]) => {

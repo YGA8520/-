@@ -121,12 +121,12 @@
   // the credits page: the two ornamented pillars of the dividers (artwork by make_divider.py, kind 'credits'), all the details between them, the small flourish between the
   // details; the items (texts, logos, separators) are listed in config.json -> credits.items
   function creditsHTML(cfg) {
-    const K = cfg.credits, F = cfg.fonts || {}, axis = (cfg.divider && cfg.divider.axis) || 57.7, fam = { body: F.body, display: F.display, lead: F.lead };
+    const K = cfg.credits, F = cfg.fonts || {}, axis = K.axis || (cfg.divider && cfg.divider.axis) || 57.7, fam = { body: F.body, display: F.display, lead: F.lead, notes: F.notes };
     const gapOf = (it) => (it.gap !== undefined ? it.gap : K.gap);
     const items = K.items.map((it) => {
       if (it.sep) return `<img src="${K.sep.image}" style="width:${K.sep.w}mm;display:block;margin:0 0 ${gapOf(it)}mm">`;
       if (it.logo) return `<img src="${it.logo}" style="width:${it.w}mm;display:block;margin:0 0 ${gapOf(it)}mm">`;
-      return `<div style="font-family:'${fam[it.font || 'body']}';font-size:${it.size}pt;line-height:${it.lh || 1.3};${it.bold ? 'font-weight:700;' : ''}margin:0 0 ${gapOf(it)}mm">${it.html}</div>`;
+      return `<div style="font-family:'${fam[it.font || K.font || 'body']}';font-size:${it.size}pt;line-height:${it.lh || 1.3};${it.bold ? 'font-weight:700;' : ''}margin:0 0 ${gapOf(it)}mm">${it.html}</div>`;
     }).join('');
     return `<img src="${K.image}" style="position:absolute;left:0;top:0;width:100%;height:100%">` +
       `<style>.crd b{font-weight:700}</style>` +
@@ -809,10 +809,14 @@
     const nToc = tocPlaceholder.length;
     let pageNo = (doc.firstPageNumber || 1) + nToc;       // ToC pages are counted in the numbering, the cover is not
     const startNo = [], divNo = [];
-    seq.forEach((it) => {
-      if (it.kind === 'div') { it.no = pageNo; divNo[it.ai] = pageNo++; }
-      else { startNo[it.ai] = pageNo; artPages[it.ai].forEach((p) => { p.no = pageNo++; }); }
-    });
+    const blanks = [];
+    for (let k = 0; k < seq.length; k++) {                // a divider is always an odd page: where it would fall on an even page, an empty page (counted, no head, no number) goes before it
+      const it = seq[k];
+      if (it.kind === 'div') {
+        if (pageNo % 2 === 0) { seq.splice(k, 0, { kind: 'blank', no: pageNo }); blanks.push(pageNo); pageNo++; k++; }
+        it.no = pageNo; divNo[it.ai] = pageNo++;
+      } else { startNo[it.ai] = pageNo; artPages[it.ai].forEach((p) => { p.no = pageNo++; }); }
+    }
     const tocPages = paginateToc(tocRows((i) => startNo[i], (i) => divNo[i]));
     if (tocPages.length !== nToc) console.log('warning: toc page count changed');
 
@@ -924,6 +928,7 @@
     });
 
     seq.forEach((it) => {
+      if (it.kind === 'blank') { root.appendChild(newPage()); return; }
       if (it.kind === 'div') {
         const pg = newPage();
         if (cfg.divider && cfg.divider.enabled && cfg.cover && cfg.cover.enabled) {
@@ -1034,7 +1039,7 @@
       });
     });
     curPage = null;
-    return { stats: STATS, pages: root.children.length, toc: articles.map((a, i) => ({ title: a.title, page: startNo[i], pages: artPages[i].length })), tocPages: nToc, titleBoxes, dividerBoxes, dividerPages: divNo, dividers: articles.map((a, i) => (a.divider ? { ai: i, label: a.divider } : null)).filter(Boolean), headerTitles: articles.map((a) => headerTitle(a)), headerAuthors: articles.map((a) => headerAuthor(a)) };
+    return { stats: STATS, pages: root.children.length, toc: articles.map((a, i) => ({ title: a.title, page: startNo[i], pages: artPages[i].length })), tocPages: nToc, titleBoxes, dividerBoxes, dividerPages: divNo, blankPages: blanks, dividers: articles.map((a, i) => (a.divider ? { ai: i, label: a.divider } : null)).filter(Boolean), headerTitles: articles.map((a) => headerTitle(a)), headerAuthors: articles.map((a) => headerAuthor(a)) };
   }
 
   window.typeset = typeset;
