@@ -502,7 +502,7 @@ def build(doc_json, layout_json, cfg_json, out):
     items = []
     for k, a in enumerate(data['articles']):
         if a.get('divider') and lay:
-            items.append((1, a['divider'], lay['dividerPages'][k]))
+            items.append((1, re.sub(r"[\u05f3\u05f4'\"]", '', a['divider']), lay['dividerPages'][k]))        # the siman band of the ToC is written without geresh / gershayim
         items.append((2, a['title'], lay['toc'][k]['page'] if lay else k + 1))
     toc = [para(run('תוכן עניינים'), ST['tocTitle'])]
     for k, (lvl, title, pg) in enumerate(items):

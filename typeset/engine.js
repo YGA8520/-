@@ -104,7 +104,7 @@
     const D = cfg.divider, [l1, l2x] = dividerLines(label), l2 = l2x.replace(/[\u05f3\u05f4'"]/g, '');          // the siman is written without geresh / gershayim
     const short = l2.replace(/[^\u05d0-\u05ea]/g, '').length <= 3;         // a short siman letter group is set larger
     const Lb = Object.assign({ font: 'Lulav CLM', weight: 700, size1: 100, numeral: 240, word: 150, y1: -85, y2: 115, maxW: 470 }, D.label || {});
-    const lx = Lb.cx * 8, ly = Lb.cy * 8, m = D.medal;
+    const m = D.medal, lx = (m.cx + ((m.titleCentre || 711) - 711) * m.scale / 8) * 8, ly = Lb.cy * 8;      // the siman is centred under the middle of the title
     const c2 = Object.assign({}, cfg, { cover: Object.assign({}, cfg.cover, { colors: D.colors || cfg.cover.colors }) });
     const mk = (txt, y, size) => ({ txt, x: lx, y: ly + y, size, maxW: Lb.maxW, font: Lb.font, weight: Lb.weight, color: Lb.color });
     return coverHTML(c2, bookName, { uid: 'd' + (dividerHTML.n = (dividerHTML.n || 0) + 1), image: D.image, logo: false, texts: { line1: '', line2: '', arcTop: '', arcBottom: [] },
@@ -741,7 +741,7 @@
     function tocRows(pageOf, divOf) {
       const rows = [];
       articles.forEach((art, i) => {
-        if (art.divider) rows.push({ kind: 'group', html: `<div class="toc-group"><span class="gname">${esc(art.divider)}</span></div>` });
+        if (art.divider) rows.push({ kind: 'group', html: `<div class="toc-group"><span class="gname">${esc(art.divider.replace(/[\u05f3\u05f4'"]/g, ''))}</span></div>` });
         const pn = pageOf ? heb(pageOf(i)) : 'תשצט';
         const ls = tocTitleLines(art.title);
         const head = ls.slice(0, -1).map((l) => `<div class="tl">${esc(l)}</div>`).join('');

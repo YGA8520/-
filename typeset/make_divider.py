@@ -155,8 +155,9 @@ def smoke(shape, rect, tpx, depth, strength, seed):
     return 1 - keep
 
 
-def draw_frame(page, bg, a, frame, geom, L, seed):
-    """one silver frame on the page: geom = (x, y, w, h) in canvas px (x may be negative: the part left of the page is cut), fade = rows fading in from the top (fraction)"""
+def draw_frame(page, bg, a, frame, geom, L, seed, fade_x=None):
+    """one silver frame on the page: geom = (x, y, w, h, fade) in canvas px (x may be negative and the frame may leave the page below: what is outside is cut),
+    fade = fraction of the height over which the frame fades in from its top edge; fade_x = (x0, x1) in px: opaque left of x0, gone right of x1"""
     H, W = page.shape[:2]
     x, y, w, h, fade = geom
     fs = L['scale']
@@ -169,12 +170,17 @@ def draw_frame(page, bg, a, frame, geom, L, seed):
     if fade:
         t = np.clip((np.arange(H) - y) / (fade * h), 0, 1)
         fy = t * t * (3 - 2 * t)
+    fxv = np.ones(W, np.float32)                                          # horizontal fade of the whole frame
+    if fade_x:
+        t = np.clip((np.arange(W) - fade_x[0]) / float(fade_x[1] - fade_x[0]), 0, 1)
+        fxv = 1 - t * t * (3 - 2 * t)
+    fy = fy[:, None] * fxv[None, :]
     foot = np.zeros((H, W), np.float32)
     box = clip_box(foot.shape, x, y, w, h)
     foot[box[0]] = 1.0
-    A = foot * (fy ** 2)[:, None]                                          # the paper fades quicker than the rails, so that no edge of it shows where the frame is gone
+    A = foot * fy ** 2 if not fade_x else foot * fy                        # the paper fades quicker than the rails, so that no edge of it shows where the frame is gone
     sh = ndimage.gaussian_filter(np.roll(np.roll(foot, 9, axis=0), 7, axis=1), 10)                 # a soft shadow so that the frame stands on the page
-    page *= (1 - L.get('shadow', 0.30) * sh * fy[:, None])[..., None]
+    page *= (1 - L.get('shadow', 0.30) * sh * fy)[..., None]
     tpx = RAIL_T * 2 * fs
     hz = L.get('halo', {})
     halo = smoke((H, W), (x, y, w, h), tpx, hz.get('depth', 150) * 2 * fs, hz.get('strength', 0.6), seed)
@@ -184,7 +190,7 @@ def draw_frame(page, bg, a, frame, geom, L, seed):
     cm = np.zeros((H, W, 3), np.float32)
     am[box[0]] = malpha[box[1]]
     cm[box[0]] = metal[box[1]]
-    Am = (am * fy[:, None])[..., None]
+    Am = (am * fy)[..., None]
     page[:] = page * (1 - Am) + cm * Am
 
 
@@ -221,18 +227,22 @@ def build(out=None, layout=None):
     bg = bg * (1 - w) + flat * w
     page = bg.copy()
 
-    # ---- the two frames: left part outside the page
+    # ---- the two frames
     fs = L['scale']
+    ms = L['medal']['scale']
+    lcx = L['medal']['cx'] + (L['medal'].get('titleCentre', RING_C[0]) - RING_C[0]) * ms / 8      # mm: the middle of the title, the siman is centred under it
     bleed = int(CORNER * fs * 2 + 40)
     t, b = L['top'], L['bottom']
+    # top: a landscape frame, its left part outside the page, fading out to the right (gone a little after the middle of the page)
     th = int(round(t['h'] * MM))
-    draw_frame(page, bg, a, frame, (-bleed, int(round(t['cy'] * MM)) - th // 2, int(round(t['right'] * MM)) + bleed, th, 0), L, 1)
-    by0 = int(round(b['top'] * MM))
-    bh = int(round((PAGE_U[1] / 8 + b.get('bleed', 3) - b['top']) * MM))
-    draw_frame(page, bg, a, frame, (-bleed, by0, int(round(b['right'] * MM)) + bleed, bh, b.get('fade', 0.6)), L, 2)
+    draw_frame(page, bg, a, frame, (-bleed, int(round(t['cy'] * MM)) - th // 2, int(round(t['right'] * MM)) + bleed, th, 0), L, 1,
+               fade_x=(int(round(t['fadeFrom'] * MM)), int(round(t['fadeTo'] * MM))))
+    # bottom: a frame centred under the title, half of its height below the page, fading in from its top edge: two pillars rising from the bottom of the page
+    vis = PAGE_U[1] / 8 - b['top']                                        # mm of the frame that are on the page
+    bw = int(round(b['w'] * MM))
+    draw_frame(page, bg, a, frame, (int(round(lcx * MM)) - bw // 2, int(round(b['top'] * MM)), bw, int(round(2 * vis * MM)), b['fade']), L, 2)
 
     # ---- the title block of the medallion: black ink (multiplied onto the page, without the rings) + silver swash
-    ms = L['medal']['scale']
     bx0, by0m, bx1, by1m = mc.MEDALLION_BOX
     ink = np.where(elem[..., None], np.clip(a / np.maximum(clean, 1e-3), 0, 1), 1.0)
     ink_full = np.clip(lum_of(ink), 0, 1)
@@ -273,7 +283,7 @@ def build(out=None, layout=None):
             k = fl['scale']
             pw2, ph2 = int(round((ux1 - ux0) * k * PX)), int(round((uy1 - uy0) * k * PX))
             ps = np.asarray(Image.fromarray((piece * 255).astype(np.uint8)).resize((pw2, ph2), Image.LANCZOS)).astype(np.float32) / 255.0
-            qx = int(round((lb['cx'] * 8 - (ux1 - ux0) * k / 2) * PX))
+            qx = int(round((lcx * 8 - (ux1 - ux0) * k / 2) * PX))
             qy = int(round((lb['cy'] * 8 + fl[key] - (uy1 - uy0) * k / 2) * PX))
             box = clip_box(page.shape, qx, qy, pw2, ph2)
             if box:
