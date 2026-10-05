@@ -1,16 +1,11 @@
 {
-  "_comment": "קונטרס 'לחידודא דאורייתא': overlay on config.json for front_pages.js (outer cover, inner title page, credits page, back cover). Text taken from the client's old pages.",
+  "_comment": "קונטרס 'לחידודא דאורייתא': overlay on config.json for front_pages.js (outer cover, inner title page, credits page, back cover). credits.items = all the items of the credits page of config.json plus the layout credit ('עימוד ועיצוב') from this booklet's old credits page.",
   "bookName": "לחידודא דאורייתא",
   "fontFaces": [
     {
       "family": "Frank Ruhl Libre",
       "file": "FrankRuhlLibre.ttf",
       "weight": "300 900"
-    },
-    {
-      "family": "Arc Top",
-      "file": "FrankRuhlLibre.ttf",
-      "weight": "500"
     },
     {
       "family": "Keren",
@@ -41,7 +36,7 @@
     }
   ],
   "cover": {
-    "fontArcTop": "Arc Top",
+    "fontArcTop": "Asher",
     "texts": {
       "kuntres": "קונטרס",
       "arcTop": "לְהָבִין מָשָׁל וּמְלִיצָה דִּבְרֵי חֲכָמִים וְחִידֹתָם",
@@ -72,23 +67,29 @@
   "credits": {
     "items": [
       {
+        "html": "בסייעתא דשמיא",
+        "size": 9.5,
+        "font": "notes",
+        "gap": 3.5
+      },
+      {
         "logo": "assets/cover/logo-grey.png",
         "w": 33,
-        "gap": 6.5
+        "gap": 5.5
       },
       {
         "html": "\"שגיאות מי יבין\"",
         "size": 17,
         "font": "notes",
         "bold": true,
-        "gap": 2.6
+        "gap": 2.4
       },
       {
         "html": "כל הערה או הארה<br>תתקבל בברכה",
         "size": 13,
         "font": "notes",
         "lh": 1.4,
-        "gap": 5.5
+        "gap": 4.2
       },
       {
         "sep": true
@@ -98,21 +99,54 @@
         "size": 11.5,
         "font": "notes",
         "lh": 1.45,
-        "gap": 3.2
+        "gap": 2.6
       },
       {
         "html": "<span dir=\"ltr\">b613515@gmail.com</span><br><span dir=\"ltr\">052-7616296</span>",
         "size": 11,
         "font": "notes",
         "lh": 1.45,
-        "gap": 3.2
+        "gap": 2.6
       },
       {
         "html": "<span style=\"white-space:nowrap\">עימוד ועיצוב: י.א. <span dir=\"ltr\">0534185035</span></span>",
         "size": 9.5,
         "font": "notes",
         "bold": true,
-        "gap": 5.5
+        "gap": 3.4
+      },
+      {
+        "sep": true
+      },
+      {
+        "html": "קו בית הוראה לשאלות<br>בהלכות תפילה וברכות:",
+        "size": 11,
+        "font": "notes",
+        "lh": 1.4,
+        "gap": 1.6
+      },
+      {
+        "html": "<span dir=\"ltr\">0772150094</span>",
+        "size": 12.5,
+        "font": "notes",
+        "bold": true,
+        "gap": 3.6
+      },
+      {
+        "sep": true
+      },
+      {
+        "html": "לשמיעת השיעורים והשיחות:",
+        "size": 11,
+        "font": "notes",
+        "gap": 1.6
+      },
+      {
+        "html": "<span dir=\"ltr\">0733718376</span>",
+        "size": 12.5,
+        "font": "notes",
+        "bold": true,
+        "gap": 3.6
       },
       {
         "sep": true
@@ -122,12 +156,12 @@
         "size": 12,
         "font": "notes",
         "bold": true,
-        "gap": 2.2
+        "gap": 1.8
       },
       {
         "logo": "assets/cover/nedarim.png",
         "w": 17,
-        "gap": 2.2
+        "gap": 1.8
       },
       {
         "html": "בלשונית - 'ברומו של עולם'",
