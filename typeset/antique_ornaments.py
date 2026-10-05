@@ -13,9 +13,9 @@ from scipy import ndimage
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, 'assets', 'ornaments', '_black')
 
-# luminance -> silver (the same steel / silver ramp as the frame of the dividers, a little darker so that it holds on white paper)
-RAMP = [(0.00, (16, 16, 18)), (0.20, (58, 59, 63)), (0.40, (104, 106, 111)), (0.60, (152, 154, 159)),
-        (0.78, (196, 198, 203)), (0.92, (228, 230, 234)), (1.00, (248, 249, 251))]
+# luminance -> silver: the grey version of the champagne gilding of the soft palette (make_cover.SILVER_RAMP), so that the ornaments of the body belong to the colour family of the covers
+import make_cover as _mc
+RAMP = list(_mc.SILVER_RAMP)
 LIGHT = (-0.7, -0.7)            # direction of the light (towards the light source): top left
 BASE = 0.55                     # mean luminance of the metal
 BEVEL = 0.40                    # strength of the bevel

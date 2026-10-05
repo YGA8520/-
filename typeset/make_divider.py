@@ -27,8 +27,8 @@ RAIL_T = 62                             # thickness of the rails of the frame
 
 SILVER_RAMP = mc.SILVER_RAMP                         # the frame: dark steel .. bright silver
 SWASH_SILVER_RAMP = mc.SILVER_SWASH_RAMP                # the swash: brilliant silver running into dark steel
-FRAME_GRADE = dict(gamma=0.72, contrast=1.06, bright=0.08, sheen=0.10, waves=1.5, phase=0.12)         # grading of the frame: lighter than the gold of the cover, silver
-SWASH = dict(gamma=0.90, contrast=1.10, bright=0.02)
+FRAME_GRADE = mc.PALETTES['soft']['gold']               # the grading of the frame and of the swash: those of the soft palette (the dividers are its black-and-white version)
+SWASH = mc.PALETTES['soft']['swash']
 
 
 def lum_of(a):
@@ -50,9 +50,11 @@ def fill_holes(a, hole, sigmas=(4, 8, 16, 32, 64)):
 
 
 def grey_cloud(a):
-    """the cloud of the cover in grey: white stays white, the (coloured) smoke becomes dark grey like the brown palette makes it dark brown"""
+    """the cloud of the cover in grey: the tone of the soft palette (what the cover has) converted to luminance, so that the grey pages are its black-and-white version"""
+    P = mc.PALETTES['soft']
     h, s, v = mc.rgb_to_hsv(a)
-    g = v * (1 + (0.50 - 1) * np.clip(s * 3.0, 0, 1))
+    tone = mc.hsv_to_rgb(np.full_like(h, P['t1']), np.clip(s * P['s1'], 0, 1), np.clip(v * (1 + (P['v1'] - 1) * np.clip(s * 3.0, 0, 1)), 0, 1))
+    g = np.clip(tone @ np.array([0.299, 0.587, 0.114], dtype=np.float32), 0, 1)
     return np.stack([g, g, g], axis=-1)
 
 

@@ -211,7 +211,7 @@
   "wordFallbackChars": "×√",
   "cover": {
     "image": "assets/cover/cover-bg.jpg",
-    "palette": "brown",
+    "palette": "soft",
     "fontTitle": "EFT Algebra",
     "texts": {
       "kuntres": "קונטרס",
@@ -307,6 +307,14 @@
         "dark": "#2e1b0c",
         "titleEdge": "#b98a2a",
         "titleCore": "#4a2d16",
+        "titleFade": 0.3
+      },
+      "soft": {
+        "title": "#4d3c2b",
+        "arc": "#6f5c45",
+        "dark": "#392c20",
+        "titleEdge": "#a98f5c",
+        "titleCore": "#4d3c2b",
         "titleFade": 0.3
       }
     },
