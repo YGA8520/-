@@ -18,3 +18,13 @@ python3 make_report.py report.docx        # Hebrew report: new questions, remove
 * Fonts: Tehila (running text), RimonMF (siman headings, question letters, siman in the page header), Gisha / Gisha Bold (askers' names, sources), Times New Roman (page numbers).
   The four supplied .TTF files go into `fonts/` (used for measuring glyphs; not in git).  RimonMF is a legacy symbol-encoded font: its text is written as U+F0E0..F0FA codes in visual order (`fontmetrics.to_rimon`), exactly like Wingdings text.
 * Each question letter gets two small generated pictures (the squares) whose height and spacing are computed from the glyph outline of that letter (`marker_images`), so the letter is centred between them.
+
+## Cover page
+`make_cover_ritcha.py` takes the cover of the previous booklet (`../../output/cover.pdf`, soft palette) and replaces its first title line "פלפולא" by "ריתחא" in the same font (EFT Algebra, taken from the font subset embedded in that PDF; the ח, which the old cover never used, is drawn from the font's own strokes – replace it by the real glyph when the font file is at hand). Everything else of the cover stays as it was. `assemble_pdf.py` puts the cover (stretched to A4) in front of the rendered booklet:
+
+```
+python3 make_cover_ritcha.py ../../output/cover.pdf cover_176x250.pdf
+./render.sh booklet.docx rb                        # -> rb/booklet.pdf (the 62 text pages)
+python3 assemble_pdf.py cover_176x250.pdf rb/booklet.pdf ../ריתחא_דאורייתא_חוברת.pdf ../ריתחא_דאורייתא_עמוד_שער.pdf
+```
+The cover is not numbered; the page numbers of the text pages still start with א.
