@@ -320,8 +320,9 @@
   },
   "divider": {"image": "assets/cover/divider-bg.jpg",
     "colors": {"title": "#262626", "arc": "#4a4a4a", "dark": "#1c1c1c", "titleEdge": "#8f9296", "titleCore": "#262626", "titleFade": 0.3},
-    "medal": {"cx": 60.3, "cy": 55, "scale": 0.58},
-    "frame": {"cx": 60.3, "cy": 155.4, "scale": 0.58},
-    "fleurons": {"scale": 1.25, "top": -235, "bottom": 215},
-    "label": {"size1": 115, "numeral": 270, "word": 170, "y1": -85, "y2": 135, "maxW": 540}}
+    "frame": {"cx": -3, "cy": 125.2, "scale": 1.0, "light": 0.3},
+    "medal": {"cx": 74, "cy": 91, "scale": 0.88},
+    "disc": {"r": 41, "feather": 10, "alpha": 0.93, "texture": 0.35},
+    "fleurons": {"scale": 1.0, "top": -195, "bottom": 185},
+    "label": {"cx": 31, "cy": 201, "font": "Lulav CLM", "weight": 700, "color": "#1c1c1c", "size1": 96, "numeral": 225, "word": 130, "y1": -75, "y2": 105, "maxW": 420}}
 }

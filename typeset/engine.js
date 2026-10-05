@@ -73,8 +73,9 @@
     const lg = C.logo && G.logo && opt.logo !== false ? G.logo : null, lw = lg ? lg.h * C.logo.w / C.logo.h : 0;
     // live text outside the medallion (the siman of a divider), set like the title; x / y in the 1408 x 2000 grid of the page
     const labels = (opt.labels || []).map((L, i) => {
-      const sz = fit(L.txt, L.size, L.maxW);
-      return `<text x="${L.x.toFixed(1)}" y="${L.y.toFixed(1)}" text-anchor="middle" font-family="${fT}" font-size="${sz.toFixed(2)}" fill="${titleFill('cvL' + i, L.txt, sz, L.x)}" style="${st}">${esc(L.txt)}</text>`;
+      const fam = L.font || fT, wt = L.weight || 400, w = textW(L.txt, `${wt} ${L.size}px "${fam}"`), sz = w > L.maxW ? L.size * L.maxW / w : L.size;
+      const fill = L.font ? (L.color || col.dark) : titleFill('cvL' + i, L.txt, sz, L.x);
+      return `<text x="${L.x.toFixed(1)}" y="${L.y.toFixed(1)}" text-anchor="middle" font-family="${fam}" font-weight="${wt}" font-size="${sz.toFixed(2)}" fill="${fill}" style="${st}">${esc(L.txt)}</text>`;
     }).join('');
     const medal = (T.kuntres ? `<text x="${G.kuntres.x}" y="${G.kuntres.y + dy}" text-anchor="middle" font-family="${fT}" font-size="${G.kuntres.size}" fill="${col.dark}" style="${st}">${esc(T.kuntres)}</text>` : '') +
       `<text x="${G.title.x1}" y="${G.title.y1 + dy}" text-anchor="middle" font-family="${fT}" font-size="${s1.toFixed(2)}" fill="${fill1}" style="${st}">${esc(title1)}</text>` +
@@ -101,12 +102,13 @@
   function dividerHTML(cfg, label, bookName) {
     const D = cfg.divider, [l1, l2] = dividerLines(label);
     const short = l2.replace(/[^\u05d0-\u05ea]/g, '').length <= 3;         // a short siman letter group is set larger
-    const Lb = Object.assign({ size1: 100, numeral: 240, word: 150, y1: -85, y2: 115, maxW: 470 }, D.label || {});
-    const fx = D.frame.cx * 8, fy = D.frame.cy * 8, m = D.medal;
+    const Lb = Object.assign({ font: 'Lulav CLM', weight: 700, size1: 100, numeral: 240, word: 150, y1: -85, y2: 115, maxW: 470 }, D.label || {});
+    const lx = Lb.cx * 8, ly = Lb.cy * 8, m = D.medal;
     const c2 = Object.assign({}, cfg, { cover: Object.assign({}, cfg.cover, { colors: D.colors || cfg.cover.colors }) });
+    const mk = (txt, y, size) => ({ txt, x: lx, y: ly + y, size, maxW: Lb.maxW, font: Lb.font, weight: Lb.weight, color: Lb.color });
     return coverHTML(c2, bookName, { image: D.image, logo: false, texts: { line1: '', line2: '' },
       group: `translate(${m.cx * 8} ${m.cy * 8}) scale(${m.scale}) translate(-711 -749)`,
-      labels: [{ txt: l1, x: fx, y: fy + Lb.y1, size: Lb.size1, maxW: Lb.maxW }, { txt: l2, x: fx, y: fy + Lb.y2, size: short ? Lb.numeral : Lb.word, maxW: Lb.maxW }].filter((x) => x.txt) });
+      labels: [mk(l1, Lb.y1, Lb.size1), mk(l2, Lb.y2, short ? Lb.numeral : Lb.word)].filter((x) => x.txt) });
   }
 
   // ---------------------------------------------------------------- engine
