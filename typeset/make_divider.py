@@ -155,9 +155,10 @@ def smoke(shape, rect, tpx, depth, strength, seed):
     return 1 - keep
 
 
-def draw_frame(page, bg, a, frame, geom, L, seed, fade_x=None):
+def draw_frame(page, bg, a, frame, geom, L, seed, fade_x=None, lighten=None):
     """one silver frame on the page: geom = (x, y, w, h, fade) in canvas px (x may be negative and the frame may leave the page below: what is outside is cut),
-    fade = fraction of the height over which the frame fades in from its top edge; fade_x = (x0, x1) in px: opaque left of x0, gone right of x1"""
+    fade = fraction of the height over which the frame fades in from its top edge; fade_x = (x0, x1) in px: opaque left of x0, gone right of x1;
+    lighten = (H, W) mask 0..1 where the rails and the smoke are lightened (something stands over them)"""
     H, W = page.shape[:2]
     x, y, w, h, fade = geom
     fs = L['scale']
@@ -184,12 +185,16 @@ def draw_frame(page, bg, a, frame, geom, L, seed, fade_x=None):
     tpx = RAIL_T * 2 * fs
     hz = L.get('halo', {})
     halo = smoke((H, W), (x, y, w, h), tpx, hz.get('depth', 150) * 2 * fs, hz.get('strength', 0.6), seed)
+    if lighten is not None:
+        halo = halo * (1 - lighten)
     paper = (1 - (1 - bg) * L.get('paper', 0.35)) * (1 - halo)[..., None]
     page[:] = page * (1 - A[..., None]) + paper * A[..., None]
     am = np.zeros((H, W), np.float32)
     cm = np.zeros((H, W, 3), np.float32)
     am[box[0]] = malpha[box[1]]
     cm[box[0]] = metal[box[1]]
+    if lighten is not None:
+        am = am * (1 - L.get('lighten', {}).get('alpha', 0.92) * lighten)
     Am = (am * fy)[..., None]
     page[:] = page * (1 - Am) + cm * Am
 
@@ -227,20 +232,24 @@ def build(out=None, layout=None):
     bg = bg * (1 - w) + flat * w
     page = bg.copy()
 
-    # ---- the two frames
+    # ---- the two pillars: the rails of a frame centred under the title, running over the whole height of the page (its top and bottom are outside the page), with no fade;
+    # the title block stands over them and the pillars are lightened where they meet
     fs = L['scale']
     ms = L['medal']['scale']
     lcx = L['medal']['cx'] + (L['medal'].get('titleCentre', RING_C[0]) - RING_C[0]) * ms / 8      # mm: the middle of the title, the siman is centred under it
-    bleed = int(CORNER * fs * 2 + 40)
-    t, b = L['top'], L['bottom']
-    # top: a landscape frame, its left part outside the page, fading out to the right (gone a little after the middle of the page)
-    th = int(round(t['h'] * MM))
-    draw_frame(page, bg, a, frame, (-bleed, int(round(t['cy'] * MM)) - th // 2, int(round(t['right'] * MM)) + bleed, th, 0), L, 1,
-               fade_x=(int(round(t['fadeFrom'] * MM)), int(round(t['fadeTo'] * MM))))
-    # bottom: a frame centred under the title, half of its height below the page, fading in from its top edge: two pillars rising from the bottom of the page
-    vis = PAGE_U[1] / 8 - b['top']                                        # mm of the frame that are on the page
-    bw = int(round(b['w'] * MM))
-    draw_frame(page, bg, a, frame, (int(round(lcx * MM)) - bw // 2, int(round(b['top'] * MM)), bw, int(round(2 * vis * MM)), b['fade']), L, 2)
+    P = L['pillars']
+    ccx = L['medal']['cx'] + (725 - RING_C[0]) * ms / 8                                          # the title block (rules, swash, flourishes, texts) spans x 300..1150, y 455..990 of the cover
+    ccy = L['medal']['cy'] + (722 - RING_C[1]) * ms / 8
+    lt = L['lighten']
+    rx, ry = (425 * ms / 8 + lt['pad']) * MM, (267 * ms / 8 + lt['pad']) * MM
+    yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
+    dd = (np.abs((xx - ccx * MM) / rx) ** 3 + np.abs((yy - ccy * MM) / ry) ** 3) ** (1 / 3)
+    tt = np.clip((dd - 1) * min(rx, ry) / (lt['feather'] * MM), 0, 1)
+    lighten = 1 - tt * tt * (3 - 2 * tt)
+    del xx, yy, dd, tt
+    pw = int(round(P['w'] * MM))
+    ph = int(round((PAGE_U[1] / 8 + 2 * P['bleed']) * MM))
+    draw_frame(page, bg, a, frame, (int(round(lcx * MM)) - pw // 2, -int(round(P['bleed'] * MM)), pw, ph, 0), L, 2, lighten=lighten)
 
     # ---- the title block of the medallion: black ink (multiplied onto the page, without the rings) + silver swash
     bx0, by0m, bx1, by1m = mc.MEDALLION_BOX
