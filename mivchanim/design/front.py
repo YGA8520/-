@@ -194,11 +194,11 @@ def divider_page(part, units, pn):
 def back_cover():
     cx = 105
     b = []
-    b.append(f'<image href="../assets/img/logo.png" x="{cx - 17}" y="114" width="34" height="31.9"/>')
-    b.append(t_navy(cx, 163, 'ברומו של עולם', 9.2, 'Suez'))
-    b.append(t_navy(cx, 172, 'לחיזוק רוממות התפילה', 5.2, 'Frank', 500, fill=NAVY_T))
-    b.append(img('art/sep.png', cx, 177.5, 40))
-    b.append(t_navy(cx, 191, 'b613515@gmail.com', 4.1, 'Heebo', 600, .3, fill=NAVY_T))
+    b.append(f'<image href="../assets/img/logo.png" x="{cx - 17}" y="124" width="34" height="31.9"/>')
+    b.append(t_navy(cx, 172, 'ברומו של עולם', 9.2, 'Suez'))
+    b.append(t_navy(cx, 181, 'לחיזוק רוממות התפילה', 5.2, 'Frank', 500, fill=NAVY_T))
+    b.append(img('art/sep.png', cx, 185, 40))
+    b.append(t_navy(cx, 199, 'b613515@gmail.com', 4.1, 'Heebo', 600, .3, fill=NAVY_T))
     return page('back-bg.jpg', ''.join(b))
 
 
