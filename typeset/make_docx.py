@@ -485,24 +485,25 @@ def build(doc_json, layout_json, cfg_json, out):
     toc_ids = add_header('תוכן עניינים', 'TOC')
     headers.append(('headerEd.xml', empty_header())); headers.append(('headerEe.xml', empty_header()))
 
-    # cover: the artwork (build.js writes out/cover.jpg: background + text) as one page-size picture; without it a plain placeholder cover
-    cover_jpg = os.path.join(os.path.dirname(os.path.abspath(out)), 'cover.jpg')
-    if cfg.get('cover') and os.path.exists(cover_jpg):
-        MEDIA.add('cover.jpg', open(cover_jpg, 'rb').read())
-        parts.append(para(picture_page('cover.jpg', 176, 250), spacing='<w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/>', sect=sectpr('continuous', 1, empty_ids)))
-    else:
-        parts.append(para('', spacing='<w:spacing w:before="2600" w:after="0" w:line="240" w:lineRule="auto"/>') +
-                     para(picture('flourish-wide-1.png', 70), jc='center') +
-                     para(run(book['name']), ST['coverTitle']) +
-                     (para(run(book['subtitle']), ST['coverSub']) if book.get('subtitle') else '') +
-                     para(picture('flourish-wide-1.png', 70, 'v'), jc='center', sect=sectpr('continuous', 1, empty_ids)))
-    # the inner title page (the cover in black / white / grey) and the credits page follow the cover as page-size pictures (build.js writes them), neither numbered
-    for key, jpg in (('innerCover', 'inner-cover.jpg'), ('credits', 'credits.jpg')):
-        pth = os.path.join(os.path.dirname(os.path.abspath(out)), jpg)
-        if cfg.get('cover') and cfg.get(key) and os.path.exists(pth):
-            MEDIA.add(jpg, open(pth, 'rb').read())
-            # the inner title page is an odd page (Word adds the empty page - the inside of the cover - itself), the credits page follows it
-            parts.append(para(picture_page(jpg, 176, 250), spacing='<w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/>', sect=sectpr('oddPage' if key == 'innerCover' else 'nextPage', 1, empty_ids)))
+    if not data.get('noCover'):                  # an extract (e.g. the articles of one author) has no cover, inner title page or credits page
+        # cover: the artwork (build.js writes out/cover.jpg: background + text) as one page-size picture; without it a plain placeholder cover
+        cover_jpg = os.path.join(os.path.dirname(os.path.abspath(out)), 'cover.jpg')
+        if cfg.get('cover') and os.path.exists(cover_jpg):
+            MEDIA.add('cover.jpg', open(cover_jpg, 'rb').read())
+            parts.append(para(picture_page('cover.jpg', 176, 250), spacing='<w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/>', sect=sectpr('continuous', 1, empty_ids)))
+        else:
+            parts.append(para('', spacing='<w:spacing w:before="2600" w:after="0" w:line="240" w:lineRule="auto"/>') +
+                         para(picture('flourish-wide-1.png', 70), jc='center') +
+                         para(run(book['name']), ST['coverTitle']) +
+                         (para(run(book['subtitle']), ST['coverSub']) if book.get('subtitle') else '') +
+                         para(picture('flourish-wide-1.png', 70, 'v'), jc='center', sect=sectpr('continuous', 1, empty_ids)))
+        # the inner title page (the cover in black / white / grey) and the credits page follow the cover as page-size pictures (build.js writes them), neither numbered
+        for key, jpg in (('innerCover', 'inner-cover.jpg'), ('credits', 'credits.jpg')):
+            pth = os.path.join(os.path.dirname(os.path.abspath(out)), jpg)
+            if cfg.get('cover') and cfg.get(key) and os.path.exists(pth):
+                MEDIA.add(jpg, open(pth, 'rb').read())
+                # the inner title page is an odd page (Word adds the empty page - the inside of the cover - itself), the credits page follows it
+                parts.append(para(picture_page(jpg, 176, 250), spacing='<w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/>', sect=sectpr('oddPage' if key == 'innerCover' else 'nextPage', 1, empty_ids)))
 
 
     # table of contents: a real TOC field (outline levels: siman title = 1, article title = 2), with cached entries; running head like the rest of the booklet
@@ -572,7 +573,7 @@ def build(doc_json, layout_json, cfg_json, out):
         chunk.append(para(picture('fleuron-small.png', 18, 'v'), jc='center', spacing='<w:spacing w:before="120" w:after="0" w:line="240" w:lineRule="auto"/>'))
         flush()
     back_jpg = os.path.join(os.path.dirname(os.path.abspath(out)), 'back-cover.jpg')
-    if cfg.get('cover') and cfg.get('backCover') and os.path.exists(back_jpg):       # the back cover is the last page (its own section: one column, no running head)
+    if cfg.get('cover') and cfg.get('backCover') and os.path.exists(back_jpg) and not data.get('noCover'):       # the back cover is the last page (its own section: one column, no running head)
         MEDIA.add('back-cover.jpg', open(back_jpg, 'rb').read())
         parts.append(para(picture_page('back-cover.jpg', 176, 250), spacing='<w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/>'))
         last_sect = sectpr('nextPage', 1, empty_ids)
