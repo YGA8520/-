@@ -50,7 +50,7 @@ u{text-decoration:underline;text-decoration-thickness:.06em;text-underline-offse
 .uhead .sub{font-family:'Frank',serif;font-weight:500;font-size:12pt;line-height:1.35;color:var(--muted);margin-top:1.2mm}
 .uhead .org{font-family:'Heebo',sans-serif;font-weight:600;font-size:8.6pt;color:var(--gold);margin-top:1.2mm;letter-spacing:.03em}
 .orn{height:4mm;margin:.4mm 0 3.4mm;position:relative}
-.orn svg{width:100%;height:4mm;display:block}
+.orn img{display:block;width:100%;height:auto;margin:-3.2mm 0}
 .form{display:flex;align-items:flex-end;gap:7mm;margin:0 0 4.2mm;font-family:'Heebo',sans-serif;font-weight:600;font-size:10pt;color:var(--navy)}
 .form .nm{flex:1;display:flex;align-items:flex-end;gap:2.5mm}
 .form .nm i{flex:1;border-bottom:.35mm solid var(--navy2);height:5.8mm}
@@ -60,7 +60,7 @@ u{text-decoration:underline;text-decoration-thickness:.06em;text-underline-offse
 
 /* ---------- headings ---------- */
 .h2{display:flex;align-items:center;gap:3.2mm;margin:5.4mm 0 3mm;break-after:avoid;break-inside:avoid}
-.h2 .dia{flex:0 0 3.2mm;width:3.2mm;height:3.2mm;background:var(--gold2);transform:rotate(45deg);}
+.h2 .dia{flex:0 0 3.2mm;width:3.2mm;height:3.2mm;background:linear-gradient(135deg,#f0dc9a,#a8802f);transform:rotate(45deg);}
 .h2 .t{font-family:'Suez',serif;font-size:15.5pt;line-height:1.1;color:var(--navy);white-space:nowrap}
 .h2 .ln{flex:1;height:0;border-top:.3mm solid var(--gold2);position:relative}
 .h2 .ln:after{content:'';position:absolute;right:0;left:0;top:.75mm;border-top:.12mm solid var(--gold3)}
@@ -73,11 +73,11 @@ u{text-decoration:underline;text-decoration-thickness:.06em;text-underline-offse
 
 /* ---------- questions ---------- */
 .q{display:grid;grid-template-columns:8.4mm 1fr;column-gap:3.2mm;margin:0 0 3.5mm;break-inside:avoid}
-.q .bd{width:8mm;height:8mm;border:.35mm solid var(--navy2);border-radius:50%;display:flex;align-items:center;justify-content:center;
-       font-family:'Frank',serif;font-weight:700;font-size:10.2pt;line-height:1;color:var(--navy);margin-top:.6mm;position:relative;background:#fff}
-.q .bd:after{content:'';position:absolute;inset:.7mm;border:.12mm solid var(--gold3);border-radius:50%}
+.q .bd{box-sizing:border-box;width:8.7mm;height:8.7mm;border:.55mm solid transparent;border-radius:50%;display:flex;align-items:center;justify-content:center;
+       font-family:'Frank',serif;font-weight:700;font-size:10.2pt;line-height:1;color:var(--navy);margin-top:.3mm;position:relative;background:linear-gradient(#fff,#fff) padding-box,linear-gradient(135deg,#f3e2a2 0%,#b98f36 38%,#e8cf80 62%,#8c6a27 100%) border-box}
+.q .bd:after{content:'';position:absolute;inset:.45mm;border:.12mm solid var(--gold3);border-radius:50%}
 .q .bd.dig{font-family:'Heebo',sans-serif;font-weight:800;font-size:9.4pt}
-.q .bd.none{border-radius:2mm;width:8mm}
+.q .bd.none{border-radius:2mm}
 .q .bd.none:after{border-radius:1.2mm}
 .q .bd.none svg{width:3.4mm;height:3.4mm}
 .q .qb{min-width:0}
@@ -149,39 +149,26 @@ def runs_html(runs):
 
 
 def seal_svg(text, uid):
-    """round seal with ticks (echoes the cover medallion)"""
+    """round seal: the gold ring on a blue disc (art/ring.png) with cream letters"""
     t = text
-    parts = []
-    parts.append(f'<defs><linearGradient id="g{uid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8C6A27"/><stop offset=".35" stop-color="#E7CE86"/><stop offset=".6" stop-color="#C79E40"/><stop offset="1" stop-color="#8C6A27"/></linearGradient>'
-                 f'<radialGradient id="d{uid}" cx=".5" cy=".4" r=".75"><stop offset="0" stop-color="#27447C"/><stop offset="1" stop-color="#0F1E3A"/></radialGradient></defs>')
-    parts.append('<circle cx="50" cy="50" r="48" fill="url(#d%s)" stroke="url(#g%s)" stroke-width="3"/>' % (uid, uid))
-    parts.append('<circle cx="50" cy="50" r="43.2" fill="none" stroke="url(#g%s)" stroke-width=".9"/>' % uid)
-    for i in range(60):
-        a = math.radians(i * 6)
-        ln = 3.2 if i % 5 == 0 else 1.7
-        r0 = 38.5
-        x0, y0 = 50 + r0 * math.cos(a), 50 - r0 * math.sin(a)
-        x1, y1 = 50 + (r0 + ln) * math.cos(a), 50 - (r0 + ln) * math.sin(a)
-        parts.append(f'<line x1="{x0:.2f}" y1="{y0:.2f}" x2="{x1:.2f}" y2="{y1:.2f}" stroke="url(#g{uid})" stroke-width="{.9 if i % 5 == 0 else .55}"/>')
-    parts.append('<circle cx="50" cy="50" r="35" fill="none" stroke="url(#g%s)" stroke-width=".6"/>' % uid)
+    parts = ['<image href="art/ring.png" x="-3.7" y="-3.7" width="107.4" height="107.4"/>']
+
+    def tx(x, y, size, s_):
+        return (f'<text x="{x + .8}" y="{y + 1.2}" text-anchor="middle" font-family="Suez" font-size="{size}" fill="#04101F" opacity=".55" style="direction:rtl">{s_}</text>'
+                f'<text x="{x}" y="{y}" text-anchor="middle" font-family="Suez" font-size="{size}" fill="#F6EBC8" style="direction:rtl">{s_}</text>')
     if '–' in t:
-        a, b = t.split('–')
-        size = 21 if max(len(a), len(b)) <= 2 else 17
-        parts.append(f'<text x="50" y="{50 - 3.5}" text-anchor="middle" font-family="Suez" font-size="{size}" fill="url(#g{uid})" style="direction:rtl">{a}</text>')
-        parts.append(f'<path d="M44,50 h12" stroke="url(#g{uid})" stroke-width="1.1"/>')
-        parts.append(f'<text x="50" y="{50 + size * .72 + 2.5}" text-anchor="middle" font-family="Suez" font-size="{size}" fill="url(#g{uid})" style="direction:rtl">{b}</text>')
+        a_, b_ = t.split('–')
+        size = 21 if max(len(a_), len(b_)) <= 2 else 17
+        parts.append(tx(50, 50 - 3.5, size, a_))
+        parts.append('<path d="M44,50 h12" stroke="#E4C97F" stroke-width="1.1"/>')
+        parts.append(tx(50, 50 + size * .72 + 2.5, size, b_))
     else:
         size = 46 if len(t) == 1 else (34 if len(t) == 2 else 26)
-        parts.append(f'<text x="50" y="{50 + size * .255:.1f}" text-anchor="middle" font-family="Suez" font-size="{size}" fill="url(#g{uid})" style="direction:rtl">{t}</text>')
+        parts.append(tx(50, round(50 + size * .255, 1), size, t))
     return f'<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">{"".join(parts)}</svg>'
 
 
-ORN = ('<svg viewBox="0 0 400 20" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">'
-       '<line x1="0" y1="8" x2="187" y2="8" stroke="#C9A24B" stroke-width="1.6" vector-effect="non-scaling-stroke"/>'
-       '<line x1="213" y1="8" x2="400" y2="8" stroke="#C9A24B" stroke-width="1.6" vector-effect="non-scaling-stroke"/>'
-       '<line x1="0" y1="12" x2="190" y2="12" stroke="#E6D29A" stroke-width=".6" vector-effect="non-scaling-stroke"/>'
-       '<line x1="210" y1="12" x2="400" y2="12" stroke="#E6D29A" stroke-width=".6" vector-effect="non-scaling-stroke"/>'
-       '<path d="M200,1 L207,8 L200,15 L193,8 Z" fill="#A8802F"/></svg>')
+ORN = '<img src="art/rule.png" alt="">'
 
 
 def norm_close(t):

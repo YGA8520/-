@@ -60,16 +60,15 @@ def running_head(u):
 
 
 def notes_page():
-    lines = ''.join('<i></i>' for _ in range(25))
-    return ('<div class="pg notes"><div class="nt">הערות</div><div class="nl">' + lines + '</div></div>')
+    lines = ''.join('<i></i>' for _ in range(22))
+    return ('<div class="pg notes"><img class="bg" src="art/toc-frame.jpg"/><div class="nt">הערות</div><div class="nl">' + lines + '</div></div>')
 
 
 NOTES_CSS = '''
-.notes{background:#fff}
-.notes .nt{position:absolute;top:24mm;right:22mm;font-family:'Suez',serif;font-size:22pt;color:#14264a}
-.notes .nt:after{content:'';display:block;height:.3mm;background:#c9a24b;margin-top:2mm;width:60mm}
-.notes .nl{position:absolute;top:46mm;left:20mm;right:20mm}
-.notes .nl i{display:block;height:9.2mm;border-bottom:.28mm solid #c9bfa6}
+.notes .nt{position:absolute;top:30mm;left:0;right:0;text-align:center;font-family:'Suez',serif;font-size:22pt;color:#14264a}
+.notes .nt:after{content:'';display:block;height:.35mm;background:linear-gradient(90deg,transparent,#b98f36,transparent);margin:2mm auto 0;width:70mm}
+.notes .nl{position:absolute;top:52mm;left:28mm;right:28mm}
+.notes .nl i{display:block;height:9.2mm;border-bottom:.28mm solid #b9a97e}
 '''
 
 
@@ -110,7 +109,7 @@ def main():
 
     # ---------------- cover, inner title, credits, notes, back cover ----------------
     npages = [notes_page()]
-    fr = front.doc([front.cover('dark'), front.cover('light'), front.credits(), front.back_cover()] + npages + [front.frame_page()], 'front',
+    fr = front.doc([front.cover(), front.inner_title(), front.credits(), front.back_cover()] + npages + [front.frame_page()], 'front',
                    front.CREDITS_CSS + NOTES_CSS)
     open(os.path.join(B, 'front.html'), 'w', encoding='utf8').write(fr)
 
@@ -141,20 +140,24 @@ def main():
             head = (f'<div class="hd" style="left:{left}mm;right:{right}mm"><span class="r"><b></b>{running_head(u)}</span>'
                     f'<span class="l">מבחני הסימנים</span></div>')
         foot = (f'<div class="ft" style="left:{left}mm;right:{right}mm"><span class="fl"></span><span class="fn">'
-                f'<b></b>{num_label(i)}<b></b></span><span class="fl"></span></div>')
+                f'<img src="art/ring.png"><span>{num_label(i)}</span></span><span class="fl e"></span></div>')
         ov.append(f'<div class="op">{head}{foot}</div>')
     ocss = '''
 @page{size:210mm 297mm;margin:0}
 html,body{margin:0;padding:0;background:transparent}
 .op{width:210mm;height:297mm;position:relative;break-after:page;overflow:hidden}
-.hd{position:absolute;top:12.2mm;display:flex;justify-content:space-between;align-items:center;padding-bottom:1.8mm;border-bottom:.25mm solid #d9cfae;
-    font-family:'Heebo',sans-serif;font-weight:600;font-size:7.8pt;letter-spacing:.06em;color:#8b91a0;direction:rtl}
-.hd .r b{display:inline-block;width:1.7mm;height:1.7mm;background:#c9a24b;transform:rotate(45deg);margin-left:2mm;vertical-align:.1mm}
-.hd .l{font-family:'Suez',serif;font-weight:400;font-size:9pt;letter-spacing:.02em;color:#14264a;opacity:.75}
-.ft{position:absolute;bottom:9.4mm;display:flex;justify-content:center;align-items:center;gap:3.4mm;direction:rtl}
-.ft .fl{flex:0 0 26mm;height:0;border-top:.25mm solid #d9cfae}
-.ft .fn{font-family:'Suez',serif;font-size:10.5pt;color:#14264a;display:flex;align-items:center;gap:2.4mm;line-height:1}
-.ft .fn b{display:inline-block;width:1.6mm;height:1.6mm;background:#c9a24b;transform:rotate(45deg)}
+.hd{position:absolute;top:12.2mm;display:flex;justify-content:space-between;align-items:center;padding-bottom:1.8mm;
+    border-bottom:.45mm solid transparent;border-image:linear-gradient(90deg,#8c6a27,#d9bd78 50%,#8c6a27) 1;
+    font-family:'Heebo',sans-serif;font-weight:600;font-size:7.8pt;letter-spacing:.06em;color:#6d7384;direction:rtl}
+.hd .r b{display:inline-block;width:1.7mm;height:1.7mm;background:linear-gradient(135deg,#f0dc9a,#a8802f);transform:rotate(45deg);margin-left:2mm;vertical-align:.1mm}
+.hd .l{font-family:'Suez',serif;font-weight:400;font-size:9pt;letter-spacing:.02em;color:#14264a;opacity:.8}
+.ft{position:absolute;bottom:7.2mm;display:flex;justify-content:center;align-items:center;gap:2.6mm;direction:rtl}
+.ft .fl{flex:0 0 28mm;height:.5mm;background:linear-gradient(90deg,transparent,#b98f36 60%,#8c6a27)}
+.ft .fl.e{transform:scaleX(-1)}
+.ft .fn{position:relative;width:11.4mm;height:11.4mm;flex:0 0 11.4mm}
+.ft .fn img{position:absolute;left:-.1mm;top:-.1mm;width:11.7mm;height:11.7mm}
+.ft .fn span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Suez',serif;font-size:9.6pt;color:#F6EBC8;line-height:1;
+   text-shadow:.15mm .25mm 0 rgba(4,16,31,.65);padding-bottom:.2mm}
 '''
     oh = f'<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><style>{body.font_face_css("../assets/fonts")}{ocss}</style></head><body>{"".join(ov)}</body></html>'
     open(os.path.join(B, 'overlay.html'), 'w', encoding='utf8').write(oh)
@@ -167,7 +170,7 @@ html,body{margin:0;padding:0;background:transparent}
     body_r = PdfReader(os.path.join(B, 'body.pdf'))
     ov_r = PdfReader(os.path.join(B, 'overlay.pdf'))
     w = PdfWriter()
-    # front: 0 cover(dark) 1 inner 2 credits 3 back 4 notes
+    # front: 0 cover 1 inner 2 credits 3 back 4 notes 5 frame (under the contents)
     w.add_page(fr_r.pages[0])
     w.add_page(fr_r.pages[1])
     w.add_page(fr_r.pages[2])

@@ -1,17 +1,13 @@
 """Cover, inner title page, credits page, part dividers, table of contents, back cover.
 
-Two themes of the same design:  'dark'  = navy / gold (outer cover, back cover)
-                                'light' = white / navy / gold (inner title page, credits, dividers, contents) - prints cheaper
+Style: dark blue marbled ground, cream marble parchment, a tall blue panel with a beveled gold rim and embossed
+gold scrollwork (the artwork is built by gen_art.py); every letter is live text on top of the artwork.
 """
-import math
 import os
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 from common import *  # noqa: E402,F403
-
-SIMAN_RING = ['ד', 'ח', 'מו', 'מז', 'מח', 'מט', 'נ', 'נא', 'נב', 'נג', 'נד', 'נה',
-              'סא', 'סב', 'סג', 'סד', 'סה', 'סו', 'סט', 'ע', 'עא', 'עג', 'צב', 'קב']
 
 PAGE_CSS = f'''
 {font_face_css('../assets/fonts')}
@@ -20,9 +16,14 @@ html,body {{ margin:0; padding:0; background:#fff; -webkit-print-color-adjust:ex
 .pg {{ width:210mm; height:297mm; position:relative; overflow:hidden; break-after:page; page-break-after:always; }}
 .pg:last-child {{ break-after:auto; page-break-after:auto; }}
 .pg > svg {{ position:absolute; left:0; top:0; width:210mm; height:297mm; display:block; }}
+.pg > img.bg {{ position:absolute; left:0; top:0; width:210mm; height:297mm; display:block; }}
 svg text {{ font-family:'Frank','David',serif; direction:rtl; }}
-.layer {{ position:absolute; inset:0; }}
 '''
+
+NAVY_T = '#14264a'
+CREAM = '#F6EBC8'
+GOLD_T = '#E4C97F'
+BROWN = '#8a6420'
 
 
 def doc(pages, title, extra_css=''):
@@ -31,279 +32,145 @@ def doc(pages, title, extra_css=''):
             f'<style>{PAGE_CSS}{extra_css}</style></head><body>{body}</body></html>')
 
 
-def svg_page(inner, dark=True, cls='pg'):
-    return f'<div class="{cls}"><svg viewBox="0 0 210 297" xmlns="http://www.w3.org/2000/svg">{inner}</svg></div>'
-
-
-# --------------------------------------------------------------------------------------------
-def defs(theme='dark'):
-    gl = ('#6E4F17', '#B88F34', '#E3C46C', '#A57B28', '#6E4F17')   # gold on white: darker so it prints
-    return f'''
-<defs>
-  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
-    <stop offset="0" stop-color="{GOLD_D}"/><stop offset=".22" stop-color="#D9B75F"/>
-    <stop offset=".45" stop-color="#F4E4A8"/><stop offset=".68" stop-color="#C79E40"/><stop offset="1" stop-color="{GOLD_D}"/>
-  </linearGradient>
-  <linearGradient id="goldv" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0" stop-color="#F1DC96"/><stop offset=".5" stop-color="#C99F41"/><stop offset="1" stop-color="#8C6A27"/>
-  </linearGradient>
-  <linearGradient id="goldh" x1="0" y1="0" x2="1" y2="0">
-    <stop offset="0" stop-color="{GOLD_D}"/><stop offset=".5" stop-color="#F0DB93"/><stop offset="1" stop-color="{GOLD_D}"/>
-  </linearGradient>
-  <linearGradient id="goldL" x1="0" y1="0" x2="1" y2="1">
-    <stop offset="0" stop-color="{gl[0]}"/><stop offset=".3" stop-color="{gl[1]}"/><stop offset=".5" stop-color="{gl[2]}"/><stop offset=".72" stop-color="{gl[3]}"/><stop offset="1" stop-color="{gl[4]}"/>
-  </linearGradient>
-  <linearGradient id="goldLv" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0" stop-color="#D2AC52"/><stop offset=".55" stop-color="#A87F2C"/><stop offset="1" stop-color="#6E4F17"/>
-  </linearGradient>
-  <linearGradient id="goldLh" x1="0" y1="0" x2="1" y2="0">
-    <stop offset="0" stop-color="#8C6A27"/><stop offset=".5" stop-color="#C9A24B"/><stop offset="1" stop-color="#8C6A27"/>
-  </linearGradient>
-  <linearGradient id="navyv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2B4A80"/><stop offset="1" stop-color="#0E1A2B"/></linearGradient>
-  <radialGradient id="bgd" cx=".5" cy=".36" r=".85">
-    <stop offset="0" stop-color="#21396A"/><stop offset=".45" stop-color="#14264A"/><stop offset="1" stop-color="#070F1E"/>
-  </radialGradient>
-  <radialGradient id="disc" cx=".5" cy=".42" r=".7"><stop offset="0" stop-color="#27447C"/><stop offset="1" stop-color="#0F1E3A"/></radialGradient>
-  <radialGradient id="discL" cx=".5" cy=".42" r=".7"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#F3ECDA"/></radialGradient>
-  <linearGradient id="ribbon" x1="0" y1="0" x2="1" y2="0">
-    <stop offset="0" stop-color="#7A5A1F"/><stop offset=".18" stop-color="#D3AE55"/><stop offset=".5" stop-color="#F3E3A6"/>
-    <stop offset=".82" stop-color="#C79E40"/><stop offset="1" stop-color="#6F5019"/>
-  </linearGradient>
-  <linearGradient id="ribbonL" x1="0" y1="0" x2="1" y2="0">
-    <stop offset="0" stop-color="#8A6A2A"/><stop offset=".25" stop-color="#C9A24B"/><stop offset=".5" stop-color="#E6CD85"/>
-    <stop offset=".8" stop-color="#B98F36"/><stop offset="1" stop-color="#7A5A1F"/>
-  </linearGradient>
-  <linearGradient id="fadeV" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity="1"/></linearGradient>
-  <mask id="fadeMask"><rect x="0" y="150" width="210" height="147" fill="url(#fadeV)"/></mask>
-  <radialGradient id="glow" cx=".5" cy=".5" r=".5"><stop offset=".6" stop-color="#4E78C4" stop-opacity=".30"/><stop offset="1" stop-color="#4E78C4" stop-opacity="0"/></radialGradient>
-  <pattern id="grainP" width="40" height="40" patternUnits="userSpaceOnUse"><image href="../assets/img/grain.png" width="40" height="40"/></pattern>
-  <radialGradient id="shadow" cx=".5" cy=".5" r=".5"><stop offset=".78" stop-color="#000" stop-opacity=".34"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+def svg_defs():
+    return f'''<defs>
+  <linearGradient id="cream" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF8E1"/><stop offset=".55" stop-color="{CREAM}"/><stop offset="1" stop-color="#DCC58C"/></linearGradient>
+  <linearGradient id="navyg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2A4A86"/><stop offset=".5" stop-color="#14264a"/><stop offset="1" stop-color="#0B1630"/></linearGradient>
+  <linearGradient id="goldt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8C6A27"/><stop offset=".4" stop-color="#C9A24B"/><stop offset=".6" stop-color="#E9D08A"/><stop offset="1" stop-color="#8C6A27"/></linearGradient>
 </defs>'''
 
 
-class T:
-    """theme tokens"""
-    def __init__(self, theme):
-        d = theme == 'dark'
-        self.dark = d
-        self.gold = 'url(#gold)' if d else 'url(#goldL)'
-        self.goldv = 'url(#goldv)' if d else 'url(#goldLv)'
-        self.goldh = 'url(#goldh)' if d else 'url(#goldLh)'
-        self.disc = 'url(#disc)' if d else 'url(#discL)'
-        self.text = IVORY if d else NAVY
-        self.text2 = '#C9BFA6' if d else '#4a5568'
-        self.ringtxt = '#F2E2A6' if d else '#14264A'
-        self.ribbon = 'url(#ribbon)' if d else 'url(#ribbonL)'
-        self.logo = '../assets/img/logo-light.png' if d else '../assets/img/logo.png'
-        self.line_op = .17 if d else .5
+def t_cream(x, y, txt, size, family='Suez', weight=400, ls=0, anchor='middle', shadow=True, extra=''):
+    """cream letters with a dark engraved shadow (title on the blue panel)"""
+    base = f'text-anchor="{anchor}" font-family="{family}" font-weight="{weight}" font-size="{size}" letter-spacing="{ls}" {extra}'
+    out = ''
+    if shadow:
+        out += f'<text x="{x + .35}" y="{y + .55}" {base} fill="#04101F" opacity=".55">{txt}</text>'
+        out += f'<text x="{x - .12}" y="{y - .18}" {base} fill="#ffffff" opacity=".35">{txt}</text>'
+    out += f'<text x="{x}" y="{y}" {base} fill="url(#cream)">{txt}</text>'
+    return out
 
 
-def frame(t, x0=9, y0=9, x1=201, y1=288, r=7, inner=3.2, w=0.55, dots=True):
-    stroke = t.gold
-
-    def path(a, b, c, d, rr):
-        return (f'M{a+rr},{b} H{c-rr} A{rr},{rr} 0 0 0 {c},{b+rr} V{d-rr} A{rr},{rr} 0 0 0 {c-rr},{d} '
-                f'H{a+rr} A{rr},{rr} 0 0 0 {a},{d-rr} V{b+rr} A{rr},{rr} 0 0 0 {a+rr},{b} Z')
-    s = f'<path d="{path(x0, y0, x1, y1, r)}" fill="none" stroke="{stroke}" stroke-width="{w}"/>'
-    s += f'<path d="{path(x0 + inner, y0 + inner, x1 - inner, y1 - inner, r - 1.2)}" fill="none" stroke="{stroke}" stroke-width="{w * .45}"/>'
-    if dots:
-        for (cx, cy) in ((x0, y0), (x1, y0), (x0, y1), (x1, y1)):
-            s += f'<circle cx="{cx}" cy="{cy}" r="1.5" fill="{stroke}"/><circle cx="{cx}" cy="{cy}" r="3" fill="none" stroke="{stroke}" stroke-width=".3"/>'
-        for (cx, cy) in (((x0 + x1) / 2, y0), ((x0 + x1) / 2, y1)):
-            s += f'<path d="M{cx-3},{cy} L{cx},{cy-3} L{cx+3},{cy} L{cx},{cy+3} Z" fill="{stroke}"/>'
-    return s
+def t_navy(x, y, txt, size, family='Suez', weight=400, ls=0, anchor='middle', fill='url(#navyg)', extra=''):
+    base = f'text-anchor="{anchor}" font-family="{family}" font-weight="{weight}" font-size="{size}" letter-spacing="{ls}" {extra}'
+    return (f'<text x="{x + .25}" y="{y + .4}" {base} fill="#fff" opacity=".55">{txt}</text>'
+            f'<text x="{x}" y="{y}" {base} fill="{fill}">{txt}</text>')
 
 
-def rule_with_diamond(t, cx, y, half, gap=5, sw=.35, d=1.7):
-    st = t.goldh
-    return (f'<line x1="{cx-half}" y1="{y}" x2="{cx-gap}" y2="{y}" stroke="{st}" stroke-width="{sw}"/>'
-            f'<line x1="{cx+gap}" y1="{y}" x2="{cx+half}" y2="{y}" stroke="{st}" stroke-width="{sw}"/>'
-            f'<path d="M{cx-d},{y} L{cx},{y-d} L{cx+d},{y} L{cx},{y+d} Z" fill="{st}"/>'
-            f'<circle cx="{cx-gap-1.6}" cy="{y}" r=".55" fill="{st}"/><circle cx="{cx+gap+1.6}" cy="{y}" r=".55" fill="{st}"/>')
+def img(href, cx, y, w, h=None):
+    h_attr = f' height="{h}"' if h else ''
+    return f'<image href="{href}" x="{cx - w / 2}" y="{y}" width="{w}"{h_attr}/>'
 
 
-def ribbon(t, x, w=12, y0=-2, y1=150, notch=9):
-    xl, xr = x - w / 2, x + w / 2
-    return f'''
-<path d="M{xl},{y0} L{xr},{y0} L{xr},{y1} L{x},{y1-notch} L{xl},{y1} Z" fill="{t.ribbon}"/>
-<path d="M{xl+1.3},{y0} L{xl+1.3},{y1-1.2} M{xr-1.3},{y0} L{xr-1.3},{y1-1.2}" stroke="#7A5A1F" stroke-width=".25" opacity=".7"/>
-<path d="M{xl+2.4},{y0} L{xl+2.4},{y1-2.6} M{xr-2.4},{y0} L{xr-2.4},{y1-2.6}" stroke="#fff6d6" stroke-width=".18" stroke-dasharray=".9 .9" opacity=".75"/>
-<path d="M{xl},{y0} L{xl},{y1} M{xr},{y0} L{xr},{y1}" stroke="#5A4010" stroke-width=".2" opacity=".5"/>'''
-
-
-def medallion(t, cx, cy, R=46, ring=SIMAN_RING, center_char='ס', center_size=62, ticks=True, ring_letters=True, glow=True):
-    gold = t.gold
-    parts = []
-    if t.dark and glow:
-        parts.append(f'<circle cx="{cx}" cy="{cy}" r="{R+7}" fill="url(#glow)"/>')
-        parts.append(f'<circle cx="{cx}" cy="{cy}" r="{R+4.2}" fill="url(#shadow)"/>')
-    if ticks:
-        rt0 = R + 3.2
-        for i in range(120):
-            a = math.radians(i * 3)
-            ln = 2.0 if i % 5 == 0 else 1.0
-            x0, y0 = cx + rt0 * math.cos(a), cy - rt0 * math.sin(a)
-            x1, y1 = cx + (rt0 + ln) * math.cos(a), cy - (rt0 + ln) * math.sin(a)
-            parts.append(f'<line x1="{x0:.2f}" y1="{y0:.2f}" x2="{x1:.2f}" y2="{y1:.2f}" stroke="{gold}" stroke-width="{.34 if i % 5 == 0 else .2}"/>')
-    parts.append(f'<circle cx="{cx}" cy="{cy}" r="{R}" fill="{t.disc}" stroke="{gold}" stroke-width="1.3"/>')
-    parts.append(f'<circle cx="{cx}" cy="{cy}" r="{R-2.1}" fill="none" stroke="{gold}" stroke-width=".3"/>')
-    r_in = R - 12.6
-    parts.append(f'<circle cx="{cx}" cy="{cy}" r="{r_in}" fill="none" stroke="{gold}" stroke-width=".6"/>')
-    parts.append(f'<circle cx="{cx}" cy="{cy}" r="{r_in-1.8}" fill="none" stroke="{gold}" stroke-width=".25"/>')
-    if ring_letters:
-        n = len(ring)
-        half = n // 2
-        rt = R - 8.2
-        step = 180 / half
-        for i, s in enumerate(ring):
-            top = i < half
-            k = i if top else i - half
-            a_deg = step / 2 + k * step if top else 360 - step / 2 - k * step
-            a = math.radians(a_deg)
-            if top:
-                r_base = rt - 1.6
-                rot = 90 - a_deg
-            else:
-                r_base = rt + 1.6
-                rot = 270 - a_deg
-            x, y = cx + r_base * math.cos(a), cy - r_base * math.sin(a)
-            parts.append(f'<text transform="translate({x:.2f} {y:.2f}) rotate({rot:.2f})" text-anchor="middle" font-family="Suez" font-size="4.6" fill="{t.ringtxt}" style="direction:rtl">{s}</text>')
-        for k in range(half + 1):
-            for base in (0, 180):
-                a = math.radians(base + k * step)
-                x, y = cx + rt * math.cos(a), cy - rt * math.sin(a)
-                parts.append(f'<path d="M{x-.75:.2f},{y:.2f} L{x:.2f},{y-.75:.2f} L{x+.75:.2f},{y:.2f} L{x:.2f},{y+.75:.2f} Z" fill="{gold}"/>')
-    ty = cy + center_size * 0.255
-    if t.dark:
-        parts.append(f'<text x="{cx}" y="{ty:.2f}" text-anchor="middle" font-family="Suez" font-size="{center_size}" fill="#000" opacity=".35" transform="translate(.5 .7)" style="direction:rtl">{center_char}</text>')
-    parts.append(f'<text x="{cx}" y="{ty:.2f}" text-anchor="middle" font-family="Suez" font-size="{center_size}" fill="{t.goldv}" style="direction:rtl">{center_char}</text>')
-    return '\n'.join(parts)
-
-
-def small_seal(t, cx, cy, R, char, size):
-    """compact version of the medallion (ticks + one letter) for credits / dividers"""
-    gold = t.gold
-    parts = [f'<circle cx="{cx}" cy="{cy}" r="{R}" fill="{t.disc}" stroke="{gold}" stroke-width="{max(.5, R*.04):.2f}"/>',
-             f'<circle cx="{cx}" cy="{cy}" r="{R*.89:.2f}" fill="none" stroke="{gold}" stroke-width=".25"/>']
-    for i in range(60):
-        a = math.radians(i * 6)
-        ln = R * (.09 if i % 5 == 0 else .05)
-        r0 = R * .74
-        parts.append(f'<line x1="{cx + r0*math.cos(a):.2f}" y1="{cy - r0*math.sin(a):.2f}" x2="{cx + (r0+ln)*math.cos(a):.2f}" y2="{cy - (r0+ln)*math.sin(a):.2f}" stroke="{gold}" stroke-width="{.25 if i % 5 == 0 else .15}"/>')
-    parts.append(f'<text x="{cx}" y="{cy + size*.255:.2f}" text-anchor="middle" font-family="Suez" font-size="{size}" fill="{t.goldv}" style="direction:rtl">{char}</text>')
-    return ''.join(parts)
+def page(bg, inner, cls='pg'):
+    return (f'<div class="{cls}"><img class="bg" src="art/{bg}"/>'
+            f'<svg viewBox="0 0 210 297" xmlns="http://www.w3.org/2000/svg">{svg_defs()}{inner}</svg></div>')
 
 
 # --------------------------------------------------------------------------------------------
-def cover(theme='dark'):
-    t = T(theme)
+def cover():
     cx = 105
-    b = [defs()]
-    if t.dark:
-        b.append('<rect width="210" height="297" fill="url(#bgd)"/>')
-    else:
-        b.append('<rect width="210" height="297" fill="#fff"/>')
-    lines = ''.join(f'<line x1="14" y1="{y}" x2="196" y2="{y}" stroke="{"#D9B75F" if t.dark else "#C9A24B"}" stroke-opacity="{t.line_op * (1 if t.dark else .55)}" stroke-width=".18"/>' for y in range(152, 284, 7))
-    b.append(f'<g mask="url(#fadeMask)">{lines}</g>')
-    if t.dark:
-        b.append('<rect width="210" height="297" fill="url(#grainP)" opacity=".55"/>')
-    b.append(frame(t))
-    b.append(f'<text x="178" y="26" text-anchor="end" font-family="Frank" font-weight="500" font-size="4.4" fill="{t.text}" opacity=".8">בס״ד</text>')
-    b.append(medallion(t, cx, 93, 46))
-    b.append(ribbon(t, 166, 12, -2, 146))
-    b.append(f'<text x="{cx}" y="170" text-anchor="middle" font-family="Suez" font-size="14" letter-spacing="2.4" fill="{t.goldh}">מבחני</text>')
-    if t.dark:
-        b.append(f'<text x="{cx+.45}" y="206.6" text-anchor="middle" font-family="Suez" font-size="40" fill="#000" opacity=".38">הסימנים</text>')
-        b.append(f'<text x="{cx}" y="206" text-anchor="middle" font-family="Suez" font-size="40" fill="{t.gold}">הסימנים</text>')
-    else:
-        b.append(f'<text x="{cx}" y="206" text-anchor="middle" font-family="Suez" font-size="40" fill="url(#navyv)">הסימנים</text>')
-    b.append(rule_with_diamond(t, cx, 216, 47))
-    b.append(f'<text x="{cx}" y="227" text-anchor="middle" font-family="Frank" font-weight="500" font-size="5.5" fill="{t.text}">מבחנים ודפי חבורה בהלכות ברכות, קריאת שמע ותפילה</text>')
-    b.append(f'<text x="{cx}" y="235" text-anchor="middle" font-family="Heebo" font-weight="600" font-size="3.3" letter-spacing=".9" fill="{t.goldh}">אורח חיים  ·  סימנים ד – קח</text>')
-    b.append(f'<image href="{t.logo}" x="{cx-17}" y="245" width="34" height="31.9"/>')
-    return svg_page('\n'.join(b))
+    b = []
+    b.append(t_cream(cx, 16.5, 'בס״ד', 4.4, 'Frank', 500, shadow=False, extra='opacity=".9"'))
+    b.append(t_cream(cx, 36, 'ארגון ׳ברומו של עולם׳', 3.7, 'Heebo', 600, .6, shadow=False, extra=f'style="fill:{GOLD_T}"'))
+    b.append(img('art/fleuron.png', cx, 42, 27.2))
+    b.append(t_cream(cx, 84, 'מבחני', 15.5, 'Suez'))
+    b.append(t_cream(cx, 110, 'הסימנים', 19.5, 'Suez'))
+    b.append(t_cream(cx, 118.4, 'אורח חיים  ·  סימנים ד – קח', 3.1, 'Heebo', 600, .5, shadow=False, extra=f'style="fill:{GOLD_T}"'))
+    # parchment
+    b.append(t_navy(cx, 226, 'מבחנים ודפי חבורה בהלכות ברכות, קריאת שמע ותפילה', 5.5, 'Frank', 500, fill=NAVY_T))
+    b.append(f'<image href="../assets/img/logo.png" x="{cx - 11.5}" y="234" width="23" height="21.6"/>')
+    return page('cover-bg.jpg', ''.join(b))
+
+
+def inner_title():
+    cx = 105
+    b = []
+    b.append(t_navy(cx, 31, 'בס״ד', 4.4, 'Frank', 500, fill=NAVY_T))
+    b.append(img('art/fleuron.png', cx, 38, 27.2))
+    b.append(t_navy(cx, 100, 'מבחני', 21, 'Suez'))
+    b.append(t_navy(cx, 134, 'הסימנים', 33, 'Suez'))
+    b.append(img('art/flourish.png', cx, 142, 113))
+    b.append(t_navy(cx, 203, 'מבחנים ודפי חבורה בהלכות ברכות,', 6.4, 'Frank', 500, fill=NAVY_T))
+    b.append(t_navy(cx, 211.5, 'קריאת שמע ותפילה', 6.4, 'Frank', 500, fill=NAVY_T))
+    b.append(t_navy(cx, 221, 'אורח חיים  ·  סימנים ד – קח', 3.4, 'Heebo', 600, .6, fill=BROWN))
+    b.append(f'<image href="../assets/img/logo.png" x="{cx - 12}" y="233" width="24" height="22.5"/>')
+    b.append(t_navy(cx, 268.5, 'ברומו של עולם', 6, 'Suez'))
+    return page('page-frame.jpg', ''.join(b))
 
 
 CREDITS_CSS = '''
 .cr{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;flex-direction:column;align-items:center;text-align:center;color:#14264a}
-.cr .t1{font-family:'Suez',serif;font-size:21pt;line-height:1;color:#14264a}
+.cr .t1{font-family:'Suez',serif;font-size:21pt;line-height:1;color:#14264a;text-shadow:.25mm .35mm 0 rgba(255,255,255,.6)}
 .cr .sub{font-family:'Frank',serif;font-weight:500;font-size:10.5pt;color:#4a5568;margin-top:1.6mm}
 .cr .body{font-family:'Frank',serif;font-weight:500;font-size:11.6pt;line-height:1.5;color:#14264a}
 .cr .body b{font-weight:900}
-.cr .small{font-family:'Heebo',sans-serif;font-weight:600;font-size:9pt;color:#a8802f;letter-spacing:.04em}
+.cr .small{font-family:'Heebo',sans-serif;font-weight:600;font-size:9pt;color:#8a6420;letter-spacing:.04em}
 .cr .num{font-family:'Heebo',sans-serif;font-weight:800;font-size:13.5pt;direction:ltr;unicode-bidi:isolate;letter-spacing:.04em;color:#14264a}
 .cr .mail{font-family:'Heebo',sans-serif;font-weight:600;font-size:10.4pt;direction:ltr;unicode-bidi:isolate;color:#14264a}
 .cr .q{font-family:'Suez',serif;font-size:14.5pt;color:#14264a;line-height:1.2}
 .cr .gap{flex:0 0 auto}
-.cr svg.sep{width:56mm;height:4mm;display:block}
+.cr img.sep{width:46mm;height:6.57mm;display:block;margin:-1.2mm 0}
+.ringseal{position:absolute;width:38mm;height:38mm}
+.ringseal img{position:absolute;inset:0;width:38mm;height:38mm}
+.ringseal span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Suez',serif;font-size:36pt;line-height:1;color:#F6EBC8;
+  text-shadow:.3mm .45mm 0 rgba(4,16,31,.6);padding-bottom:1mm}
 '''
 
 
-def sep_svg():
-    return ('<svg class="sep" viewBox="0 0 56 4" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="sg" x1="0" x2="1"><stop offset="0" stop-color="#8C6A27"/><stop offset=".5" stop-color="#C9A24B"/><stop offset="1" stop-color="#8C6A27"/></linearGradient></defs>'
-            '<line x1="0" y1="2" x2="22" y2="2" stroke="url(#sg)" stroke-width=".3"/><line x1="34" y1="2" x2="56" y2="2" stroke="url(#sg)" stroke-width=".3"/>'
-            '<path d="M28,.2 L29.8,2 L28,3.8 L26.2,2 Z" fill="#A8802F"/><circle cx="24.4" cy="2" r=".5" fill="#A8802F"/><circle cx="31.6" cy="2" r=".5" fill="#A8802F"/></svg>')
+def sep():
+    return '<img class="sep" src="art/sep.png">'
 
 
 def credits():
-    t = T('light')
-    bg = defs() + '<rect width="210" height="297" fill="#fff"/>' + frame(t)
-    bg += f'<text x="178" y="26" text-anchor="end" font-family="Frank" font-weight="500" font-size="4.4" fill="{t.text}" opacity=".8">בס״ד</text>'
-    bg += small_seal(t, 105, 52, 18.5, 'ס', 25)
-    sep = sep_svg()
     html = f'''
-<div class="pg"><svg viewBox="0 0 210 297" xmlns="http://www.w3.org/2000/svg">{bg}</svg>
+<div class="pg"><img class="bg" src="art/page-frame.jpg"/>
+<div class="ringseal" style="left:{105 - 19}mm;top:20mm"><img src="art/ring.png"><span>ס</span></div>
 <div class="cr">
-  <div class="gap" style="height:78mm"></div>
+  <div class="gap" style="height:63mm"></div>
   <div class="t1">מבחני הסימנים</div>
   <div class="sub">קובץ מבחנים בהלכות ברכות, קריאת שמע ותפילה</div>
-  <div class="gap" style="height:6mm"></div>{sep}<div class="gap" style="height:5.4mm"></div>
+  <div class="gap" style="height:5mm"></div>{sep()}<div class="gap" style="height:4.4mm"></div>
   <div class="body">החומר נערך ונלקט<br>ע״י ארגון <b>׳ברומו של עולם׳</b><br>לחיזוק רוממות התפילה</div>
   <div class="gap" style="height:3mm"></div>
   <div class="mail">b613515@gmail.com</div><div class="mail" style="margin-top:.4mm">052-7616296</div>
-  <div class="gap" style="height:5mm"></div>{sep}<div class="gap" style="height:4.4mm"></div>
+  <div class="gap" style="height:4mm"></div>{sep()}<div class="gap" style="height:3.6mm"></div>
   <div class="body">קו בית הוראה לשאלות<br>בהלכות תפילה וברכות:</div>
   <div class="num" style="margin-top:1mm">0772150094</div>
-  <div class="gap" style="height:4.6mm"></div>{sep}<div class="gap" style="height:4.2mm"></div>
+  <div class="gap" style="height:3.6mm"></div>{sep()}<div class="gap" style="height:3.2mm"></div>
   <div class="body">לשמיעת השיעורים והשיחות:</div>
   <div class="num" style="margin-top:1mm">0733718376</div>
-  <div class="gap" style="height:4.6mm"></div>{sep}<div class="gap" style="height:3.6mm"></div>
+  <div class="gap" style="height:3.6mm"></div>{sep()}<div class="gap" style="height:2.8mm"></div>
   <div class="small">לתרומות</div>
   <img src="../assets/img/nedarim.png" style="width:15.5mm;margin-top:1.4mm"><div class="body" style="font-size:10.4pt;margin-top:1mm">בלשונית - ׳ברומו של עולם׳</div>
-  <div class="gap" style="height:5mm"></div>{sep}<div class="gap" style="height:3.4mm"></div>
+  <div class="gap" style="height:4mm"></div>{sep()}<div class="gap" style="height:2.6mm"></div>
   <div class="q">״שגיאות מי יבין״</div>
   <div class="body" style="font-size:10.8pt;margin-top:.6mm">כל הערה או הארה תתקבל בברכה</div>
   <div style="flex:1"></div>
-  <img src="../assets/img/logo.png" style="width:25mm;margin-bottom:19mm">
+  <img src="../assets/img/logo.png" style="width:22mm;margin-bottom:22mm">
 </div></div>'''
     return html
 
 
-def divider(part, units, pages=None, compact=False):
-    """part divider page (light)"""
-    t = T('light')
-    bg = defs() + '<rect width="210" height="297" fill="#fff"/>' + frame(t)
-    bg += f'<text x="178" y="26" text-anchor="end" font-family="Frank" font-weight="500" font-size="4.4" fill="{t.text}" opacity=".8">בס״ד</text>'
-    if compact:
-        bg += medallion(t, 105, 74, 33, ring=SIMAN_RING, center_char=part['letter'], center_size=42, ring_letters=False)
-    else:
-        bg += medallion(t, 105, 98, 46, ring=SIMAN_RING, center_char=part['letter'], center_size=58)
-    return bg
-
-
+# --------------------------------------------------------------------------------------------
 DIV_CSS = '''
-.dv{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;flex-direction:column;align-items:center;text-align:center}
+.dv{position:absolute;left:0;right:0;top:0;bottom:0}
 .dv>*{flex-shrink:0}
-.dv .pk{font-family:'Heebo',sans-serif;font-weight:800;font-size:10pt;letter-spacing:.5em;color:#a8802f;margin-bottom:2.6mm;padding-right:.5em}
-.dv .pt{font-family:'Suez',serif;font-size:29pt;line-height:1.1;color:#14264a;max-width:150mm}
-.dv .ps{font-family:'Frank',serif;font-weight:500;font-size:13pt;color:#5d6471;margin-top:2mm}
-.dv .list{width:132mm;margin-top:5mm}
-.dv .list.two{width:166mm;display:grid;grid-template-columns:1fr 1fr;column-gap:9mm;margin-top:3mm}
-.dv .li{display:flex;align-items:baseline;gap:2mm;font-family:'Frank',serif;font-weight:500;font-size:11pt;line-height:1.35;margin:0 0 1.7mm;color:#16181d;text-align:right}
+.dv .ringseal{left:calc(105mm - 15mm);top:9mm;width:30mm;height:30mm}
+.dv .ringseal img{width:30mm;height:30mm}
+.dv .ringseal span{font-size:31pt}
+.dv .ptx{position:absolute;left:67mm;width:76mm;top:42mm;text-align:center;color:#F6EBC8}
+.dv .pk{font-family:'Heebo',sans-serif;font-weight:800;font-size:8.6pt;letter-spacing:.42em;color:#E4C97F;padding-right:.42em;text-shadow:.2mm .3mm 0 rgba(4,16,31,.6)}
+.dv .pt{font-family:'Suez',serif;font-size:21pt;line-height:1.12;margin-top:2.4mm;color:#F6EBC8;text-shadow:.3mm .45mm 0 rgba(4,16,31,.6)}
+.dv .pt.long{font-size:18pt}
+.dv .ps{font-family:'Frank',serif;font-weight:500;font-size:11pt;margin-top:2.4mm;color:#E4D6A6;text-shadow:.2mm .3mm 0 rgba(4,16,31,.6)}
+.dv .list{position:absolute;left:38mm;right:38mm;top:170mm}
+.dv .list.two{left:27mm;right:27mm;display:grid;grid-template-columns:1fr 1fr;column-gap:9mm;top:166mm}
+.dv .li{display:flex;align-items:baseline;gap:2mm;font-family:'Frank',serif;font-weight:500;font-size:11pt;line-height:1.35;margin:0 0 1.9mm;color:#16181d;text-align:right}
 .dv .list.two .li{font-size:9.6pt;margin:0 0 1.5mm}
-.dv .li .k{font-family:'Heebo',sans-serif;font-weight:600;font-size:7.8pt;letter-spacing:.06em;color:#a8802f;flex:0 0 auto}
+.dv .li .k{font-family:'Heebo',sans-serif;font-weight:600;font-size:7.8pt;letter-spacing:.06em;color:#8a6420;flex:0 0 auto}
 .dv .list.two .li .k{font-size:6.6pt}
-.dv .li .d{flex:1;border-bottom:.3mm dotted #b9ad8c;transform:translateY(-1mm);min-width:4mm}
+.dv .li .d{flex:1;border-bottom:.3mm dotted #a8956a;transform:translateY(-1mm);min-width:4mm}
 .dv .li .n{font-family:'Suez',serif;font-size:11pt;color:#14264a;flex:0 0 auto}
 .dv .li .tt{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:48mm}
 '''
@@ -312,66 +179,64 @@ DIV_CSS = '''
 def divider_page(part, units, pn):
     """full page; units = list of dict(kicker,title,sub,page)"""
     compact = len(units) > 9
-    bg = divider(part, units, compact=compact)
     rows = ''.join(f'<div class="li"><span class="tt">{u["title"]}{(" – " + u["sub"]) if u.get("sub") and len(u["sub"]) < 24 else ""}</span><span class="k">{u["kicker"]}</span><span class="d"></span><span class="n">{u["page"]}</span></div>' for u in units)
-    top = 118 if compact else 157
     cls = 'list two' if compact else 'list'
-    return f'''<div class="pg"><svg viewBox="0 0 210 297" xmlns="http://www.w3.org/2000/svg">{bg}</svg>
-<div class="dv"><div style="height:{top}mm"></div>
-<div class="pk"><span style="font-size:2.4px;color:#fff;letter-spacing:0;direction:ltr;unicode-bidi:isolate;font-family:Arial">__MARK__</span>חלק {part["letter"]}׳</div>
-<div class="pt">{part["name"]}</div><div class="ps">{part["sub"]}</div>
-<div style="margin-top:5mm">{sep_svg()}</div>
-<div class="{cls}">{rows}</div></div></div>'''
+    long_ = ' long' if len(part['name']) > 22 else ''
+    return f'''<div class="pg"><img class="bg" src="art/divider-bg.jpg"/>
+<div class="dv">
+  <div class="ringseal"><img src="art/ring.png"><span>{part["letter"]}</span></div>
+  <div class="ptx"><span style="font-size:2.4px;color:#04101F;letter-spacing:0;direction:ltr;unicode-bidi:isolate;font-family:Arial">__MARK__</span>
+    <div class="pk">חלק {part["letter"]}׳</div><div class="pt{long_}">{part["name"]}</div><div class="ps">{part["sub"]}</div></div>
+  <div class="{cls}">{rows}</div>
+</div></div>'''
 
 
 def back_cover():
-    t = T('dark')
-    b = [defs(), '<rect width="210" height="297" fill="url(#bgd)"/>',
-         '<rect width="210" height="297" fill="url(#grainP)" opacity=".55"/>']
-    lines = ''.join(f'<line x1="14" y1="{y}" x2="196" y2="{y}" stroke="#D9B75F" stroke-opacity=".10" stroke-width=".18"/>' for y in range(40, 284, 7))
-    b.append(f'<g>{lines}</g>')
-    b.append(frame(t))
-    b.append(medallion(t, 105, 120, 30, center_size=40, ring_letters=False))
-    b.append(rule_with_diamond(t, 105, 172, 40))
-    b.append(f'<image href="{t.logo}" x="{105-21}" y="181" width="42" height="39.4"/>')
-    return svg_page('\n'.join(b))
+    cx = 105
+    b = []
+    b.append(f'<image href="../assets/img/logo.png" x="{cx - 17}" y="114" width="34" height="31.9"/>')
+    b.append(t_navy(cx, 163, 'ברומו של עולם', 9.2, 'Suez'))
+    b.append(t_navy(cx, 172, 'לחיזוק רוממות התפילה', 5.2, 'Frank', 500, fill=NAVY_T))
+    b.append(img('art/sep.png', cx, 177.5, 40))
+    b.append(t_navy(cx, 191, 'b613515@gmail.com', 4.1, 'Heebo', 600, .3, fill=NAVY_T))
+    return page('back-bg.jpg', ''.join(b))
 
 
 # --------------------------------------------------------------------------------------------
 TOC_CSS = '''
-@page { size:210mm 297mm; margin:25mm 21mm 22mm 21mm }
+@page { size:210mm 297mm; margin:27mm 26mm 36mm 26mm }
 html{background:#fff}
 body{margin:0;padding:0;background:transparent;direction:rtl;font-family:'Frank',serif;font-weight:500;color:#16181d}
-.frame{position:fixed;left:-21mm;top:-25mm;width:210mm;height:297mm;z-index:-1}
 .tt{text-align:center;margin:0 0 1mm}
-.tt .a{font-family:'Suez',serif;font-size:27pt;color:#14264a;line-height:1.1}
-.tt .b{font-family:'Heebo',sans-serif;font-weight:600;font-size:8.8pt;letter-spacing:.2em;color:#a8802f;margin-top:1.2mm}
+.tt .a{font-family:'Suez',serif;font-size:27pt;color:#14264a;line-height:1.1;text-shadow:.25mm .35mm 0 rgba(255,255,255,.6)}
+.tt .b{font-family:'Heebo',sans-serif;font-weight:600;font-size:8.8pt;letter-spacing:.2em;color:#8a6420;margin-top:1.2mm}
+.tt img{width:44mm;height:6.3mm;display:block;margin:.6mm auto 0}
 .ph{display:flex;align-items:center;gap:3.4mm;margin:6.4mm 0 2.4mm;break-after:avoid}
-.ph .sl{flex:0 0 11mm;width:11mm;height:11mm}
-.ph .sl svg{width:11mm;height:11mm;display:block}
+.ph .sl{flex:0 0 11mm;width:11mm;height:11mm;position:relative}
+.ph .sl img{position:absolute;left:-.6mm;top:-.6mm;width:12.2mm;height:12.2mm}
+.ph .sl span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Suez',serif;font-size:14pt;color:#F6EBC8;line-height:1;text-shadow:.15mm .25mm 0 rgba(4,16,31,.6);padding-bottom:.3mm}
 .ph .pn{font-family:'Suez',serif;font-size:14.5pt;color:#14264a;line-height:1.1}
 .ph .pr{font-family:'Frank',serif;font-size:10pt;color:#5d6471;margin-top:.4mm}
-.ph .ln{flex:1;border-top:.3mm solid #c9a24b;margin-top:2mm}
+.ph .ln{flex:1;height:1.1mm;margin-top:2mm;border-top:.35mm solid #b98f36;border-bottom:.12mm solid #d9bd78}
 .row{display:flex;align-items:baseline;gap:2.2mm;margin:0 0 1.45mm;font-size:10.6pt;line-height:1.3;break-inside:avoid}
-.row .k{flex:0 0 27mm;font-family:'Heebo',sans-serif;font-weight:600;font-size:7.4pt;letter-spacing:.05em;color:#a8802f}
+.row .k{flex:0 0 27mm;font-family:'Heebo',sans-serif;font-weight:600;font-size:7.4pt;letter-spacing:.05em;color:#8a6420}
 .row .t{flex:0 1 auto}
 .row .t i{font-style:normal;color:#5d6471;font-size:9.4pt}
-.row .d{flex:1;border-bottom:.3mm dotted #b9ad8c;transform:translateY(-1mm);min-width:6mm}
+.row .d{flex:1;border-bottom:.3mm dotted #a8956a;transform:translateY(-1mm);min-width:6mm}
 .row .n{font-family:'Suez',serif;font-size:10.6pt;color:#14264a;min-width:9mm;text-align:left}
-.row .sc{flex:0 0 11mm;height:5.2mm;border:.25mm solid #b9ad8c;border-radius:1.4mm;align-self:center}
-.row .sc.no{border:0}
-.legend{margin-top:5mm;text-align:center;font-family:'Heebo',sans-serif;font-weight:600;font-size:7.6pt;color:#8b91a0;letter-spacing:.06em}
+.row .sc{flex:0 0 11mm;height:5.2mm;border:.3mm solid #a8802f;border-radius:1.4mm;align-self:center;background:rgba(255,255,255,.35)}
+.row .sc.no{border:0;background:none}
+.legend{margin-top:5mm;text-align:center;font-family:'Heebo',sans-serif;font-weight:600;font-size:7.6pt;color:#7a6a45;letter-spacing:.06em}
 '''
 
 
 def toc_html(parts, units, pages, hnum):
-    t = T('light')
-    out = ['<div class="tt"><div class="a">תוכן העניינים</div><div class="b">ויומן ציונים</div></div>']
+    out = ['<div class="tt"><div class="a">תוכן העניינים</div><div class="b">ויומן ציונים</div><img src="art/sep.png"></div>']
     for p in parts:
         us = [u for u in units if u['part'] == p['id']]
         if not us:
             continue
-        seal = (f'<svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">{defs()}{small_seal(t, 10, 10, 9.4, p["letter"], 10)}</svg>')
+        seal = f'<img src="art/ring.png"><span>{p["letter"]}</span>'
         out.append(f'<div class="ph"><div class="sl">{seal}</div><div><div class="pn">{p["name"]}</div><div class="pr">{p["sub"]}</div></div><div class="ln"></div></div>')
         for u in us:
             subtxt = (u.get('sub') or '')
@@ -386,6 +251,6 @@ def toc_html(parts, units, pages, hnum):
 
 
 def frame_page():
-    """transparent page with only the frame (merged under the contents pages)"""
-    t = T('light')
-    return svg_page(defs() + frame(t))
+    """page with only the frame (merged under the contents pages / used for notes and blanks)"""
+    return '<div class="pg"><img class="bg" src="art/toc-frame.jpg"/></div>'
+
