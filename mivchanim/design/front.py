@@ -205,7 +205,7 @@ def back_cover():
 # --------------------------------------------------------------------------------------------
 TOC_CSS = '''
 @page { size:210mm 297mm; margin:27mm 26mm 36mm 26mm }
-html{background:#fff}
+html{background:transparent}
 body{margin:0;padding:0;background:transparent;direction:rtl;font-family:'Frank',serif;font-weight:500;color:#16181d}
 .tt{text-align:center;margin:0 0 1mm}
 .tt .a{font-family:'Suez',serif;font-size:27pt;color:#14264a;line-height:1.1;text-shadow:.25mm .35mm 0 rgba(255,255,255,.6)}

@@ -25,6 +25,7 @@ CSS = r'''
 .fullpage{page:full;width:210mm;height:297mm;position:relative;break-before:page;break-after:page;overflow:hidden}
 .fullpage .pg{width:210mm;height:297mm;position:relative;overflow:hidden}
 .fullpage .pg>svg{position:absolute;left:0;top:0;width:210mm;height:297mm;display:block}
+.fullpage .pg>img.bg{position:absolute;left:0;top:0;width:210mm;height:297mm;display:block}
 .fullpage svg text{font-family:'Frank','David',serif;direction:rtl}
 html,body{margin:0;padding:0;background:#fff}
 body{font-family:'Frank','David',serif;font-weight:500;font-size:12pt;line-height:1.6;color:var(--ink);
