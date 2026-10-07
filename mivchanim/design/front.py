@@ -72,11 +72,11 @@ def cover():
     cx = 105
     b = []
     b.append(t_cream(cx, 16.5, 'בס״ד', 4.4, 'Frank', 500, shadow=False, extra='opacity=".9"'))
-    b.append(t_cream(cx, 36, 'ארגון ׳ברומו של עולם׳', 3.7, 'Heebo', 600, .6, shadow=False, extra=f'style="fill:{GOLD_T}"'))
-    b.append(img('art/fleuron.png', cx, 42, 27.2))
-    b.append(t_cream(cx, 84, 'מבחני', 15.5, 'Suez'))
-    b.append(t_cream(cx, 110, 'הסימנים', 19.5, 'Suez'))
-    b.append(t_cream(cx, 118.4, 'אורח חיים  ·  סימנים ד – קח', 3.1, 'Heebo', 600, .5, shadow=False, extra=f'style="fill:{GOLD_T}"'))
+    b.append(t_cream(cx, 34, 'ארגון ׳ברומו של עולם׳', 3.9, 'Heebo', 600, .6, shadow=False, extra=f'style="fill:{GOLD_T}"'))
+    b.append(img('art/fleuron.png', cx, 41, 30.6))
+    b.append(t_cream(cx, 90, 'מבחני', 19.5, 'Suez'))
+    b.append(t_cream(cx, 119, 'הסימנים', 24.5, 'Suez'))
+    b.append(t_cream(cx, 126.6, 'אורח חיים  ·  סימנים ד – קח', 3.1, 'Heebo', 600, .5, shadow=False, extra=f'style="fill:{GOLD_T}"'))
     # parchment
     b.append(t_navy(cx, 226, 'מבחנים ודפי חבורה בהלכות ברכות, קריאת שמע ותפילה', 5.5, 'Frank', 500, fill=NAVY_T))
     b.append(f'<image href="../assets/img/logo.png" x="{cx - 11.5}" y="234" width="23" height="21.6"/>')
@@ -156,22 +156,22 @@ def credits():
 DIV_CSS = '''
 .dv{position:absolute;left:0;right:0;top:0;bottom:0}
 .dv>*{flex-shrink:0}
-.dv .ringseal{left:calc(105mm - 15mm);top:9mm;width:30mm;height:30mm}
+.dv .ringseal{left:calc(105mm - 15mm);top:12mm;width:30mm;height:30mm}
 .dv .ringseal img{width:30mm;height:30mm}
 .dv .ringseal span{font-size:31pt}
-.dv .ptx{position:absolute;left:67mm;width:76mm;top:42mm;text-align:center;color:#F6EBC8}
+.dv .ptx{position:absolute;left:67mm;width:76mm;top:46mm;text-align:center;color:#F6EBC8}
 .dv .pk{font-family:'Heebo',sans-serif;font-weight:800;font-size:8.6pt;letter-spacing:.42em;color:#E4C97F;padding-right:.42em;text-shadow:.2mm .3mm 0 rgba(4,16,31,.6)}
 .dv .pt{font-family:'Suez',serif;font-size:21pt;line-height:1.12;margin-top:2.4mm;color:#F6EBC8;text-shadow:.3mm .45mm 0 rgba(4,16,31,.6)}
 .dv .pt.long{font-size:18pt}
 .dv .ps{font-family:'Frank',serif;font-weight:500;font-size:11pt;margin-top:2.4mm;color:#E4D6A6;text-shadow:.2mm .3mm 0 rgba(4,16,31,.6)}
-.dv .list{position:absolute;left:38mm;right:38mm;top:170mm}
-.dv .list.two{left:27mm;right:27mm;display:grid;grid-template-columns:1fr 1fr;column-gap:9mm;top:166mm}
-.dv .li{display:flex;align-items:baseline;gap:2mm;font-family:'Frank',serif;font-weight:500;font-size:11pt;line-height:1.35;margin:0 0 1.9mm;color:#16181d;text-align:right}
-.dv .list.two .li{font-size:9.6pt;margin:0 0 1.5mm}
+.dv .list{position:absolute;left:36mm;right:36mm;top:182mm}
+.dv .list.two{left:27mm;right:27mm;display:grid;grid-template-columns:1fr 1fr;column-gap:9mm;top:175mm}
+.dv .li{display:flex;align-items:baseline;gap:2mm;font-family:'Frank',serif;font-weight:500;font-size:12pt;line-height:1.35;margin:0 0 3.2mm;color:#16181d;text-align:right}
+.dv .list.two .li{font-size:9.6pt;margin:0 0 1.3mm}
 .dv .li .k{font-family:'Heebo',sans-serif;font-weight:600;font-size:7.8pt;letter-spacing:.06em;color:#8a6420;flex:0 0 auto}
 .dv .list.two .li .k{font-size:6.6pt}
 .dv .li .d{flex:1;border-bottom:.3mm dotted #a8956a;transform:translateY(-1mm);min-width:4mm}
-.dv .li .n{font-family:'Suez',serif;font-size:11pt;color:#14264a;flex:0 0 auto}
+.dv .li .n{font-family:'Suez',serif;font-size:12pt;color:#14264a;flex:0 0 auto}
 .dv .li .tt{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:48mm}
 '''
 

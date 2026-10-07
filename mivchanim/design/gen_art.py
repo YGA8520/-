@@ -19,6 +19,7 @@ from PIL import Image, ImageDraw
 from scipy import ndimage as ndi
 
 sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '.deps'))
 import art  # noqa: E402
 from art import CACHE, emboss, bez, GOLD  # noqa: E402
 from gold import gold  # noqa: E402
@@ -129,7 +130,7 @@ def rim(base, poly, width, height=.7, shadow=.5, closed=True):
 
 
 # ------------------------------------------------------------------ the parchment scene (cover / dividers)
-def parchment_scene(panel_shoulder, panel_tip, sil_shoulder, seed=3):
+def parchment_scene(panel_shoulder, panel_tip, sil_shoulder, seed=3, flourish_w=128):
     W, H = int(W_MM * PPM), int(H_MM * PPM)
     base = art.blue_marble(W, H, seed=seed).astype(float)
     sil = silhouette(shoulder_y=sil_shoulder)
@@ -171,7 +172,7 @@ def parchment_scene(panel_shoulder, panel_tip, sil_shoulder, seed=3):
     put(base, 'flower-strip.png', strip, x=56.6, y=-6, rot=90)
     put(base, 'flower-strip.png', strip, x=142.6, y=-6, rot=270)
     # under the tip of the panel
-    put(base, 'flourish-wide-1.png', 128, cx=105, y=panel_tip - 5.5)
+    put(base, 'flourish-wide-1.png', flourish_w, cx=105, y=panel_tip - 5.5)
     return base
 
 
@@ -183,7 +184,7 @@ def build_cover():
 
 
 def build_divider():
-    base = parchment_scene(86, 130, 58, seed=7)
+    base = parchment_scene(86, 130, 58, seed=7, flourish_w=98)
     put(base, 'fleuron-small.png', 30, cx=105, y=266.5, flip_y=True)
     return finish(base, 'divider-bg')
 
