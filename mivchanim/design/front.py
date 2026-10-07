@@ -111,10 +111,6 @@ CREDITS_CSS = '''
 .cr .q{font-family:'Suez',serif;font-size:14.5pt;color:#14264a;line-height:1.2}
 .cr .gap{flex:0 0 auto}
 .cr img.sep{width:46mm;height:6.57mm;display:block;margin:-1.2mm 0}
-.ringseal{position:absolute;width:38mm;height:38mm}
-.ringseal img{position:absolute;inset:0;width:38mm;height:38mm}
-.ringseal span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Suez',serif;font-size:36pt;line-height:1;color:#F6EBC8;
-  text-shadow:.3mm .45mm 0 rgba(4,16,31,.6);padding-bottom:1mm}
 '''
 
 
@@ -153,7 +149,14 @@ def credits():
 
 
 # --------------------------------------------------------------------------------------------
-DIV_CSS = '''
+RING_CSS = '''
+.ringseal{position:absolute;width:38mm;height:38mm}
+.ringseal img{position:absolute;inset:0;width:38mm;height:38mm}
+.ringseal span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Suez',serif;font-size:36pt;line-height:1;color:#F6EBC8;
+  text-shadow:.3mm .45mm 0 rgba(4,16,31,.6);padding-bottom:1mm}
+'''
+
+DIV_CSS = RING_CSS + '''
 .dv{position:absolute;left:0;right:0;top:0;bottom:0}
 .dv>*{flex-shrink:0}
 .dv .ringseal{left:calc(105mm - 15mm);top:12mm;width:30mm;height:30mm}
@@ -161,13 +164,13 @@ DIV_CSS = '''
 .dv .ringseal span{font-size:31pt}
 .dv .ptx{position:absolute;left:67mm;width:76mm;top:46mm;text-align:center;color:#F6EBC8}
 .dv .pk{font-family:'Heebo',sans-serif;font-weight:800;font-size:8.6pt;letter-spacing:.42em;color:#E4C97F;padding-right:.42em;text-shadow:.2mm .3mm 0 rgba(4,16,31,.6)}
-.dv .pt{font-family:'Suez',serif;font-size:21pt;line-height:1.12;margin-top:2.4mm;color:#F6EBC8;text-shadow:.3mm .45mm 0 rgba(4,16,31,.6)}
-.dv .pt.long{font-size:18pt}
+.dv .pt{font-family:'Suez',serif;font-size:23pt;line-height:1.12;margin-top:2.4mm;color:#F6EBC8;text-shadow:.3mm .45mm 0 rgba(4,16,31,.6)}
+.dv .pt.long{font-size:20pt}
 .dv .ps{font-family:'Frank',serif;font-weight:500;font-size:11pt;margin-top:2.4mm;color:#E4D6A6;text-shadow:.2mm .3mm 0 rgba(4,16,31,.6)}
 .dv .list{position:absolute;left:36mm;right:36mm;top:182mm}
-.dv .list.two{left:27mm;right:27mm;display:grid;grid-template-columns:1fr 1fr;column-gap:9mm;top:175mm}
+.dv .list.two{left:27mm;right:27mm;display:grid;grid-template-columns:1fr 1fr;column-gap:9mm;top:172mm}
 .dv .li{display:flex;align-items:baseline;gap:2mm;font-family:'Frank',serif;font-weight:500;font-size:12pt;line-height:1.35;margin:0 0 3.2mm;color:#16181d;text-align:right}
-.dv .list.two .li{font-size:9.6pt;margin:0 0 1.3mm}
+.dv .list.two .li{font-size:9.6pt;margin:0 0 1mm}
 .dv .li .k{font-family:'Heebo',sans-serif;font-weight:600;font-size:7.8pt;letter-spacing:.06em;color:#8a6420;flex:0 0 auto}
 .dv .list.two .li .k{font-size:6.6pt}
 .dv .li .d{flex:1;border-bottom:.3mm dotted #a8956a;transform:translateY(-1mm);min-width:4mm}
@@ -204,7 +207,7 @@ def back_cover():
 
 # --------------------------------------------------------------------------------------------
 TOC_CSS = '''
-@page { size:210mm 297mm; margin:27mm 26mm 36mm 26mm }
+@page { size:210mm 297mm; margin:34mm 26mm 36mm 26mm }
 html{background:transparent}
 body{margin:0;padding:0;background:transparent;direction:rtl;font-family:'Frank',serif;font-weight:500;color:#16181d}
 .tt{text-align:center;margin:0 0 1mm}

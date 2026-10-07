@@ -8,7 +8,7 @@
 ```
 ./run_all.sh
 ```
-דרישות: python3 (pymupdf, pypdf, pillow, numpy), poppler-utils, node + playwright עם chromium.
+דרישות: python3 (pymupdf, pypdf, pillow, numpy, scipy), poppler-utils, node + playwright עם chromium.
 
 ## מבנה
 | קובץ | תפקיד |
@@ -18,8 +18,9 @@
 | `tools/parse_units.py` | זיהוי שאלות, תשובות, כותרות ושורות כתיבה → `work/units.json` |
 | `design/manual.py` | עמוד אחד (סימן עו) שנבנה ידנית |
 | `design/body.py` | עיצוב הגוף (CSS) |
-| `design/front.py` | שער, שער פנימי, קרדיטים, חלקים, תוכן עניינים, שער אחורי |
+| `design/front.py` | שער, שער פנימי, קרדיטים, חלקים, תוכן עניינים, שער אחורי (כל האותיות טקסט חי מעל הרקע המצויר) |
+| `design/gen_art.py` (+ `art.py`, `gold.py`) | יצירת האמנות: רקע כחול משויש, קלף שיש, פאנל כחול עם שפה מוזהבת, עטורי זהב מובלטים (מהמאסטרים ב-`assets/ornaments`), טבעת החותם, קו מפריד → `build/art` (כמה דקות) |
 | `build.py` | הרכבה: מספור עמודים באותיות, כותרת עליונה, מסגרת, סימניות ב-PDF |
 | `tools/verify.py` | בדיקת נאמנות: כל מילה במקור מופיעה בקובץ החדש ולהפך |
 
-פלטת הצבעים והחותם לקוחים מהלוגו של "ברומו של עולם" (נייבי וזהב). הגופנים הם Frank Ruhl Libre, Suez One, Heebo (רישיון OFL).
+הסגנון: כחול משויש, קלף שיש בהיר ועטורי זהב מובלטים, בהשראת כריכת "קונטרס ברכת יהושע"; הלוגו והצבעים של "ברומו של עולם". הגופנים הם Frank Ruhl Libre, Suez One, Heebo (רישיון OFL).

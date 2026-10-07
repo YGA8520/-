@@ -110,7 +110,7 @@ def main():
     # ---------------- cover, inner title, credits, notes, back cover ----------------
     npages = [notes_page()]
     fr = front.doc([front.cover(), front.inner_title(), front.credits(), front.back_cover()] + npages + [front.frame_page()], 'front',
-                   front.CREDITS_CSS + NOTES_CSS)
+                   front.CREDITS_CSS + front.RING_CSS + NOTES_CSS)
     open(os.path.join(B, 'front.html'), 'w', encoding='utf8').write(fr)
 
     # ---------------- running head + page numbers overlay ----------------
