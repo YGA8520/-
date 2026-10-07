@@ -61,7 +61,7 @@ def running_head(u):
 
 def notes_page():
     lines = ''.join('<i></i>' for _ in range(22))
-    return ('<div class="pg notes"><img class="bg" src="art/toc-frame.jpg"/><div class="nt">הערות</div><div class="nl">' + lines + '</div></div>')
+    return ('<div class="pg notes"><img class="bg" src="art/ref-frame.jpg"/><div class="nt">הערות</div><div class="nl">' + lines + '</div></div>')
 
 
 NOTES_CSS = '''

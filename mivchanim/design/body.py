@@ -152,7 +152,7 @@ def runs_html(runs):
 def seal_svg(text, uid):
     """round seal: the gold ring on a blue disc (art/ring.png) with cream letters"""
     t = text
-    parts = ['<image href="art/ring.png" x="-3.7" y="-3.7" width="107.4" height="107.4"/>']
+    parts = ['<image href="art/ring.png" x="-1.1" y="-1.1" width="102.2" height="102.2"/>']
 
     def tx(x, y, size, s_):
         return (f'<text x="{x + .8}" y="{y + 1.2}" text-anchor="middle" font-family="Suez" font-size="{size}" fill="#04101F" opacity=".55" style="direction:rtl">{s_}</text>'

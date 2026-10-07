@@ -210,7 +210,7 @@ GOLD = [(0, (36, 22, 6)), (.16, (88, 58, 16)), (.34, (156, 114, 38)), (.52, (206
 IVORY = [(0, (60, 44, 20)), (.2, (120, 92, 44)), (.4, (186, 152, 82)), (.6, (222, 196, 130)), (.8, (244, 228, 176)), (1, (255, 250, 232))]
 
 
-def emboss(mask, ppm, height_mm=.9, light=(-.55, -.65, .5), colors=GOLD, shadow=.55, shadow_off=(.5, .7), spec=.55, bevel=1.0):
+def emboss(mask, ppm, height_mm=.9, light=(-.55, -.65, .5), colors=GOLD, shadow=.55, shadow_off=(.5, .7), spec=.55, bevel=1.0, gamma=1.0, edge_dark=.45, sheen=.08, shadow_rgb=(8, 6, 4)):
     """mask float 0..1 (HxW) -> RGBA uint8 with a metallic bevel, sheen and drop shadow"""
     h, w = mask.shape
     s = ppm
@@ -233,11 +233,11 @@ def emboss(mask, ppm, height_mm=.9, light=(-.55, -.65, .5), colors=GOLD, shadow=
     flat = np.clip(.5 + (diff - .62) * 1.55, 0, 1)
     # cavity darkening towards the edges of thin parts
     edge = np.clip(1 - ndi.gaussian_filter(mask, max(.7, s * .22)), 0, 1) * mask
-    v = np.clip(flat + sp * spec - edge * .45, 0, 1)
+    v = np.clip(flat + sp * spec - edge * edge_dark, 0, 1)
     # slow sheen across the piece (brushed metal feel)
     yy, xx = np.mgrid[0:h, 0:w]
-    sheen = .5 + .5 * np.sin((xx * .6 + yy * .35) / (s * 7))
-    v = np.clip(v + (sheen - .5) * .08 * mask, 0, 1)
+    sheen_w = .5 + .5 * np.sin((xx * .6 + yy * .35) / (s * 7))
+    v = np.clip(v + (sheen_w - .5) * sheen * mask, 0, 1) ** gamma
     col = ramp(v, colors)
     a = np.clip(ndi.gaussian_filter(mask, .6) * 1.15, 0, 1)
     a = np.where(mask > .5, np.maximum(a, mask), a)
@@ -248,7 +248,7 @@ def emboss(mask, ppm, height_mm=.9, light=(-.55, -.65, .5), colors=GOLD, shadow=
         sh = ndi.gaussian_filter(mask, s * .5)
         sh = ndi.shift(sh, (shadow_off[1] * s, shadow_off[0] * s), order=1)
         out[..., 3] = sh * 255 * shadow
-        out[..., :3] = (8, 6, 4)
+        out[..., :3] = shadow_rgb
     # composite gold over shadow
     A = rgba[..., 3:] / 255
     out[..., :3] = rgba[..., :3] * A + out[..., :3] * (1 - A)
@@ -260,3 +260,50 @@ def save(arr, name):
     p = os.path.join(CACHE, name)
     Image.fromarray(arr).save(p)
     return p
+
+
+def bevel_relief(mask, ppm, bevel_mm=.5, dome_mm=.9, relief=1.0, light=(-.6, -.7, .38), colors=GOLD, shadow=.55,
+                 shadow_off_mm=(.35, .5), shadow_blur_mm=.35, shadow_rgb=(10, 6, 3), gamma=1.0, spec=.25, ambient=.52, seed=0):
+    """flat-topped cast relief: a narrow bevel round the edge (crisp highlights / shadows), a very gentle dome across wide parts.
+    mask float 0..1 -> RGBA uint8 (colour ramp `colors`, with a soft cast shadow)"""
+    from scipy import ndimage as _ndi
+    m = mask > .5
+    sdf = _ndi.distance_transform_edt(m).astype(np.float32) - _ndi.distance_transform_edt(~m).astype(np.float32)
+    sdf = _ndi.gaussian_filter(sdf, 1.1)                                          # removes the pixel stairs of the distance field
+    dt = np.maximum(sdf, 0) / ppm                                                  # mm from the edge (inside)
+    e1 = np.clip(dt / bevel_mm, 0, 1)
+    e1 = e1 * e1 * (3 - 2 * e1)
+    e2 = np.clip(dt / dome_mm, 0, 1)
+    e2 = np.sin(e2 * np.pi / 2)
+    H = (.78 * e1 + .22 * e2) * m
+    H = _ndi.gaussian_filter(H, max(.6, bevel_mm * ppm * .12))
+    gy, gx = np.gradient(H)
+    k = relief * ppm * bevel_mm * 1.55
+    nx, ny = -gx * k, -gy * k
+    nz = np.ones_like(nx)
+    ln = np.sqrt(nx * nx + ny * ny + nz * nz)
+    nx, ny, nz = nx / ln, ny / ln, nz / ln
+    L = np.array(light, float)
+    L /= np.linalg.norm(L)
+    diff = nx * L[0] + ny * L[1] + nz * L[2]
+    diff0 = L[2]
+    v = ambient + (diff - diff0) * 1.9
+    hv = L + np.array([0, 0, 1.0])
+    hv /= np.linalg.norm(hv)
+    sp = np.clip(nx * hv[0] + ny * hv[1] + nz * hv[2], 0, 1) ** 28
+    v = np.clip(v + sp * spec, 0, 1) ** gamma
+    col = ramp(v, colors)
+    rng = np.random.default_rng(seed)
+    col += (rng.random(v.shape) - .5)[..., None] * 3.2
+    a = np.clip(_ndi.gaussian_filter(mask, .55) * 1.1, 0, 1)
+    a = np.where(m, np.maximum(a, mask), a)
+    out = np.zeros(m.shape + (4,), np.float32)
+    if shadow > 0:
+        sh = _ndi.gaussian_filter(mask.astype(np.float32), shadow_blur_mm * ppm)
+        sh = _ndi.shift(sh, (shadow_off_mm[1] * ppm, shadow_off_mm[0] * ppm), order=1)
+        out[..., 3] = sh * 255 * shadow
+        out[..., :3] = shadow_rgb
+    A = (a * 1.0)[..., None]
+    out[..., :3] = col * A + out[..., :3] * (1 - A)
+    out[..., 3] = np.maximum(a * 255, out[..., 3])
+    return np.clip(out, 0, 255).astype('uint8')
