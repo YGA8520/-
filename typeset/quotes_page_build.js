@@ -45,8 +45,7 @@ body { font-kerning: normal; text-rendering: geometricPrecision; }
 .title { font-family: "${F.display}"; font-size: 22pt; line-height: 1.12; color: ${ink}; text-align: center; }
 .title .tl { display: block; white-space: nowrap; }
 .title .tl span { display: inline-block; }
-.cols { flex: 1 1 0; width: 100%; margin: 3.4mm 0 3.2mm; display: flex; flex-direction: row; gap: ${T.gap}mm; min-height: 0; }
-.foot { margin-top: auto; }
+.cols { flex: 1 1 0; width: 100%; margin: 3.4mm 0 0; display: flex; flex-direction: row; gap: ${T.gap}mm; min-height: 0; }
 .cols .c { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; justify-content: space-between; }
 .sep { flex: none; display: flex; justify-content: center; align-items: center; }
 .sep img { width: ${T.sepW}mm; height: auto; display: block; }
@@ -54,22 +53,17 @@ body { font-kerning: normal; text-rendering: geometricPrecision; }
 .card { font-size: var(--q); }
 .who, .role { text-wrap: balance; }
 .q, .src { text-wrap: pretty; }
-.who { font-family: "${F.toc}"; font-weight: 700; font-size: 0.98em; line-height: 1.2; padding: 0.9mm 1.4mm 0.8mm; color: #3a3d42; background: linear-gradient(to bottom, #ececed, #e0e0e1); border-top: 0.25mm solid ${rule}; border-bottom: 0.25mm solid ${rule}; }
-.role { font-family: "${F.toc}"; font-size: 0.9em; line-height: 1.2; padding: 0.9mm 1.4mm; margin-top: 1mm; color: #f1f1f2; background: linear-gradient(to bottom, #4b4f55, #33363b); }
+.who { font-family: "${F.toc}"; font-weight: 700; font-size: calc(0.98em * var(--k, 1)); line-height: 1.2; padding: 0.9mm 1.4mm 0.8mm; color: #3a3d42; background: linear-gradient(to bottom, #ececed, #e0e0e1); border-top: 0.25mm solid ${rule}; border-bottom: 0.25mm solid ${rule}; }
+.role { font-family: "${F.toc}"; font-size: calc(0.9em * var(--k, 1)); line-height: 1.2; padding: 0.9mm 1.4mm; margin-top: 1mm; color: #f1f1f2; background: linear-gradient(to bottom, #4b4f55, #33363b); }
 .pc { margin-top: 1.9mm; }
 .pc + .pc { margin-top: 1.5mm; }
 .card.cont > .pc:first-child { margin-top: 0; }
 .q { font-family: "${F.body}"; font-size: 1em; line-height: 1.27; margin: 0; }
 .q b { font-weight: 700; }
 .src { font-family: "${F.body}"; font-size: 0.86em; margin: 0; color: ${soft}; line-height: 1.2; margin-top: 0.9mm; }
-.foot { flex: none; width: 100%; padding: 1.7mm 3mm 1.5mm; color: #f1f1f2; background: linear-gradient(to bottom, #4b4f55, #33363b); border-top: 0.3mm solid ${rule}; border-bottom: 0.3mm solid ${rule}; font-family: "${F.toc}"; line-height: 1.35; }
-.foot .l1 { font-size: 9.2pt; }
-.foot .l2 { font-size: 9.6pt; font-weight: 700; }
-.foot .d { display: inline-block; width: 1.3mm; height: 1.3mm; background: #c9cacc; transform: rotate(45deg); margin: 0 2.4mm; vertical-align: 0.4mm; }
 </style></head><body><div class="page" id="pg"><img class="frame" src="assets/haskamot/frame-silver.png">
 <div class="col" id="col"><div class="titlerow"><div class="fl">${sep}</div><div class="band" id="band"><div class="title" id="title">${data.title.map((l) => `<span class="tl"><span>${esc(l)}</span></span>`).join('')}</div></div><div class="fl mir">${sep}</div></div>
-<div class="cols" id="cols"></div>
-<div class="foot"><div class="l1"><i class="d"></i>${rich(data.footer[0])}<i class="d"></i></div><div class="l2">${rich(data.footer[1])}</div></div></div>
+<div class="cols" id="cols"></div></div>
 <div id="pool">${data.cards.map(card).join('')}</div></div></body></html>`;
   fs.writeFileSync(path.join(__dirname, '_quotes.html'), html);
 
@@ -117,19 +111,25 @@ body { font-kerning: normal; text-rendering: geometricPrecision; }
         const cs = [col(0, c1), col(c1, c2), col(c2, N)];
         cs.forEach((c, i) => { c.i = i; });
         const lo = Math.min(...cs.map((c) => c.gap)), hi = Math.max(...cs.map((c) => c.gap));
-        const cost = (hi - lo) + 0.35 * hi;
-        if (lo / MMv >= minGap && (!res || cost < res.cost)) res = { hi, lo, cost, c: [c1, c2], pred: cs.map((c) => +(c.h / MMv).toFixed(1)) };
+        const cost = 3 * (hi - lo) + 0.4 * hi;
+        if (lo / MMv >= minGap && (!res || cost < res.cost)) res = { hi, lo, cost, c: [c1, c2], gaps: cs.map((c) => c.gap / MMv), pred: cs.map((c) => +(c.h / MMv).toFixed(1)) };
       }
       return res;
     };
-    let pick = null;
-    for (let q = 11.5; q >= 6.5; q -= 0.05) {
-      pg.style.setProperty('--q', q + 'pt');
-      const at = measure(), r = search(at);
-      if (r && (!pick || r.cost < pick.cost - 0.15 * MMv)) pick = { q, at, ...r };
+    // the text takes (nearly) the largest size that fits; within 1.6 pt of it, the size at which the gaps between the cards of the three columns are the most alike
+    const tries = [];
+    for (const k of [0.86, 0.9, 0.94, 0.98, 1.02]) {              // the size of the chips relative to the text
+      pg.style.setProperty('--k', k);
+      for (let q = 11.5; q >= 6.5; q -= 0.05) {
+        pg.style.setProperty('--q', q + 'pt');
+        const at = measure(), r = search(at);
+        if (r) tries.push({ q, k, at, ...r });
+      }
     }
+    const top = Math.max(...tries.map((t) => t.q));
+    const pick = tries.length ? tries.filter((t) => t.q >= top - 1.6).reduce((u, t) => (t.cost < u.cost - 0.15 * MMv ? t : u)) : null;
     if (!pick) return { error: 'does not fit' };
-    pg.style.setProperty('--q', pick.q + 'pt');
+    pg.style.setProperty('--q', pick.q + 'pt'); pg.style.setProperty('--k', pick.k);
     const at = pick.at, bounds = [0, ...pick.c, at.length];
     // build the three columns; a quotation that is cut is shown twice, each time clipped to its own lines
     const piece = (s, e) => {
@@ -149,15 +149,15 @@ body { font-kerning: normal; text-rendering: geometricPrecision; }
       });
     };
     const fitInfo = [];
-    for (let c = 0; c < 3; c++) { const col = document.createElement('div'); col.className = 'c'; piece(bounds[c], bounds[c + 1]).forEach((d, i) => { if (i) { const sp = document.createElement('div'); sp.className = 'sep'; sp.innerHTML = sepHTML; col.appendChild(sp); } col.appendChild(d); }); cols.appendChild(col); }
+    for (let c = 0; c < 3; c++) { const col = document.createElement('div'); col.className = 'c'; piece(bounds[c], bounds[c + 1]).forEach((d, i) => { if (i) { const sp = document.createElement('div'); sp.className = 'sep'; sp.innerHTML = sepHTML; sp.firstElementChild.style.width = Math.min(17, Math.max(9, 0.95 * pick.gaps[c] + 2)) + 'mm'; col.appendChild(sp); } col.appendChild(d); }); cols.appendChild(col); }
     pool.remove();
     [...cols.children].forEach((col) => { const k = [...col.children].filter((e) => e.classList.contains('card')), h = k.reduce((u, e) => u + e.getBoundingClientRect().height, 0); fitInfo.push({ blocks: k.length, textMm: +(h / MMv).toFixed(1), gapMm: +(((avail - h) / Math.max(k.length - 1, 1)) / MMv).toFixed(1) }); });
     const split = [...new Set(at.slice(bounds[1] - 1, bounds[1] + 1).concat(at.slice(bounds[2] - 1, bounds[2] + 1)).filter((x) => x.t === 'line').map((x) => x.ci + 1))];
-    return { titlePt: ts, quotePt: +pick.q.toFixed(2), availMm: +(avail / MMv).toFixed(1), columns: fitInfo, cardsCutAcrossColumns: split, predictedTextMm: pick.pred };
+    return { titlePt: ts, quotePt: +pick.q.toFixed(2), chips: pick.k, availMm: +(avail / MMv).toFixed(1), columns: fitInfo, cardsCutAcrossColumns: split, predictedTextMm: pick.pred };
   }, [MM, T.minGap, sep]);
   console.log(JSON.stringify(fit));
   if (fit.error) { await browser.close(); process.exit(1); }
-  const chk = await p.evaluate(() => { const pr = document.getElementById('col').getBoundingClientRect(); let m = 0, r = 0, l = 1e9; document.querySelectorAll('#col *').forEach((e) => { const b = e.getBoundingClientRect(); if (b.width && b.height && e.tagName !== 'IMG') { m = Math.max(m, b.bottom); r = Math.max(r, b.right); l = Math.min(l, b.left); } }); return { bottomOver: +((m - pr.bottom) / (96 / 25.4)).toFixed(2), sideOver: +(Math.max(r - pr.right, pr.left - l) / (96 / 25.4)).toFixed(2) }; });
+  const chk = await p.evaluate(() => { const pr = document.getElementById('col').getBoundingClientRect(); let m = 0, r = 0, l = 1e9; document.querySelectorAll('#col *').forEach((e) => { if (e.closest('.pc[style*="overflow"]') && !e.classList.contains('pc')) return; const b = e.getBoundingClientRect(); if (b.width && b.height && e.tagName !== 'IMG') { m = Math.max(m, b.bottom); r = Math.max(r, b.right); l = Math.min(l, b.left); } }); return { bottomOver: +((m - pr.bottom) / (96 / 25.4)).toFixed(2), sideOver: +(Math.max(r - pr.right, pr.left - l) / (96 / 25.4)).toFixed(2) }; });
   console.log('overflow (mm, <= 0 is fine):', JSON.stringify(chk));
 
   await p.pdf({ path: path.join(outDir, data.id + '.pdf'), width: `${T.w}mm`, height: `${T.h}mm`, printBackground: true, preferCSSPageSize: true });
