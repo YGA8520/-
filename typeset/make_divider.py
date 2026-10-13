@@ -99,7 +99,7 @@ def stretch(arr, w, h):
     return np.asarray(Image.fromarray(arr.astype(np.float32), 'F').resize((w, h), Image.BILINEAR))
 
 
-def orn_piece(a, frame, kind):
+def orn_piece(a, frame, kind, soft=False):
     """a vertical ornament of the cover frame, at twice the size: 'scroll' = the acanthus scroll that hangs from the top-left corner along the rail (without the horizontal
     part of the corner), 'curl' = the curl in the middle of the left rail.  Returns (luminance, alpha); the pieces include the rail they sit on and fade in and out over 24
     units, so that neighbouring pieces overlap without a seam (the ornaments of the cover frame cast their shadow on the rail)."""
@@ -110,6 +110,10 @@ def orn_piece(a, frame, kind):
         m[:50, 146:] = 0                                                   # what belongs to the horizontal part of the corner (leaf and tendril right of the bead)
         m[:72, 196:] = 0
         m[480:, 165:] = 0                                                  # a speck
+        if soft:                                                           # the tendril that hangs from the leaves fades in instead of being cut flat
+            t = np.clip((np.arange(m.shape[0]) - 50) / 70.0, 0, 1)
+            t = (t * t * (3 - 2 * t)).astype(np.float32)
+            m[:, 146:] *= t[:, None]
     n = 2 * 24
     ramp = np.ones(m.shape[0], np.float32)
     ramp[:n] = np.arange(n) / n
@@ -122,7 +126,7 @@ def orn_piece(a, frame, kind):
     return l, m
 
 
-def assemble_metal(a, frame, Wb, Hb, orns=()):
+def assemble_metal(a, frame, Wb, Hb, orns=(), match=False):
     """a frame of any size (Wb x Hb artwork units, at twice the size): the four corner blocks of the cover frame, the rails made of its straight left rail.
     Returns (luminance, alpha)."""
     C, T = CORNER, RAIL_T
@@ -150,12 +154,20 @@ def assemble_metal(a, frame, Wb, Hb, orns=()):
                               ((ox0, 440, ox0 + T, 586), (T, lv + 2 * F, 0, C - F)), ((ox1 - T, 405, ox1, 586), (T, lv + 2 * F, Wb - T, C - F))):
         rl, ra = piece2(a, frame, box)
         over(stretch(rl, 2 * w, 2 * h), stretch(ra, 2 * w, 2 * h), 2 * x, 2 * y)
+    plain = lum.copy() if match else None
     for kind, y, flip in orns:                                                           # ornaments of the cover along both rails: y = top of the piece (frame units)
-        ol, om = orn_piece(a, frame, kind)
+        ol, om = orn_piece(a, frame, kind, soft=match)
         if y < C or y + ol.shape[0] / 2 > Hb - C:                                         # keep clear of the corner blocks (outside the page)
             continue
         if flip:
             ol, om = ol[::-1], om[::-1]
+        if match:                                                                        # the rail of a piece has the glow of its place in the cover: bring it to the tone of the plain rail
+            ref = plain[2 * C + 4, :ol.shape[1]]
+            g = ref[10:80].mean() / np.maximum(ol[:, 10:80].mean(axis=1), 1e-3)
+            g = np.clip(ndimage.gaussian_filter1d(g, 10), 0.55, 1.7).astype(np.float32)
+            xs = np.arange(ol.shape[1], dtype=np.float32)
+            w = np.clip(1 - (xs - 110) / 40.0, 0, 1)
+            ol = np.clip(ol * (1 + (g[:, None] - 1) * w[None, :]), 0, 1)
         over(ol, om, 0, int(round(2 * y)))                                               # left rail
         over(ol[:, ::-1], om[:, ::-1], 2 * Wb - ol.shape[1], int(round(2 * y)))            # right rail (mirrored)
     ramp = np.clip((np.arange(2 * C) - 2 * (C - F)) / (2 * F), 0, 1)                    # 0 .. 1 over the last F units towards the inside of a corner block
