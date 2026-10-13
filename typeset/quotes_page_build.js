@@ -9,7 +9,7 @@ let chromium;
 try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = require('/opt/node22/lib/node_modules/playwright')); }
 
 const MM = 96 / 25.4;
-const T = { w: 176, h: 250, x0: 17, x1: 159, top: 5.5, bottom: 241, gap: 3.4, minGap: 5.7, sepW: 12 };       // page, the free area between the rails, gap between the columns, least distance between two cards, the small ornament between them included (mm)
+const T = { w: 176, h: 250, x0: 17, x1: 159, top: 5.5, bottom: 244.5, gap: 3.4, minGap: 5.7, sepW: 12 };       // page, the free area between the rails, gap between the columns, least distance between two cards, the small ornament between them included (mm)
 
 (async () => {
   const src = process.argv[2] || path.join(__dirname, 'pages', 'chiuv-tefila.json');
