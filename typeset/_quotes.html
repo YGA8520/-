@@ -1,0 +1,58 @@
+<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><style>
+@page { size: 176mm 250mm; margin: 0; }
+@font-face{font-family:"FrankRuehl DP";font-weight:400;unicode-range:U+0000-00D6,U+00D8-05F2,U+05F5-2219,U+221B-10FFFF;src:url("assets/fonts/FrankRuehlDP-Regular.otf");}
+@font-face{font-family:"FrankRuehl DP";font-weight:400;unicode-range:U+05F3-05F4;src:url("assets/fonts/FrankRuehlDP-Q-Regular.otf");}
+@font-face{font-family:"FrankRuehl DP";font-weight:700;unicode-range:U+0000-00D6,U+00D8-05F2,U+05F5-2219,U+221B-10FFFF;src:url("assets/fonts/FrankRuehlDP-Bold.otf");}
+@font-face{font-family:"FrankRuehl DP";font-weight:700;unicode-range:U+05F3-05F4;src:url("assets/fonts/FrankRuehlDP-Q-Bold.otf");}
+@font-face{font-family:"Livorna";font-weight:400;src:url("assets/fonts/Livorna-Regular.ttf");}
+@font-face{font-family:"Shofar";font-weight:400;src:url("assets/fonts/ShofarRegular.ttf");}
+@font-face{font-family:"Shofar";font-weight:700;src:url("assets/fonts/ShofarDemi-Bold.ttf");}
+@font-face{font-family:"Asher";font-weight:400;src:url("assets/fonts/Asher-Regular.ttf");}
+@font-face{font-family:"Asher";font-weight:700;src:url("assets/fonts/Asher-Bold.ttf");}
+@font-face{font-family:"HadasaNew";font-weight:400;src:url("assets/fonts/HadasaNew-Regular.ttf");}
+@font-face{font-family:"HadasaNew";font-weight:700;src:url("assets/fonts/HadasaNew-Bold.ttf");}
+@font-face{font-family:"Ashkenazy";font-weight:400;src:url("assets/fonts/Ashkenazy-Regular.ttf");}
+@font-face{font-family:"EFT Algebra";font-weight:400;src:url("assets/fonts/EFT_Algebra-Regular.ttf");}
+@font-face{font-family:"Keren";font-weight:400;src:url("assets/fonts/KerenU-Regular.ttf");}
+@font-face{font-family:"Keren";font-weight:700;src:url("assets/fonts/KerenU-Bold.ttf");}
+@font-face{font-family:"Lulav CLM";font-weight:700;src:url("assets/fonts/LulavCLM-Bold.otf");}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: #fff; -webkit-print-color-adjust: exact; }
+body { font-kerning: normal; text-rendering: geometricPrecision; }
+.page { position: relative; width: 176mm; height: 250mm; overflow: hidden; direction: rtl; color: #1c1c1c; background: #fff; --q: 9pt; }
+.frame { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+.col { position: absolute; left: 17mm; width: 142mm; top: 5.5mm; height: 235.5mm; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.titlerow { display: flex; align-items: center; justify-content: center; width: 100%; flex: none; }
+.titlerow .fl { width: 5.4mm; height: 21mm; position: relative; flex: none; }
+.titlerow .fl img { position: absolute; left: 50%; top: 50%; width: 21mm; height: auto; transform: translate(-50%, -50%) rotate(90deg); }
+.titlerow .mir { transform: scaleX(-1); }
+.band { flex: 1 1 auto; background: linear-gradient(to bottom, #ececed, #e2e2e3); border-top: 0.3mm solid #8f9296; border-bottom: 0.3mm solid #8f9296; padding: 1.8mm 5mm 1.6mm; margin: 0 0.6mm; }
+.title { font-family: "Ashkenazy"; font-size: 22pt; line-height: 1.12; color: #1c1c1c; text-align: center; }
+.title .tl { display: block; white-space: nowrap; }
+.title .tl span { display: inline-block; }
+.cols { flex: 1 1 0; width: 100%; margin: 3.4mm 0 3.2mm; display: flex; flex-direction: row; gap: 3.4mm; min-height: 0; }
+.foot { margin-top: auto; }
+.cols .c { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; justify-content: space-between; }
+.sep { flex: none; display: flex; justify-content: center; align-items: center; }
+.sep img { width: 12mm; height: auto; display: block; }
+#pool { position: absolute; left: 0; top: 0; width: 45.06666666666666mm; visibility: hidden; }
+.card { font-size: var(--q); }
+.who, .role { text-wrap: balance; }
+.q, .src { text-wrap: pretty; }
+.who { font-family: "HadasaNew"; font-weight: 700; font-size: 0.98em; line-height: 1.2; padding: 0.9mm 1.4mm 0.8mm; color: #3a3d42; background: linear-gradient(to bottom, #ececed, #e0e0e1); border-top: 0.25mm solid #8f9296; border-bottom: 0.25mm solid #8f9296; }
+.role { font-family: "HadasaNew"; font-size: 0.9em; line-height: 1.2; padding: 0.9mm 1.4mm; margin-top: 1mm; color: #f1f1f2; background: linear-gradient(to bottom, #4b4f55, #33363b); }
+.pc { margin-top: 1.9mm; }
+.pc + .pc { margin-top: 1.5mm; }
+.card.cont > .pc:first-child { margin-top: 0; }
+.q { font-family: "FrankRuehl DP"; font-size: 1em; line-height: 1.27; margin: 0; }
+.q b { font-weight: 700; }
+.src { font-family: "FrankRuehl DP"; font-size: 0.86em; margin: 0; color: #4a4a4a; line-height: 1.2; margin-top: 0.9mm; }
+.foot { flex: none; width: 100%; padding: 1.7mm 3mm 1.5mm; color: #f1f1f2; background: linear-gradient(to bottom, #4b4f55, #33363b); border-top: 0.3mm solid #8f9296; border-bottom: 0.3mm solid #8f9296; font-family: "HadasaNew"; line-height: 1.35; }
+.foot .l1 { font-size: 9.2pt; }
+.foot .l2 { font-size: 9.6pt; font-weight: 700; }
+.foot .d { display: inline-block; width: 1.3mm; height: 1.3mm; background: #c9cacc; transform: rotate(45deg); margin: 0 2.4mm; vertical-align: 0.4mm; }
+</style></head><body><div class="page" id="pg"><img class="frame" src="assets/haskamot/frame-silver.png">
+<div class="col" id="col"><div class="titlerow"><div class="fl"><img src="assets/cover/fleuron-sep.png"></div><div class="band" id="band"><div class="title" id="title"><span class="tl"><span>גודל החיוב ללימוד הלכות תפילה</span></span><span class="tl"><span>מפי מרנן גדולי הדור וראשי הישיבות</span></span></div></div><div class="fl mir"><img src="assets/cover/fleuron-sep.png"></div></div>
+<div class="cols" id="cols"></div>
+<div class="foot"><div class="l1"><i class="d"></i>נערך ע״י ארגון ״ברומו של עולם״ לחיזוק ורוממות התפילה<i class="d"></i></div><div class="l2">להצטרפות ולפתיחת סניפים <bdi dir="ltr">052-7616296</bdi></div></div></div>
+<div id="pool"><div class="card"><div class="hd"><div class="who">מרן החזו״א זצוק״ל</div><div class="role">ביקש מרבי יעקב אדלשטיין זצוק״ל</div></div><div class="pc"><p class="q">שימסור בשמו לבני ישיבת פוניבז׳</p></div><div class="pc"><p class="q">״שהקב״ה עשה חוזה, שהתורה והתפילה קשורים זה בזה, ואי אפשר בשום פנים ואופן, להיות תלמיד חכם אמיתי בלי להשקיע בתפילה״</p></div></div><div class="card"><div class="hd"><div class="who">אורחות יושר ממרן רבינו שר התורה</div><div class="role">רבי חיים קניבסקי זצ״ל</div></div><div class="pc"><p class="q">״ואין ספק שלימוד הלכות תפילה חיובן קודם לכל הלימודים כי הם נוהגין ג״פ בכל יום״.</p></div><p class="src">(אורחות יושר – ערך התפילה)</p></div><div class="card"><div class="hd"><div class="who">דברי מרן ראש הישיבה</div><div class="role">הגרי״ג אדלשטיין זצוקללה״ה</div></div><div class="pc"><p class="q">״... לפעמים ילד אין לו טעם בתפילה... ולא קיבל חינוך כראוי על תפילה, צריכים ללמוד איתם הלכות תפילה, ולהסביר להם מה זה תפילה, ומהי הקדושה שיש בתפילה, שיבינו את הרווח בזה...״</p></div><p class="src">(מתוך דברי רבינו בערך חינוך תפילה)</p></div><div class="card"><div class="hd"><div class="who">מרן גאון ישראל</div><div class="role">רבי דב לנדו שליט״א</div></div><div class="pc"><p class="q">״יש ללמוד הלכות הנוגעים למעשה בתפילה, ולהקפיד לקיימם דבר יום ביומו״</p></div></div><div class="card"><div class="hd"><div class="who">המשגיח מרן הגאון הצדיק</div><div class="role">רבי דן סגל שליט״א</div></div><div class="pc"><p class="q">״בוודאי לימוד הלכות תפילה חשוב ביותר, אם היו יודעים את מעלת התפילה וגדלותה היו רודפים אחריה לקיימה כראוי וכיאות בכל הכח״</p></div></div><div class="card"><div class="hd"><div class="who">הגאון רבי משה שלזינגר שליט״א</div><div class="role">ר״י ״קול תורה״</div></div><div class="pc"><p class="q">״הנה התפילה צריכה חיזוק תמיד וודאי שהעוסק בהלכות תפילה ושערי הלכה ועבודה בספרי היראה, מביאה להתעוררות בתפילה ולעבודת התפילה מתוך קרבת השי״ת וכמו שבישיבתנו הקדושה.״</p></div></div><div class="card"><div class="hd"><div class="who">מרן הגאון הגדול רבי דוד כהן שליט״א</div><div class="role">ר״י ״חברון״</div></div><div class="pc"><p class="q">״ראוי מאד לחזק המפעל הגדול הזה של ארגון ״ברומו של עולם״ ולסייע בידם בכל האפשר, וגם לסייע לצרף עוד בתי מדרשות של קהילות בני התורה למפעל זה, למען העמיד עמוד העבודה ברוממות הנפש, דבר חשוב וגדול ונחוץ מאד להעמיד את יסוד העבודה אצל בני התורה, שעמוד העבודה בדורנו הוא התפילה״</p></div></div><div class="card"><div class="hd"><div class="who">מרן הגאון הגדול רבי שלמה ידידיה זעפרני שליט״א</div><div class="role">גאב״ד ״כתר תורה״ ורב קהילות בני התורה</div></div><div class="pc"><p class="q">״וכמו שכל אחד מבין שהסנדלר אינו יכול לעשות עבודתו בלי פטיש ומסמר, ונגר אינו יכול לעשות עבודת הנגרות בלי מסור, כך תפילת האדם כלי עבודתו הינו כוונת הלב ואם אינה בכל לבו אינה תפילה״</p></div></div><div class="card"><div class="hd"><div class="who">הגר״י תופיק אביעזרי שליט״א</div><div class="role">רב העיר ביתר עילית</div></div><div class="pc"><p class="q">״<b>התועלת שאדם מקבל מהקשר עם בורא עולם אין תחליף לזה,</b> ואין תחליף לביטחון שאדם מרגיש בזכות זה״</p></div><div class="pc"><p class="q">״מי שמתקשר עם בורא עולם יש לו חיים אחרים לגמרי״</p></div></div><div class="card"><div class="hd"><div class="who">הגאון רבי זאב כ״ץ שליט״א</div><div class="role">ראש הישיבה ״תורת רפאל״ ביתר</div></div><div class="pc"><p class="q">״והתוצאות של לימוד הלכות ופירוש התפילה עצומות ונפלאות והדברים חודרים ללב, ומחנכים ונותנים טעם אמיתי לעבודת הלב – לתפילה, ובלי ספק שלמתחנכים כך בנערותם הדברים ישפיעו בס״ד בהמשך הדרך בישיבה גדולה ובהמשך החיים״</p></div></div><div class="card"><div class="hd"><div class="who">הגאון רבי עזרא עדס שליט״א</div><div class="role">ראש הישיבה ״קול יעקב״ ביתר</div></div><div class="pc"><p class="q">״לחזק ולרומם את נושא התפילה – זה פרויקט ענק, אני לא חושב שיש שמחה להקב״ה כהשמחה ששמח בפרויקט הזה״</p></div></div><div class="card"><div class="hd"><div class="who">הרה״ג ר׳ שמעון אורצל שליט״א</div><div class="role">ראש ישיבת ״השמונאים״ ור״מ בישיבת ״קול תורה״</div></div><div class="pc"><p class="q">״ב״ה זכיתי לראות מהנסיון שאין ספק שהעוסקים בהלכות תפילה הרי הם מתעלים בעבודת התפילה, ואינה דומה תפילתם אחר שעסקו בהלכותיה לקודם לזה. מלבד אשר יודעים את ההלכה לנהוג כדת כראוי וכנכון.״</p></div></div></div></div></body></html>
