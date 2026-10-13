@@ -8,7 +8,7 @@ let chromium;
 try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = require('/opt/node22/lib/node_modules/playwright')); }
 
 const MM = 96 / 25.4;
-const T = { w: 176, h: 250, x0: 17, x1: 159, top: 11, bottom: 240 };       // page and the free area between the rails (mm); the axis is the middle of the page
+const T = { w: 176, h: 250, x0: 17, x1: 159, top: 5.5, bottom: 241 };       // page and the free area between the rails (mm); the axis is the middle of the page
 
 (async () => {
   const outDir = process.argv[2] || path.join(__dirname, 'out', 'haskamot');
@@ -32,10 +32,10 @@ const T = { w: 176, h: 250, x0: 17, x1: 159, top: 11, bottom: 240 };       // pa
         (h.date_right ? `<div class="dateline">${esc(h.date_right)}</div>` : '') +
         `<div class="txt" id="txt">${h.paras.map((p) => `<p>${rich(p)}</p>`).join('')}</div>` +
         (h.closing ? `<div class="closing">${esc(h.closing)}</div>` : '') +
-        `<div class="sigs">${h.signatures.map((s) => `<span class="${/מצטרף/.test(s) ? 'join' : 'sig'}">${esc(s)}</span>`).join('')}</div>`;
+        `<div class="sigs">${h.signature_rows.map((r) => `<div class="sigrow">${r.map((s) => `<span class="${/מצטרף/.test(s) ? 'join' : 'sig'}">${esc(s)}</span>`).join('')}</div>`).join('')}</div>`;
     }
     return `<div class="page" data-id="${h.id}"><img class="frame" src="assets/haskamot/frame-silver.png">` +
-      `<div class="col" id="col"><div class="titlerow"><div class="fl mir">${sep}</div><div class="title">${esc(data.title)}</div><div class="fl">${sep}</div></div>` +
+      `<div class="col" id="col"><div class="titlerow"><div class="fl">${sep}</div><div class="band"><div class="title">${esc(data.title)}</div></div><div class="fl mir">${sep}</div></div>` +
       `<div class="head">${esc(h.head)}</div>${h.sub ? `<div class="sub">${esc(h.sub)}</div>` : ''}<div class="rule"></div>${body}</div></div>`;
   };
 
@@ -49,14 +49,13 @@ body { font-kerning: normal; text-rendering: geometricPrecision; }
 .page:last-child { page-break-after: auto; break-after: auto; }
 .frame { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
 .col { position: absolute; left: ${T.x0}mm; width: ${T.x1 - T.x0}mm; top: ${T.top}mm; height: ${T.bottom - T.top}mm; display: flex; flex-direction: column; align-items: center; text-align: center; }
-.titlerow { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; width: 100%; column-gap: 5mm; margin-top: 1mm; }
-.titlerow .fl { display: flex; }
-.titlerow .fl:first-child { justify-content: flex-start; }
-.titlerow .fl:last-child { justify-content: flex-end; }
-.titlerow .fl img { width: 17mm; display: block; }
-.titlerow .mir img { transform: scaleX(-1); }
+.titlerow { display: flex; align-items: center; justify-content: center; width: 100%; margin-top: 0; }
+.titlerow .fl { width: 5.4mm; height: 21mm; position: relative; flex: none; }
+.titlerow .fl img { position: absolute; left: 50%; top: 50%; width: 21mm; height: auto; transform: translate(-50%, -50%) rotate(90deg); }
+.titlerow .mir { transform: scaleX(-1); }
+.band { background: linear-gradient(to bottom, #ececed, #e2e2e3); border-top: 0.3mm solid ${rule}; border-bottom: 0.3mm solid ${rule}; padding: 1.7mm 12mm 1.5mm; margin: 0 0.6mm; }
 .title { font-family: "${F.display}"; font-size: 26pt; line-height: 1.05; margin: 0; color: ${ink}; text-align: center; }
-.head { font-family: "${F.toc}"; font-weight: 700; font-size: 12.5pt; margin-top: 2.2mm; line-height: 1.25; }
+.head { font-family: "${F.toc}"; font-weight: 700; font-size: 12.5pt; margin-top: 2.6mm; line-height: 1.25; }
 .sub { font-family: "${F.toc}"; font-size: 9.5pt; margin-top: 0.8mm; color: ${soft}; line-height: 1.3; }
 .rule { width: 64mm; height: 0.25mm; background: ${rule}; margin: 2.2mm 0 2.6mm; opacity: .85; flex: none; }
 .fac { margin: 0 auto 3mm; padding: 1.6mm; background: #fffefb; border: 0.25mm solid ${soft}; box-shadow: 0.9mm 1.1mm 2.4mm rgba(40,40,40,.26), inset 0 0 0 0.9mm #fffefb, inset 0 0 0 1.15mm ${rule}; flex: none; position: relative; }
@@ -68,7 +67,8 @@ body { font-kerning: normal; text-rendering: geometricPrecision; }
 .txt p { margin: 0 0 1.6mm; }
 .txt b { font-weight: 700; }
 .closing { font-family: "${F.body}"; margin-top: 1mm; flex: none; }
-.sigs { display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline; column-gap: 6mm; row-gap: 0.8mm; margin-top: 2mm; flex: none; }
+.sigs { display: flex; flex-direction: column; align-items: center; row-gap: 0.6mm; margin-top: 2mm; flex: none; }
+.sigrow { display: flex; justify-content: center; align-items: baseline; column-gap: 9mm; }
 .sig { font-family: "${F.author}"; font-weight: 700; font-size: 12pt; }
 .join { font-family: "${F.body}"; font-size: 10pt; color: ${soft}; }
 </style></head><body><div id="pages">${data.pages.map(pageHTML).join('')}</div></body></html>`;
@@ -102,7 +102,7 @@ body { font-kerning: normal; text-rendering: geometricPrecision; }
       res.push({ id: pg.dataset.id, size: chosen, facW: +wmm.toFixed(1), facH: +hmm.toFixed(1), used: +(used() / MMv).toFixed(1), avail: bottom - top });
     });
     return res;
-  }, [MM, T.bottom, T.top, 84, T.x1 - T.x0]);
+  }, [MM, T.bottom, T.top, 96, T.x1 - T.x0]);
   console.log(JSON.stringify(fit));
   const over = await p.evaluate((b) => [...document.querySelectorAll('.page')].map((pg) => { const col = pg.querySelector('#col'); let m = 0; col.querySelectorAll('*').forEach((e) => { m = Math.max(m, e.getBoundingClientRect().bottom - pg.getBoundingClientRect().top); }); return { id: pg.dataset.id, bottomMm: +(m / (96 / 25.4)).toFixed(1), limit: b }; }), T.bottom);
   console.log(JSON.stringify(over));
