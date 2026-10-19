@@ -13,7 +13,7 @@ as "הזכרת השם" in the full booklet). No dividers, no table of contents.
 What is done to the pages (the PDF comes out of Chromium; the fonts of the title and the header are Type 3 fonts that carry the whole alphabet, so new
 text is set with the same glyphs at the advances of the font - nothing is substituted):
   * order (48 pages): 1 colour cover, 2 credits page (instead of the empty page), 3 grey inner title page, 4 empty, 5-7 the first article, 8 empty,
-    9-45 the second one, 46-47 empty, 48 back cover. Every article begins on an odd page and the back cover is an even page, so empty pages fill the
+    9-45 the second one, 46-47 empty, 48 back cover (with --algebra page 4 carries the memorial text instead of staying empty). Every article begins on an odd page and the back cover is an even page, so empty pages fill the
     gaps. The running head is mirrored (number at the outer edge, the group "name of the booklet + title / author" at the other side), the page
     body is symmetric (equal margins), so the pages of both articles, which moved from even to odd and back, only get their head mirrored: the
     number, the booklet name and the bullet change sides and the author / the title change places
@@ -202,21 +202,36 @@ LULAV = os.path.join(HERE, 'assets', 'fonts', 'LulavCLM-Bold.otf')
 COVER_SUB = ('בעניין הכוונה בהזכרת שם השם', 'ושמות שאינם נמחקים')
 # the dedication of the grey inner title page, all in Lulav: (text, size, step from the previous line, extra weight) - the grid of the cover is 1408 x 2000
 DEDICATION = [
-    ('יו״ל במלאות שבעה לעלותו לשמי רום בחטף', 36, 0, 0),
-    ('של ינוקא דבי רב עלם חמודות', 36, 48, 0),
-    ('הילד אליהו בן הדסה חיה עזריאל ז״ל', 70, 104, 1.6),
-    ('רוכב בערבות שש ושמח בבא אליו נפש נקי וצדיק', 36, 74, 0),
-    ('בן יבלחט״א ידידינו העומד לימינינו', 36, 66, 0),
-    ('הרה״ג ר׳ חיים מאיר שליט״א', 56, 78, 1.4),
-    ('זכות התורה תעמוד לו ולעילוי נשמתו ובעדן תהיה מנוחתו', 33, 84, 0),
-    ('עד יקוצו וירננו שוכני עפר בב״א', 33, 44, 0),
+    ('יו״ל במלאות שבעה לעלותו לשמי רום בחטף', 29, 0, 0),
+    ('של ינוקא דבי רב עלם חמודות', 29, 40, 0),
+    ('הילד אליהו בן הדסה חיה עזריאל ז״ל', 54, 82, 1.3),
+    ('רוכב בערבות שש ושמח בבא אליו נפש נקי וצדיק', 29, 60, 0),
+    ('בן יבלחט״א ידידינו העומד לימינינו', 29, 54, 0),
+    ('הרה״ג ר׳ חיים מאיר שליט״א', 44, 64, 1.2),
+    ('זכות התורה תעמוד לו ולעילוי נשמתו ובעדן תהיה מנוחתו', 26, 68, 0),
+    ('עד יקוצו וירננו שוכני עפר בב״א', 26, 36, 0),
 ]
-DEDICATION_MAXW = 940.0                            # widest line (a line is shrunk to fit)
+# the page of the memorial text (the empty page 4 behind the grey inner title page): title, name, a verse, two paragraphs, the abbreviation
+MEMORIAL_FONT = os.path.join(HERE, 'assets', 'fonts', 'FrankRuhlLibre.ttf')            # variable font, weight axis
+MEMORIAL_TITLE, MEMORIAL_NAME = 'לעילוי נשמת', 'הילד אליהו ז״ל'
+MEMORIAL_VERSE, MEMORIAL_CITE = 'ה׳ נתן וה׳ לקח, יהי שם ה׳ מבורך', 'איוב א, כא'
+MEMORIAL_PARAS = [
+    'קונטרס זה נערך ונלקט לעילוי נשמתו הטהורה של הילד הרך אליהו ז״ל, שנקטף בעודו בראשית חייו ועלתה נשמתו לשמי מרום. '
+    'יהי רצון שכל דבר תורה הנלמד בו, וכל ברכה ותפילה שתיאמר מתוך כוונה, יעלו לזכותו ויהיו לו לעילוי נשמה.',
+    'תהא נשמתו צרורה בצרור החיים, ו״בלע המות לנצח ומחה ה׳ אלקים דמעה מעל כל פנים״ (ישעיה כה, ח). '
+    'המקום ינחם את הוריו ואת כל בני משפחתו בתוך שאר אבלי ציון וירושלים, ולא ידעו עוד צער.',
+]
+MEMORIAL_END = 'תנצב״ה'
+MEMORIAL_W, MEMORIAL_SIZE, MEMORIAL_LEAD = 800.0, 36.0, 60.0                           # text column (grid units), size, line step
+DEDICATION_MAXW = 720.0                            # widest line (a line is shrunk to fit)
 DEDICATION_BAND = (850.0, 1790.0)                  # the block is centred vertically between the circle (after it moved up) and the inner edge of the frame
 GRID_CX = 705.5                                    # the middle of the page in the grid of the cover (the page is 2078.125 units wide, cm 1.47636, offset -2.49)
 MEDALLION_UP = 150.0                               # the circle of the inner title page moves up by this much (grid units)
 CREDIT_LABEL, CREDIT_PHONE = 'עימוד ועיצוב: י. א. - ', '0534185035'
 CREDIT_SHIFT, CREDIT_GAP, CREDIT_BOX = 24.0, 40.0, dict(padx=11.0, up=19.0, down=11.0, r=7.0, inset=2.6)   # css px
+
+
+MIRROR = {'(': ')', ')': '(', '[': ']', ']': '['}
 
 
 class PdfPen(BasePen):
@@ -247,7 +262,7 @@ class Outline:
     def __init__(self, *paths):
         self.faces = []
         for p in paths:
-            f = TTFont(p)
+            f = p if isinstance(p, TTFont) else TTFont(p)
             self.faces.append((f, f.getBestCmap(), f.getGlyphSet(), f['head'].unitsPerEm))
 
     def _face(self, ch):
@@ -264,7 +279,7 @@ class Outline:
         (an outline of that width, in the units of the page, in the stroke colour that is in force)"""
         out = []
         for c in reversed(text):
-            f, g, gs, upem = self._face(c)
+            f, g, gs, upem = self._face(MIRROR.get(c, c))             # brackets are mirrored in a right-to-left run
             sc = size / upem
             pen = PdfPen(gs)
             gs[g].draw(pen)
@@ -344,6 +359,64 @@ def move_medallion(pdf, page):
         m = [float(v) for v in pat.Matrix]
         m[5] += MEDALLION_UP * 0.35432571                           # the page is 708.96 pt = 2000 grid units high
         pat.Matrix = pikepdf.Array([Decimal(f'{v:.8f}') for v in m])
+
+
+def wrap(text, outline, size, width):
+    """greedy line breaking; a last line of one word takes the word before it down"""
+    words, lines, cur = text.split(), [], []
+    for w in words:
+        if cur and outline.width(' '.join(cur + [w]), size) > width:
+            lines.append(cur)
+            cur = []
+        cur.append(w)
+    lines.append(cur)
+    if len(lines) > 1 and len(lines[-1]) == 1 and len(lines[-2]) > 2:
+        lines[-1].insert(0, lines[-2].pop())
+    return [' '.join(l) for l in lines]
+
+
+def memorial_page(pdf, fleuron, algebra, like):
+    """the page of the memorial text; fleuron = the small flourish of the credits page (an image), like = a page whose size it takes"""
+    from fontTools.varLib import instancer
+    def frank(w):
+        f = TTFont(MEMORIAL_FONT)
+        instancer.instantiateVariableFont(f, {'wght': w}, inplace=True)
+        return Outline(f)
+    body, strong, lulav, disp = frank(470), frank(600), Outline(LULAV, algebra), Outline(algebra)
+    cx, items, y = GRID_CX, [], 0.0                                 # items: (outline, text, size, y, weight); y is relative, shifted at the end
+    def put(o, text, size, step, weight=0.0):
+        nonlocal y
+        y += step
+        items.append((o, text, size, y, weight))
+    put(disp, MEMORIAL_TITLE, 92, 0)
+    put(lulav, MEMORIAL_NAME, 58, 104, 1.3)
+    put(strong, MEMORIAL_VERSE, 40, 150)
+    put(body, MEMORIAL_CITE, 25, 46)
+    y += 10
+    for para in MEMORIAL_PARAS:
+        lines = wrap(para, body, MEMORIAL_SIZE, MEMORIAL_W)
+        for i, line in enumerate(lines):
+            put(body, line, MEMORIAL_SIZE, MEMORIAL_LEAD if i else MEMORIAL_LEAD + 30)
+    put(disp, MEMORIAL_END, 60, 110)
+    flo_w, flo_h = 430.0, 430.0 * 168 / 648                       # the flourish: size on the page
+    gap = 120.0
+    height = items[-1][3] - items[0][3] + 2 * (flo_h + gap)
+    top = 1000.0 - height / 2 + flo_h + gap - items[0][3]           # the block is centred vertically (baseline of the title = top + items[0][3])
+    ops = [CSI([], Operator('q')), CSI([Decimal('0.35432571'), 0, 0, Decimal('-0.35432571'), 0, Decimal('708.96')], Operator('cm')),
+           CSI([Decimal('0.1098')], Operator('g')), CSI([Decimal('0.1098')], Operator('G'))]
+    for o, text, size, yy, weight in items:
+        size = min(size, size * 900.0 / o.width(text, size))
+        ops += o.ops(text, size, cx - o.width(text, size) / 2, top + yy, weight)
+    y_first, y_last = top + items[0][3] - 92 - gap, top + items[-1][3] + gap * 0.55
+    for yy, flip in ((y_first - flo_h, False), (y_last + flo_h, True)):
+        ops += [CSI([], Operator('q')), CSI([Decimal(f'{flo_w:.2f}'), 0, 0, Decimal(f'{-flo_h if not flip else flo_h:.2f}'), Decimal(f'{cx - flo_w / 2:.2f}'),
+                                              Decimal(f'{yy + flo_h if not flip else yy - flo_h:.2f}')], Operator('cm')),
+                CSI([Name('/X34')], Operator('Do')), CSI([], Operator('Q'))]
+    ops.append(CSI([], Operator('Q')))
+    page = pikepdf.Page(pdf.make_indirect(pikepdf.Dictionary(
+        Type=Name.Page, MediaBox=like.MediaBox, Resources=pikepdf.Dictionary(XObject=pikepdf.Dictionary({'/X34': fleuron})),
+        Contents=pdf.make_stream(pikepdf.unparse_content_stream(ops)))))
+    return page
 
 
 def glyph_codes(font):
@@ -426,10 +499,15 @@ def build(src, out, title='beinyan', name=BOOKLET_NAME, algebra=None):
         plan.append((kind, n))
     while (len(plan) + 1) % 4:
         plan.append(('blank', None))
+    if algebra:
+        plan[plan.index(('blank', None))] = ('memorial', None)       # the empty page behind the inner title page carries the memorial text
     plan.append(('keep', BACK))
     assert len(plan) % 4 == 0 and all(len(plan[:i]) % 2 == 0 for i, (k, n) in enumerate(plan) if n in (ART1[0], ART2[0])), 'parity'
     pages, blank_src = [], P[FRONT[1] - 1]
     for new_no, (kind, n) in enumerate(plan, 1):
+        if kind == 'memorial':
+            pages.append(memorial_page(pdf, P[3].Resources.XObject['/X34'], algebra, blank_src))
+            continue
         if kind == 'blank':
             pages.append(pikepdf.Page(pdf.make_indirect(pikepdf.Dictionary(
                 Type=Name.Page, MediaBox=blank_src.MediaBox, Resources=pikepdf.Dictionary(), Contents=pdf.make_stream(b'')))))
