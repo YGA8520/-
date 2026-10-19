@@ -17,3 +17,7 @@ typeset/assets/cover/cover-bg.jpg
 typeset/chk/
 typeset/assets/cover/divider-bg.jpg
 typeset/_haskamot.html
+
+# font-library: generated outputs (the zip and the specimen images are rebuilt on demand)
+font-library/dist/
+font-library/specimens/

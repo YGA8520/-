@@ -1,0 +1,4 @@
+{
+  "_help": "Optional. One entry per family, keyed by the family name exactly as build_catalog.py prints it. Keys: category, use, avoid. Keys starting with _ are ignored.",
+  "_example": {"category": "serif / Hebrew book face", "use": "body text of printed booklets, long reading", "avoid": "small sizes on screen"}
+}
