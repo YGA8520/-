@@ -4,7 +4,7 @@
 usage: python extract_booklet.py booklet.pdf out.pdf
 
 Used for the memorial booklet: the cover pages (cover, inner title page, credits, back cover) + the two articles of R. Moshe Zada (the opening
-"החובה להתאמץ בדור אחרון" and the one that stands as "הזכרת השם" in the full booklet, here retitled "בעניין כוונת השם" without the line "קונטרס").
+"החובה להתאמץ בדור אחרון" and the one that stands as "הזכרת השם" in the full booklet, here retitled "בעניין הזכרת השם" without the line "קונטרס").
 No dividers, no table of contents.
 
 What is done to the pages (the PDF comes out of Chromium; the fonts of the title and the header are Type 3 fonts that carry the whole alphabet, so new
@@ -12,7 +12,7 @@ text is set with the same glyphs at the advances of the font - nothing is substi
   * parity: the pages keep their physical parity (a mirrored running head: number at the outer edge), so an article that began on an even page
     still begins on an even page; white pages are inserted where a divider / the table of contents used to be
   * page numbers: printed number = physical page - 4 (alef = physical page 5, as in the full booklet), re-set on every article page
-  * running head of the odd pages of the second article: "הזכרת השם" -> "בעניין כוונת השם" (the group is right-aligned, so the new title grows to the left)
+  * running head of the odd pages of the second article: "הזכרת השם" -> "בעניין הזכרת השם" (the group is right-aligned, so the new title grows to the left)
   * title page of the second article: new title in the same frame (the frame has a minimum width and the longer title still fits), the line
     "קונטרס" removed; the body text is NOT reflowed (every column keeps its place), so the extra line is shared between the three gaps of the head
     block (header-frame, frame-author, author-text) instead of staying as one hole
@@ -25,9 +25,9 @@ from pikepdf import Name, Operator, String, ContentStreamInstruction as CSI
 # source page numbers (1 = cover) of the full booklet
 FRONT = [1, 2, 3, 4]                  # cover, empty page inside the cover, inner title page, credits
 ART1 = (20, 22)                       # "החובה להתאמץ בדור אחרון" (Moshe Zada, the opening articles' second)
-ART2 = (84, 120)                      # "הזכרת השם" (Moshe Zada) -> "בעניין כוונת השם"
+ART2 = (84, 120)                      # "הזכרת השם" (Moshe Zada) -> "בעניין הזכרת השם"
 BACK = 634
-OLD_TITLE, NEW_TITLE = 'הזכרת השם', 'בעניין כוונת השם'
+OLD_TITLE, NEW_TITLE = 'הזכרת השם', 'בעניין הזכרת השם'
 NUM_OFFSET = 4                        # printed number = physical page - 4
 BANNER_SHARE = Decimal('22.9167')     # one third of the freed line (68.75 units) in the units of the 0.24 pt matrix of the page
 PAGE_W_PX, MARGIN_PX = 665, 73.3125   # page width in css px, outer margin (19.4 mm)
