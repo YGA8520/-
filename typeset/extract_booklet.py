@@ -1,40 +1,45 @@
 #!/usr/bin/env python3
 """Cuts a small booklet out of the finished full booklet PDF (vector pages are copied, nothing is rasterised) - the original is not touched.
 
-usage: python extract_booklet.py booklet.pdf out.pdf
+usage: python extract_booklet.py booklet.pdf out.pdf [--title beinyan|plain]
 
 Used for the memorial booklet: the cover pages (cover, inner title page, credits, back cover) + the two articles of R. Moshe Zada (the opening
-"החובה להתאמץ בדור אחרון" and the one that stands as "הזכרת השם" in the full booklet, here retitled "בעניין הזכרת השם" without the line "קונטרס").
-No dividers, no table of contents.
+"החובה להתאמץ בדור אחרון" and the one that stands as "הזכרת השם" in the full booklet). No dividers, no table of contents.
+  --title beinyan  (default)  the second article is retitled "בעניין הזכרת השם" and the line "קונטרס" under its title is removed
+  --title plain               the second article keeps its title block exactly as it is: "הזכרת השם" with the line "קונטרס"
 
 What is done to the pages (the PDF comes out of Chromium; the fonts of the title and the header are Type 3 fonts that carry the whole alphabet, so new
 text is set with the same glyphs at the advances of the font - nothing is substituted):
-  * parity: the pages keep their physical parity (a mirrored running head: number at the outer edge), so an article that began on an even page
-    still begins on an even page; white pages are inserted where a divider / the table of contents used to be
+  * layout: front pages, an empty page 5 (the first article keeps its even page), the first article on 6-8, the second article follows at once, on page 9
+    (odd), two empty pages and the back cover (48 pages, a multiple of 4). The running head is mirrored (number at the outer edge, the group "name of the
+    booklet + title / author" at the other side), the page body is symmetric (equal margins), so the pages of the second article, which moved from even
+    to odd and back, only get their head mirrored: the number, the booklet name and the bullet change sides and the author / the title change places
   * page numbers: printed number = physical page - 4 (alef = physical page 5, as in the full booklet), re-set on every article page
-  * running head of the odd pages of the second article: "הזכרת השם" -> "בעניין הזכרת השם" (the group is right-aligned, so the new title grows to the left)
-  * title page of the second article: new title in the same frame (the frame has a minimum width and the longer title still fits), the line
-    "קונטרס" removed; the body text is NOT reflowed (every column keeps its place), so the extra line is shared between the three gaps of the head
+  * title page of the second article (--title beinyan): new title in the same frame (the frame has a minimum width and the longer title still fits),
+    the line "קונטרס" removed; the body text is NOT reflowed (every column keeps its place), so the extra line is shared between the three gaps of the head
     block (header-frame, frame-author, author-text) instead of staying as one hole
 Needs: pip install pikepdf"""
-import sys
+import argparse
 from decimal import Decimal
 import pikepdf
 from pikepdf import Name, Operator, String, ContentStreamInstruction as CSI
 
 # source page numbers (1 = cover) of the full booklet
 FRONT = [1, 2, 3, 4]                  # cover, empty page inside the cover, inner title page, credits
-ART1 = (20, 22)                       # "החובה להתאמץ בדור אחרון" (Moshe Zada, the opening articles' second)
-ART2 = (84, 120)                      # "הזכרת השם" (Moshe Zada) -> "בעניין הזכרת השם"
+ART1 = (20, 22)                       # "החובה להתאמץ בדור אחרון" (Moshe Zada)
+ART2 = (84, 120)                      # "הזכרת השם" (Moshe Zada)
 BACK = 634
+SRC_AUTHOR, SRC_TITLE1, SRC_TITLE2 = 84, 21, 85    # pages whose running head carries the author (even) / the titles (odd)
 OLD_TITLE, NEW_TITLE = 'הזכרת השם', 'בעניין הזכרת השם'
 NUM_OFFSET = 4                        # printed number = physical page - 4
 BANNER_SHARE = Decimal('22.9167')     # one third of the freed line (68.75 units) in the units of the 0.24 pt matrix of the page
 PAGE_W_PX, MARGIN_PX = 665, 73.3125   # page width in css px, outer margin (19.4 mm)
+# running head, css px (read from the full booklet): booklet name / bullet / start (even) or end (odd) of the author-title text
+HEAD = {'even': dict(pal=73.3125, bullet=190.76563, text=202.60938), 'odd': dict(pal=481.40625, bullet=469.5625, text_end=462.558)}
 
 
 def letter_code(ch):                  # Type 3 fonts of the booklet: code = 0xAF + (letter - alef)
-    return 0xAF + ord(ch) - 0x05D0
+    return 3 if ch == ' ' else 0xAF + ord(ch) - 0x05D0
 
 
 def hebrew_number(n):
@@ -45,9 +50,13 @@ def hebrew_number(n):
     return (tens[n // 10 - 1] if n >= 10 else '') + (ones[n % 10 - 1] if n % 10 else '')
 
 
+def visual(text):
+    return [letter_code(c) for c in reversed(text)]
+
+
 def decode(codes):
     """logical text of a run of codes (the codes are stored in visual order, left to right)"""
-    return ''.join(' ' if c == 3 else chr(0x05D0 + c - 0xAF) if 0xAF <= c <= 0xC9 else '?' for c in reversed(codes))
+    return ''.join(' ' if c == 3 else chr(0x05D0 + c - 0xAF) if c and 0xAF <= c <= 0xC9 else '?' for c in reversed(codes))
 
 
 def advances(font, codes, size):
@@ -70,7 +79,7 @@ def text_block(font_name, size, x, y, codes, font):
 
 
 def split_blocks(ops):
-    """(start, end, font name, size, x, y, codes) of every BT..ET block that shows Type 3 glyphs one byte at a time"""
+    """every BT..ET block: start, end, font name, size, x, y of its Tm and the one-byte codes it shows"""
     out, i = [], 0
     while i < len(ops):
         if str(ops[i].operator) == 'BT':
@@ -94,49 +103,61 @@ def split_blocks(ops):
     return out
 
 
-def retitle_header(pdf, page, ops, odd, num_text, old_title=None, new_title=None):
-    """renumbers the page and (odd pages) swaps the title of the running head; returns the new instruction list"""
-    fonts = page.Resources.Font
+def set_tm_x(ops, blk, x):
+    for k in range(blk['start'], blk['end'] + 1):
+        if str(ops[k].operator) == 'Tm':
+            t = list(ops[k].operands)
+            t[4] = Decimal(f'{x:.5f}')
+            ops[k] = CSI(t, Operator('Tm'))
+
+
+def head_blocks(ops):
     blocks = split_blocks(ops)
-    edits = []
-    num = next(b for b in blocks if b['font'] == '/F40' and abs(b['size'] - 17.33) < 0.01)
-    f40 = fonts['/F40']
-    old_end = num['x'] + sum(advances(f40, num['codes'], 17.33))
-    codes = [letter_code(c) for c in reversed(num_text)]          # visual order = left to right
-    width = sum(advances(f40, codes, 17.33))
-    if odd:
-        x = num['x']                                               # outer edge is the left one
-    else:
-        assert abs(old_end - (PAGE_W_PX - MARGIN_PX)) < 0.3, old_end
-        x = old_end - width                                        # outer edge is the right one
-    edits.append((num['start'], num['end'], text_block('/F40', 17.33, x, num['y'], codes, f40)))
-    if odd and old_title:
-        f41 = fonts['/F41']
-        tb = next(b for b in blocks if b['font'] == '/F41' and abs(b['size'] - 13.33) < 0.01 and decode(b['codes']) == old_title)
-        end = tb['x'] + sum(advances(f41, tb['codes'], 13.33))
-        ncodes = [3 if c == ' ' else letter_code(c) for c in reversed(new_title)]
-        nw = sum(advances(f41, ncodes, 13.33))
-        edits.append((tb['start'], tb['end'], text_block('/F41', 13.33, end - nw, tb['y'], ncodes, f41)))
+    first = lambda f, s: next(b for b in blocks if b['font'] == f and abs(b['size'] - s) < 0.01)
+    return first('/F40', 20), first('/F41', 13.33), first('/F40', 17.33), first('/F42', 8)
+
+
+def head_text(page, ops):
+    """the codes of the author / title text of the running head of a source page"""
+    return head_blocks(ops)[1]['codes']
+
+
+def rebuild_header(page, ops, odd, num_text, text_codes):
+    """running head of the page as it has to be on an odd / even page: number at the outer edge, the booklet name and the bullet at the other
+    side, the author or the title text (text_codes) next to the bullet; the glyphs are the ones of the page's own fonts"""
+    pal, txt, num, bul = head_blocks(ops)
+    f40, f41 = page.Resources.Font['/F40'], page.Resources.Font['/F41']
+    h = HEAD['odd' if odd else 'even']
+    set_tm_x(ops, pal, h['pal'])
+    set_tm_x(ops, bul, h['bullet'])
+    ncodes = visual(num_text)
+    nw = sum(advances(f40, ncodes, 17.33))
+    nx = MARGIN_PX if odd else PAGE_W_PX - MARGIN_PX - nw                  # the outer edge is the left one on an odd page
+    tw = sum(advances(f41, text_codes, 13.33))
+    tx = h['text_end'] - tw if odd else h['text']                          # the group of the odd pages is right-aligned
+    edits = [(num['start'], num['end'], text_block('/F40', 17.33, nx, num['y'], ncodes, f40)),
+             (txt['start'], txt['end'], text_block('/F41', 13.33, tx, txt['y'], text_codes, f41))]
     for s, e, new in sorted(edits, reverse=True):
         ops[s:e + 1] = new
     return ops
 
 
-def title_page(pdf, page, ops):
+def title_page(page, ops):
     """new title in the frame, 'קונטרס' removed, the freed line shared between the gaps of the head block"""
     f47 = page.Resources.Font['/F47']
     blocks = split_blocks(ops)
     old = next(b for b in blocks if b['font'] == '/F47' and abs(b['size'] - 22) < 0.01)
     assert decode(old['codes']) == OLD_TITLE
     centre = old['x'] + sum(advances(f47, old['codes'], 22)) / 2
-    ncodes = [3 if c == ' ' else letter_code(c) for c in reversed(NEW_TITLE)]
+    ncodes = visual(NEW_TITLE)
     nw = sum(advances(f47, ncodes, 22))
     dy = float(BANNER_SHARE) / 3.125                               # Tm units
     kon = next(b for b in blocks if b['font'] == '/F41' and abs(b['size'] - 14.66) < 0.01 and decode(b['codes']) == 'קונטרס')
     aut = next(b for b in blocks if b['font'] == '/F80')
     # images of the frame (cloud, left cap, middle, right cap) move down by one share; the title with them
-    for k, (o, op) in enumerate((x.operands, str(x.operator)) for x in ops):
-        if op == 'cm' and len(o) == 6 and float(o[3]) < 0 and float(o[0]) > 60 and 150 < -float(o[3]) < 200 and float(o[0]) != 1621.875:
+    for k, x in enumerate(ops):
+        o = x.operands
+        if str(x.operator) == 'cm' and len(o) == 6 and float(o[3]) < 0 and float(o[0]) > 60 and 150 < -float(o[3]) < 200 and float(o[0]) != 1621.875:
             ops[k] = CSI([o[0], o[1], o[2], o[3], o[4], Decimal(str(float(o[5]) + float(BANNER_SHARE)))], Operator('cm'))
     # author line: two shares
     for k in range(aut['start'], aut['end'] + 1):
@@ -151,28 +172,32 @@ def title_page(pdf, page, ops):
     return ops
 
 
-def build(src, out):
+def build(src, out, title='beinyan'):
     pdf = pikepdf.open(src)
     P = pdf.pages
-    plan = [('keep', n) for n in FRONT] + [('blank', None)] + [('art', n) for n in range(ART1[0], ART1[1] + 1)] + [('blank', None)] + \
-           [('art', n) for n in range(ART2[0], ART2[1] + 1)] + [('blank', None), ('keep', BACK)]
+    parse = lambda n: list(pikepdf.parse_content_stream(P[n - 1]))
+    author = head_text(P[SRC_AUTHOR - 1], parse(SRC_AUTHOR))
+    title1 = head_text(P[SRC_TITLE1 - 1], parse(SRC_TITLE1))
+    title2 = head_text(P[SRC_TITLE2 - 1], parse(SRC_TITLE2))
+    assert decode(title2) == OLD_TITLE
+    if title == 'beinyan':
+        title2 = visual(NEW_TITLE)
+    plan = [('keep', n) for n in FRONT] + [('blank', None)] + [('art', n) for n in range(ART1[0], ART1[1] + 1)] + \
+           [('art', n) for n in range(ART2[0], ART2[1] + 1)] + [('blank', None)] * 2 + [('keep', BACK)]
     assert len(plan) % 4 == 0, len(plan)
     pages, blank_src = [], P[FRONT[1] - 1]
     for new_no, (kind, n) in enumerate(plan, 1):
         if kind == 'blank':
-            pg = pikepdf.Page(pdf.make_indirect(pikepdf.Dictionary(
-                Type=Name.Page, MediaBox=blank_src.MediaBox, Resources=pikepdf.Dictionary(), Contents=pdf.make_stream(b''))))
-            pages.append(pg)
+            pages.append(pikepdf.Page(pdf.make_indirect(pikepdf.Dictionary(
+                Type=Name.Page, MediaBox=blank_src.MediaBox, Resources=pikepdf.Dictionary(), Contents=pdf.make_stream(b'')))))
             continue
         pg = P[n - 1]
         if kind == 'art':
-            assert new_no % 2 == n % 2, 'parity of page %d would change' % n
-            ops = list(pikepdf.parse_content_stream(pg))
-            num = hebrew_number(new_no - NUM_OFFSET)
-            retitle = ART2[0] <= n <= ART2[1]
-            ops = retitle_header(pdf, pg, ops, new_no % 2 == 1, num, OLD_TITLE if retitle and new_no % 2 == 1 else None, NEW_TITLE)
-            if n == ART2[0]:
-                ops = title_page(pdf, pg, ops)
+            odd = new_no % 2 == 1
+            t = (title1 if ART1[0] <= n <= ART1[1] else title2) if odd else author
+            ops = rebuild_header(pg, parse(n), odd, hebrew_number(new_no - NUM_OFFSET), t)
+            if n == ART2[0] and title == 'beinyan':
+                ops = title_page(pg, ops)
             pg.Contents = pdf.make_stream(pikepdf.unparse_content_stream(ops))
         pages.append(pg)
     keep = [p.obj for p in pages]
@@ -184,4 +209,8 @@ def build(src, out):
 
 
 if __name__ == '__main__':
-    build(sys.argv[1], sys.argv[2])
+    ap = argparse.ArgumentParser()
+    ap.add_argument('booklet'), ap.add_argument('out')
+    ap.add_argument('--title', choices=['beinyan', 'plain'], default='beinyan')
+    a = ap.parse_args()
+    build(a.booklet, a.out, a.title)
