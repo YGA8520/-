@@ -18,11 +18,18 @@ text is set with the same glyphs at the advances of the font - nothing is substi
   * title page of the second article (--title beinyan): new title in the same frame (the frame has a minimum width and the longer title still fits),
     the line "קונטרס" removed; the body text is NOT reflowed (every column keeps its place), so the extra line is shared between the three gaps of the head
     block (header-frame, frame-author, author-text) instead of staying as one hole
-Needs: pip install pikepdf"""
+  * memorial cover pages (--algebra FONT.ttf): on the cover (page 1) and on the grey inner title page (page 3) the title "פלפולא דאורייתא" is replaced by
+    the new name (two lines, outlines of the original display font EFT Algebra, same gold / grey fill), the two curved lines (the quotation round
+    the circle and "חבורות ● שיעורים ..." under it) are removed, the subtitle is replaced (outlines of Lulav CLM Bold); the logo stays
+  * credits page: one more line (typesetting credit); the whole column moves up a little to keep the margins
+Needs: pip install pikepdf fonttools"""
 import argparse
+import os
 from decimal import Decimal
 import pikepdf
 from pikepdf import Name, Operator, String, ContentStreamInstruction as CSI
+from fontTools.ttLib import TTFont
+from fontTools.pens.basePen import BasePen
 
 # source page numbers (1 = cover) of the full booklet
 FRONT = [1, 2, 3, 4]                  # cover, empty page inside the cover, inner title page, credits
@@ -183,7 +190,154 @@ def title_page(page, ops):
     return ops
 
 
-def build(src, out, title='beinyan', name=BOOKLET_NAME):
+# ------------------------------------------------------------------------------------------------ cover pages and credits
+HERE = os.path.dirname(os.path.abspath(__file__))
+LULAV = os.path.join(HERE, 'assets', 'fonts', 'LulavCLM-Bold.otf')
+COVER_TITLE = ('הזכרת', 'השם')                      # line 1 (right), line 2 (left)
+COVER_TITLE_SIZE = 190.0
+COVER_LINES = dict(y1=708.0, y2=878.0, right1=1119.66, left2=346.5)      # baselines and the edges of the two lines of the original title
+COVER_SUB = ('בעניין הכוונה בהזכרת שם השם', 'ושמות שאינם נמחקים')
+CREDIT_TEXT, CREDIT_PHONE = 'עימוד ועיצוב י.א. - ', '0534185035'
+CREDIT_SHIFT, CREDIT_GAP = 18.0, 36.0              # css px: the column moves up, the new line sits this far under the last one
+
+
+class PdfPen(BasePen):
+    def __init__(self, gs):
+        super().__init__(gs)
+        self.ops = []
+
+    @staticmethod
+    def _n(v):
+        return Decimal(f'{v:.2f}')
+
+    def _moveTo(self, p):
+        self.ops.append(CSI([self._n(p[0]), self._n(p[1])], Operator('m')))
+
+    def _lineTo(self, p):
+        self.ops.append(CSI([self._n(p[0]), self._n(p[1])], Operator('l')))
+
+    def _curveToOne(self, a, b, c):
+        self.ops.append(CSI([self._n(v) for v in (*a, *b, *c)], Operator('c')))
+
+    def _closePath(self):
+        self.ops.append(CSI([], Operator('h')))
+
+
+class Outline:
+    """a font file as a source of outlines: text is drawn as filled paths (the fill, a colour or the gold / grey pattern, is the one in force)"""
+    def __init__(self, path):
+        self.f = TTFont(path)
+        self.cmap, self.gs, self.upem = self.f.getBestCmap(), self.f.getGlyphSet(), self.f['head'].unitsPerEm
+
+    def width(self, text, size):
+        return sum(self.f['hmtx'][self.cmap[ord(c)]][0] for c in text) * size / self.upem
+
+    def ops(self, text, size, x, y):
+        """text (logical order) with its left edge at x and its baseline at y of the page's flipped coordinate system"""
+        out, sc = [], size / self.upem
+        for c in reversed(text):
+            g = self.cmap[ord(c)]
+            pen = PdfPen(self.gs)
+            self.gs[g].draw(pen)
+            if pen.ops:
+                out += [CSI([], Operator('q')), CSI([Decimal(f'{sc:.6f}'), 0, 0, Decimal(f'{-sc:.6f}'), Decimal(f'{x:.3f}'), Decimal(f'{y:.3f}')], Operator('cm'))]
+                out += pen.ops + [CSI([], Operator('f')), CSI([], Operator('Q'))]
+            x += self.f['hmtx'][g][0] * sc
+        return out
+
+
+def curved_groups(ops, fonts):
+    """(first, last) of every q..Q group that shows text in one of the given fonts (the curved lines: one glyph per group)"""
+    out, i = [], 0
+    while i < len(ops):
+        if str(ops[i].operator) == 'q':
+            depth, j, hit = 1, i + 1, False
+            while depth:
+                o = str(ops[j].operator)
+                depth += (o == 'q') - (o == 'Q')
+                hit |= o == 'Tf' and str(ops[j].operands[0]) in fonts
+                j += 1
+            if hit and j - i < 40:
+                out.append((i, j - 1))
+                i = j
+            else:
+                i += 1                                             # an enclosing group: look inside it
+        else:
+            i += 1
+    return out
+
+
+def memorial_cover(page, ops, algebra, curved):
+    """new name, no curved lines, new subtitle (page 1 = colour cover, page 3 = grey inner title page: same structure)"""
+    lulav = Outline(LULAV)
+    blocks = split_blocks(ops)
+    titles = [b for b in blocks if abs(b['size'] - 165) < 0.01]
+    subs = [b for b in blocks if abs(b['size'] - 42) < 0.01]
+    assert len(titles) == 2 and len(subs) == 2
+    edits = [(a, b, []) for a, b in curved_groups(ops, curved)]
+    L = COVER_LINES
+    w1 = algebra.width(COVER_TITLE[0], COVER_TITLE_SIZE)
+    edits.append((titles[0]['start'], titles[0]['end'], algebra.ops(COVER_TITLE[0], COVER_TITLE_SIZE, L['right1'] - w1, L['y1'])))
+    edits.append((titles[1]['start'], titles[1]['end'], algebra.ops(COVER_TITLE[1], COVER_TITLE_SIZE, L['left2'], L['y2'])))
+    fonts = page.Resources.Font
+    for old, text in zip(subs, COVER_SUB):                          # centred where the old line was centred
+        w_old = sum(advances(fonts[old['font']], old['codes'], 42))
+        centre = old['x'] + w_old / 2
+        edits.append((old['start'], old['end'], lulav.ops(text, 42, centre - lulav.width(text, 42) / 2, old['y'])))
+    for a, b, new in sorted(edits, key=lambda e: -e[0]):
+        ops[a:b + 1] = new
+    return ops
+
+
+def glyph_codes(font):
+    """character -> code of a Type 3 font of the booklet (from its ToUnicode)"""
+    import re
+    s, m = font.ToUnicode.read_bytes().decode(), {}
+    for blk in re.findall(r'beginbfchar(.*?)endbfchar', s, re.S):
+        for a, b in re.findall(r'<([0-9A-Fa-f]+)>\s*<([0-9A-Fa-f]+)>', blk):
+            m[chr(int(b[:4], 16))] = int(a, 16)
+    for blk in re.findall(r'beginbfrange(.*?)endbfrange', s, re.S):
+        for a, b, c in re.findall(r'<([0-9A-Fa-f]+)>\s*<([0-9A-Fa-f]+)>\s*<([0-9A-Fa-f]+)>', blk):
+            for i in range(int(a, 16), int(b, 16) + 1):
+                m[chr(int(c[:4], 16) + i - int(a, 16))] = i
+    return m
+
+
+def credits_line(page, ops):
+    """the typesetting credit under the last line of the credits page; the column (texts and flourishes) moves up first"""
+    f32, f33 = page.Resources.Font['/F32'], page.Resources.Font['/F33']
+    blocks = split_blocks(ops)
+    centres = []
+    for b in blocks:                                               # the axis of the column = the centre of its centred lines
+        if b['codes'] and None not in b['codes'] and b['font'] in ('/F32', '/F33'):
+            centres.append(b['x'] + sum(advances(page.Resources.Font[b['font']], b['codes'], b['size'])) / 2)
+    centres.sort()
+    axis = centres[len(centres) // 2]
+    last = max(blocks, key=lambda b: b['y'])
+    for k, op in enumerate(ops):                                   # shift up: images are placed by cm (units of 0.24 pt matrix), texts by Tm
+        if str(op.operator) == 'cm' and len(op.operands) == 6 and float(op.operands[0]) > 100 and k > 35 and float(op.operands[0]) < 1000:
+            t = list(op.operands)
+            t[5] = Decimal(f'{float(t[5]) - CREDIT_SHIFT * 3.125:.4f}')
+            ops[k] = CSI(t, Operator('cm'))
+        elif str(op.operator) == 'Tm':
+            t = list(op.operands)
+            t[5] = Decimal(f'{float(t[5]) - CREDIT_SHIFT:.4f}')
+            ops[k] = CSI(t, Operator('Tm'))
+    y = last['y'] - CREDIT_SHIFT + CREDIT_GAP
+    size = 14.66
+    c32, c33 = glyph_codes(f32), glyph_codes(f33)
+    hebrew = [c32[c] for c in reversed(CREDIT_TEXT)]               # visual order, left to right: number, " - ", the Hebrew (reversed)
+    number = [c33[c] for c in CREDIT_PHONE]
+    w_h = sum(advances(f32, hebrew, size))
+    w_n = sum(advances(f33, number, size))
+    x0 = axis - (w_h + w_n) / 2
+    new = text_block('/F33', size, x0, y, number, f33) + text_block('/F32', size, x0 + w_n, y, hebrew, f32)
+    end = max(k for k, op in enumerate(ops) if str(op.operator) == 'ET')
+    ops[end + 1:end + 1] = new                                     # inside the group of the last line (same fill, same matrix)
+    return ops
+
+
+def build(src, out, title='beinyan', name=BOOKLET_NAME, algebra=None):
     pdf = pikepdf.open(src)
     P = pdf.pages
     parse = lambda n: list(pikepdf.parse_content_stream(P[n - 1]))
@@ -203,6 +357,10 @@ def build(src, out, title='beinyan', name=BOOKLET_NAME):
                 Type=Name.Page, MediaBox=blank_src.MediaBox, Resources=pikepdf.Dictionary(), Contents=pdf.make_stream(b'')))))
             continue
         pg = P[n - 1]
+        if kind == 'keep' and algebra and n in (1, 3, 4):
+            ops = list(pikepdf.parse_content_stream(pg))
+            ops = credits_line(pg, ops) if n == 4 else memorial_cover(pg, ops, algebra, {'/F10', '/F11'} if n == 1 else {'/F24', '/F25'})
+            pg.Contents = pdf.make_stream(pikepdf.unparse_content_stream(ops))
         if kind == 'art':
             odd = new_no % 2 == 1
             t = (title1 if ART1[0] <= n <= ART1[1] else title2) if odd else author
@@ -223,6 +381,7 @@ if __name__ == '__main__':
     ap = argparse.ArgumentParser()
     ap.add_argument('booklet'), ap.add_argument('out')
     ap.add_argument('--title', choices=['beinyan', 'plain'], default='beinyan')
+    ap.add_argument('--algebra', help='EFT Algebra font file: switches the cover pages and the credits page to the memorial version')
     ap.add_argument('--name', default=BOOKLET_NAME, help='name of the booklet in the running head')
     a = ap.parse_args()
-    build(a.booklet, a.out, a.title, a.name)
+    build(a.booklet, a.out, a.title, a.name, Outline(a.algebra) if a.algebra else None)
