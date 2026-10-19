@@ -34,8 +34,11 @@ OLD_TITLE, NEW_TITLE = 'הזכרת השם', 'בעניין הזכרת השם'
 NUM_OFFSET = 4                        # printed number = physical page - 4
 BANNER_SHARE = Decimal('22.9167')     # one third of the freed line (68.75 units) in the units of the 0.24 pt matrix of the page
 PAGE_W_PX, MARGIN_PX = 665, 73.3125   # page width in css px, outer margin (19.4 mm)
-# running head, css px (read from the full booklet): booklet name / bullet / start (even) or end (odd) of the author-title text
-HEAD = {'even': dict(pal=73.3125, bullet=190.76563, text=202.60938), 'odd': dict(pal=481.40625, bullet=469.5625, text_end=462.558)}
+# running head, css px (read from the full booklet): the group is [booklet name][gap + bullet][author / title text]; on an even page it starts at the
+# inner margin (left), on an odd page it ends at the right edge; the number sits at the outer edge
+HEAD_EDGE_LEFT, HEAD_EDGE_RIGHT = 73.3125, 591.855
+GAP_NAME_BULLET, GAP_BULLET_TEXT = 7.0, 11.84     # name end -> bullet, bullet -> text start (even); mirrored on odd pages
+BOOKLET_NAME = 'פלפולא דאורייתא'
 
 
 def letter_code(ch):                  # Type 3 fonts of the booklet: code = 0xAF + (letter - alef)
@@ -122,20 +125,28 @@ def head_text(page, ops):
     return head_blocks(ops)[1]['codes']
 
 
-def rebuild_header(page, ops, odd, num_text, text_codes):
+def rebuild_header(page, ops, odd, num_text, text_codes, name=BOOKLET_NAME):
     """running head of the page as it has to be on an odd / even page: number at the outer edge, the booklet name and the bullet at the other
     side, the author or the title text (text_codes) next to the bullet; the glyphs are the ones of the page's own fonts"""
     pal, txt, num, bul = head_blocks(ops)
     f40, f41 = page.Resources.Font['/F40'], page.Resources.Font['/F41']
-    h = HEAD['odd' if odd else 'even']
-    set_tm_x(ops, pal, h['pal'])
-    set_tm_x(ops, bul, h['bullet'])
     ncodes = visual(num_text)
     nw = sum(advances(f40, ncodes, 17.33))
     nx = MARGIN_PX if odd else PAGE_W_PX - MARGIN_PX - nw                  # the outer edge is the left one on an odd page
+    pcodes = visual(name)
+    pw = sum(advances(f40, pcodes, 20))
     tw = sum(advances(f41, text_codes, 13.33))
-    tx = h['text_end'] - tw if odd else h['text']                          # the group of the odd pages is right-aligned
+    if odd:                                                                # the group is right-aligned
+        px = HEAD_EDGE_RIGHT - pw
+        bx = px - GAP_BULLET_TEXT
+        tx = bx - GAP_NAME_BULLET - tw
+    else:
+        px = HEAD_EDGE_LEFT
+        bx = px + pw + GAP_NAME_BULLET
+        tx = bx + GAP_BULLET_TEXT
+    set_tm_x(ops, bul, bx)
     edits = [(num['start'], num['end'], text_block('/F40', 17.33, nx, num['y'], ncodes, f40)),
+             (pal['start'], pal['end'], text_block('/F40', 20, px, pal['y'], pcodes, f40)),
              (txt['start'], txt['end'], text_block('/F41', 13.33, tx, txt['y'], text_codes, f41))]
     for s, e, new in sorted(edits, reverse=True):
         ops[s:e + 1] = new
@@ -172,7 +183,7 @@ def title_page(page, ops):
     return ops
 
 
-def build(src, out, title='beinyan'):
+def build(src, out, title='beinyan', name=BOOKLET_NAME):
     pdf = pikepdf.open(src)
     P = pdf.pages
     parse = lambda n: list(pikepdf.parse_content_stream(P[n - 1]))
@@ -195,7 +206,7 @@ def build(src, out, title='beinyan'):
         if kind == 'art':
             odd = new_no % 2 == 1
             t = (title1 if ART1[0] <= n <= ART1[1] else title2) if odd else author
-            ops = rebuild_header(pg, parse(n), odd, hebrew_number(new_no - NUM_OFFSET), t)
+            ops = rebuild_header(pg, parse(n), odd, hebrew_number(new_no - NUM_OFFSET), t, name)
             if n == ART2[0] and title == 'beinyan':
                 ops = title_page(pg, ops)
             pg.Contents = pdf.make_stream(pikepdf.unparse_content_stream(ops))
@@ -212,5 +223,6 @@ if __name__ == '__main__':
     ap = argparse.ArgumentParser()
     ap.add_argument('booklet'), ap.add_argument('out')
     ap.add_argument('--title', choices=['beinyan', 'plain'], default='beinyan')
+    ap.add_argument('--name', default=BOOKLET_NAME, help='name of the booklet in the running head')
     a = ap.parse_args()
-    build(a.booklet, a.out, a.title)
+    build(a.booklet, a.out, a.title, a.name)
