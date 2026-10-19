@@ -1,0 +1,231 @@
+#!/usr/bin/env python3
+"""Print-ready PDFs of the memorial booklet (extract_booklet.py output, 48 pages) for the printing house.  usage: python make_print_booklet.py booklet.pdf out_dir [spine_mm]
+
+  zada-interior-print.pdf         the inside: from the inner title page (page 3) to the last page before the inside of the back cover (page 46) = 44 pages, a multiple of 4,
+                                  black only (DeviceGray), every page with 3 mm bleed, crop marks, centre marks and a slug line outside the bleed
+  zada-cover-outside-print.pdf    front | spine | back as one sheet (Hebrew: the spine is on the right of the front cover), colour (RGB), bleed, crop and fold marks
+  zada-cover-inside-print.pdf     the inside of the cover: inside of the back (empty) | spine | inside of the front (the credits page), for a cover printed on both sides
+  zada-cover-pages-print.pdf      front and back cover as two separate sheets
+  print-preflight.txt, print-notes.txt
+
+The artwork of the covers, of the inner title page and of the credits page goes to the edge, so the bleed is made by mirroring the picture over the edge (the live text never
+reaches the edge).  The pictures are taken from the PDF itself (page 3 has a changed background).   Needs pymupdf, numpy, pillow."""
+import io
+import os
+import sys
+import numpy as np
+import pymupdf
+from PIL import Image
+
+MM = 72 / 25.4
+TW, TH, B, M, MARK_OFF, MARK_LEN, MARK_W = 176.0, 250.0, 3.0, 10.0, 4.0, 5.0, 0.25
+SLUG_FONT = '/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf'
+pt = lambda v: v * MM
+
+
+def page_picture(doc, i):
+    """the full-page picture of a page (the biggest image): decoded, with B mm mirrored over every edge; returns (PIL image, pixels per mm of the trim)"""
+    best = max(doc[i].get_images(), key=lambda im: im[2] * im[3])
+    im = Image.open(io.BytesIO(doc.extract_image(best[0])['image'])).convert('RGB')
+    ppm = im.width / TW
+    pad = int(round(B * ppm))
+    return Image.fromarray(np.pad(np.asarray(im), ((pad, pad), (pad, pad), (0, 0)), mode='reflect')), ppm
+
+
+def gray_shadings(src, dst):
+    """one-colour printing: the gradient fills (the title of the inner title page, DeviceRGB shadings with grey values) become DeviceGray and the neutral
+    rg / RG colours become g / G (the pictures are grey already)"""
+    import pikepdf
+    pdf = pikepdf.open(src)
+    lum = lambda c: round(0.299 * float(c[0]) + 0.587 * float(c[1]) + 0.114 * float(c[2]), 4)
+    for page in pdf.pages:
+        for pat in (page.Resources.get('/Pattern') or {}).values():
+            sh = pat.get('/Shading')
+            if sh is None or str(sh.get('/ColorSpace')) != '/DeviceRGB':
+                continue
+            fn = sh.Function
+            for f in (list(fn.Functions) if '/Functions' in fn else [fn]):
+                f.C0, f.C1 = pikepdf.Array([lum(f.C0)]), pikepdf.Array([lum(f.C1)])
+            if '/Encode' in fn:
+                fn.Encode = pikepdf.Array([0, 1] * len(list(fn.Functions)))
+            sh.ColorSpace = pikepdf.Name.DeviceGray
+        ops, changed = list(pikepdf.parse_content_stream(page)), False
+        for k, ins in enumerate(ops):                                # the colour operators: neutral rg / RG (r = g = b) become g / G
+            if str(ins.operator) in ('rg', 'RG'):
+                v = [float(x) for x in ins.operands]
+                ops[k] = pikepdf.ContentStreamInstruction([lum(v)], pikepdf.Operator('g' if str(ins.operator) == 'rg' else 'G'))
+                changed = True
+        if changed:
+            page.Contents = pdf.make_stream(pikepdf.unparse_content_stream(ops))
+    pdf.save(dst)
+
+
+def line(page, x0, y0, x1, y1):
+    page.draw_line(pymupdf.Point(pt(x0), pt(y0)), pymupdf.Point(pt(x1), pt(y1)), color=(0,), width=MARK_W)
+
+
+def marks(page, x0, y0, x1, y1, folds=(), slug=None):
+    for x, sx in ((x0, -1), (x1, 1)):
+        for y, sy in ((y0, -1), (y1, 1)):
+            line(page, x + sx * MARK_OFF, y, x + sx * (MARK_OFF + MARK_LEN), y)
+            line(page, x, y + sy * MARK_OFF, x, y + sy * (MARK_OFF + MARK_LEN))
+    cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
+    for y, sy in ((y0, -1), (y1, 1)):
+        line(page, cx, y + sy * MARK_OFF, cx, y + sy * (MARK_OFF + MARK_LEN))
+    for x, sx in ((x0, -1), (x1, 1)):
+        line(page, x + sx * MARK_OFF, cy, x + sx * (MARK_OFF + MARK_LEN), cy)
+    for fx in folds:
+        for y, sy in ((y0, -1), (y1, 1)):
+            line(page, fx, y + sy * MARK_OFF, fx, y + sy * (MARK_OFF + MARK_LEN))
+    if slug:
+        page.insert_text(pymupdf.Point(pt(x0 + 14), pt(y1 + MARK_OFF + MARK_LEN - 1.2)), slug, fontsize=5, fontfile=SLUG_FONT, fontname='slug', color=(0,))
+
+
+def boxes(page, x0, y0, x1, y1):
+    page.set_trimbox(pymupdf.Rect(pt(x0), pt(y0), pt(x1), pt(y1)))
+    page.set_bleedbox(pymupdf.Rect(pt(x0 - B), pt(y0 - B), pt(x1 + B), pt(y1 + B)))
+    page.set_artbox(pymupdf.Rect(pt(x0), pt(y0), pt(x1), pt(y1)))
+
+
+def place(sheet, picture, src, i, x, y, tmp):
+    """a page at (x, y) mm of the sheet: its picture with the bleed underneath, the page itself (vector) on top"""
+    if picture is not None:
+        path = os.path.join(tmp, f'bleed-{i}-{x:g}.jpg')
+        picture.save(path, quality=94, subsampling=0, optimize=True)
+        sheet.insert_image(pymupdf.Rect(pt(x - B), pt(y - B), pt(x + TW + B), pt(y + TH + B)), filename=path)
+    sheet.show_pdf_page(pymupdf.Rect(pt(x), pt(y), pt(x) + src[i].rect.width, pt(y) + src[i].rect.height), src, i)
+
+
+def build(booklet, out, spine=None):
+    import tempfile
+    os.makedirs(out, exist_ok=True)
+    src = pymupdf.open(booklet)
+    n = src.page_count
+    front, inside_front, inside_back, back = 0, 1, n - 2, n - 1
+    interior = list(range(2, n - 2))
+    assert len(interior) % 4 == 0, len(interior)
+    spine = spine if spine is not None else round(len(interior) / 2 * 0.10 * 2) / 2          # 0.1 mm per leaf (80 g/m2 uncoated paper), to 0.5 mm
+    W, H = TW + 2 * M, TH + 2 * M
+    total = len(interior)
+    with tempfile.TemporaryDirectory() as tmp:
+        # ---- the inside, black only
+        gray_src = os.path.join(tmp, 'gray-src.pdf')
+        gray_shadings(booklet, gray_src)
+        gray = pymupdf.open(gray_src)
+        for i in interior:
+            gray[i].recolor(1)
+        doc = pymupdf.open()
+        for k, i in enumerate(interior, 1):
+            pg = doc.new_page(width=pt(W), height=pt(H))
+            big = max((im[2] * im[3] for im in gray[i].get_images()), default=0) >= 2816 * 4000 * 0.9 and len(gray[i].get_text().strip()) < 400
+            pic = page_picture(gray, i)[0].convert('L') if big else None            # the pages with a full-page background (the inner title page)
+            place(pg, pic, gray, i, M, M, tmp)
+            marks(pg, M, M, M + TW, M + TH, (0,), f'Pilpula Daoraita memorial - inside - page {k} of {total} - trim {TW:g} x {TH:g} mm - bleed {B:g} mm - black only')
+            boxes(pg, M, M, M + TW, M + TH)
+        doc.set_metadata({'title': 'Pilpula Daoraita memorial - inside (print)', 'subject': f'{total} pages, trim {TW:g} x {TH:g} mm, bleed {B:g} mm, DeviceGray'})
+        inside = os.path.join(out, 'zada-interior-print.pdf')
+        doc.save(inside, garbage=3, deflate=True)
+        doc.close(); gray.close()
+
+        # ---- the outside of the cover (colour): front | spine | back
+        SW = 2 * M + 2 * TW + spine
+        fp, ppm = page_picture(src, front)
+        bp, _ = page_picture(src, back)
+        sheet = pymupdf.open()
+        pg = sheet.new_page(width=pt(SW), height=pt(H))
+        fx, bx = M, M + TW + spine
+        pad = int(round(B * ppm))
+        fa, ba = np.asarray(fp).astype(np.float32), np.asarray(bp).astype(np.float32)
+        strip = int(round(1.5 * ppm))
+        from scipy import ndimage
+        left = ndimage.gaussian_filter1d(fa[:, fa.shape[1] - pad - strip: fa.shape[1] - pad].mean(axis=1), 6, axis=0)
+        right = ndimage.gaussian_filter1d(ba[:, pad: pad + strip].mean(axis=1), 6, axis=0)
+        sw_px = max(2, int(round(spine * ppm)))
+        t = np.linspace(0, 1, sw_px, dtype=np.float32)[None, :, None]
+        spine_path = os.path.join(tmp, 'spine.jpg')
+        Image.fromarray(np.clip(left[:, None, :] * (1 - t) + right[:, None, :] * t, 0, 255).astype(np.uint8)).save(spine_path, quality=94, subsampling=0)
+        pg.insert_image(pymupdf.Rect(pt(fx + TW), pt(M - B), pt(bx), pt(M + TH + B)), filename=spine_path)
+        place(pg, fp, src, front, fx, M, tmp)
+        place(pg, bp, src, back, bx, M, tmp)
+        marks(pg, M, M, SW - M, M + TH, (fx + TW, bx), f'Pilpula Daoraita memorial - cover, outside - spine {spine:g} mm (estimate) - trim {2 * TW + spine:g} x {TH:g} mm - bleed {B:g} mm')
+        pg.set_trimbox(pymupdf.Rect(pt(M), pt(M), pt(SW - M), pt(M + TH)))
+        pg.set_bleedbox(pymupdf.Rect(pt(M - B), pt(M - B), pt(SW - M + B), pt(M + TH + B)))
+        sheet.set_metadata({'title': 'Pilpula Daoraita memorial - cover outside (print)', 'subject': f'front | spine {spine:g} mm | back, bleed {B:g} mm, RGB'})
+        outside = os.path.join(out, 'zada-cover-outside-print.pdf')
+        sheet.save(outside, garbage=3, deflate=True)
+        sheet.close()
+
+        # ---- the inside of the cover: inside of the back | spine | inside of the front (the credits page)
+        sheet = pymupdf.open()
+        pg = sheet.new_page(width=pt(SW), height=pt(H))
+        cp, _ = page_picture(src, inside_front)
+        place(pg, cp, src, inside_front, bx, M, tmp)                  # the sheet is turned over: the front is now on the right, the back on the left
+        place(pg, None, src, inside_back, fx, M, tmp)
+        marks(pg, M, M, SW - M, M + TH, (fx + TW, bx), f'Pilpula Daoraita memorial - cover, inside - spine {spine:g} mm (estimate) - trim {2 * TW + spine:g} x {TH:g} mm - bleed {B:g} mm')
+        pg.set_trimbox(pymupdf.Rect(pt(M), pt(M), pt(SW - M), pt(M + TH)))
+        pg.set_bleedbox(pymupdf.Rect(pt(M - B), pt(M - B), pt(SW - M + B), pt(M + TH + B)))
+        sheet.set_metadata({'title': 'Pilpula Daoraita memorial - cover inside (print)'})
+        inner = os.path.join(out, 'zada-cover-inside-print.pdf')
+        sheet.save(inner, garbage=3, deflate=True)
+        sheet.close()
+
+        # ---- front and back as separate sheets
+        two = pymupdf.open()
+        for i, nm, pic in ((front, 'front cover', fp), (back, 'back cover', bp)):
+            pg = two.new_page(width=pt(W), height=pt(H))
+            place(pg, pic, src, i, M, M, tmp)
+            marks(pg, M, M, M + TW, M + TH, (), f'Pilpula Daoraita memorial - {nm} - trim {TW:g} x {TH:g} mm - bleed {B:g} mm')
+            boxes(pg, M, M, M + TW, M + TH)
+        two.set_metadata({'title': 'Pilpula Daoraita memorial - front and back cover (print)'})
+        pages = os.path.join(out, 'zada-cover-pages-print.pdf')
+        two.save(pages, garbage=3, deflate=True)
+        two.close()
+    report(out, [inside, outside, inner, pages], total, spine)
+    src.close()
+
+
+def report(out, files, total, spine):
+    lines = []
+    for path in files:
+        d = pymupdf.open(path)
+        fonts, low, spaces = {}, 1e9, set()
+        for pno in range(d.page_count):
+            for f in d.get_page_fonts(pno):
+                fonts[f[3]] = f[1] != 'n/a' or f[2] == 'Type3'
+            for info in d[pno].get_image_info(xrefs=True):
+                w, h, bb = info['width'], info['height'], info['bbox']
+                bw, bh = (bb[2] - bb[0]) / MM, (bb[3] - bb[1]) / MM
+                if bw >= 30 and bh >= 30:
+                    low = min(low, w / (bw / 25.4), h / (bh / 25.4))
+                spaces.add(info.get('colorspace'))
+        p0 = d[0]
+        lines.append(f'{os.path.basename(path)}: {d.page_count} page(s), sheet {p0.rect.width / MM:.1f} x {p0.rect.height / MM:.1f} mm, trim {p0.trimbox.width / MM:.1f} x {p0.trimbox.height / MM:.1f} mm, '
+                     f'bleed box {p0.bleedbox.width / MM:.1f} x {p0.bleedbox.height / MM:.1f} mm, fonts {len(fonts)} (all embedded: {all(fonts.values())}), '
+                     f'lowest artwork resolution {low:.0f} dpi, image colour spaces {sorted(str(s) for s in spaces)}, {os.path.getsize(path) / 1e6:.1f} MB')
+        d.close()
+    open(os.path.join(out, 'print-preflight.txt'), 'w', encoding='utf8').write('\n'.join(lines) + f'\n\ninside: {total} pages (a multiple of 4)\nspine estimated {spine:g} mm\n')
+    he = f"""פלפולא דאורייתא (קונטרס לעילוי נשמת) - קבצים לבית הדפוס
+
+zada-interior-print.pdf - פנים החוברת
+  * {total} עמודים (כפולה של 4). הקובץ מתחיל בשער הפנימי השחור-לבן (עמוד אי-זוגי) ומסתיים בעמוד הריק שלפני פנים הכריכה האחורית.
+  * גודל החוברת לאחר חיתוך: {TW:g} x {TH:g} מ"מ (B5). שוליים לחיתוך (Bleed): {B:g} מ"מ מכל צד. גודל הגיליון בקובץ: {TW + 2 * M:g} x {TH + 2 * M:g} מ"מ.
+  * סימני חיתוך בפינות, סימני אמצע בכל צד ושורת מידע (מספר עמוד) מחוץ לשוליים. הקופסאות TrimBox / BleedBox מוגדרות בקובץ.
+  * שחור בלבד (DeviceGray) - הדפסה בצבע אחד. כל הגופנים מוטמעים (חלקם כקווי מתאר וקטוריים).
+  * הרקע של השער הפנימי מורחב לשוליים בהשתקפות של התמונה; הטקסט לא מגיע לקצה.
+  * עמוד 2 בקובץ הוא עמוד ה"לעילוי נשמת". כל חבורה מתחילה בעמוד אי-זוגי (שמאלי): החבורה הראשונה בעמוד 3 בקובץ והשנייה בעמוד 7 (העמוד הריק 6 שביניהן נחוץ לשם כך). עמודים 43 ו-44 בקובץ ריקים.
+
+zada-cover-outside-print.pdf - חוץ הכריכה כיריעה אחת: שער קדמי | שדרה | שער אחורי (בעברית השדרה מימין לשער הקדמי)
+  * גודל לאחר חיתוך: {2 * TW + spine:g} x {TH:g} מ"מ. עובי השדרה {spine:g} מ"מ הוא הערכה בלבד (פנים של {total} עמודים, 80 גרם) - לחוברת מהודקת בסיכות השדרה כמעט אפסית; יש לאשר מול בית הדפוס לפי הנייר והכריכה בפועל.
+  * סימני חיתוך וסימני קיפול של השדרה. הקובץ בצבע (RGB) - לא הומר ל-CMYK כי אין כאן פרופיל צבע של בית הדפוס; בית הדפוס צריך להמיר, או לשלוח את הפרופיל שלו.
+zada-cover-inside-print.pdf - פנים הכריכה: פנים הכריכה האחורית (ריק) | שדרה | פנים הכריכה הקדמית (עמוד הקרדיטים). נחוץ רק אם הכריכה מודפסת משני צדיה; אם היא מודפסת מצד אחד בלבד, עמוד הקרדיטים ייפול.
+zada-cover-pages-print.pdf - הכריכה הקדמית והאחורית כשני עמודים נפרדים (למקרה שבית הדפוס מעדיף כך).
+
+מה לברר מול בית הדפוס לפני שליחה: סוג הכריכה (מהודקת / דבוקה), נייר ומשקל לפנים ולכריכה (קובע את עובי השדרה), שוליים לחיתוך, האם נדרש PDF/X (X-1a או X-4) ופרופיל צבע,
+האם רוצים את הפנים עם סימני חיתוך או בלעדיהם, והאם הכריכה מודפסת משני צדיה (אחרת עמוד הקרדיטים לא יודפס).
+"""
+    open(os.path.join(out, 'print-notes.txt'), 'w', encoding='utf8').write(he)
+    print('\n'.join(lines))
+
+
+if __name__ == '__main__':
+    build(sys.argv[1], sys.argv[2], float(sys.argv[3]) if len(sys.argv) > 3 else None)

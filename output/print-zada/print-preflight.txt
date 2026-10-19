@@ -1,0 +1,7 @@
+zada-interior-print.pdf: 44 page(s), sheet 196.0 x 270.0 mm, trim 176.0 x 250.0 mm, bleed box 182.0 x 256.0 mm, fonts 8 (all embedded: True), lowest artwork resolution 406 dpi, image colour spaces ['1', '3'], 6.6 MB
+zada-cover-outside-print.pdf: 1 page(s), sheet 374.0 x 270.0 mm, trim 354.0 x 250.0 mm, bleed box 360.0 x 256.0 mm, fonts 4 (all embedded: True), lowest artwork resolution 394 dpi, image colour spaces ['3'], 6.5 MB
+zada-cover-inside-print.pdf: 1 page(s), sheet 374.0 x 270.0 mm, trim 354.0 x 250.0 mm, bleed box 360.0 x 256.0 mm, fonts 2 (all embedded: True), lowest artwork resolution 406 dpi, image colour spaces ['3'], 1.7 MB
+zada-cover-pages-print.pdf: 2 page(s), sheet 196.0 x 270.0 mm, trim 176.0 x 250.0 mm, bleed box 182.0 x 256.0 mm, fonts 4 (all embedded: True), lowest artwork resolution 394 dpi, image colour spaces ['3'], 6.5 MB
+
+inside: 44 pages (a multiple of 4)
+spine estimated 2 mm
