@@ -7,6 +7,7 @@ Used for the memorial booklet: the cover pages + the two articles of R. Moshe Za
 as "הזכרת השם" in the full booklet). No dividers, no table of contents.
   --title beinyan  (default)  the second article is retitled "בעניין הזכרת השם" and the line "קונטרס" under its title is removed
   --title plain               the second article keeps its title block exactly as it is: "הזכרת השם" with the line "קונטרס"
+  --display FONT              Dimdumim (legacy cp1255 encoding) for the title and the abbreviation of the memorial text page
   --name NAME                 replaces the booklet name in the running head (default: the name of the full booklet)
   --algebra FONT              the client's display font (not in git): switches the front pages to the memorial version, see below
 
@@ -34,6 +35,7 @@ from decimal import Decimal
 import pikepdf
 from pikepdf import Name, Operator, String, ContentStreamInstruction as CSI
 from fontTools.ttLib import TTFont
+from fontTools.ttLib.tables._c_m_a_p import CmapSubtable
 from fontTools.pens.basePen import BasePen
 
 # source page numbers (1 = cover) of the full booklet
@@ -375,14 +377,33 @@ def wrap(text, outline, size, width):
     return [' '.join(l) for l in lines]
 
 
-def memorial_page(pdf, fleuron, algebra, like):
+def legacy_font(path):
+    """a font whose Hebrew letters sit at the cp1255 code points (0xE0..0xFA of a symbol cmap, like Dimdumim) with a Unicode cmap; its ASCII ' and \"
+    are the geresh / gershayim"""
+    t = TTFont(path)
+    base, uni = t['cmap'].tables[0].cmap, {}
+    for i in range(27):
+        uni[0x5D0 + i] = base.get(0xF000 + 0xE0 + i) or base[0xE0 + i]
+    for c in range(0x20, 0x7F):
+        g = base.get(0xF000 + c) or base.get(c)
+        if g:
+            uni[c] = g
+    uni[0x5F3], uni[0x5F4] = uni.get(0x27), uni.get(0x22)
+    st = CmapSubtable.newSubtable(4)
+    st.platformID, st.platEncID, st.language, st.cmap = 3, 1, 0, {k: v for k, v in uni.items() if v}
+    t['cmap'].tables = [st]
+    return t
+
+
+def memorial_page(pdf, fleuron, algebra, like, display=None):
     """the page of the memorial text; fleuron = the small flourish of the credits page (an image), like = a page whose size it takes"""
     from fontTools.varLib import instancer
     def frank(w):
         f = TTFont(MEMORIAL_FONT)
         instancer.instantiateVariableFont(f, {'wght': w}, inplace=True)
         return Outline(f)
-    body, strong, lulav, disp = frank(470), frank(600), Outline(LULAV, algebra), Outline(algebra)
+    body, strong, lulav = frank(470), frank(600), Outline(LULAV, algebra)
+    disp = Outline(legacy_font(display), LULAV) if display else Outline(algebra)          # the title and the abbreviation
     cx, items, y = GRID_CX, [], 0.0                                 # items: (outline, text, size, y, weight); y is relative, shifted at the end
     def put(o, text, size, step, weight=0.0):
         nonlocal y
@@ -481,7 +502,7 @@ def credits_box(page, ops):
     return ops
 
 
-def build(src, out, title='beinyan', name=BOOKLET_NAME, algebra=None):
+def build(src, out, title='beinyan', name=BOOKLET_NAME, algebra=None, display=None):
     pdf = pikepdf.open(src)
     P = pdf.pages
     parse = lambda n: list(pikepdf.parse_content_stream(P[n - 1]))
@@ -506,7 +527,7 @@ def build(src, out, title='beinyan', name=BOOKLET_NAME, algebra=None):
     pages, blank_src = [], P[FRONT[1] - 1]
     for new_no, (kind, n) in enumerate(plan, 1):
         if kind == 'memorial':
-            pages.append(memorial_page(pdf, P[3].Resources.XObject['/X34'], algebra, blank_src))
+            pages.append(memorial_page(pdf, P[3].Resources.XObject['/X34'], algebra, blank_src, display))
             continue
         if kind == 'blank':
             pages.append(pikepdf.Page(pdf.make_indirect(pikepdf.Dictionary(
@@ -541,6 +562,7 @@ if __name__ == '__main__':
     ap.add_argument('booklet'), ap.add_argument('out')
     ap.add_argument('--title', choices=['beinyan', 'plain'], default='beinyan')
     ap.add_argument('--algebra', help='EFT Algebra font file (the client\'s): switches the front pages to the memorial version')
+    ap.add_argument('--display', help='font file (Dimdumim, legacy encoding) for the title and the abbreviation of the memorial text page')
     ap.add_argument('--name', default=BOOKLET_NAME, help='name of the booklet in the running head')
     a = ap.parse_args()
-    build(a.booklet, a.out, a.title, a.name, a.algebra)
+    build(a.booklet, a.out, a.title, a.name, a.algebra, a.display)
