@@ -12,21 +12,24 @@ as "הזכרת השם" in the full booklet). No dividers, no table of contents.
 
 What is done to the pages (the PDF comes out of Chromium; the fonts of the title and the header are Type 3 fonts that carry the whole alphabet, so new
 text is set with the same glyphs at the advances of the font - nothing is substituted):
-  * order (44 pages): 1 colour cover, 2 credits page (instead of the empty page), 3 grey inner title page, 4-6 the first article, 7-43 the second one,
-    44 back cover. The running head is mirrored (number at the outer edge, the group "name of the booklet + title / author" at the other side), the page
-    body is symmetric (equal margins), so the pages of the second article, which moved from even to odd and back, only get their head mirrored: the
+  * order (48 pages): 1 colour cover, 2 credits page (instead of the empty page), 3 grey inner title page, 4 empty, 5-7 the first article, 8 empty,
+    9-45 the second one, 46-47 empty, 48 back cover. Every article begins on an odd page and the back cover is an even page, so empty pages fill the
+    gaps. The running head is mirrored (number at the outer edge, the group "name of the booklet + title / author" at the other side), the page
+    body is symmetric (equal margins), so the pages of both articles, which moved from even to odd and back, only get their head mirrored: the
     number, the booklet name and the bullet change sides and the author / the title change places
-  * page numbers: printed number = physical page - 3 (alef = the first page of the first article), re-set on every article page
+  * page numbers: printed number = physical page - 4 (alef = physical page 5, as in the full booklet), re-set on every article page
   * title page of the second article (--title beinyan): new title in the same frame (the frame has a minimum width and the longer title still fits),
     the line "קונטרס" removed; the body text is NOT reflowed (every column keeps its place), so the extra line is shared between the three gaps of the head
     block (header-frame, frame-author, author-text) instead of staying as one hole
   * memorial front pages (--algebra): the two curved lines round the circle of the covers (the quotation and "חבורות ● שיעורים ...") are removed; the
-    subtitle of the colour cover becomes "בעניין הכוונה בהזכרת שם השם ושמות שאינם נמחקים"; on the grey inner title page the subtitle is replaced by the
-    dedication (outlines of Lulav CLM Bold and EFT Algebra, the grey of the page); the logos stay. The credits page gets the typesetting credit in a double
+    subtitle of the colour cover becomes "בעניין הכוונה בהזכרת שם השם ושמות שאינם נמחקים" (centred on the page); on the grey inner title page the subtitle
+    is replaced by the dedication (all in Lulav CLM Bold, centred on the page, the names larger and thickened), the logo is removed and the circle with its
+    texts moves up (shift_medallion.py moves the medallion inside the background picture); the logo of the colour cover stays. The credits page gets the typesetting credit in a double
     rounded frame under its last line, the column moves up a little to keep the margins
-Needs: pip install pikepdf fonttools"""
+Needs: pip install pikepdf fonttools numpy scipy pillow"""
 import argparse
 import os
+import sys
 from decimal import Decimal
 import pikepdf
 from pikepdf import Name, Operator, String, ContentStreamInstruction as CSI
@@ -40,7 +43,7 @@ ART2 = (84, 120)                      # "הזכרת השם" (Moshe Zada)
 BACK = 634
 SRC_AUTHOR, SRC_TITLE1, SRC_TITLE2 = 84, 21, 85    # pages whose running head carries the author (even) / the titles (odd)
 OLD_TITLE, NEW_TITLE = 'הזכרת השם', 'בעניין הזכרת השם'
-NUM_OFFSET = 3                        # printed number = physical page - 3 (alef = the first page of the first article)
+NUM_OFFSET = 4                        # printed number = physical page - 4 (alef = physical page 5, as in the full booklet)
 BANNER_SHARE = Decimal('22.9167')     # one third of the freed line (68.75 units) in the units of the 0.24 pt matrix of the page
 PAGE_W_PX, MARGIN_PX = 665, 73.3125   # page width in css px, outer margin (19.4 mm)
 # running head, css px (read from the full booklet): the group is [booklet name][gap + bullet][author / title text]; on an even page it starts at the
@@ -194,20 +197,24 @@ def title_page(page, ops):
 
 # ------------------------------------------------------------------------------------------------ cover pages and credits
 HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
 LULAV = os.path.join(HERE, 'assets', 'fonts', 'LulavCLM-Bold.otf')
 COVER_SUB = ('בעניין הכוונה בהזכרת שם השם', 'ושמות שאינם נמחקים')
-# the dedication of the grey inner title page: (text, face, size, step from the previous line) - sizes and steps in the 1408 x 2000 grid of the cover
+# the dedication of the grey inner title page, all in Lulav: (text, size, step from the previous line, extra weight) - the grid of the cover is 1408 x 2000
 DEDICATION = [
-    ('יו״ל במלאות שבעה לעלותו לשמי רום בחטף', 'lulav', 28, 0),
-    ('של ינוקא דבי רב עלם חמודות', 'lulav', 28, 36),
-    ('הילד אליהו בן הדסה חיה עזריאל ז״ל', 'algebra', 60, 66),
-    ('רוכב בערבות שש ושמח בבא אליו נפש נקי וצדיק', 'lulav', 28, 48),
-    ('בן יבלחט״א ידידינו העומד לימינינו', 'lulav', 28, 54),
-    ('הרה״ג ר׳ חיים מאיר שליט״א', 'algebra', 44, 52),
-    ('זכות התורה תעמוד לו ולעילוי נשמתו ובעדן תהיה מנוחתו', 'lulav', 24, 54),
-    ('עד יקוצו וירננו שוכני עפר בב״א', 'lulav', 24, 31),
+    ('יו״ל במלאות שבעה לעלותו לשמי רום בחטף', 36, 0, 0),
+    ('של ינוקא דבי רב עלם חמודות', 36, 48, 0),
+    ('הילד אליהו בן הדסה חיה עזריאל ז״ל', 70, 104, 1.6),
+    ('רוכב בערבות שש ושמח בבא אליו נפש נקי וצדיק', 36, 74, 0),
+    ('בן יבלחט״א ידידינו העומד לימינינו', 36, 66, 0),
+    ('הרה״ג ר׳ חיים מאיר שליט״א', 56, 78, 1.4),
+    ('זכות התורה תעמוד לו ולעילוי נשמתו ובעדן תהיה מנוחתו', 33, 84, 0),
+    ('עד יקוצו וירננו שוכני עפר בב״א', 33, 44, 0),
 ]
-DEDICATION_Y0, DEDICATION_MAXW = 1066.0, 900.0     # first baseline; widest line (the line is shrunk to fit)
+DEDICATION_MAXW = 940.0                            # widest line (a line is shrunk to fit)
+DEDICATION_BAND = (850.0, 1790.0)                  # the block is centred vertically between the circle (after it moved up) and the inner edge of the frame
+GRID_CX = 705.5                                    # the middle of the page in the grid of the cover (the page is 2078.125 units wide, cm 1.47636, offset -2.49)
+MEDALLION_UP = 150.0                               # the circle of the inner title page moves up by this much (grid units)
 CREDIT_LABEL, CREDIT_PHONE = 'עימוד ועיצוב: י. א. - ', '0534185035'
 CREDIT_SHIFT, CREDIT_GAP, CREDIT_BOX = 24.0, 40.0, dict(padx=11.0, up=19.0, down=11.0, r=7.0, inset=2.6)   # css px
 
@@ -252,8 +259,9 @@ class Outline:
     def width(self, text, size):
         return sum(self._face(c)[0]['hmtx'][self._face(c)[1]][0] / self._face(c)[3] for c in text) * size
 
-    def ops(self, text, size, x, y):
-        """text (logical order) with its left edge at x and its baseline at y of the page's flipped coordinate system"""
+    def ops(self, text, size, x, y, weight=0.0):
+        """text (logical order) with its left edge at x and its baseline at y of the page's flipped coordinate system; weight > 0 thickens the letters
+        (an outline of that width, in the units of the page, in the stroke colour that is in force)"""
         out = []
         for c in reversed(text):
             f, g, gs, upem = self._face(c)
@@ -262,7 +270,9 @@ class Outline:
             gs[g].draw(pen)
             if pen.ops:
                 out += [CSI([], Operator('q')), CSI([Decimal(f'{sc:.6f}'), 0, 0, Decimal(f'{-sc:.6f}'), Decimal(f'{x:.3f}'), Decimal(f'{y:.3f}')], Operator('cm'))]
-                out += pen.ops + [CSI([], Operator('f')), CSI([], Operator('Q'))]
+                if weight:
+                    out += [CSI([Decimal(f'{weight / sc:.2f}')], Operator('w')), CSI([1], Operator('j'))]
+                out += pen.ops + [CSI([], Operator('B' if weight else 'f')), CSI([], Operator('Q'))]
             x += f['hmtx'][g][0] * sc
         return out
 
@@ -290,30 +300,50 @@ def curved_groups(ops, fonts):
 
 def memorial_cover(page, ops, curved, subtitle, algebra):
     """no curved lines round the circle; the subtitle (two lines under the circle) is replaced: on the colour cover by the new subtitle, on the grey
-    inner title page (subtitle=None) by the dedication"""
+    inner title page (subtitle=None) by the dedication; there also the logo is removed and the circle moves up"""
     lulav = Outline(LULAV, algebra)
     blocks = split_blocks(ops)
     subs = [b for b in blocks if abs(b['size'] - 42) < 0.01]
     assert len(subs) == 2
     edits = [(a, b, []) for a, b in curved_groups(ops, curved)]
-    fonts = page.Resources.Font
-    centres = [b['x'] + sum(advances(fonts[b['font']], b['codes'], 42)) / 2 for b in subs]
     if subtitle:
-        for old, text, c in zip(subs, subtitle, centres):          # centred where the old line was centred
-            edits.append((old['start'], old['end'], lulav.ops(text, 42, c - lulav.width(text, 42) / 2, old['y'])))
+        for old, text in zip(subs, subtitle):                       # centred on the page
+            edits.append((old['start'], old['end'], lulav.ops(text, 42, GRID_CX - lulav.width(text, 42) / 2, old['y'])))
     else:
-        cx = sum(centres) / 2
-        faces = {'lulav': lulav, 'algebra': Outline(algebra)}
-        new, y = [], DEDICATION_Y0
-        for text, face, size, step in DEDICATION:
+        total = sum(step for _, _, step, _ in DEDICATION)
+        y = (DEDICATION_BAND[0] + DEDICATION_BAND[1]) / 2 - total / 2 + DEDICATION[0][1] * 0.35
+        new = []
+        for text, size, step, weight in DEDICATION:
             y += step
-            size = min(size, size * DEDICATION_MAXW / faces[face].width(text, size))
-            new += faces[face].ops(text, size, cx - faces[face].width(text, size) / 2, y)
+            size = min(size, size * DEDICATION_MAXW / lulav.width(text, size))
+            new += lulav.ops(text, size, GRID_CX - lulav.width(text, size) / 2, y, weight)
         edits.append((subs[0]['start'], subs[0]['end'], new))
         edits.append((subs[1]['start'], subs[1]['end'], []))
+        for b in blocks:                                            # the live texts of the medallion (kontres, the title) go up with the circle
+            if abs(b['size'] - 56.45) < 0.01 or abs(b['size'] - 165) < 0.01:
+                for k in range(b['start'], b['end'] + 1):
+                    if str(ops[k].operator) == 'Tm':
+                        t = list(ops[k].operands)
+                        t[5] = Decimal(f'{float(t[5]) - MEDALLION_UP:.3f}')
+                        ops[k] = CSI(t, Operator('Tm'))
+        for k, op in enumerate(ops):                                # the logo: the last group q cm Do Q with the big image
+            if str(op.operator) == 'cm' and len(op.operands) == 6 and 400 < float(op.operands[0]) < 500 and str(ops[k + 2].operator) in ('gs', 'rg', 'Do'):
+                last = next(j for j in range(k, len(ops)) if str(ops[j].operator) == 'Q')
+                edits.append((k - 1, last, []))
     for a, b, new in sorted(edits, key=lambda e: -e[0]):
         ops[a:b + 1] = new
     return ops
+
+
+def move_medallion(pdf, page):
+    """the picture of the page (the medallion in it), the gradient of the title: all up by MEDALLION_UP"""
+    import shift_medallion
+    img = page.Resources.XObject['/X19']
+    img.write(shift_medallion.shifted_background(img.read_raw_bytes(), MEDALLION_UP), filter=Name.DCTDecode)
+    for pat in page.Resources.Pattern.values():
+        m = [float(v) for v in pat.Matrix]
+        m[5] += MEDALLION_UP * 0.35432571                           # the page is 708.96 pt = 2000 grid units high
+        pat.Matrix = pikepdf.Array([Decimal(f'{v:.8f}') for v in m])
 
 
 def glyph_codes(font):
@@ -388,9 +418,16 @@ def build(src, out, title='beinyan', name=BOOKLET_NAME, algebra=None):
     assert decode(title2) == OLD_TITLE
     if title == 'beinyan':
         title2 = visual(NEW_TITLE)
-    plan = [('keep', n) for n in FRONT] + [('art', n) for n in range(ART1[0], ART1[1] + 1)] + \
-           [('art', n) for n in range(ART2[0], ART2[1] + 1)] + [('keep', BACK)]
-    assert len(plan) % 4 == 0, len(plan)
+    # every article begins on an odd page, the back cover is an even page, the number of pages is a multiple of 4: empty pages fill the gaps
+    plan = []
+    for kind, n in [('keep', k) for k in FRONT] + [('art', n) for n in range(ART1[0], ART1[1] + 1)] + [('art', n) for n in range(ART2[0], ART2[1] + 1)]:
+        if kind == 'art' and n in (ART1[0], ART2[0]) and len(plan) % 2 == 1:
+            plan.append(('blank', None))
+        plan.append((kind, n))
+    while (len(plan) + 1) % 4:
+        plan.append(('blank', None))
+    plan.append(('keep', BACK))
+    assert len(plan) % 4 == 0 and all(len(plan[:i]) % 2 == 0 for i, (k, n) in enumerate(plan) if n in (ART1[0], ART2[0])), 'parity'
     pages, blank_src = [], P[FRONT[1] - 1]
     for new_no, (kind, n) in enumerate(plan, 1):
         if kind == 'blank':
@@ -403,6 +440,8 @@ def build(src, out, title='beinyan', name=BOOKLET_NAME, algebra=None):
             ops = credits_box(pg, ops) if n == 4 else memorial_cover(
                 pg, ops, {'/F10', '/F11'} if n == 1 else {'/F24', '/F25'}, COVER_SUB if n == 1 else None, algebra)
             pg.Contents = pdf.make_stream(pikepdf.unparse_content_stream(ops))
+            if n == 3:
+                move_medallion(pdf, pg)
         if kind == 'art':
             odd = new_no % 2 == 1
             t = (title1 if ART1[0] <= n <= ART1[1] else title2) if odd else author
