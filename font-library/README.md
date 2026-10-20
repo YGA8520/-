@@ -42,8 +42,8 @@ ONLY=hebrew MAXSTYLES=2 node font-library/tools/specimen.js   # תמונה לכ�
 python3 font-library/tools/package_skill.py
 ```
 
-נוצרים ב-`font-library/dist/` שני קבצי zip, כי הכול יחד גדול מדי: `my-fonts-hebrew.zip` (כל משפחה שיש בה עברית) ו-`my-fonts-latin.zip` (גופני אנגלית: טקסט, כותרות, כתב, כתב יד; גופני סמלים/סינית/אייקונים מושמטים ומודפסים ברשימה).
-ב-claude.ai: **Settings ← Capabilities ← Skills ← Upload skill**, ומעלים כל zip בנפרד. (שמות התפריטים עשויים להשתנות.) אם אחד נדחה בשל גודל — מורידים משפחות או מפצלים עוד.
+ב-claude.ai אסור שה-zip יעבור **30MB לא דחוס**, ולכן הספרייה מתפצלת אוטומטית לכמה Skills (עברית; לטינית סריף / סאנס / כותרות-כתב-מונוספייס), וכל אחד שעובר את המגבלה מתפצל שוב לפי גודל. הקבצים נוצרים ב-`font-library/dist/`; גופני סמלים/סינית/אייקונים מושמטים ומודפסים ברשימה.
+מעלים כל zip בנפרד: **Settings ← Capabilities ← Skills ← Upload skill**. (שמות התפריטים עשויים להשתנות.)
 
 ## 5. שימוש בריפו הזה (Claude Code)
 
