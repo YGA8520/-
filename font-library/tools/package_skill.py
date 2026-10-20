@@ -92,11 +92,30 @@ def build(name, fams, notes):
             src = r['file'].split('#')[0]
             rename[src] = safe_rel(src, taken)
     files = set(rename)
+    members = {}                                    # (collection, index) -> standalone .ttf written into the zip
+    for rs in fams.values():
+        for r in rs:
+            if '#' in r['file']:
+                src, idx = r['file'].split('#')
+                members[(src, int(idx))] = os.path.splitext(rename[src])[0] + '_%s.ttf' % idx
     for src, rel in sorted(rename.items()):
+        if src.lower().endswith('.ttc'):
+            continue                                # collections are unpacked below: @font-face and most scanners cannot use a .ttc
         dst = os.path.join(tmp, rel)
         os.makedirs(os.path.dirname(dst), exist_ok=True)
         shutil.copy2(os.path.join(SKILL, src), dst)
-    fams = {n: [dict(r, file=rename[r['file'].split('#')[0]] + ('#' + r['file'].split('#')[1] if '#' in r['file'] else '')) for r in rs] for n, rs in fams.items()}
+    if members:
+        from fontTools.ttLib import TTCollection
+        for src in sorted({k[0] for k in members}):
+            coll = TTCollection(os.path.join(SKILL, src))
+            for (s2, idx), rel in sorted(members.items()):
+                if s2 == src:
+                    os.makedirs(os.path.dirname(os.path.join(tmp, rel)), exist_ok=True)
+                    coll.fonts[idx].save(os.path.join(tmp, rel))
+    def short_license(t):
+        return re.sub(r'\s+', ' ', t).strip()[:140]
+    fams = {n: [dict(r, file=(members[tuple([r['file'].split('#')[0], int(r['file'].split('#')[1])])] if '#' in r['file'] else rename[r['file']]),
+                   license=short_license(r.get('license', ''))) for r in rs] for n, rs in fams.items()}
     shutil.copytree(os.path.join(SKILL, 'scripts'), os.path.join(tmp, 'scripts'))
     md = open(os.path.join(SKILL, 'SKILL.md'), encoding='utf-8').read()
     body = md.split('---', 2)[2]
