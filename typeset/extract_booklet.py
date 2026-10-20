@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Cuts a small booklet out of the finished full booklet PDF (vector pages are copied, nothing is rasterised) - the original is not touched.
 
-usage: python extract_booklet.py booklet.pdf out.pdf [--title beinyan|plain] [--algebra EFT_Algebra.ttf] [--name NAME]
+usage: python extract_booklet.py booklet.pdf out.pdf [--title beinyan|plain] [--algebra EFT_Algebra.ttf] [--name NAME]\n           [--title-font MANTB.TTF --text-font frank.otf --text-bold bold.otf] [--haskama h.pdf] [--prospectus p.pdf]
 
 Used for the memorial booklet: the cover pages + the two articles of R. Moshe Zada (the opening "החובה להתאמץ בדור אחרון" and the one that stands
 as "הזכרת השם" in the full booklet). No dividers, no table of contents.
@@ -13,7 +13,7 @@ as "הזכרת השם" in the full booklet). No dividers, no table of contents.
 
 What is done to the pages (the PDF comes out of Chromium; the fonts of the title and the header are Type 3 fonts that carry the whole alphabet, so new
 text is set with the same glyphs at the advances of the font - nothing is substituted):
-  * order (48 pages): 1 colour cover, 2 credits page (instead of the empty page), 3 grey inner title page, 4 empty, 5-7 the first article, 8 empty,
+  * order (52 pages): 1 colour cover, 2 credits page, 3 grey inner title page, 4 memorial text page, 5 table of contents (generated: every article,\n    part heading and sub-heading with its page), 6 the haskama (title changed to the singular), 7-9 the first article, 10 empty, 11-47 the second,\n    48-50 empty, 51 the prospectus (inside of the back cover), 52 back cover. Earlier layout (48 pages): 4 empty, 5-7 the first article, 8 empty,
     9-45 the second one, 46-47 empty, 48 back cover (with --algebra page 4 carries the memorial text instead of staying empty). Every article begins on an odd page and the back cover is an even page, so empty pages fill the
     gaps. The running head is mirrored (number at the outer edge, the group "name of the booklet + title / author" at the other side), the page
     body is symmetric (equal margins), so the pages of both articles, which moved from even to odd and back, only get their head mirrored: the
@@ -35,7 +35,6 @@ from decimal import Decimal
 import pikepdf
 from pikepdf import Name, Operator, String, ContentStreamInstruction as CSI
 from fontTools.ttLib import TTFont
-from fontTools.ttLib.tables._c_m_a_p import CmapSubtable
 from fontTools.pens.basePen import BasePen
 
 # source page numbers (1 = cover) of the full booklet
@@ -214,7 +213,6 @@ DEDICATION = [
     ('עד יקוצו וירננו שוכני עפר בב״א', 26, 36, 0),
 ]
 # the page of the memorial text (the empty page 4 behind the grey inner title page): title, name, a verse, two paragraphs, the abbreviation
-MEMORIAL_FONT = os.path.join(HERE, 'assets', 'fonts', 'FrankRuhlLibre.ttf')            # variable font, weight axis
 MEMORIAL_TITLE, MEMORIAL_NAME = 'לעילוי נשמת', 'הילד אליהו ז״ל'
 MEMORIAL_VERSE, MEMORIAL_CITE = 'ה׳ נתן וה׳ לקח, יהי שם ה׳ מבורך', 'איוב א, כא'
 MEMORIAL_PARAS = [
@@ -223,8 +221,8 @@ MEMORIAL_PARAS = [
     'תהא נשמתו צרורה בצרור החיים, ו״בלע המות לנצח ומחה ה׳ אלקים דמעה מעל כל פנים״ (ישעיה כה, ח). '
     'המקום ינחם את הוריו ואת כל בני משפחתו בתוך שאר אבלי ציון וירושלים, ולא ידעו עוד צער.',
 ]
-MEMORIAL_END = 'תנצב״ה'
-MEMORIAL_W, MEMORIAL_SIZE, MEMORIAL_LEAD = 800.0, 36.0, 60.0                           # text column (grid units), size, line step
+MEMORIAL_END = 'ת.נ.צ.ב.ה'
+MEMORIAL_W, MEMORIAL_SIZE, MEMORIAL_LEAD = 800.0, 36.0, 62.0                           # text column (grid units), size, line step
 DEDICATION_MAXW = 720.0                            # widest line (a line is shrunk to fit)
 DEDICATION_BAND = (850.0, 1790.0)                  # the block is centred vertically between the circle (after it moved up) and the inner edge of the frame
 GRID_CX = 705.5                                    # the middle of the page in the grid of the cover (the page is 2078.125 units wide, cm 1.47636, offset -2.49)
@@ -365,7 +363,12 @@ def move_medallion(pdf, page):
 
 def wrap(text, outline, size, width):
     """greedy line breaking; a last line of one word takes the word before it down"""
-    words, lines, cur = text.split(), [], []
+    words, lines, cur = [], [], []
+    for w in text.split():                                          # 'ז״ל' stays with the name before it
+        if words and w.startswith('ז״ל'):
+            words[-1] += ' ' + w
+        else:
+            words.append(w)
     for w in words:
         if cur and outline.width(' '.join(cur + [w]), size) > width:
             lines.append(cur)
@@ -377,67 +380,104 @@ def wrap(text, outline, size, width):
     return [' '.join(l) for l in lines]
 
 
-def legacy_font(path):
-    """a font whose Hebrew letters sit at the cp1255 code points (0xE0..0xFA of a symbol cmap, like Dimdumim) with a Unicode cmap; its ASCII ' and \"
-    are the geresh / gershayim"""
+def frank_font(path):
+    """FrankRuehl DP draws U+05F3 / U+05F4 empty: its ASCII ' and " are the geresh / gershayim (see prepare_fonts.py)"""
     t = TTFont(path)
-    base, uni = t['cmap'].tables[0].cmap, {}
-    for i in range(27):
-        uni[0x5D0 + i] = base.get(0xF000 + 0xE0 + i) or base[0xE0 + i]
-    for c in range(0x20, 0x7F):
-        g = base.get(0xF000 + c) or base.get(c)
-        if g:
-            uni[c] = g
-    uni[0x5F3], uni[0x5F4] = uni.get(0x27), uni.get(0x22)
-    st = CmapSubtable.newSubtable(4)
-    st.platformID, st.platEncID, st.language, st.cmap = 3, 1, 0, {k: v for k, v in uni.items() if v}
-    t['cmap'].tables = [st]
+    for st in t['cmap'].tables:
+        if st.isUnicode():
+            st.cmap[0x5F3], st.cmap[0x5F4] = 'quotesingle', 'quotedbl'
     return t
 
 
-def memorial_page(pdf, fleuron, algebra, like, display=None):
-    """the page of the memorial text; fleuron = the small flourish of the credits page (an image), like = a page whose size it takes"""
-    from fontTools.varLib import instancer
-    def frank(w):
-        f = TTFont(MEMORIAL_FONT)
-        instancer.instantiateVariableFont(f, {'wght': w}, inplace=True)
-        return Outline(f)
-    body, strong, lulav = frank(470), frank(600), Outline(LULAV, algebra)
-    disp = Outline(legacy_font(display), LULAV) if display else Outline(algebra)          # the title and the abbreviation
+def parse_path(d):
+    """'M x,y L x,y C x,y x,y x,y Z' (absolute) -> path operators"""
+    tok, out, i = d.replace(',', ' ').split(), [], 0
+    names = {'M': ('m', 2), 'L': ('l', 2), 'C': ('c', 6)}
+    while i < len(tok):
+        c = tok[i]
+        i += 1
+        if c == 'Z':
+            out.append(CSI([], Operator('h')))
+            continue
+        op, n = names[c]
+        out.append(CSI([Decimal(t) for t in tok[i:i + n]], Operator(op)))
+        i += n
+    return out
+
+
+def ellipse(cx, cy, rx, ry):
+    k = 0.5523
+    f = lambda *v: ' '.join(f'{t:.2f}' for t in v)
+    return (f'M {f(cx + rx, cy)} C {f(cx + rx, cy + k * ry, cx + k * rx, cy + ry, cx, cy + ry)} C {f(cx - k * rx, cy + ry, cx - rx, cy + k * ry, cx - rx, cy)} '
+            f'C {f(cx - rx, cy - k * ry, cx - k * rx, cy - ry, cx, cy - ry)} C {f(cx + k * rx, cy - ry, cx + rx, cy - k * ry, cx + rx, cy)} Z')
+
+
+def candle(cx, top, height):
+    """a memorial candle (a flame with fine rays, a wick, a candle with wax drips, a plate): vector drawing in greys, 266 units high in its own system"""
+    import math
+    sc = height / 266.0
+    ops = [CSI([], Operator('q')), CSI([Decimal(f'{sc:.5f}'), 0, 0, Decimal(f'{sc:.5f}'), Decimal(f'{cx:.2f}'), Decimal(f'{top:.2f}')], Operator('cm')),
+           CSI([1], Operator('J')), CSI([1], Operator('j'))]
+    def draw(d, fill=None, stroke=None, width=1.0):
+        nonlocal ops
+        if fill is not None:
+            ops.append(CSI([Decimal(str(fill))], Operator('g')))
+        if stroke is not None:
+            ops += [CSI([Decimal(str(stroke))], Operator('G')), CSI([Decimal(str(width))], Operator('w'))]
+        ops += parse_path(d) if isinstance(d, str) else d
+        ops.append(CSI([], Operator('B' if fill is not None and stroke is not None else ('f' if fill is not None else 'S'))))
+    for ang in (-78, -54, -30, 30, 54, 78):                           # rays round the flame, finest strokes
+        r1, r2, a = 54, 66 if abs(ang) < 60 else 62, math.radians(ang)
+        draw(f'M {r1 * math.sin(a):.2f} {50 - r1 * math.cos(a):.2f} L {r2 * math.sin(a):.2f} {50 - r2 * math.cos(a):.2f}', None, 0.45, 1.3)
+    draw('M 0 0 C 10 20 31 40 27 62 C 25 74 14 81 0 81 C -14 81 -25 74 -27 62 C -31 40 -10 20 0 0 Z', 0.17, 0.12, 1.2)       # the flame
+    draw('M 0 36 C 6 47 14 55 11 66 C 10 72 5 76 0 76 C -5 76 -10 72 -11 66 C -14 55 -6 47 0 36 Z', 0.94)
+    draw('M 0 80 L 0 101', None, 0.15, 3.0)                              # the wick
+    draw('M -23 109 C -23 102 23 102 23 109 L 23 252 L -23 252 Z', 0.9, 0.2, 1.8)                                      # the candle
+    draw(ellipse(0, 109, 23, 6), 0.8, 0.2, 1.4)                                                                        # the pool of wax
+    draw('M -23 109 C -23 130 -15 136 -15 120 L -15 109 Z', 0.95, 0.2, 1.2)                                            # drips
+    draw('M 8 109 C 8 128 15 132 15 116 L 15 109 Z', 0.95, 0.2, 1.2)
+    draw('M -13 138 L -13 238', None, 1.0, 4.0)                                                                        # a highlight on the candle
+    draw('M -45 252 L 45 252 L 53 266 L -53 266 Z', 0.8, 0.2, 1.8)                                                     # the plate
+    ops += [CSI([], Operator('Q'))]
+    return ops
+
+
+def memorial_page(pdf, fleuron, algebra, like, fonts):
+    """the page of the memorial text: a candle, the title, the name, a verse, two paragraphs, the abbreviation, a flourish.  fonts = the title font (Mantova
+    bold), the text font and its bold (FrankRuehl DP); lulav / algebra are not used here (they are the fonts of the front pages)"""
+    title_f, text_f, bold_f = Outline(fonts['title']), Outline(frank_font(fonts['text'])), Outline(frank_font(fonts['bold']))
     cx, items, y = GRID_CX, [], 0.0                                 # items: (outline, text, size, y, weight); y is relative, shifted at the end
     def put(o, text, size, step, weight=0.0):
         nonlocal y
         y += step
         items.append((o, text, size, y, weight))
-    put(disp, MEMORIAL_TITLE, 92, 0)
-    put(lulav, MEMORIAL_NAME, 58, 104, 1.3)
-    put(strong, MEMORIAL_VERSE, 40, 150)
-    put(body, MEMORIAL_CITE, 25, 46)
+    put(title_f, MEMORIAL_TITLE, 96, 0)
+    put(title_f, MEMORIAL_NAME, 60, 100)
+    put(bold_f, MEMORIAL_VERSE, 42, 150)
+    put(text_f, MEMORIAL_CITE, 25, 46)
     y += 10
     for para in MEMORIAL_PARAS:
-        lines = wrap(para, body, MEMORIAL_SIZE, MEMORIAL_W)
+        lines = wrap(para, text_f, MEMORIAL_SIZE, MEMORIAL_W)
         for i, line in enumerate(lines):
-            put(body, line, MEMORIAL_SIZE, MEMORIAL_LEAD if i else MEMORIAL_LEAD + 30)
-    put(disp, MEMORIAL_END, 60, 110)
-    flo_w, flo_h = 430.0, 430.0 * 168 / 648                       # the flourish: size on the page
-    gap = 120.0
-    height = items[-1][3] - items[0][3] + 2 * (flo_h + gap)
-    top = 1000.0 - height / 2 + flo_h + gap - items[0][3]           # the block is centred vertically (baseline of the title = top + items[0][3])
+            put(text_f, line, MEMORIAL_SIZE, MEMORIAL_LEAD if i else MEMORIAL_LEAD + 30)
+    put(title_f, MEMORIAL_END, 64, 118)
+    can_h, flo_w, flo_h, gap = 340.0, 430.0, 430.0 * 168 / 648, 100.0
+    height = can_h + 118 + (items[-1][3] - items[0][3]) + 70 + gap + flo_h
+    top = 1000.0 - height / 2                                       # the block is centred vertically
+    base = top + can_h + 118 - items[0][3]
     ops = [CSI([], Operator('q')), CSI([Decimal('0.35432571'), 0, 0, Decimal('-0.35432571'), 0, Decimal('708.96')], Operator('cm')),
            CSI([Decimal('0.1098')], Operator('g')), CSI([Decimal('0.1098')], Operator('G'))]
+    ops += candle(cx, top, can_h)
+    ops += [CSI([Decimal('0.1098')], Operator('g')), CSI([Decimal('0.1098')], Operator('G'))]
     for o, text, size, yy, weight in items:
         size = min(size, size * 900.0 / o.width(text, size))
-        ops += o.ops(text, size, cx - o.width(text, size) / 2, top + yy, weight)
-    y_first, y_last = top + items[0][3] - 92 - gap, top + items[-1][3] + gap * 0.55
-    for yy, flip in ((y_first - flo_h, False), (y_last + flo_h, True)):
-        ops += [CSI([], Operator('q')), CSI([Decimal(f'{flo_w:.2f}'), 0, 0, Decimal(f'{-flo_h if not flip else flo_h:.2f}'), Decimal(f'{cx - flo_w / 2:.2f}'),
-                                              Decimal(f'{yy + flo_h if not flip else yy - flo_h:.2f}')], Operator('cm')),
-                CSI([Name('/X34')], Operator('Do')), CSI([], Operator('Q'))]
-    ops.append(CSI([], Operator('Q')))
-    page = pikepdf.Page(pdf.make_indirect(pikepdf.Dictionary(
+        ops += o.ops(text, size, cx - o.width(text, size) / 2, base + yy, weight)
+    y_fl = base + items[-1][3] + 70 + gap
+    ops += [CSI([], Operator('q')), CSI([Decimal(f'{flo_w:.2f}'), 0, 0, Decimal(f'{flo_h:.2f}'), Decimal(f'{cx - flo_w / 2:.2f}'), Decimal(f'{y_fl:.2f}')], Operator('cm')),
+            CSI([Name('/X34')], Operator('Do')), CSI([], Operator('Q')), CSI([], Operator('Q'))]
+    return pikepdf.Page(pdf.make_indirect(pikepdf.Dictionary(
         Type=Name.Page, MediaBox=like.MediaBox, Resources=pikepdf.Dictionary(XObject=pikepdf.Dictionary({'/X34': fleuron})),
         Contents=pdf.make_stream(pikepdf.unparse_content_stream(ops)))))
-    return page
 
 
 def glyph_codes(font):
@@ -502,9 +542,171 @@ def credits_box(page, ops):
     return ops
 
 
-def build(src, out, title='beinyan', name=BOOKLET_NAME, algebra=None, display=None):
+# ------------------------------------------------------------------------------------------------ table of contents, haskama, prospectus
+TOC_TITLE_BANDS = ('הסכמה', 'חבורות')
+HASKAMA_LINE = 'הסכמת הגאונים מרנן ורבנן גדולי ישראל שליט״א'
+TOC_FIRST_Y, TOC_NEXT_Y, TOC_BOTTOM = 240.0, 128.0, 872.0        # css px: the first band / the first line of a continuation page / the lowest baseline
+TOC_STEP = dict(article=41.0, haskama=31.0, part=26.0, sub=21.0)  # distance from the baseline of an entry to the baseline of the next one
+HASKAMA_OLD, HASKAMA_NEW = 'הסכמות', 'הסכמה'
+
+
+def book_headings(pdf, first, last):
+    """the part headings (Ashkenazy 19.33: 'ענף א') and the sub-headings (Livorna 15.33) of the pages first..last of the full booklet:
+    [(page, kind, text)], 'part' = the heading with its title; consecutive lines of one heading are joined"""
+    import collections
+    found = []
+    for pn in range(first, last + 1):
+        pg = pdf.pages[pn - 1]
+        ops = list(pikepdf.parse_content_stream(pg))
+        inv = {k: {c: ch for ch, c in glyph_codes(v).items()} for k, v in (pg.Resources.get('/Font') or {}).items() if v.get('/Subtype') == '/Type3'}
+        groups = collections.defaultdict(list)
+        for b in split_blocks(ops):
+            if not b['codes'] or None in b['codes']:
+                continue
+            kind = 'part' if b['font'] == '/F47' and abs(b['size'] - 19.33) < 0.02 else 'sub' if b['font'] == '/F40' and abs(b['size'] - 15.33) < 0.02 else None
+            if kind:
+                groups[(kind, b['y'])].append((b['x'], ''.join(inv[b['font']].get(c, '?') for c in reversed(b['codes']))))
+        for (kind, y), items in sorted(groups.items(), key=lambda kv: kv[0][1]):
+            found.append((pn, kind, y, ''.join(t for x, t in sorted(items, key=lambda i: -i[0]))))
+    out = []
+    for pn, kind, y, text in found:
+        text = text.strip().rstrip(':').strip()
+        if kind == 'sub' and out and out[-1][0] == pn and abs(y - out[-1][2]) < 30:
+            prev = out[-1]                                          # the title of a part heading / the second line of a heading
+            out[-1] = (pn, prev[1], y, prev[3] + (' – ' if prev[1] == 'part' and ' – ' not in prev[3] else ' ') + text)
+        else:
+            out.append((pn, kind, y, text))
+    return [(pn, kind, text) for pn, kind, y, text in out]
+
+
+def toc_items(pdf, art1, art2, author):
+    """the entries of the table of contents in order: (kind, text, source page); kinds: band, haskama, article, part, sub"""
+    items = [('band', TOC_TITLE_BANDS[0], None), ('haskama', HASKAMA_LINE, 'haskama'), ('band', TOC_TITLE_BANDS[1], None),
+             ('article', 'החובה להתאמץ בדור אחרון', art1[0]), ('article', NEW_TITLE if author else OLD_TITLE, art2[0])]
+    for pn, kind, text in book_headings(pdf, art2[0], art2[1]):
+        items.append((kind, text, pn))
+    return items
+
+
+def toc_layout(items):
+    """pagination of the entries: [[(item, baseline or band top)]], css px"""
+    pages, cur, y = [], [], TOC_FIRST_Y
+    first = True
+    for it in items:
+        kind = it[0]
+        need = 52 if kind == 'band' else 40
+        if y + need > TOC_BOTTOM and cur:
+            pages.append(cur)
+            cur, y, first = [], TOC_NEXT_Y, False
+        if kind == 'band':
+            top = y if (not cur or y == TOC_FIRST_Y) else y + 2
+            cur.append((it, top))
+            y = top + 52
+        else:
+            cur.append((it, y))
+            y += TOC_STEP[kind]
+    pages.append(cur)
+    return pages
+
+
+def toc_pages(pdf, base, layout, printed, first_no):
+    """the pages of the table of contents (a copy of the old one in the Type 3 fonts of the booklet); printed(src) -> Hebrew numeral of a source page"""
+    orig = list(pikepdf.parse_content_stream(base))
+    fonts = base.Resources.Font
+    f50, f51 = fonts['/F50'], fonts['/F51']
+    c50, c51 = glyph_codes(f50), glyph_codes(f51)
+    blocks = split_blocks(orig)
+    t_art = next(b for b in blocks if b['font'] == '/F51' and abs(b['size'] - 16) < 0.01)
+    right = t_art['x'] + sum(advances(f51, t_art['codes'], 16))                     # the right edge of the entries
+    t_band = next(b for b in blocks if b['font'] == '/F50' and abs(b['size'] - 18) < 0.01)
+    right_band = t_band['x'] + sum(advances(f50, t_band['codes'], 18))
+    auth = [b for b in blocks if b['font'] == '/F52'][1]                                   # the second author line of the old table of contents: Zada
+    auth_ops = orig[auth['start']:auth['end'] + 1]
+    i45 = next(k for k, x in enumerate(orig) if str(x.operator) == 'Do' and str(x.operands[0]) == '/X45')
+    i48 = next(k for k, x in enumerate(orig) if str(x.operator) == 'Do' and str(x.operands[0]) == '/X48')
+    title_ops = orig[i45 - 5:i48 + 2]
+    head_codes = head_text(base, orig)
+    shift = 11812.5 / 3.125                                                              # the text coordinates of this page group are css px + 3780
+    group = lambda: [CSI([], Operator('q')), CSI([Decimal('3.125'), 0, 0, Decimal('3.125'), Decimal('-2.4902344'), Decimal('-11812.5')], Operator('cm')),
+                     CSI([0], Operator('G')), CSI([0], Operator('g')), CSI([Name('/G3')], Operator('gs'))]
+    def codes(cmap, text):
+        return [cmap[MIRROR.get(c, c)] for c in reversed(text)]
+    def put(ops, font_name, font, cmap, size, text, x_right, y):
+        cs = codes(cmap, text)
+        w = sum(advances(font, cs, size))
+        ops += text_block(font_name, size, x_right - w, y + shift, cs, font)
+        return x_right - w
+    pages = []
+    for pi, page_items in enumerate(layout):
+        no = first_no + pi
+        ops = rebuild_header(base, list(orig), no % 2 == 1, hebrew_number(no - NUM_OFFSET), head_codes)
+        k43 = next(k for k, x in enumerate(ops) if str(x.operator) == 'Do' and str(x.operands[0]) == '/X43')
+        out = ops[:k43 + 2]
+        if pi == 0:
+            out += title_ops
+        out += group()
+        for (kind, text, src), y in page_items:
+            if kind == 'band':
+                top = y + shift
+                out += [CSI([Decimal('0.902')], Operator('g')), CSI([73, Decimal(f'{top:.2f}'), 519, 31], Operator('re')), CSI([], Operator('f')),
+                        CSI([0], Operator('g')), CSI([73, Decimal(f'{top:.2f}'), 519, 1], Operator('re')), CSI([], Operator('f')),
+                        CSI([73, Decimal(f'{top + 30:.2f}'), 519, 1], Operator('re')), CSI([], Operator('f'))]
+                put(out, '/F50', f50, c50, 18, text, right_band, y + 21)
+                continue
+            size, ind = {'article': (16, 0), 'haskama': (15, 0), 'part': (14.66, 18), 'sub': (13.33, 38)}[kind]
+            x_left = put(out, '/F51', f51, c51, size, text, right - ind, y)
+            num = printed(src)
+            ncs = codes(c50, num)
+            nw = sum(advances(f50, ncs, 14.66))
+            out += text_block('/F50', 14.66, 73.3125, y + 2 + shift, ncs, f50)
+            out += [CSI([], Operator('q')), CSI([1], Operator('w')), CSI([[1, 1], 0], Operator('d')), CSI([0], Operator('G')),
+                    CSI([Decimal(f'{73.3125 + nw + 7:.2f}'), Decimal(f'{y + 1.5 + shift:.2f}')], Operator('m')),
+                    CSI([Decimal(f'{x_left - 6:.2f}'), Decimal(f'{y + 1.5 + shift:.2f}')], Operator('l')), CSI([], Operator('S')), CSI([], Operator('Q'))]
+            if kind == 'article':
+                out += [CSI([Decimal('0.1333')], Operator('g'))]
+                blk = list(auth_ops)
+                for k, ins in enumerate(blk):
+                    if str(ins.operator) == 'Tm':
+                        t = list(ins.operands)
+                        t[5] = Decimal(f'{y + 17 + shift:.2f}')
+                        blk[k] = CSI(t, Operator('Tm'))
+                out += blk + [CSI([0], Operator('g'))]
+        out.append(CSI([], Operator('Q')))
+        pages.append(pikepdf.Page(pdf.make_indirect(pikepdf.Dictionary(
+            Type=Name.Page, MediaBox=base.MediaBox, Resources=base.Resources, Contents=pdf.make_stream(pikepdf.unparse_content_stream(out))))))
+    return pages
+
+
+def haskama_page(page):
+    """the page of the haskama as it was sent, with the title 'הסכמות' changed to 'הסכמה' (centred where the old title was centred)"""
+    form = page.Resources.XObject['/X41']
+    ops = list(pikepdf.parse_content_stream(form))
+    f8 = form.Resources.Font['/F8']
+    cmap = glyph_codes(f8)
+    inv = {c: ch for ch, c in cmap.items()}
+    for b in split_blocks(ops):
+        if b['font'] == '/F8' and b['codes'] and None not in b['codes'] and ''.join(inv.get(c, '?') for c in reversed(b['codes'])) == HASKAMA_OLD:
+            ncodes = [cmap[c] for c in reversed(HASKAMA_NEW)]
+            centre = b['x'] + sum(advances(f8, b['codes'], b['size'])) / 2
+            x = centre - sum(advances(f8, ncodes, b['size'])) / 2
+            ops[b['start']:b['end'] + 1] = text_block('/F8', b['size'], x, b['y'], ncodes, f8)
+            form.write(pikepdf.unparse_content_stream(ops))
+            return page
+    raise ValueError('the title of the haskama was not found')
+
+
+def import_page(pdf, path, keep):
+    """a one-page PDF appended to pdf; returns the page (the source stays open in keep until pdf is saved)"""
+    other = pikepdf.open(path)
+    keep.append(other)
+    pdf.pages.append(other.pages[0])
+    return pdf.pages[-1]
+
+
+def build(src, out, title='beinyan', name=BOOKLET_NAME, algebra=None, fonts=None, haskama=None, prospectus=None):
     pdf = pikepdf.open(src)
     P = pdf.pages
+    keep_open = []
     parse = lambda n: list(pikepdf.parse_content_stream(P[n - 1]))
     author = head_text(P[SRC_AUTHOR - 1], parse(SRC_AUTHOR))
     title1 = head_text(P[SRC_TITLE1 - 1], parse(SRC_TITLE1))
@@ -512,22 +714,37 @@ def build(src, out, title='beinyan', name=BOOKLET_NAME, algebra=None, display=No
     assert decode(title2) == OLD_TITLE
     if title == 'beinyan':
         title2 = visual(NEW_TITLE)
-    # every article begins on an odd page, the back cover is an even page, the number of pages is a multiple of 4: empty pages fill the gaps
-    plan = []
-    for kind, n in [('keep', k) for k in FRONT] + [('art', n) for n in range(ART1[0], ART1[1] + 1)] + [('art', n) for n in range(ART2[0], ART2[1] + 1)]:
-        if kind == 'art' and n in (ART1[0], ART2[0]) and len(plan) % 2 == 1:
+    has_pg = haskama_page(import_page(pdf, haskama, keep_open)) if haskama else None
+    pro_pg = import_page(pdf, prospectus, keep_open) if prospectus else None
+    items = toc_items(pdf, ART1, ART2, title == 'beinyan') if fonts else None
+    layout = toc_layout(items) if items else []
+    # every article begins on an odd page, the back cover is an even page, the number of pages is a multiple of 4; the page before the back cover is the
+    # inside of the cover (the prospectus); empty pages fill the gaps
+    plan = [('keep', k) for k in FRONT] + ([('memorial', None)] if fonts else []) + [('toc', i) for i in range(len(layout))] + ([('haskama', None)] if haskama else [])
+    for n in [n for n in range(ART1[0], ART1[1] + 1)] + [n for n in range(ART2[0], ART2[1] + 1)]:
+        if n in (ART1[0], ART2[0]) and len(plan) % 2 == 1:
             plan.append(('blank', None))
-        plan.append((kind, n))
-    while (len(plan) + 1) % 4:
+        plan.append(('art', n))
+    while (len(plan) + 2) % 4:
         plan.append(('blank', None))
-    if algebra:
-        plan[plan.index(('blank', None))] = ('memorial', None)       # the empty page behind the inner title page carries the memorial text
-    plan.append(('keep', BACK))
-    assert len(plan) % 4 == 0 and all(len(plan[:i]) % 2 == 0 for i, (k, n) in enumerate(plan) if n in (ART1[0], ART2[0])), 'parity'
+    plan += [('prospectus', None) if prospectus else ('blank', None), ('keep', BACK)]
+    assert len(plan) % 4 == 0 and all(len(plan[:i]) % 2 == 0 for i, (k, n) in enumerate(plan) if k == 'art' and n in (ART1[0], ART2[0])), 'parity'
+    new_of = {n: i + 1 for i, (k, n) in enumerate(plan) if k == 'art'}                     # source page -> page of the booklet
+    haskama_no = next((i + 1 for i, (k, n) in enumerate(plan) if k == 'haskama'), None)
+    printed = lambda s: hebrew_number((haskama_no if s == 'haskama' else new_of[s]) - NUM_OFFSET)
     pages, blank_src = [], P[FRONT[1] - 1]
     for new_no, (kind, n) in enumerate(plan, 1):
         if kind == 'memorial':
-            pages.append(memorial_page(pdf, P[3].Resources.XObject['/X34'], algebra, blank_src, display))
+            pages.append(memorial_page(pdf, P[3].Resources.XObject['/X34'], algebra, blank_src, fonts))
+            continue
+        if kind == 'toc':
+            pages.append(None)                                         # filled in below, when the numbers of all pages are known
+            continue
+        if kind == 'haskama':
+            pages.append(has_pg)
+            continue
+        if kind == 'prospectus':
+            pages.append(pro_pg)
             continue
         if kind == 'blank':
             pages.append(pikepdf.Page(pdf.make_indirect(pikepdf.Dictionary(
@@ -549,12 +766,16 @@ def build(src, out, title='beinyan', name=BOOKLET_NAME, algebra=None, display=No
                 ops = title_page(pg, ops)
             pg.Contents = pdf.make_stream(pikepdf.unparse_content_stream(ops))
         pages.append(pg)
+    first_toc = next((i + 1 for i, (k, n) in enumerate(plan) if k == 'toc'), None)
+    if first_toc:
+        toc = toc_pages(pdf, P[4], layout, printed, first_toc)
+        pages = [toc[plan[i][1]] if plan[i][0] == 'toc' else p for i, p in enumerate(pages)]
     keep = [p.obj for p in pages]
     del P[:]
     for p in keep:
         P.append(pikepdf.Page(p))
     pdf.save(out, linearize=False, compress_streams=True, object_stream_mode=pikepdf.ObjectStreamMode.generate)
-    print(f'{out}: {len(keep)} pages')
+    print(f'{out}: {len(keep)} pages; plan: ' + ' '.join(f'{i + 1}{k[0]}' for i, (k, n) in enumerate(plan)))
 
 
 if __name__ == '__main__':
@@ -562,7 +783,12 @@ if __name__ == '__main__':
     ap.add_argument('booklet'), ap.add_argument('out')
     ap.add_argument('--title', choices=['beinyan', 'plain'], default='beinyan')
     ap.add_argument('--algebra', help='EFT Algebra font file (the client\'s): switches the front pages to the memorial version')
-    ap.add_argument('--display', help='font file (Dimdumim, legacy encoding) for the title and the abbreviation of the memorial text page')
+    ap.add_argument('--title-font', help='Hebrew display font (Guttman Mantova Bold) for the memorial text page')
+    ap.add_argument('--text-font', help='FrankRuehl DP regular for the memorial text page')
+    ap.add_argument('--text-bold', help='FrankRuehl DP bold for the memorial text page')
+    ap.add_argument('--haskama', help='one-page PDF of the haskama (its title is changed to the singular)')
+    ap.add_argument('--prospectus', help='one-page PDF for the inside of the back cover')
     ap.add_argument('--name', default=BOOKLET_NAME, help='name of the booklet in the running head')
     a = ap.parse_args()
-    build(a.booklet, a.out, a.title, a.name, a.algebra, a.display)
+    fonts = dict(title=a.title_font, text=a.text_font, bold=a.text_bold) if a.title_font else None
+    build(a.booklet, a.out, a.title, a.name, a.algebra, fonts, a.haskama, a.prospectus)

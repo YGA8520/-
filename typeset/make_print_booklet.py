@@ -11,6 +11,7 @@
 The artwork of the covers, of the inner title page and of the credits page goes to the edge, so the bleed is made by mirroring the picture over the edge (the live text never
 reaches the edge).  The pictures are taken from the PDF itself (page 3 has a changed background).   Needs pymupdf, numpy, pillow."""
 import io
+import zlib
 import os
 import sys
 import numpy as np
@@ -38,8 +39,11 @@ def gray_shadings(src, dst):
     import pikepdf
     pdf = pikepdf.open(src)
     lum = lambda c: round(0.299 * float(c[0]) + 0.587 * float(c[1]) + 0.114 * float(c[2]), 4)
-    for page in pdf.pages:
-        for pat in (page.Resources.get('/Pattern') or {}).values():
+    def gray_patterns(res, seen, depth=0):                           # the RGB shadings of this resource dictionary and of the forms inside it
+        for pat in ((res or {}).get('/Pattern') or {}).values():
+            if pat.objgen in seen:
+                continue
+            seen.add(pat.objgen)
             sh = pat.get('/Shading')
             if sh is None or str(sh.get('/ColorSpace')) != '/DeviceRGB':
                 continue
@@ -49,6 +53,13 @@ def gray_shadings(src, dst):
             if '/Encode' in fn:
                 fn.Encode = pikepdf.Array([0, 1] * len(list(fn.Functions)))
             sh.ColorSpace = pikepdf.Name.DeviceGray
+        for x in ((res or {}).get('/XObject') or {}).values():
+            if x.get('/Subtype') == '/Form' and depth < 4 and x.objgen not in seen:
+                seen.add(x.objgen)
+                gray_patterns(x.get('/Resources'), seen, depth + 1)
+    seen = set()
+    for page in pdf.pages:
+        gray_patterns(page.Resources, seen)
         ops, changed = list(pikepdf.parse_content_stream(page)), False
         for k, ins in enumerate(ops):                                # the colour operators: neutral rg / RG (r = g = b) become g / G
             if str(ins.operator) in ('rg', 'RG'):
@@ -57,6 +68,26 @@ def gray_shadings(src, dst):
                 changed = True
         if changed:
             page.Contents = pdf.make_stream(pikepdf.unparse_content_stream(ops))
+    done = set()
+    def gray_images(res, depth=0):                                   # RGB pictures (the facsimile of the haskama) become DeviceGray
+        for _, x in ((res or {}).get('/XObject') or {}).items():
+            if x.objgen in done:
+                continue
+            done.add(x.objgen)
+            if x.get('/Subtype') == '/Image':
+                cs = x.get('/ColorSpace')
+                rgb = str(cs) == '/DeviceRGB' or (isinstance(cs, pikepdf.Array) and str(cs[0]) == '/ICCBased' and int(cs[1].get('/N', 0)) == 3)
+                if rgb:
+                    im = pikepdf.PdfImage(x).as_pil_image().convert('L')
+                    for k in ('/DecodeParms', '/Filter', '/ColorSpace', '/Decode'):
+                        if k in x:
+                            del x[k]
+                    x.write(zlib.compress(im.tobytes()), filter=pikepdf.Name.FlateDecode)
+                    x.ColorSpace, x.BitsPerComponent = pikepdf.Name.DeviceGray, 8
+            elif x.get('/Subtype') == '/Form' and depth < 4:
+                gray_images(x.get('/Resources'), depth + 1)
+    for page in pdf.pages:
+        gray_images(page.Resources)
     pdf.save(dst)
 
 
@@ -180,11 +211,22 @@ def build(booklet, out, spine=None):
         pages = os.path.join(out, 'zada-cover-pages-print.pdf')
         two.save(pages, garbage=3, deflate=True)
         two.close()
-    report(out, [inside, outside, inner, pages], total, spine)
+    a1, a2, toc = article_pages(booklet, interior)
+    report(out, [inside, outside, inner, pages], total, spine, a1, a2, toc)
     src.close()
 
 
-def report(out, files, total, spine):
+def article_pages(booklet, interior):
+    """pages (of the interior file) where the two articles begin and of the table of contents"""
+    d = pymupdf.open(booklet)
+    txt = [d[i].get_text() for i in interior]
+    toc = next((k for k, t in enumerate(txt) if 'תוכן עניינים' in t), None)
+    a1 = next(k for k, t in enumerate(txt) if 'החובה להתאמץ בדור אחרון' in t and k != toc)
+    a2 = next(k for k, t in enumerate(txt) if t.count('בעניין הזכרת השם') >= 2 and k > a1 + 2)      # the title page: the title and the running head
+    return a1 + 1, a2 + 1, (toc + 1 if toc is not None else None)
+
+
+def report(out, files, total, spine, a1=None, a2=None, toc=None):
     lines = []
     for path in files:
         d = pymupdf.open(path)
@@ -212,12 +254,12 @@ zada-interior-print.pdf - פנים החוברת
   * סימני חיתוך בפינות, סימני אמצע בכל צד ושורת מידע (מספר עמוד) מחוץ לשוליים. הקופסאות TrimBox / BleedBox מוגדרות בקובץ.
   * שחור בלבד (DeviceGray) - הדפסה בצבע אחד. כל הגופנים מוטמעים (חלקם כקווי מתאר וקטוריים).
   * הרקע של השער הפנימי מורחב לשוליים בהשתקפות של התמונה; הטקסט לא מגיע לקצה.
-  * עמוד 2 בקובץ הוא עמוד ה"לעילוי נשמת". כל חבורה מתחילה בעמוד אי-זוגי (שמאלי): החבורה הראשונה בעמוד 3 בקובץ והשנייה בעמוד 7 (העמוד הריק 6 שביניהן נחוץ לשם כך). עמודים 43 ו-44 בקובץ ריקים.
+  * סדר העמודים בקובץ: 1 שער פנימי, 2 עמוד "לעילוי נשמת", {toc} תוכן עניינים, אחריו ההסכמה. כל חבורה מתחילה בעמוד אי-זוגי (שמאלי): החבורה הראשונה בעמוד {a1} בקובץ והשנייה בעמוד {a2} (עמוד ריק ביניהן נחוץ לשם כך). שלושת העמודים האחרונים בקובץ ריקים (השלמה לכפולה של 4).
 
 zada-cover-outside-print.pdf - חוץ הכריכה כיריעה אחת: שער קדמי | שדרה | שער אחורי (בעברית השדרה מימין לשער הקדמי)
   * גודל לאחר חיתוך: {2 * TW + spine:g} x {TH:g} מ"מ. עובי השדרה {spine:g} מ"מ הוא הערכה בלבד (פנים של {total} עמודים, 80 גרם) - לחוברת מהודקת בסיכות השדרה כמעט אפסית; יש לאשר מול בית הדפוס לפי הנייר והכריכה בפועל.
   * סימני חיתוך וסימני קיפול של השדרה. הקובץ בצבע (RGB) - לא הומר ל-CMYK כי אין כאן פרופיל צבע של בית הדפוס; בית הדפוס צריך להמיר, או לשלוח את הפרופיל שלו.
-zada-cover-inside-print.pdf - פנים הכריכה: פנים הכריכה האחורית (ריק) | שדרה | פנים הכריכה הקדמית (עמוד הקרדיטים). נחוץ רק אם הכריכה מודפסת משני צדיה; אם היא מודפסת מצד אחד בלבד, עמוד הקרדיטים ייפול.
+zada-cover-inside-print.pdf - פנים הכריכה: פנים הכריכה האחורית (עמוד "גודל החיוב ללימוד הלכות תפילה") | שדרה | פנים הכריכה הקדמית (עמוד הקרדיטים). נחוץ אם הכריכה מודפסת משני צדיה; אם היא מודפסת מצד אחד בלבד, עמוד הקרדיטים ועמוד "גודל החיוב" ייפלו.
 zada-cover-pages-print.pdf - הכריכה הקדמית והאחורית כשני עמודים נפרדים (למקרה שבית הדפוס מעדיף כך).
 
 מה לברר מול בית הדפוס לפני שליחה: סוג הכריכה (מהודקת / דבוקה), נייר ומשקל לפנים ולכריכה (קובע את עובי השדרה), שוליים לחיתוך, האם נדרש PDF/X (X-1a או X-4) ופרופיל צבע,
