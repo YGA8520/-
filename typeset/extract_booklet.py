@@ -228,7 +228,7 @@ DEDICATION_BAND = (850.0, 1790.0)                  # the block is centred vertic
 GRID_CX = 705.5                                    # the middle of the page in the grid of the cover (the page is 2078.125 units wide, cm 1.47636, offset -2.49)
 MEDALLION_UP = 150.0                               # the circle of the inner title page moves up by this much (grid units)
 CREDIT_LABEL, CREDIT_PHONE = 'עימוד ועיצוב: י. א. - ', '0534185035'
-CREDIT_SHIFT, CREDIT_GAP, CREDIT_BOX = 24.0, 40.0, dict(padx=11.0, up=19.0, down=11.0, r=7.0, inset=2.6)   # css px
+CREDIT_SHIFT, CREDIT_GAP, CREDIT_BOX = 30.0, 62.0, dict(padx=11.0, up=19.0, down=11.0, r=7.0, inset=2.6)   # css px
 
 
 MIRROR = {'(': ')', ')': '(', '[': ']', ']': '['}
@@ -412,33 +412,73 @@ def ellipse(cx, cy, rx, ry):
             f'C {f(cx - rx, cy - k * ry, cx - k * rx, cy - ry, cx, cy - ry)} C {f(cx + k * rx, cy - ry, cx + rx, cy - k * ry, cx + rx, cy)} Z')
 
 
-def candle(cx, top, height):
-    """a memorial candle (a flame with fine rays, a wick, a candle with wax drips, a plate): vector drawing in greys, 266 units high in its own system"""
+def shading(pdf, kind, coords, stops):
+    """an axial (kind 2) or radial (kind 3) shading in DeviceRGB; stops = [(t, (r, g, b))] with t from 0 to 1"""
+    fns = [pdf.make_indirect(pikepdf.Dictionary(FunctionType=2, Domain=[0, 1], C0=list(a[1]), C1=list(b[1]), N=1)) for a, b in zip(stops, stops[1:])]
+    fn = pdf.make_indirect(pikepdf.Dictionary(FunctionType=3, Domain=[0, 1], Functions=fns, Bounds=[t for t, _ in stops[1:-1]], Encode=[0, 1] * len(fns)))
+    return pdf.make_indirect(pikepdf.Dictionary(ShadingType=kind, ColorSpace=Name.DeviceRGB, Coords=coords, Function=fn, Extend=[True, True]))
+
+
+GOLD = [(0, (0.64, 0.50, 0.22)), (0.28, (0.86, 0.73, 0.40)), (0.5, (0.96, 0.87, 0.58)), (0.75, (0.84, 0.70, 0.36)), (1, (0.62, 0.48, 0.20))]
+
+
+def lamp(pdf, shadings, cx, top, height):
+    """a hanging oil lamp (a bead, three chains, an urn of gold with a fluted foot, a flame) drawn in vectors with gold gradients; designed in a 704 x 1000 view
+    (the drawing from y = 130 to 935); shadings = the /Shading resources of the page, filled here"""
     import math
-    sc = height / 266.0
-    ops = [CSI([], Operator('q')), CSI([Decimal(f'{sc:.5f}'), 0, 0, Decimal(f'{sc:.5f}'), Decimal(f'{cx:.2f}'), Decimal(f'{top:.2f}')], Operator('cm')),
+    sc = height / 805.0
+    ops = [CSI([], Operator('q')), CSI([Decimal(f'{sc:.5f}'), 0, 0, Decimal(f'{sc:.5f}'), Decimal(f'{cx - 335 * sc:.2f}'), Decimal(f'{top - 130 * sc:.2f}')], Operator('cm')),
            CSI([1], Operator('J')), CSI([1], Operator('j'))]
-    def draw(d, fill=None, stroke=None, width=1.0):
-        nonlocal ops
-        if fill is not None:
-            ops.append(CSI([Decimal(str(fill))], Operator('g')))
-        if stroke is not None:
-            ops += [CSI([Decimal(str(stroke))], Operator('G')), CSI([Decimal(str(width))], Operator('w'))]
-        ops += parse_path(d) if isinstance(d, str) else d
-        ops.append(CSI([], Operator('B' if fill is not None and stroke is not None else ('f' if fill is not None else 'S'))))
-    for ang in (-78, -54, -30, 30, 54, 78):                           # rays round the flame, finest strokes
-        r1, r2, a = 54, 66 if abs(ang) < 60 else 62, math.radians(ang)
-        draw(f'M {r1 * math.sin(a):.2f} {50 - r1 * math.cos(a):.2f} L {r2 * math.sin(a):.2f} {50 - r2 * math.cos(a):.2f}', None, 0.45, 1.3)
-    draw('M 0 0 C 10 20 31 40 27 62 C 25 74 14 81 0 81 C -14 81 -25 74 -27 62 C -31 40 -10 20 0 0 Z', 0.17, 0.12, 1.2)       # the flame
-    draw('M 0 36 C 6 47 14 55 11 66 C 10 72 5 76 0 76 C -5 76 -10 72 -11 66 C -14 55 -6 47 0 36 Z', 0.94)
-    draw('M 0 80 L 0 101', None, 0.15, 3.0)                              # the wick
-    draw('M -23 109 C -23 102 23 102 23 109 L 23 252 L -23 252 Z', 0.9, 0.2, 1.8)                                      # the candle
-    draw(ellipse(0, 109, 23, 6), 0.8, 0.2, 1.4)                                                                        # the pool of wax
-    draw('M -23 109 C -23 130 -15 136 -15 120 L -15 109 Z', 0.95, 0.2, 1.2)                                            # drips
-    draw('M 8 109 C 8 128 15 132 15 116 L 15 109 Z', 0.95, 0.2, 1.2)
-    draw('M -13 138 L -13 238', None, 1.0, 4.0)                                                                        # a highlight on the candle
-    draw('M -45 252 L 45 252 L 53 266 L -53 266 Z', 0.8, 0.2, 1.8)                                                     # the plate
-    ops += [CSI([], Operator('Q'))]
+    def put(name, sh):
+        shadings[name] = sh
+    def fill_sh(d, name):                                            # fill the path d with the shading name
+        ops.extend([CSI([], Operator('q'))] + parse_path(d) + [CSI([], Operator('W')), CSI([], Operator('n')), CSI([Name(name)], Operator('sh')), CSI([], Operator('Q'))])
+    def stroke(d, rgb, w, dash=None):
+        ops.extend([CSI([], Operator('q')), CSI([Decimal(str(v)) for v in rgb], Operator('RG')), CSI([Decimal(str(w))], Operator('w'))]
+                   + ([CSI([dash, 0], Operator('d'))] if dash else []) + (parse_path(d) if isinstance(d, str) else d) + [CSI([], Operator('S')), CSI([], Operator('Q'))])
+    dark, mid = (0.56, 0.42, 0.16), (0.78, 0.64, 0.32)
+    put('/LgB', shading(pdf, 2, [195, 0, 475, 0], GOLD))                                              # the urn: left to right
+    put('/LgR', shading(pdf, 2, [200, 0, 470, 0], [(0, (0.7, 0.56, 0.26)), (0.4, (0.93, 0.83, 0.52)), (1, (0.66, 0.52, 0.22))]))
+    put('/LgBead', shading(pdf, 3, [330, 142, 1, 338, 148, 16], [(0, (1.0, 0.95, 0.75)), (0.6, (0.88, 0.74, 0.40)), (1, (0.6, 0.46, 0.18))]))
+    put('/LgBead2', shading(pdf, 3, [330, 912, 1, 338, 918, 16], [(0, (1.0, 0.95, 0.75)), (0.6, (0.88, 0.74, 0.40)), (1, (0.6, 0.46, 0.18))]))
+    put('/LgFlame', shading(pdf, 3, [335, 545, 2, 335, 505, 108], [(0, (1.0, 0.99, 0.92)), (0.3, (1.0, 0.92, 0.45)), (0.7, (1.0, 0.72, 0.2)), (1, (0.95, 0.5, 0.1))]))
+    put('/LgGlow', shading(pdf, 3, [335, 530, 4, 335, 530, 90], [(0, (1.0, 0.97, 0.8)), (1, (1, 1, 1))]))
+    # a soft glow round the flame
+    fill_sh(ellipse(335, 520, 95, 105), '/LgGlow')
+    # the chains (double stroke: dark links, light centres)
+    for d in ('M 332 205 L 214 560', 'M 336 205 L 319 470', 'M 340 205 L 454 560'):
+        stroke(d, dark, 3.4, [5, 3])
+        stroke(d, (0.9, 0.78, 0.45), 1.4, [5, 3])
+    # the cap under the top bead
+    fill_sh('M 320 190 C 326 176 350 176 356 190 L 346 210 L 330 210 Z', '/LgB')
+    stroke('M 320 190 C 326 176 350 176 356 190 L 346 210 L 330 210 Z', dark, 1.2)
+    for x in (329, 338, 347):
+        stroke(f'M {x} 184 L {x - (338 - x) * 0.3:.1f} 208', dark, 1.0)
+    fill_sh(ellipse(338, 148, 15, 15), '/LgBead')
+    stroke(ellipse(338, 148, 15, 15), dark, 1.0)
+    # the flame and the wick
+    ops.append(CSI([0.08], Operator('G'))); ops.append(CSI([Decimal('0.1')], Operator('g')))
+    fill_sh('M 335 425 C 347 455 364 482 359 520 C 357 546 347 569 335 573 C 323 569 313 546 311 520 C 306 482 323 455 335 425 Z', '/LgFlame')
+    stroke('M 335 566 L 335 584', (0.1, 0.07, 0.04), 5.5)
+    # the urn
+    body = ('M 469 570 C 468 590 458 600 445 608 C 432 618 426 640 430 662 C 436 690 468 708 467 745 C 467 758 464 768 460 776 C 452 810 410 870 347 902 '
+            'L 323 902 C 260 870 218 810 210 776 C 206 768 203 758 203 745 C 202 708 234 690 240 662 C 244 640 238 618 225 608 C 212 600 202 590 201 570 Z')
+    fill_sh(body, '/LgB')
+    stroke(body, dark, 1.6)
+    fill_sh(ellipse(335, 568, 134, 14), '/LgR')                                                         # the rim
+    stroke(ellipse(335, 568, 134, 14), dark, 1.6)
+    fill_sh(ellipse(335, 568, 118, 8.5), '/LgB')
+    stroke(ellipse(335, 570, 118, 8.5), dark, 1.0)
+    stroke('M 240 603 C 300 618 370 618 430 603', mid, 11, [6, 6])                                       # the key pattern of the neck
+    stroke('M 240 603 C 300 618 370 618 430 603', dark, 1.0)
+    stroke('M 210 776 C 260 792 410 792 460 776', dark, 2.0)                                              # the band between the bulb and the fluted foot
+    for k, x in enumerate(range(222, 460, 26)):                                                           # the flutes
+        t = (x - 335) / 125.0
+        stroke(f'M {x:.1f} 782 C {x - 10 * t:.1f} 830 {335 + t * 60:.1f} 880 335 902', dark, 1.5)
+        stroke(f'M {x + 4:.1f} 782 C {x - 6 * t:.1f} 830 {335 + t * 58:.1f} 880 336 902', (0.93, 0.83, 0.52), 1.0)
+    fill_sh(ellipse(335, 918, 15, 15), '/LgBead2')
+    stroke(ellipse(335, 918, 15, 15), dark, 1.0)
+    ops.append(CSI([], Operator('Q')))
     return ops
 
 
@@ -461,13 +501,14 @@ def memorial_page(pdf, fleuron, algebra, like, fonts):
         for i, line in enumerate(lines):
             put(text_f, line, MEMORIAL_SIZE, MEMORIAL_LEAD if i else MEMORIAL_LEAD + 30)
     put(title_f, MEMORIAL_END, 64, 118)
-    can_h, flo_w, flo_h, gap = 340.0, 430.0, 430.0 * 168 / 648, 100.0
+    can_h, flo_w, flo_h, gap = 430.0, 430.0, 430.0 * 168 / 648, 100.0
     height = can_h + 118 + (items[-1][3] - items[0][3]) + 70 + gap + flo_h
     top = 1000.0 - height / 2                                       # the block is centred vertically
     base = top + can_h + 118 - items[0][3]
     ops = [CSI([], Operator('q')), CSI([Decimal('0.35432571'), 0, 0, Decimal('-0.35432571'), 0, Decimal('708.96')], Operator('cm')),
            CSI([Decimal('0.1098')], Operator('g')), CSI([Decimal('0.1098')], Operator('G'))]
-    ops += candle(cx, top, can_h)
+    shadings = pikepdf.Dictionary()
+    ops += lamp(pdf, shadings, cx, top, can_h)
     ops += [CSI([Decimal('0.1098')], Operator('g')), CSI([Decimal('0.1098')], Operator('G'))]
     for o, text, size, yy, weight in items:
         size = min(size, size * 900.0 / o.width(text, size))
@@ -476,7 +517,7 @@ def memorial_page(pdf, fleuron, algebra, like, fonts):
     ops += [CSI([], Operator('q')), CSI([Decimal(f'{flo_w:.2f}'), 0, 0, Decimal(f'{flo_h:.2f}'), Decimal(f'{cx - flo_w / 2:.2f}'), Decimal(f'{y_fl:.2f}')], Operator('cm')),
             CSI([Name('/X34')], Operator('Do')), CSI([], Operator('Q')), CSI([], Operator('Q'))]
     return pikepdf.Page(pdf.make_indirect(pikepdf.Dictionary(
-        Type=Name.Page, MediaBox=like.MediaBox, Resources=pikepdf.Dictionary(XObject=pikepdf.Dictionary({'/X34': fleuron})),
+        Type=Name.Page, MediaBox=like.MediaBox, Resources=pikepdf.Dictionary(XObject=pikepdf.Dictionary({'/X34': fleuron}), Shading=shadings),
         Contents=pdf.make_stream(pikepdf.unparse_content_stream(ops)))))
 
 
