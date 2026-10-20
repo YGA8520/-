@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Print-ready PDFs of the memorial booklet (extract_booklet.py output, 48 pages) for the printing house.  usage: python make_print_booklet.py booklet.pdf out_dir [spine_mm] [--a5]   (--a5: every page scaled to 148 x 210 mm, bleed 3 mm, as before)
+"""Print-ready PDFs of the memorial booklet (extract_booklet.py output, 48 pages) for the printing house.  usage: python make_print_booklet.py booklet.pdf out_dir [spine_mm] [--a5] [--plain]   (--plain: only the inside, exactly the trim size, no bleed, no marks)   (--a5: every page scaled to 148 x 210 mm, bleed 3 mm, as before)
 
   zada-interior-print.pdf         the inside: from the inner title page (page 3) to the last page before the inside of the back cover (page 46) = 44 pages, a multiple of 4,
                                   black only (DeviceGray), every page with 3 mm bleed, crop marks, centre marks and a slug line outside the bleed
@@ -233,6 +233,33 @@ def article_pages(booklet, interior):
     return a1 + 1, a2 + 1, (toc + 1 if toc is not None else None)
 
 
+def build_plain(booklet, out, fmt='A5'):
+    """only the inside, black only, every page exactly the trim size, no bleed, no marks, no slug: zada-interior-<fmt>.pdf"""
+    global TW, TH, FORMAT
+    TW, TH = FORMATS[fmt]
+    FORMAT = fmt
+    import tempfile
+    os.makedirs(out, exist_ok=True)
+    n = pymupdf.open(booklet).page_count
+    interior = list(range(2, n - 2))
+    assert len(interior) % 4 == 0
+    with tempfile.TemporaryDirectory() as tmp:
+        gray_src = os.path.join(tmp, 'gray-src.pdf')
+        gray_shadings(booklet, gray_src)
+        gray = pymupdf.open(gray_src)
+        for i in interior:
+            gray[i].recolor(1)
+        doc = pymupdf.open()
+        for i in interior:
+            pg = doc.new_page(width=pt(TW), height=pt(TH))
+            pg.show_pdf_page(pg.rect, gray, i, keep_proportion=False)           # the proportions of B5 and A5 differ by 0.1 %
+            pg.set_trimbox(pg.rect)
+        doc.set_metadata({'title': f'Pilpula Daoraita memorial - inside ({fmt})', 'subject': f'{len(interior)} pages, {TW:g} x {TH:g} mm, DeviceGray, no bleed, no marks'})
+        path = os.path.join(out, f'zada-interior-{fmt}.pdf')
+        doc.save(path, garbage=3, deflate=True)
+    print(f'{path}: {len(interior)} pages, {TW:g} x {TH:g} mm')
+
+
 def report(out, files, total, spine, a1=None, a2=None, toc=None):
     lines = []
     for path in files:
@@ -279,4 +306,7 @@ zada-cover-pages-print.pdf - הכריכה הקדמית והאחורית כשני
 if __name__ == '__main__':
     args = [a for a in sys.argv[1:] if not a.startswith('--')]
     fmt = 'A5' if '--a5' in sys.argv else 'B5'
+    if '--plain' in sys.argv:
+        build_plain(args[0], args[1], fmt)
+        raise SystemExit(0)
     build(args[0], args[1], float(args[2]) if len(args) > 2 else None, fmt)
