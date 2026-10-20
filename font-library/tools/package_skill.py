@@ -7,7 +7,7 @@ The library is split by what the fonts are for (Hebrew / Latin serif / Latin san
 that is still too big is split again by size. Symbol, CJK/Indic and icon fonts are left out (the list is printed).
 Every zip holds the same SKILL.md rules, its own catalog and the helper scripts. Run build_catalog.py first.
 """
-import argparse, json, os, shutil, sys, zipfile
+import argparse, hashlib, json, os, re, shutil, sys, zipfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -68,17 +68,35 @@ def split_by_size(fams, limit_mb):
     return parts
 
 
+def safe_rel(rel, taken):
+    """claude.ai rejects zip paths with spaces, quotes or non-ASCII letters: copy such fonts under an ASCII name (the user's own files are not renamed)"""
+    base = rel.split('#')[0]
+    if re.fullmatch(r'[A-Za-z0-9._/-]+', base):
+        return base
+    stem, ext = os.path.splitext(os.path.basename(base))
+    ascii_stem = re.sub(r'[^A-Za-z0-9._-]+', '_', stem).strip('_.')
+    new = 'fonts/%s%s' % (ascii_stem or 'font-' + hashlib.md5(stem.encode('utf-8')).hexdigest()[:8], ext)
+    while new in taken and taken[new] != base:
+        new = new[:-len(ext)] + '_' + hashlib.md5(base.encode('utf-8')).hexdigest()[:4] + ext
+    taken[new] = base
+    return new
+
+
 def build(name, fams, notes):
     tmp = os.path.join(DIST, 'build', name)
     shutil.rmtree(tmp, ignore_errors=True)
     os.makedirs(tmp)
-    files = set()
+    taken, rename = {}, {}
     for rs in fams.values():
-        files |= {r['file'].split('#')[0] for r in rs}
-    for rel in sorted(files):
+        for r in rs:
+            src = r['file'].split('#')[0]
+            rename[src] = safe_rel(src, taken)
+    files = set(rename)
+    for src, rel in sorted(rename.items()):
         dst = os.path.join(tmp, rel)
         os.makedirs(os.path.dirname(dst), exist_ok=True)
-        shutil.copy2(os.path.join(SKILL, rel), dst)
+        shutil.copy2(os.path.join(SKILL, src), dst)
+    fams = {n: [dict(r, file=rename[r['file'].split('#')[0]] + ('#' + r['file'].split('#')[1] if '#' in r['file'] else '')) for r in rs] for n, rs in fams.items()}
     shutil.copytree(os.path.join(SKILL, 'scripts'), os.path.join(tmp, 'scripts'))
     md = open(os.path.join(SKILL, 'SKILL.md'), encoding='utf-8').read()
     body = md.split('---', 2)[2]
