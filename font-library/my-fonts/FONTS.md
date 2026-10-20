@@ -6,5 +6,161 @@ Legend: ✔ full · ◐ partial · — none. Hebrew = 27 letters incl. finals; N
 
 | Family | Styles | Hebrew | Niqqud | Taamim | Marks | Latin | Category | Good for | Avoid |
 |---|---|:-:|:-:|:-:|:-:|:-:|---|---|---|
+| Agency FB | 400, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Algerian | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Anka CLM | 700 | ✔ | — | — | ◐ | ◐ | *(not set)* |  |  |
+| Arial | 400, 400i, 700, 700i | — | — | — | — | ✔ | *(not set)* |  |  |
+| Arial Rounded MT Bold | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Baskerville Old Face | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Bauhaus 93 | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Bell MT | 400, 400i, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Berlin Sans FB | 400, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Berlin Sans FB Demi | 700 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Bernard MT Condensed | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Blackadder ITC | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Bodoni MT | 400, 400i, 700, 700i, 900, 900i | — | — | — | — | ✔ | *(not set)* |  |  |
+| Book Antiqua | 400, 400i, 700, 700i | — | — | — | — | ✔ | *(not set)* |  |  |
+| Bookman Old Style | 300, 300i, 600, 600i | — | — | — | — | ✔ | *(not set)* |  |  |
+| Bookshelf Symbol 7 | 400 | — | — | — | — | — | *(not set)* |  |  |
+| Bradley Hand ITC | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Britannic Bold | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Broadway | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Brush Script MT | 400i | — | — | — | — | ✔ | *(not set)* |  |  |
+| Californian FB | 400, 400i, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Calisto MT | 400, 400i, 700, 700i | — | — | — | — | ✔ | *(not set)* |  |  |
+| Castellar | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Centaur | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Century | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Century Gothic | 400, 400i, 700, 700i | — | — | — | — | ✔ | *(not set)* |  |  |
+| Century Schoolbook | 400, 400i, 700, 700i | — | — | — | — | ✔ | *(not set)* |  |  |
+| Chiller | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Colonna MT | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Comix No2 CLM | 700 | ✔ | — | — | — | — | *(not set)* |  |  |
+| Cooper Black | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Copperplate Gothic Bold | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Copperplate Gothic Light | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Curlz MT | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Dorian CLM | 400 | ✔ | — | — | — | — | *(not set)* |  |  |
+| Dubai | 300, 400, 500, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Edwardian Script ITC | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Elephant | 400, 400i | — | — | — | — | ✔ | *(not set)* |  |  |
+| Engravers MT | 500 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Eras Bold ITC | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Eras Demi ITC | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Eras Light ITC | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Eras Medium ITC | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Felix Titling | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Footlight MT Light | 300 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Forte | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Franklin Gothic Book | 400, 400i | — | — | — | — | ✔ | *(not set)* |  |  |
+| Franklin Gothic Demi | 400, 400i | — | — | — | — | ✔ | *(not set)* |  |  |
+| Franklin Gothic Demi Cond | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Franklin Gothic Heavy | 400, 400i | — | — | — | — | ✔ | *(not set)* |  |  |
+| Franklin Gothic Medium Cond | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| FrankRuehl | 400 | ✔ | ✔ | ✔ | ✔ | ✔ | *(not set)* |  |  |
+| FrankRuehl DP | 400, 700 | ✔ | ✔ | ✔ | ◐ | ✔ | *(not set)* |  |  |
+| Freestyle Script | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| French Script MT | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Gan CLM | 700 | ✔ | — | — | — | — | *(not set)* |  |  |
+| Garamond | 400, 400i, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Gigi | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Gill Sans MT | 400, 400i, 700, 700i | — | — | — | — | ✔ | *(not set)* |  |  |
+| Gill Sans MT Condensed | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Gill Sans MT Ext Condensed Bold | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Gill Sans Ultra Bold | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Gill Sans Ultra Bold Condensed | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Gladia CLM | 700 | ✔ | — | — | — | — | *(not set)* |  |  |
+| Gloucester MT Extra Condensed | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Goudy Old Style | 400, 400i, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Goudy Stout | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Guttman Aharoni | 400 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
+| Guttman Drogolin | 400, 700 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
+| Guttman Frank | 400, 700 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
+| Guttman Frnew | 400 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
+| Guttman Haim | 400 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
+| Guttman Haim-Condensed | 400 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
+| Guttman Hatzvi | 400, 700 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
+| Guttman Kav | 400, 700 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
+| Guttman Kav-Light | 400 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
+| Guttman Logo1 | 400 | — | — | — | — | — | *(not set)* |  |  |
+| Guttman Mantova | 400, 700 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
+| Guttman Mantova-Decor | 400 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
+| Guttman Miryam | 300, 700 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
+| Guttman Myamfix | 400 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
+| Guttman Rashi | 400, 700 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
+| Guttman Stam | 400 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
+| Guttman Stam1 | 400 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
+| Guttman Vilna | 400, 700 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
+| Guttman Yad | 400 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
+| Guttman Yad-Brush | 400 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
+| Guttman Yad-Light | 400 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
+| Guttman-Aharoni | 700 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
+| Guttman-Aram | 400 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
+| Guttman-CourMir | 400 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
+| Hadassah Friedlaender | 400, 700 | ✔ | ✔ | — | ✔ | ✔ | *(not set)* |  |  |
+| Haettenschweiler | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Harlow Solid Italic | 400i | — | — | — | — | ✔ | *(not set)* |  |  |
+| Harrington | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| High Tower Text | 400, 400i | — | — | — | — | ✔ | *(not set)* |  |  |
+| Imprint MT Shadow | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Informal Roman | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Jokerman | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Juice ITC | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Kristen ITC | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Ktav Yad CLM | 500i, 700i | ✔ | — | — | ◐ | — | *(not set)* |  |  |
+| Kunstler Script | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Leelawadee | 400, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Lucida Bright | 400, 400i, 600, 600i | — | — | — | — | ✔ | *(not set)* |  |  |
+| Lucida Calligraphy | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Lucida Fax | 400, 400i, 600, 600i | — | — | — | — | ✔ | *(not set)* |  |  |
+| Lucida Handwriting | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Lucida Sans | 400, 400i, 600, 600i | — | — | — | — | ✔ | *(not set)* |  |  |
+| Lucida Sans Typewriter | 400, 400i, 600, 600i | — | — | — | — | ✔ | *(not set)* |  |  |
+| Magneto | 700 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Maiandra GD | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Matura MT Script Capitals | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Microsoft Uighur | 400, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Mistral | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Modern No. 20 | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Monotype Corsiva | 400i | — | — | — | — | ✔ | *(not set)* |  |  |
+| MS Reference Sans Serif | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| MS Reference Specialty | 400 | — | — | — | — | — | *(not set)* |  |  |
+| MT Extra | 400 | — | — | — | — | — | *(not set)* |  |  |
+| Niagara Engraved | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Niagara Solid | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| OCR A Extended | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Old English Text MT | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Ozrad CLM | 700 | ✔ | — | — | — | — | *(not set)* |  |  |
+| Palace Script MT | 400i | — | — | — | — | ✔ | *(not set)* |  |  |
+| Papyrus | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Parchment | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Perpetua | 400, 400i, 700, 700i | — | — | — | — | ✔ | *(not set)* |  |  |
+| Perpetua Titling MT | 300, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
+| PFT_Rashi | 400 | ✔ | ◐ | ◐ | ✔ | ✔ | *(not set)* |  |  |
+| PFT_Vilna | 400, 700 | ✔ | ◐ | ◐ | ✔ | ✔ | *(not set)* |  |  |
+| Playbill | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Poor Richard | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Pristina | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Rage Italic | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Rashi DP | 400 | ✔ | ✔ | ✔ | ◐ | ✔ | *(not set)* |  |  |
+| Ravie | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Rockwell | 400, 400i, 700, 700i | — | — | — | — | ✔ | *(not set)* |  |  |
+| Rockwell Condensed | 400, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Rockwell Extra Bold | 800 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Script MT Bold | 700 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Showcard Gothic | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Snap ITC | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Stencil | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Tempus Sans ITC | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Tw Cen MT | 400, 400i, 700, 700i | — | — | — | — | ✔ | *(not set)* |  |  |
+| Tw Cen MT Condensed | 400, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Tw Cen MT Condensed Extra Bold | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| VILNA מתוקן DP | 400 | ✔ | ◐ | ✔ | ◐ | ✔ | *(not set)* |  |  |
+| Viner Hand ITC | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Vivaldi | 400i | — | — | — | — | ✔ | *(not set)* |  |  |
+| Vladimir Script | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Wide Latin | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
+| Wingdings 2 | 400 | — | — | — | — | — | *(not set)* |  |  |
+| Wingdings 3 | 400 | — | — | — | — | — | *(not set)* |  |  |
 
 Style codes: weight (100–900), `i` = italic, `v` = variable font. Files and exact names: `catalog.json`.
