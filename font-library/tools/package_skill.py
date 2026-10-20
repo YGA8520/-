@@ -139,6 +139,7 @@ def build(name, fams, notes):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--limit-mb', type=float, default=LIMIT_MB, help='uncompressed font bytes per skill (default %d)' % LIMIT_MB)
+    ap.add_argument('--only', help='build just this group (e.g. my-fonts-latin-serif); other zips in dist/ are kept')
     a = ap.parse_args()
     cat_path = os.path.join(SKILL, 'catalog.json')
     if not os.path.exists(cat_path):
@@ -146,8 +147,13 @@ def main():
     cat = json.load(open(cat_path, encoding='utf-8'))['families']
     notes = {n: v['notes'] for n, v in cat.items()}
     fam = group([r for v in cat.values() for r in v['fonts']])
-    shutil.rmtree(DIST, ignore_errors=True)
-    os.makedirs(DIST)
+    if a.only:
+        for f in os.listdir(DIST) if os.path.isdir(DIST) else []:
+            if f == a.only + '.zip' or f.startswith(a.only + '-part'):
+                os.remove(os.path.join(DIST, f))
+    else:
+        shutil.rmtree(DIST, ignore_errors=True)
+    os.makedirs(DIST, exist_ok=True)
     skills, left = {}, []
     for n, rs in fam.items():
         c = notes[n].get('category', '')
@@ -157,6 +163,8 @@ def main():
         else:
             skills.setdefault(skill_of(c, heb), {})[n] = rs
     for base, fams in sorted(skills.items()):
+        if a.only and base != a.only:
+            continue
         parts = split_by_size(fams, a.limit_mb)
         for i, part in enumerate(parts, 1):
             build(base if len(parts) == 1 else '%s-part%d' % (base, i), part, notes)
