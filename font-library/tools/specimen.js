@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-/* usage: node tools/specimen.js [fonts-dir] [out-dir]
+/* usage: [ONLY=hebrew|"Family A,Family B"] [MAXSTYLES=4] node tools/specimen.js [fonts-dir] [out-dir]
+   ONLY=hebrew renders just the families with Hebrew letters; MAXSTYLES caps the rows per family (default 4, 0 = all).
    Renders one PNG per family (Hebrew + Latin + digits, every weight/italic found) so a font can be chosen by eye.
    Uses the same Chromium/Playwright as the rest of the repo. */
 const fs = require('fs'), path = require('path');
@@ -9,17 +10,21 @@ const ROOT = path.resolve(__dirname, '..');
 const fontsDir = path.resolve(process.argv[2] || path.join(ROOT, 'my-fonts', 'fonts'));
 const outDir = path.resolve(process.argv[3] || path.join(ROOT, 'specimens'));
 const catalog = JSON.parse(fs.readFileSync(path.join(ROOT, 'my-fonts', 'catalog.json'), 'utf8')).families;
+const only = process.env.ONLY, maxStyles = +(process.env.MAXSTYLES || 4);
+const wanted = fam => !only || (only === 'hebrew' ? catalog[fam].fonts.some(f => f.hebrew !== 'none') : only.split(',').includes(fam));
 const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 const HEB = 'בראשית ברא אלקים את השמים ואת הארץ — אבגדהוזחטיכךלמםנןסעפףצץקרשת 0123456789 ₪ ״׳';
 const LAT = 'The quick brown fox jumps over the lazy dog — ABCDEFG abcdefg 0123456789';
 (async () => {
   fs.mkdirSync(outDir, { recursive: true });
   const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined });
-  for (const [fam, { fonts }] of Object.entries(catalog)) {
+  for (const [fam, { fonts: all }] of Object.entries(catalog)) {
+    if (!wanted(fam)) continue;
+    const fonts = maxStyles ? all.slice(0, maxStyles) : all;
     let css = '', rows = '';
     fonts.forEach((f, i) => {
       const file = f.file.split('#')[0];
-      const src = 'file://' + path.join(ROOT, 'my-fonts', file).replace(/ /g, '%20');
+      const src = 'file://' + encodeURI(path.join(ROOT, 'my-fonts', file));
       const w = f.variable_axes && f.variable_axes.wght ? `${f.variable_axes.wght[0]} ${f.variable_axes.wght[2]}` : f.weight;
       css += `@font-face{font-family:"S${i}";src:url("${src}");font-weight:${w};font-style:${f.italic ? 'italic' : 'normal'}}\n`;
       rows += `<div class="row"><div class="tag">${esc(f.style)} · ${f.weight}${f.italic ? ' italic' : ''}${f.variable_axes && f.variable_axes.wght ? ' · variable' : ''} · ${esc(f.file)}</div>
@@ -33,8 +38,13 @@ const LAT = 'The quick brown fox jumps over the lazy dog — ABCDEFG abcdefg 012
       .heb{direction:rtl;font-size:34px;line-height:1.35}.lat{direction:ltr;font-size:26px;line-height:1.3;margin-top:4px}</style>
       <h1>${esc(fam)}</h1>${rows}`;
     const page = await browser.newPage({ viewport: { width: 1180, height: 400 } });
-    await page.setContent(html, { waitUntil: 'load' });
-    await page.evaluate(() => document.fonts.ready);
+    // goto a real file:// page: a setContent() page (about:blank) is not allowed to load local font files and silently falls back
+    const tmp = path.join(outDir, '_tmp.html');
+    fs.writeFileSync(tmp, html);
+    await page.goto('file://' + tmp.replace(/ /g, '%20'), { waitUntil: 'load' });
+    const bad = await page.evaluate(async () => { await Promise.all([...document.fonts].map(f => f.load().catch(() => {}))); return [...document.fonts].filter(f => f.status !== 'loaded').length; });
+    if (bad) console.error(`! ${fam}: ${bad} font file(s) did not load - the specimen shows a fallback font`);
+    fs.unlinkSync(tmp);
     const out = path.join(outDir, fam.replace(/[^\w-]+/g, '_') + '.png');
     await page.screenshot({ path: out, fullPage: true });
     await page.close();

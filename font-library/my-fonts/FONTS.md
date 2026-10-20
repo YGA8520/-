@@ -6,240 +6,240 @@ Legend: ✔ full · ◐ partial · — none. Hebrew = 27 letters incl. finals; N
 
 | Family | Styles | Hebrew | Niqqud | Taamim | Marks | Latin | Category | Good for | Avoid |
 |---|---|:-:|:-:|:-:|:-:|:-:|---|---|---|
-| Agency FB | 400, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Aharoni | 700 | ✔ | ✔ | ✔ | ✔ | ✔ | *(not set)* |  |  |
-| Algerian | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Anka CLM | 700 | ✔ | — | — | ◐ | ◐ | *(not set)* |  |  |
-| Arial | 400, 400i, 700, 700i, 900 | ✔ | ✔ | ✔ | ✔ | ✔ | *(not set)* |  |  |
-| Arial Rounded MT Bold | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Bahnschrift | 400v | — | — | — | ◐ | ✔ | *(not set)* |  |  |
-| Baskerville Old Face | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Bauhaus 93 | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Bell MT | 400, 400i, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Berlin Sans FB | 400, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Berlin Sans FB Demi | 700 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Bernard MT Condensed | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Blackadder ITC | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Bodoni MT | 400, 400i, 700, 700i, 900, 900i | — | — | — | — | ✔ | *(not set)* |  |  |
-| Book Antiqua | 400, 400i, 700, 700i | — | — | — | — | ✔ | *(not set)* |  |  |
-| Bookman Old Style | 300, 300i, 600, 600i | — | — | — | — | ✔ | *(not set)* |  |  |
-| Bookshelf Symbol 7 | 400 | — | — | — | — | — | *(not set)* |  |  |
-| Bradley Hand ITC | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Britannic Bold | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Broadway | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Brush Script MT | 400i | — | — | — | — | ✔ | *(not set)* |  |  |
-| Calibri | 300, 400, 400i, 700, 700i | ✔ | ✔ | ✔ | ✔ | ✔ | *(not set)* |  |  |
-| Californian FB | 400, 400i, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Calisto MT | 400, 400i, 700, 700i | — | — | — | — | ✔ | *(not set)* |  |  |
-| Cambria | 400, 400i, 700, 700i | — | — | — | ◐ | ✔ | *(not set)* |  |  |
-| Cambria Math | 400 | — | — | — | ◐ | ✔ | *(not set)* |  |  |
-| Candara | 400, 400i, 700, 700i | — | — | — | ◐ | ✔ | *(not set)* |  |  |
-| Castellar | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Centaur | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Century | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Century Gothic | 400, 400i, 700, 700i | — | — | — | — | ✔ | *(not set)* |  |  |
-| Century Schoolbook | 400, 400i, 700, 700i | — | — | — | — | ✔ | *(not set)* |  |  |
-| Chiller | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Colonna MT | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Comic Sans MS | 400, 400i, 700, 700i | — | — | — | — | ✔ | *(not set)* |  |  |
-| Comix No2 CLM | 700 | ✔ | — | — | — | — | *(not set)* |  |  |
-| Consolas | 400, 400i, 700, 700i | — | — | — | ◐ | ✔ | *(not set)* |  |  |
-| Constantia | 400, 400i, 700, 700i | — | — | — | — | ✔ | *(not set)* |  |  |
-| Cooper Black | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Copperplate Gothic Bold | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Copperplate Gothic Light | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Corbel | 300, 300i, 400, 400i, 700, 700i | — | — | — | ◐ | ✔ | *(not set)* |  |  |
-| Courier New | 400, 400i, 700, 700i | ✔ | ✔ | ✔ | ✔ | ✔ | *(not set)* |  |  |
-| Curlz MT | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| David | 400, 700 | ✔ | ✔ | ✔ | ✔ | ✔ | *(not set)* |  |  |
-| Dorian CLM | 400 | ✔ | — | — | — | — | *(not set)* |  |  |
-| Dubai | 300, 400, 500, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Ebrima | 400, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Edwardian Script ITC | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Elephant | 400, 400i | — | — | — | — | ✔ | *(not set)* |  |  |
-| Engravers MT | 500 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Eras Bold ITC | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Eras Demi ITC | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Eras Light ITC | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Eras Medium ITC | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Felix Titling | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Footlight MT Light | 300 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Forte | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Franklin Gothic Book | 400, 400i | — | — | — | — | ✔ | *(not set)* |  |  |
-| Franklin Gothic Demi | 400, 400i | — | — | — | — | ✔ | *(not set)* |  |  |
-| Franklin Gothic Demi Cond | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Franklin Gothic Heavy | 400, 400i | — | — | — | — | ✔ | *(not set)* |  |  |
-| Franklin Gothic Medium | 400, 400i | — | — | — | — | ✔ | *(not set)* |  |  |
-| Franklin Gothic Medium Cond | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| FrankRuehl | 400 | ✔ | ✔ | ✔ | ✔ | ✔ | *(not set)* |  |  |
-| FrankRuehl DP | 400, 700 | ✔ | ✔ | ✔ | ◐ | ✔ | *(not set)* |  |  |
-| Freestyle Script | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| French Script MT | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Gabriola | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Gadugi | 400, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Gan CLM | 700 | ✔ | — | — | — | — | *(not set)* |  |  |
-| Garamond | 400, 400i, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Georgia | 400, 400i, 700, 700i | — | — | — | — | ✔ | *(not set)* |  |  |
-| Gigi | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Gill Sans MT | 400, 400i, 700, 700i | — | — | — | — | ✔ | *(not set)* |  |  |
-| Gill Sans MT Condensed | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Gill Sans MT Ext Condensed Bold | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Gill Sans Ultra Bold | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Gill Sans Ultra Bold Condensed | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Gisha | 400, 700 | ✔ | ◐ | ✔ | ✔ | ✔ | *(not set)* |  |  |
-| Gladia CLM | 700 | ✔ | — | — | — | — | *(not set)* |  |  |
-| Gloucester MT Extra Condensed | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Goudy Old Style | 400, 400i, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Goudy Stout | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Guttman Aharoni | 400 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
-| Guttman Drogolin | 400, 700 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
-| Guttman Frank | 400, 700 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
-| Guttman Frnew | 400 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
-| Guttman Haim | 400 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
-| Guttman Haim-Condensed | 400 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
-| Guttman Hatzvi | 400, 700 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
-| Guttman Kav | 400, 700 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
-| Guttman Kav-Light | 400 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
-| Guttman Logo1 | 400 | — | — | — | — | — | *(not set)* |  |  |
-| Guttman Mantova | 400, 700 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
-| Guttman Mantova-Decor | 400 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
-| Guttman Miryam | 300, 700 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
-| Guttman Myamfix | 400 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
-| Guttman Rashi | 400, 700 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
-| Guttman Stam | 400 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
-| Guttman Stam1 | 400 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
-| Guttman Vilna | 400, 700 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
-| Guttman Yad | 400 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
-| Guttman Yad-Brush | 400 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
-| Guttman Yad-Light | 400 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
-| Guttman-Aharoni | 700 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
-| Guttman-Aram | 400 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
-| Guttman-CourMir | 400 | ✔ | ◐ | ◐ | ✔ | — | *(not set)* |  |  |
-| Hadassah Friedlaender | 400, 700 | ✔ | ✔ | — | ✔ | ✔ | *(not set)* |  |  |
-| Haettenschweiler | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Harlow Solid Italic | 400i | — | — | — | — | ✔ | *(not set)* |  |  |
-| Harrington | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| High Tower Text | 400, 400i | — | — | — | — | ✔ | *(not set)* |  |  |
-| Impact | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Imprint MT Shadow | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Informal Roman | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Ink Free | 400 | — | — | — | ◐ | ✔ | *(not set)* |  |  |
-| Javanese Text | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Jokerman | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Juice ITC | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Kristen ITC | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Ktav Yad CLM | 500i, 700i | ✔ | — | — | ◐ | — | *(not set)* |  |  |
-| Kunstler Script | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Leelawadee | 400, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Leelawadee UI | 350, 400, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Levenim MT | 400, 700 | ✔ | ✔ | ✔ | ✔ | ✔ | *(not set)* |  |  |
-| Lucida Bright | 400, 400i, 600, 600i | — | — | — | — | ✔ | *(not set)* |  |  |
-| Lucida Calligraphy | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Lucida Console | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Lucida Fax | 400, 400i, 600, 600i | — | — | — | — | ✔ | *(not set)* |  |  |
-| Lucida Handwriting | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Lucida Sans | 400, 400i, 600, 600i | — | — | — | — | ✔ | *(not set)* |  |  |
-| Lucida Sans Typewriter | 400, 400i, 600, 600i | — | — | — | — | ✔ | *(not set)* |  |  |
-| Lucida Sans Unicode | 400 | ✔ | ◐ | — | ✔ | ✔ | *(not set)* |  |  |
-| Magneto | 700 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Maiandra GD | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Malgun Gothic | 300, 400, 700 | — | — | — | ◐ | ✔ | *(not set)* |  |  |
-| Marlett | 500 | — | — | — | — | — | *(not set)* |  |  |
-| Matura MT Script Capitals | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Microsoft Himalaya | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Microsoft JhengHei | 290, 400, 700 | — | — | — | ◐ | ✔ | *(not set)* |  |  |
-| Microsoft JhengHei UI | 290, 400, 700 | — | — | — | ◐ | ✔ | *(not set)* |  |  |
-| Microsoft New Tai Lue | 400, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Microsoft PhagsPa | 400, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Microsoft Sans Serif | 400 | ✔ | ✔ | ✔ | ✔ | ✔ | *(not set)* |  |  |
-| Microsoft Tai Le | 400, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Microsoft Uighur | 400, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Microsoft YaHei | 290, 400, 700 | — | — | — | ◐ | ✔ | *(not set)* |  |  |
-| Microsoft YaHei UI | 290, 400, 700 | — | — | — | ◐ | ✔ | *(not set)* |  |  |
-| Microsoft Yi Baiti | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| MingLiU-ExtB | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| MingLiU_HKSCS-ExtB | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| MingLiU_MSCS-ExtB | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Miriam | 400 | ✔ | ✔ | ✔ | ✔ | ✔ | *(not set)* |  |  |
-| Miriam Fixed | 400 | ✔ | ✔ | ✔ | ✔ | ✔ | *(not set)* |  |  |
-| Mistral | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Modern No. 20 | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Mongolian Baiti | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Monotype Corsiva | 400i | — | — | — | — | ✔ | *(not set)* |  |  |
-| MS Gothic | 400 | — | — | — | ◐ | ✔ | *(not set)* |  |  |
-| MS PGothic | 400 | — | — | — | ◐ | ✔ | *(not set)* |  |  |
-| MS Reference Sans Serif | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| MS Reference Specialty | 400 | — | — | — | — | — | *(not set)* |  |  |
-| MS UI Gothic | 400 | — | — | — | ◐ | ✔ | *(not set)* |  |  |
-| MT Extra | 400 | — | — | — | — | — | *(not set)* |  |  |
-| MV Boli | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Myanmar Text | 400, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Narkisim | 400 | ✔ | ✔ | ✔ | ✔ | ✔ | *(not set)* |  |  |
-| Niagara Engraved | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Niagara Solid | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Nirmala Text | 350, 400, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Nirmala UI | 350, 400, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
-| NSimSun | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| OCR A Extended | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Old English Text MT | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Ozrad CLM | 700 | ✔ | — | — | — | — | *(not set)* |  |  |
-| Palace Script MT | 400i | — | — | — | — | ✔ | *(not set)* |  |  |
-| Palatino Linotype | 400, 400i, 700, 700i | — | — | — | — | ✔ | *(not set)* |  |  |
-| Papyrus | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Parchment | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Perpetua | 400, 400i, 700, 700i | — | — | — | — | ✔ | *(not set)* |  |  |
-| Perpetua Titling MT | 300, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
-| PFT_Rashi | 400 | ✔ | ◐ | ◐ | ✔ | ✔ | *(not set)* |  |  |
-| PFT_Vilna | 400, 700 | ✔ | ◐ | ◐ | ✔ | ✔ | *(not set)* |  |  |
-| Playbill | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| PMingLiU-ExtB | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Poor Richard | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Pristina | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Rage Italic | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Rashi DP | 400 | ✔ | ✔ | ✔ | ◐ | ✔ | *(not set)* |  |  |
-| Ravie | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Rockwell | 400, 400i, 700, 700i | — | — | — | — | ✔ | *(not set)* |  |  |
-| Rockwell Condensed | 400, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Rockwell Extra Bold | 800 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Rod | 400 | ✔ | ✔ | ✔ | ✔ | ✔ | *(not set)* |  |  |
-| Sans Serif Collection | 400 | — | — | — | ◐ | ✔ | *(not set)* |  |  |
-| Script MT Bold | 700 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Segoe Fluent Icons | 400 | — | — | — | — | — | *(not set)* |  |  |
-| Segoe MDL2 Assets | 400 | — | — | — | — | — | *(not set)* |  |  |
-| Segoe Print | 400, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Segoe Script | 400, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Segoe UI | 300, 300i, 350, 350i, 400, 400i, 600, 600i, 700, 700i, 900, 900i | ✔ | ✔ | ✔ | ✔ | ✔ | *(not set)* |  |  |
-| Segoe UI Emoji | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Segoe UI Historic | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Segoe UI Symbol | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Segoe UI Variable | 400v | ◐ | ◐ | — | ◐ | ✔ | *(not set)* |  |  |
-| Showcard Gothic | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| SimSun | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| SimSun-ExtB | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| SimSun-ExtG | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Sitka | 400iv, 400v | — | — | — | — | ✔ | *(not set)* |  |  |
-| Snap ITC | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Stencil | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Sylfaen | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Symbol | 400 | — | — | — | — | — | *(not set)* |  |  |
-| Tahoma | 400, 700 | ✔ | ✔ | ✔ | ✔ | ✔ | *(not set)* |  |  |
-| Tempus Sans ITC | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Times New Roman | 400, 400i, 700, 700i | ✔ | ✔ | ✔ | ✔ | ✔ | *(not set)* |  |  |
-| Trebuchet MS | 400, 400i, 700, 700i | — | — | — | — | ✔ | *(not set)* |  |  |
-| Tw Cen MT | 400, 400i, 700, 700i | — | — | — | — | ✔ | *(not set)* |  |  |
-| Tw Cen MT Condensed | 400, 700 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Tw Cen MT Condensed Extra Bold | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Verdana | 400, 400i, 700, 700i | — | — | — | ◐ | ✔ | *(not set)* |  |  |
-| VILNA מתוקן DP | 400 | ✔ | ◐ | ✔ | ◐ | ✔ | *(not set)* |  |  |
-| Viner Hand ITC | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Vivaldi | 400i | — | — | — | — | ✔ | *(not set)* |  |  |
-| Vladimir Script | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Webdings | 400 | — | — | — | — | — | *(not set)* |  |  |
-| Wide Latin | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
-| Wingdings | 400 | — | — | — | — | — | *(not set)* |  |  |
-| Wingdings 2 | 400 | — | — | — | — | — | *(not set)* |  |  |
-| Wingdings 3 | 400 | — | — | — | — | — | *(not set)* |  |  |
-| Yu Gothic | 300, 400, 500, 700 | — | — | — | ◐ | ✔ | *(not set)* |  |  |
-| Yu Gothic UI | 300, 350, 400, 600, 700 | — | — | — | ◐ | ✔ | *(not set)* |  |  |
+| Agency FB | 400, 700 | — | — | — | — | ✔ | display sans / condensed | Latin headlines, posters, short bold lines | body text |
+| Aharoni | 700 | ✔ | ✔ | ✔ | ✔ | ✔ | sans display, geometric (Futura-like), bold only | headlines, covers, posters, short bold lines | long body text; no regular weight |
+| Algerian | 400 | — | — | — | — | ✔ | display serif / slab / titling | Latin titles, covers, certificates, caps-only headings | body text, small sizes |
+| Anka CLM | 700 | ✔ | — | — | ◐ | ◐ | display sans (Culmus), bold only, partial Latin | short decorative headings | body text; check legibility of every letter before use |
+| Arial | 400, 400i, 700, 700i, 900 | ✔ | ✔ | ✔ | ✔ | ✔ | neutral sans (installed set is Arial Narrow family) | documents, tables, forms, UI, small sizes | anything that needs character |
+| Arial Rounded MT Bold | 400 | — | — | — | — | ✔ | display sans / condensed | Latin headlines, posters, short bold lines | body text |
+| Bahnschrift | 400v | — | — | — | ◐ | ✔ | sans text | Latin body text, UI, general documents |  |
+| Baskerville Old Face | 400 | — | — | — | — | ✔ | serif text | Latin body text / long reading |  |
+| Bauhaus 93 | 400 | — | — | — | — | ✔ | display serif / slab / titling | Latin titles, covers, certificates, caps-only headings | body text, small sizes |
+| Bell MT | 400, 400i, 700 | — | — | — | — | ✔ | serif text | Latin body text / long reading |  |
+| Berlin Sans FB | 400, 700 | — | — | — | — | ✔ | display sans / condensed | Latin headlines, posters, short bold lines | body text |
+| Berlin Sans FB Demi | 700 | — | — | — | — | ✔ | display sans / condensed | Latin headlines, posters, short bold lines | body text |
+| Bernard MT Condensed | 400 | — | — | — | — | ✔ | display sans / condensed | Latin headlines, posters, short bold lines | body text |
+| Blackadder ITC | 400 | — | — | — | — | ✔ | script / calligraphic | invitations, certificates, short decorative lines | all-caps, body text, small sizes |
+| Bodoni MT | 400, 400i, 700, 700i, 900, 900i | — | — | — | — | ✔ | serif text | Latin body text / long reading |  |
+| Book Antiqua | 400, 400i, 700, 700i | — | — | — | — | ✔ | serif text | Latin body text / long reading |  |
+| Bookman Old Style | 300, 300i, 600, 600i | — | — | — | — | ✔ | serif text | Latin body text / long reading |  |
+| Bookshelf Symbol 7 | 400 | — | — | — | — | — | symbols / icons - never for text | icons only | any text; Hebrew or Latin |
+| Bradley Hand ITC | 400 | — | — | — | — | ✔ | handwriting / informal | informal or children material, short lines | formal documents |
+| Britannic Bold | 400 | — | — | — | — | ✔ | display sans / condensed | Latin headlines, posters, short bold lines | body text |
+| Broadway | 400 | — | — | — | — | ✔ | display serif / slab / titling | Latin titles, covers, certificates, caps-only headings | body text, small sizes |
+| Brush Script MT | 400i | — | — | — | — | ✔ | script / calligraphic | invitations, certificates, short decorative lines | all-caps, body text, small sizes |
+| Calibri | 300, 400, 400i, 700, 700i | ✔ | ✔ | ✔ | ✔ | ✔ | humanist sans, Office default | Word/PowerPoint documents, business text | traditional/sacred-text typography |
+| Californian FB | 400, 400i, 700 | — | — | — | — | ✔ | serif text | Latin body text / long reading |  |
+| Calisto MT | 400, 400i, 700, 700i | — | — | — | — | ✔ | serif text | Latin body text / long reading |  |
+| Cambria | 400, 400i, 700, 700i | — | — | — | ◐ | ✔ | serif text | Latin body text / long reading |  |
+| Cambria Math | 400 | — | — | — | ◐ | ✔ | symbols / icons - never for text | icons only | any text; Hebrew or Latin |
+| Candara | 400, 400i, 700, 700i | — | — | — | ◐ | ✔ | sans text | Latin body text, UI, general documents |  |
+| Castellar | 400 | — | — | — | — | ✔ | display serif / slab / titling | Latin titles, covers, certificates, caps-only headings | body text, small sizes |
+| Centaur | 400 | — | — | — | — | ✔ | serif text | Latin body text / long reading |  |
+| Century | 400 | — | — | — | — | ✔ | serif text | Latin body text / long reading |  |
+| Century Gothic | 400, 400i, 700, 700i | — | — | — | — | ✔ | sans text | Latin body text, UI, general documents |  |
+| Century Schoolbook | 400, 400i, 700, 700i | — | — | — | — | ✔ | serif text | Latin body text / long reading |  |
+| Chiller | 400 | — | — | — | — | ✔ | novelty display (use sparingly) | one-off themed headlines | anything formal; body text |
+| Colonna MT | 400 | — | — | — | — | ✔ | display serif / slab / titling | Latin titles, covers, certificates, caps-only headings | body text, small sizes |
+| Comic Sans MS | 400, 400i, 700, 700i | — | — | — | — | ✔ | handwriting / informal | informal or children material, short lines | formal documents |
+| Comix No2 CLM | 700 | ✔ | — | — | — | — | informal comic sans (Culmus), bold only | children, playful headings | formal or religious documents |
+| Consolas | 400, 400i, 700, 700i | — | — | — | ◐ | ✔ | monospace | code, tables, typewriter look | body text |
+| Constantia | 400, 400i, 700, 700i | — | — | — | — | ✔ | serif text | Latin body text / long reading |  |
+| Cooper Black | 400 | — | — | — | — | ✔ | display serif / slab / titling | Latin titles, covers, certificates, caps-only headings | body text, small sizes |
+| Copperplate Gothic Bold | 400 | — | — | — | — | ✔ | display serif / slab / titling | Latin titles, covers, certificates, caps-only headings | body text, small sizes |
+| Copperplate Gothic Light | 400 | — | — | — | — | ✔ | display serif / slab / titling | Latin titles, covers, certificates, caps-only headings | body text, small sizes |
+| Corbel | 300, 300i, 400, 400i, 700, 700i | — | — | — | ◐ | ✔ | sans text | Latin body text, UI, general documents |  |
+| Courier New | 400, 400i, 700, 700i | ✔ | ✔ | ✔ | ✔ | ✔ | monospace typewriter | code, forms, deliberate typewriter look | body text |
+| Curlz MT | 400 | — | — | — | — | ✔ | novelty display (use sparingly) | one-off themed headlines | anything formal; body text |
+| David | 400, 700 | ✔ | ✔ | ✔ | ✔ | ✔ | traditional Hebrew book serif (Microsoft) | formal documents, letters, long Hebrew reading with niqqud/taamim | tiny sizes on screen |
+| Dorian CLM | 400 | ✔ | — | — | — | — | light geometric sans (Culmus), Hebrew only | elegant short headings, invitations | small sizes, long text |
+| Dubai | 300, 400, 500, 700 | — | — | — | — | ✔ | sans text | Latin body text, UI, general documents |  |
+| Ebrima | 400, 700 | — | — | — | — | ✔ | sans text | Latin body text, UI, general documents |  |
+| Edwardian Script ITC | 400 | — | — | — | — | ✔ | script / calligraphic | invitations, certificates, short decorative lines | all-caps, body text, small sizes |
+| Elephant | 400, 400i | — | — | — | — | ✔ | display serif / slab / titling | Latin titles, covers, certificates, caps-only headings | body text, small sizes |
+| Engravers MT | 500 | — | — | — | — | ✔ | display serif / slab / titling | Latin titles, covers, certificates, caps-only headings | body text, small sizes |
+| Eras Bold ITC | 400 | — | — | — | — | ✔ | display sans / condensed | Latin headlines, posters, short bold lines | body text |
+| Eras Demi ITC | 400 | — | — | — | — | ✔ | display sans / condensed | Latin headlines, posters, short bold lines | body text |
+| Eras Light ITC | 400 | — | — | — | — | ✔ | display sans / condensed | Latin headlines, posters, short bold lines | body text |
+| Eras Medium ITC | 400 | — | — | — | — | ✔ | display sans / condensed | Latin headlines, posters, short bold lines | body text |
+| Felix Titling | 400 | — | — | — | — | ✔ | display serif / slab / titling | Latin titles, covers, certificates, caps-only headings | body text, small sizes |
+| Footlight MT Light | 300 | — | — | — | — | ✔ | serif text | Latin body text / long reading |  |
+| Forte | 400 | — | — | — | — | ✔ | novelty display (use sparingly) | one-off themed headlines | anything formal; body text |
+| Franklin Gothic Book | 400, 400i | — | — | — | — | ✔ | sans text | Latin body text, UI, general documents |  |
+| Franklin Gothic Demi | 400, 400i | — | — | — | — | ✔ | display sans / condensed | Latin headlines, posters, short bold lines | body text |
+| Franklin Gothic Demi Cond | 400 | — | — | — | — | ✔ | display sans / condensed | Latin headlines, posters, short bold lines | body text |
+| Franklin Gothic Heavy | 400, 400i | — | — | — | — | ✔ | display sans / condensed | Latin headlines, posters, short bold lines | body text |
+| Franklin Gothic Medium | 400, 400i | — | — | — | — | ✔ | sans text | Latin body text, UI, general documents |  |
+| Franklin Gothic Medium Cond | 400 | — | — | — | — | ✔ | display sans / condensed | Latin headlines, posters, short bold lines | body text |
+| FrankRuehl | 400 | ✔ | ✔ | ✔ | ✔ | ✔ | classic Hebrew text serif (Frank-Ruehl), the traditional newspaper/sefer face | body text of books, booklets, divrei Torah, long reading | headline weight (only regular here; use FrankRuehl DP bold) |
+| FrankRuehl DP | 400, 700 | ✔ | ✔ | ✔ | ◐ | ✔ | Frank-Ruehl serif with regular + bold, proprietary DP set | body + bold emphasis in printed booklets and sefarim | redistribution outside the owner (licence) |
+| Freestyle Script | 400 | — | — | — | — | ✔ | script / calligraphic | invitations, certificates, short decorative lines | all-caps, body text, small sizes |
+| French Script MT | 400 | — | — | — | — | ✔ | script / calligraphic | invitations, certificates, short decorative lines | all-caps, body text, small sizes |
+| Gabriola | 400 | — | — | — | — | ✔ | script / calligraphic | invitations, certificates, short decorative lines | all-caps, body text, small sizes |
+| Gadugi | 400, 700 | — | — | — | — | ✔ | sans text | Latin body text, UI, general documents |  |
+| Gan CLM | 700 | ✔ | — | — | — | — | rounded bold sans (Culmus), bold only | kids, friendly headlines | formal documents |
+| Garamond | 400, 400i, 700 | — | — | — | — | ✔ | serif text | Latin body text / long reading |  |
+| Georgia | 400, 400i, 700, 700i | — | — | — | — | ✔ | serif text | Latin body text / long reading |  |
+| Gigi | 400 | — | — | — | — | ✔ | novelty display (use sparingly) | one-off themed headlines | anything formal; body text |
+| Gill Sans MT | 400, 400i, 700, 700i | — | — | — | — | ✔ | sans text | Latin body text, UI, general documents |  |
+| Gill Sans MT Condensed | 400 | — | — | — | — | ✔ | display sans / condensed | Latin headlines, posters, short bold lines | body text |
+| Gill Sans MT Ext Condensed Bold | 400 | — | — | — | — | ✔ | display sans / condensed | Latin headlines, posters, short bold lines | body text |
+| Gill Sans Ultra Bold | 400 | — | — | — | — | ✔ | display sans / condensed | Latin headlines, posters, short bold lines | body text |
+| Gill Sans Ultra Bold Condensed | 400 | — | — | — | — | ✔ | display sans / condensed | Latin headlines, posters, short bold lines | body text |
+| Gisha | 400, 700 | ✔ | ◐ | ✔ | ✔ | ✔ | modern humanist sans, regular+bold | screens, web, presentations, labels | niqqud-heavy text (partial niqqud) |
+| Gladia CLM | 700 | ✔ | — | — | — | — | flat geometric display (Culmus), bold only | posters, headlines | body text |
+| Gloucester MT Extra Condensed | 400 | — | — | — | — | ✔ | display sans / condensed | Latin headlines, posters, short bold lines | body text |
+| Goudy Old Style | 400, 400i, 700 | — | — | — | — | ✔ | serif text | Latin body text / long reading |  |
+| Goudy Stout | 400 | — | — | — | — | ✔ | display serif / slab / titling | Latin titles, covers, certificates, caps-only headings | body text, small sizes |
+| Guttman Aharoni | 400 | ✔ | ◐ | ◐ | ✔ | — | geometric sans, regular | headlines, modern layouts | Latin text (no Latin glyphs: Latin falls back) |
+| Guttman Drogolin | 400, 700 | ✔ | ◐ | ◐ | ✔ | — | Drugulin-style traditional Hebrew serif, regular + bold, proprietary | sefer/book typography, divrei Torah, long reading | redistribution outside the owner (licence); Latin text (no Latin glyphs) |
+| Guttman Frank | 400, 700 | ✔ | ◐ | ◐ | ✔ | — | Frank-Ruehl style serif, regular + bold | book body text | Latin text (no Latin glyphs) |
+| Guttman Frnew | 400 | ✔ | ◐ | ◐ | ✔ | — | newer Frank-Ruehl variant, regular | book body text | Latin text (no Latin glyphs) |
+| Guttman Haim | 400 | ✔ | ◐ | ◐ | ✔ | — | very heavy display sans | big headlines, posters | anything below ~24pt |
+| Guttman Haim-Condensed | 400 | ✔ | ◐ | ◐ | ✔ | — | condensed heavy display sans | tight headlines, headings in narrow columns | body text |
+| Guttman Hatzvi | 400, 700 | ✔ | ◐ | ◐ | ✔ | — | geometric sans with wide forms, regular + bold | modern headings, short statements | long text |
+| Guttman Kav | 400, 700 | ✔ | ◐ | ◐ | ✔ | — | monoline sans with open spacing, regular + bold | modern headings, short text | long text |
+| Guttman Kav-Light | 400 | ✔ | ◐ | ◐ | ✔ | — | light monoline sans | elegant short lines, subtitles | small sizes, long text |
+| Guttman Logo1 | 400 | — | — | — | — | — | symbols / icons - never for text | the Guttman logo glyphs only | any text |
+| Guttman Mantova | 400, 700 | ✔ | ◐ | ◐ | ✔ | — | Mantua-style Hebrew book serif, regular + bold | headings and text with traditional sefarim feel | Latin text (no Latin glyphs) |
+| Guttman Mantova-Decor | 400 | ✔ | ◐ | ◐ | ✔ | — | decorative outlined Mantova | titles, covers | body text |
+| Guttman Miryam | 300, 700 | ✔ | ◐ | ◐ | ✔ | — | Miriam-style clean sans, light + bold | newspaper-like headings and modern text | Latin text (no Latin glyphs) |
+| Guttman Myamfix | 400 | ✔ | ◐ | ◐ | ✔ | — | light fixed-width sans | tables, aligned columns | running text |
+| Guttman Rashi | 400, 700 | ✔ | ◐ | ◐ | ✔ | — | Rashi script letters, regular + bold | commentary text (Rashi-style), side notes | primary text; readers expect Rashi script only for commentary |
+| Guttman Stam | 400 | ✔ | ◐ | ◐ | ✔ | — | STaM-style scribal letters with crowns, regular | headings in Torah-scroll style, certificates, invitations | long text; scribal look is not for ordinary reading |
+| Guttman Stam1 | 400 | ✔ | ◐ | ◐ | ✔ | — | bolder STaM-style letters | headings, certificates | long text |
+| Guttman Vilna | 400, 700 | ✔ | ◐ | ◐ | ✔ | — | Vilna-edition (Talmud printing) serif, regular + bold | Gemara/Talmud-style text, sefarim body | Latin text (no Latin glyphs) |
+| Guttman Yad | 400 | ✔ | ◐ | ◐ | ✔ | — | handwriting | personal notes, informal headings | formal or sacred text, long text |
+| Guttman Yad-Brush | 400 | ✔ | ◐ | ◐ | ✔ | — | brush handwriting, bold | expressive headings | long text |
+| Guttman Yad-Light | 400 | ✔ | ◐ | ◐ | ✔ | — | light handwriting | informal notes, signatures | long text |
+| Guttman-Aharoni | 700 | ✔ | ◐ | ◐ | ✔ | — | geometric sans, bold | headlines, covers | Latin text (no Latin glyphs) |
+| Guttman-Aram | 400 | ✔ | ◐ | ◐ | ✔ | — | clean humanist sans | notices, flyers, general modern text | Latin text (no Latin glyphs) |
+| Guttman-CourMir | 400 | ✔ | ◐ | ◐ | ✔ | — | monospace Hebrew | forms, deliberate typewriter look | body text |
+| Hadassah Friedlaender | 400, 700 | ✔ | ✔ | — | ✔ | ✔ | modern humanist book serif, regular + bold, full niqqud (no taamim) | long reading on paper and screen, niqqud text | cantillation marks (no taamim) |
+| Haettenschweiler | 400 | — | — | — | — | ✔ | display sans / condensed | Latin headlines, posters, short bold lines | body text |
+| Harlow Solid Italic | 400i | — | — | — | — | ✔ | script / calligraphic | invitations, certificates, short decorative lines | all-caps, body text, small sizes |
+| Harrington | 400 | — | — | — | — | ✔ | script / calligraphic | invitations, certificates, short decorative lines | all-caps, body text, small sizes |
+| High Tower Text | 400, 400i | — | — | — | — | ✔ | serif text | Latin body text / long reading |  |
+| Impact | 400 | — | — | — | — | ✔ | display sans / condensed | Latin headlines, posters, short bold lines | body text |
+| Imprint MT Shadow | 400 | — | — | — | — | ✔ | novelty display (use sparingly) | one-off themed headlines | anything formal; body text |
+| Informal Roman | 400 | — | — | — | — | ✔ | handwriting / informal | informal or children material, short lines | formal documents |
+| Ink Free | 400 | — | — | — | ◐ | ✔ | handwriting / informal | informal or children material, short lines | formal documents |
+| Javanese Text | 400 | — | — | — | — | ✔ | other scripts (CJK, Indic, etc.) - only for those scripts | text in those scripts only | Hebrew/Latin text |
+| Jokerman | 400 | — | — | — | — | ✔ | novelty display (use sparingly) | one-off themed headlines | anything formal; body text |
+| Juice ITC | 400 | — | — | — | — | ✔ | handwriting / informal | informal or children material, short lines | formal documents |
+| Kristen ITC | 400 | — | — | — | — | ✔ | handwriting / informal | informal or children material, short lines | formal documents |
+| Ktav Yad CLM | 500i, 700i | ✔ | — | — | ◐ | — | handwriting italic (Culmus) | informal notes, quotes | long or formal text |
+| Kunstler Script | 400 | — | — | — | — | ✔ | script / calligraphic | invitations, certificates, short decorative lines | all-caps, body text, small sizes |
+| Leelawadee | 400, 700 | — | — | — | — | ✔ | sans text | Latin body text, UI, general documents |  |
+| Leelawadee UI | 350, 400, 700 | — | — | — | — | ✔ | sans text | Latin body text, UI, general documents |  |
+| Levenim MT | 400, 700 | ✔ | ✔ | ✔ | ✔ | ✔ | light geometric sans, regular + bold | modern layouts, presentations, headings | long text in light weight |
+| Lucida Bright | 400, 400i, 600, 600i | — | — | — | — | ✔ | serif text | Latin body text / long reading |  |
+| Lucida Calligraphy | 400 | — | — | — | — | ✔ | script / calligraphic | invitations, certificates, short decorative lines | all-caps, body text, small sizes |
+| Lucida Console | 400 | — | — | — | — | ✔ | monospace | code, tables, typewriter look | body text |
+| Lucida Fax | 400, 400i, 600, 600i | — | — | — | — | ✔ | serif text | Latin body text / long reading |  |
+| Lucida Handwriting | 400 | — | — | — | — | ✔ | handwriting / informal | informal or children material, short lines | formal documents |
+| Lucida Sans | 400, 400i, 600, 600i | — | — | — | — | ✔ | sans text | Latin body text, UI, general documents |  |
+| Lucida Sans Typewriter | 400, 400i, 600, 600i | — | — | — | — | ✔ | monospace | code, tables, typewriter look | body text |
+| Lucida Sans Unicode | 400 | ✔ | ◐ | — | ✔ | ✔ | humanist sans with wide coverage | screens, labels, UI | niqqud-heavy text (partial niqqud) |
+| Magneto | 700 | — | — | — | — | ✔ | novelty display (use sparingly) | one-off themed headlines | anything formal; body text |
+| Maiandra GD | 400 | — | — | — | — | ✔ | sans text | Latin body text, UI, general documents |  |
+| Malgun Gothic | 300, 400, 700 | — | — | — | ◐ | ✔ | sans text | Latin body text, UI, general documents |  |
+| Marlett | 500 | — | — | — | — | — | symbols / icons - never for text | icons only | any text; Hebrew or Latin |
+| Matura MT Script Capitals | 400 | — | — | — | — | ✔ | script / calligraphic | invitations, certificates, short decorative lines | all-caps, body text, small sizes |
+| Microsoft Himalaya | 400 | — | — | — | — | ✔ | other scripts (CJK, Indic, etc.) - only for those scripts | text in those scripts only | Hebrew/Latin text |
+| Microsoft JhengHei | 290, 400, 700 | — | — | — | ◐ | ✔ | other scripts (CJK, Indic, etc.) - only for those scripts | text in those scripts only | Hebrew/Latin text |
+| Microsoft JhengHei UI | 290, 400, 700 | — | — | — | ◐ | ✔ | other scripts (CJK, Indic, etc.) - only for those scripts | text in those scripts only | Hebrew/Latin text |
+| Microsoft New Tai Lue | 400, 700 | — | — | — | — | ✔ | other scripts (CJK, Indic, etc.) - only for those scripts | text in those scripts only | Hebrew/Latin text |
+| Microsoft PhagsPa | 400, 700 | — | — | — | — | ✔ | other scripts (CJK, Indic, etc.) - only for those scripts | text in those scripts only | Hebrew/Latin text |
+| Microsoft Sans Serif | 400 | ✔ | ✔ | ✔ | ✔ | ✔ | classic UI sans | UI mock-ups, small labels | design-forward layouts |
+| Microsoft Tai Le | 400, 700 | — | — | — | — | ✔ | other scripts (CJK, Indic, etc.) - only for those scripts | text in those scripts only | Hebrew/Latin text |
+| Microsoft Uighur | 400, 700 | — | — | — | — | ✔ | other scripts (CJK, Indic, etc.) - only for those scripts | text in those scripts only | Hebrew/Latin text |
+| Microsoft YaHei | 290, 400, 700 | — | — | — | ◐ | ✔ | other scripts (CJK, Indic, etc.) - only for those scripts | text in those scripts only | Hebrew/Latin text |
+| Microsoft YaHei UI | 290, 400, 700 | — | — | — | ◐ | ✔ | other scripts (CJK, Indic, etc.) - only for those scripts | text in those scripts only | Hebrew/Latin text |
+| Microsoft Yi Baiti | 400 | — | — | — | — | ✔ | other scripts (CJK, Indic, etc.) - only for those scripts | text in those scripts only | Hebrew/Latin text |
+| MingLiU-ExtB | 400 | — | — | — | — | ✔ | other scripts (CJK, Indic, etc.) - only for those scripts | text in those scripts only | Hebrew/Latin text |
+| MingLiU_HKSCS-ExtB | 400 | — | — | — | — | ✔ | other scripts (CJK, Indic, etc.) - only for those scripts | text in those scripts only | Hebrew/Latin text |
+| MingLiU_MSCS-ExtB | 400 | — | — | — | — | ✔ | other scripts (CJK, Indic, etc.) - only for those scripts | text in those scripts only | Hebrew/Latin text |
+| Miriam | 400 | ✔ | ✔ | ✔ | ✔ | ✔ | classic Hebrew sans (Helvetica-like) | neutral headings and text, modern print | sacred-text feel |
+| Miriam Fixed | 400 | ✔ | ✔ | ✔ | ✔ | ✔ | monospace sans | tables, code-like content | running text |
+| Mistral | 400 | — | — | — | — | ✔ | script / calligraphic | invitations, certificates, short decorative lines | all-caps, body text, small sizes |
+| Modern No. 20 | 400 | — | — | — | — | ✔ | serif text | Latin body text / long reading |  |
+| Mongolian Baiti | 400 | — | — | — | — | ✔ | other scripts (CJK, Indic, etc.) - only for those scripts | text in those scripts only | Hebrew/Latin text |
+| Monotype Corsiva | 400i | — | — | — | — | ✔ | script / calligraphic | invitations, certificates, short decorative lines | all-caps, body text, small sizes |
+| MS Gothic | 400 | — | — | — | ◐ | ✔ | other scripts (CJK, Indic, etc.) - only for those scripts | text in those scripts only | Hebrew/Latin text |
+| MS PGothic | 400 | — | — | — | ◐ | ✔ | other scripts (CJK, Indic, etc.) - only for those scripts | text in those scripts only | Hebrew/Latin text |
+| MS Reference Sans Serif | 400 | — | — | — | — | ✔ | sans text | Latin body text, UI, general documents |  |
+| MS Reference Specialty | 400 | — | — | — | — | — | symbols / icons - never for text | icons only | any text; Hebrew or Latin |
+| MS UI Gothic | 400 | — | — | — | ◐ | ✔ | other scripts (CJK, Indic, etc.) - only for those scripts | text in those scripts only | Hebrew/Latin text |
+| MT Extra | 400 | — | — | — | — | — | symbols / icons - never for text | icons only | any text; Hebrew or Latin |
+| MV Boli | 400 | — | — | — | — | ✔ | handwriting / informal | informal or children material, short lines | formal documents |
+| Myanmar Text | 400, 700 | — | — | — | — | ✔ | other scripts (CJK, Indic, etc.) - only for those scripts | text in those scripts only | Hebrew/Latin text |
+| Narkisim | 400 | ✔ | ✔ | ✔ | ✔ | ✔ | serif with calligraphic touch | headings and text with a literary feel | tiny sizes |
+| Niagara Engraved | 400 | — | — | — | — | ✔ | novelty display (use sparingly) | one-off themed headlines | anything formal; body text |
+| Niagara Solid | 400 | — | — | — | — | ✔ | novelty display (use sparingly) | one-off themed headlines | anything formal; body text |
+| Nirmala Text | 350, 400, 700 | — | — | — | — | ✔ | sans text | Latin body text, UI, general documents |  |
+| Nirmala UI | 350, 400, 700 | — | — | — | — | ✔ | sans text | Latin body text, UI, general documents |  |
+| NSimSun | 400 | — | — | — | — | ✔ | other scripts (CJK, Indic, etc.) - only for those scripts | text in those scripts only | Hebrew/Latin text |
+| OCR A Extended | 400 | — | — | — | — | ✔ | display serif / slab / titling | Latin titles, covers, certificates, caps-only headings | body text, small sizes |
+| Old English Text MT | 400 | — | — | — | — | ✔ | display serif / slab / titling | Latin titles, covers, certificates, caps-only headings | body text, small sizes |
+| Ozrad CLM | 700 | ✔ | — | — | — | — | bold sans (Culmus), bold only | headlines | body text |
+| Palace Script MT | 400i | — | — | — | — | ✔ | script / calligraphic | invitations, certificates, short decorative lines | all-caps, body text, small sizes |
+| Palatino Linotype | 400, 400i, 700, 700i | — | — | — | — | ✔ | serif text | Latin body text / long reading |  |
+| Papyrus | 400 | — | — | — | — | ✔ | handwriting / informal | informal or children material, short lines | formal documents |
+| Parchment | 400 | — | — | — | — | ✔ | script / calligraphic | invitations, certificates, short decorative lines | all-caps, body text, small sizes |
+| Perpetua | 400, 400i, 700, 700i | — | — | — | — | ✔ | serif text | Latin body text / long reading |  |
+| Perpetua Titling MT | 300, 700 | — | — | — | — | ✔ | display serif / slab / titling | Latin titles, covers, certificates, caps-only headings | body text, small sizes |
+| PFT_Rashi | 400 | ✔ | ◐ | ◐ | ✔ | ✔ | Rashi script | commentary text | primary text |
+| PFT_Vilna | 400, 700 | ✔ | ◐ | ◐ | ✔ | ✔ | Vilna-edition serif with real Latin, regular + bold | Talmud/sefarim body mixed with Latin | tiny sizes |
+| Playbill | 400 | — | — | — | — | ✔ | novelty display (use sparingly) | one-off themed headlines | anything formal; body text |
+| PMingLiU-ExtB | 400 | — | — | — | — | ✔ | other scripts (CJK, Indic, etc.) - only for those scripts | text in those scripts only | Hebrew/Latin text |
+| Poor Richard | 400 | — | — | — | — | ✔ | serif text | Latin body text / long reading |  |
+| Pristina | 400 | — | — | — | — | ✔ | script / calligraphic | invitations, certificates, short decorative lines | all-caps, body text, small sizes |
+| Rage Italic | 400 | — | — | — | — | ✔ | novelty display (use sparingly) | one-off themed headlines | anything formal; body text |
+| Rashi DP | 400 | ✔ | ✔ | ✔ | ◐ | ✔ | Rashi script (DP set, proprietary) | commentary text in printed sefarim | primary text; redistribution (licence) |
+| Ravie | 400 | — | — | — | — | ✔ | novelty display (use sparingly) | one-off themed headlines | anything formal; body text |
+| Rockwell | 400, 400i, 700, 700i | — | — | — | — | ✔ | display serif / slab / titling | Latin titles, covers, certificates, caps-only headings | body text, small sizes |
+| Rockwell Condensed | 400, 700 | — | — | — | — | ✔ | display sans / condensed | Latin headlines, posters, short bold lines | body text |
+| Rockwell Extra Bold | 800 | — | — | — | — | ✔ | display serif / slab / titling | Latin titles, covers, certificates, caps-only headings | body text, small sizes |
+| Rod | 400 | ✔ | ✔ | ✔ | ✔ | ✔ | monospace-styled Hebrew serif | forms, deliberate typewriter look | body text |
+| Sans Serif Collection | 400 | — | — | — | ◐ | ✔ | other scripts (CJK, Indic, etc.) - only for those scripts | text in those scripts only | Hebrew/Latin text |
+| Script MT Bold | 700 | — | — | — | — | ✔ | script / calligraphic | invitations, certificates, short decorative lines | all-caps, body text, small sizes |
+| Segoe Fluent Icons | 400 | — | — | — | — | — | symbols / icons - never for text | icons only | any text; Hebrew or Latin |
+| Segoe MDL2 Assets | 400 | — | — | — | — | — | symbols / icons - never for text | icons only | any text; Hebrew or Latin |
+| Segoe Print | 400, 700 | — | — | — | — | ✔ | handwriting / informal | informal or children material, short lines | formal documents |
+| Segoe Script | 400, 700 | — | — | — | — | ✔ | handwriting / informal | informal or children material, short lines | formal documents |
+| Segoe UI | 300, 300i, 350, 350i, 400, 400i, 600, 600i, 700, 700i, 900, 900i | ✔ | ✔ | ✔ | ✔ | ✔ | Windows UI sans, many weights (light to black) | screens, presentations, clean documents | traditional/sacred-text typography |
+| Segoe UI Emoji | 400 | — | — | — | — | ✔ | symbols / icons - never for text | icons only | any text; Hebrew or Latin |
+| Segoe UI Historic | 400 | — | — | — | — | ✔ | symbols / icons - never for text | icons only | any text; Hebrew or Latin |
+| Segoe UI Symbol | 400 | — | — | — | — | ✔ | symbols / icons - never for text | icons only | any text; Hebrew or Latin |
+| Segoe UI Variable | 400v | ◐ | ◐ | — | ◐ | ✔ | variable UI sans, partial Hebrew only | Latin-first UI | Hebrew text (partial Hebrew coverage) |
+| Showcard Gothic | 400 | — | — | — | — | ✔ | display serif / slab / titling | Latin titles, covers, certificates, caps-only headings | body text, small sizes |
+| SimSun | 400 | — | — | — | — | ✔ | other scripts (CJK, Indic, etc.) - only for those scripts | text in those scripts only | Hebrew/Latin text |
+| SimSun-ExtB | 400 | — | — | — | — | ✔ | other scripts (CJK, Indic, etc.) - only for those scripts | text in those scripts only | Hebrew/Latin text |
+| SimSun-ExtG | 400 | — | — | — | — | ✔ | other scripts (CJK, Indic, etc.) - only for those scripts | text in those scripts only | Hebrew/Latin text |
+| Sitka | 400iv, 400v | — | — | — | — | ✔ | serif text | Latin body text / long reading |  |
+| Snap ITC | 400 | — | — | — | — | ✔ | novelty display (use sparingly) | one-off themed headlines | anything formal; body text |
+| Stencil | 400 | — | — | — | — | ✔ | display serif / slab / titling | Latin titles, covers, certificates, caps-only headings | body text, small sizes |
+| Sylfaen | 400 | — | — | — | — | ✔ | serif text | Latin body text (also Georgian/Armenian) |  |
+| Symbol | 400 | — | — | — | — | — | symbols / icons - never for text | icons only | any text; Hebrew or Latin |
+| Tahoma | 400, 700 | ✔ | ✔ | ✔ | ✔ | ✔ | compact UI sans, regular + bold | small sizes, forms, tables | design-forward layouts |
+| Tempus Sans ITC | 400 | — | — | — | — | ✔ | handwriting / informal | informal or children material, short lines | formal documents |
+| Times New Roman | 400, 400i, 700, 700i | ✔ | ✔ | ✔ | ✔ | ✔ | classic serif, 4 styles with Hebrew and niqqud | default formal documents, bilingual text | distinctive design |
+| Trebuchet MS | 400, 400i, 700, 700i | — | — | — | — | ✔ | sans text | Latin body text, UI, general documents |  |
+| Tw Cen MT | 400, 400i, 700, 700i | — | — | — | — | ✔ | sans text | Latin body text, UI, general documents |  |
+| Tw Cen MT Condensed | 400, 700 | — | — | — | — | ✔ | display sans / condensed | Latin headlines, posters, short bold lines | body text |
+| Tw Cen MT Condensed Extra Bold | 400 | — | — | — | — | ✔ | display sans / condensed | Latin headlines, posters, short bold lines | body text |
+| Verdana | 400, 400i, 700, 700i | — | — | — | ◐ | ✔ | sans text | Latin body text, UI, general documents |  |
+| VILNA מתוקן DP | 400 | ✔ | ◐ | ✔ | ◐ | ✔ | corrected Vilna-style serif (DP set, proprietary) | Talmud/sefarim body text | redistribution (licence) |
+| Viner Hand ITC | 400 | — | — | — | — | ✔ | handwriting / informal | informal or children material, short lines | formal documents |
+| Vivaldi | 400i | — | — | — | — | ✔ | script / calligraphic | invitations, certificates, short decorative lines | all-caps, body text, small sizes |
+| Vladimir Script | 400 | — | — | — | — | ✔ | script / calligraphic | invitations, certificates, short decorative lines | all-caps, body text, small sizes |
+| Webdings | 400 | — | — | — | — | — | symbols / icons - never for text | icons only | any text; Hebrew or Latin |
+| Wide Latin | 400 | — | — | — | — | ✔ | display serif / slab / titling | Latin titles, covers, certificates, caps-only headings | body text, small sizes |
+| Wingdings | 400 | — | — | — | — | — | symbols / icons - never for text | icons only | any text; Hebrew or Latin |
+| Wingdings 2 | 400 | — | — | — | — | — | symbols / icons - never for text | icons only | any text; Hebrew or Latin |
+| Wingdings 3 | 400 | — | — | — | — | — | symbols / icons - never for text | icons only | any text; Hebrew or Latin |
+| Yu Gothic | 300, 400, 500, 700 | — | — | — | ◐ | ✔ | sans text | Latin body text, UI, general documents |  |
+| Yu Gothic UI | 300, 350, 400, 600, 700 | — | — | — | ◐ | ✔ | sans text | Latin body text, UI, general documents |  |
 
 Style codes: weight (100–900), `i` = italic, `v` = variable font. Files and exact names: `catalog.json`.

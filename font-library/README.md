@@ -31,7 +31,7 @@ python3 font-library/tools/build_catalog.py
 ## 3. תצוגות מקדימות והערות
 
 ```
-node font-library/tools/specimen.js        # תמונה לכל משפחה ב-font-library/specimens/
+ONLY=hebrew MAXSTYLES=2 node font-library/tools/specimen.js   # תמונה לכל משפחה עברית; בלי ONLY — כל המשפחות
 ```
 
 אפשר לבקש מ-Claude להסתכל על התמונות ולנסח את `notes.json` (קטגוריה / מתאים ל / להימנע), ואתה מתקן. אחרי עדכון ההערות מריצים שוב את שלב 2.
@@ -39,11 +39,11 @@ node font-library/tools/specimen.js        # תמונה לכל משפחה ב-fon
 ## 4. העלאה לצ'אט ולדסקטופ (Skill)
 
 ```
-python3 font-library/tools/package_skill.py   # יוצר font-library/dist/my-fonts.zip
+python3 font-library/tools/package_skill.py
 ```
 
-ואז ב-claude.ai: **Settings ← Capabilities ← Skills ← Upload skill** ובוחרים את ה-zip. (שמות התפריטים עשויים להשתנות; ה-Skill אחד לכל החשבון — צ'אט, דסקטופ ו-Claude Code.)
-אם ההעלאה נדחית בשל גודל, מפצלים לכמה Skills (למשל גופני כותרת / גופני טקסט / לטינית) — מעתיקים את `my-fonts` לתיקייה בשם אחר, משנים שם `name:` ב-`SKILL.md`, ומחלקים את הגופנים.
+נוצרים ב-`font-library/dist/` שני קבצי zip, כי הכול יחד גדול מדי: `my-fonts-hebrew.zip` (כל משפחה שיש בה עברית) ו-`my-fonts-latin.zip` (גופני אנגלית: טקסט, כותרות, כתב, כתב יד; גופני סמלים/סינית/אייקונים מושמטים ומודפסים ברשימה).
+ב-claude.ai: **Settings ← Capabilities ← Skills ← Upload skill**, ומעלים כל zip בנפרד. (שמות התפריטים עשויים להשתנות.) אם אחד נדחה בשל גודל — מורידים משפחות או מפצלים עוד.
 
 ## 5. שימוש בריפו הזה (Claude Code)
 

@@ -38,8 +38,8 @@ If `FONTS.md` shows an empty table, the library has not been filled yet: say so,
 
 ## Licences
 
-Each file carries its licence string in `catalog.json`. Embedding in a PDF/web page or sending a font file to someone else are different permissions: when a licence looks restrictive or is empty and the output will be published or distributed, mention it to the user once instead of deciding silently. Never put fonts into a public repository or public page unless the user says their licence allows it.
+Each file carries its licence string in `catalog.json`. Embedding in a PDF/web page or sending a font file to someone else are different permissions: when a licence looks restrictive or is empty and the output will be published or distributed, mention it to the user once instead of deciding silently. Never put fonts into a public repository or public page unless the user says their licence allows it. Most Microsoft-supplied fonts here only permit embedding in documents (as their embedded licence says), not redistributing the font files.
 
 ## Maintaining the library (for the user's setup, not for every task)
 
-New fonts: drop files into `fonts/`, then from the repository run `python3 font-library/tools/build_catalog.py` (regenerates `FONTS.md` and `catalog.json`), add the family's category/use to `font-library/notes.json`, and `python3 font-library/tools/package_skill.py` to get a fresh zip.
+New fonts: drop files into `fonts/`, then from the repository run `python3 font-library/tools/build_catalog.py` (regenerates `FONTS.md` and `catalog.json`), add the family's category/use to `font-library/notes.json`, and `python3 font-library/tools/package_skill.py` to get fresh upload zips (`my-fonts-hebrew`, `my-fonts-latin`).

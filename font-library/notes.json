@@ -1,4 +1,1178 @@
 {
-  "_help": "Optional. One entry per family, keyed by the family name exactly as build_catalog.py prints it. Keys: category, use, avoid. Keys starting with _ are ignored.",
-  "_example": {"category": "serif / Hebrew book face", "use": "body text of printed booklets, long reading", "avoid": "small sizes on screen"}
+ "_help": "One entry per family, keyed by the family name exactly as build_catalog.py prints it. Keys: category, use, avoid. Keys starting with _ are ignored. Hebrew entries were judged from rendered specimens; Latin entries from the typeface names (not viewed) - correct them as you like.",
+ "Aharoni": {
+  "category": "sans display, geometric (Futura-like), bold only",
+  "use": "headlines, covers, posters, short bold lines",
+  "avoid": "long body text; no regular weight"
+ },
+ "Anka CLM": {
+  "category": "display sans (Culmus), bold only, partial Latin",
+  "use": "short decorative headings",
+  "avoid": "body text; check legibility of every letter before use"
+ },
+ "Arial": {
+  "category": "neutral sans (installed set is Arial Narrow family)",
+  "use": "documents, tables, forms, UI, small sizes",
+  "avoid": "anything that needs character"
+ },
+ "Calibri": {
+  "category": "humanist sans, Office default",
+  "use": "Word/PowerPoint documents, business text",
+  "avoid": "traditional/sacred-text typography"
+ },
+ "Comix No2 CLM": {
+  "category": "informal comic sans (Culmus), bold only",
+  "use": "children, playful headings",
+  "avoid": "formal or religious documents"
+ },
+ "Courier New": {
+  "category": "monospace typewriter",
+  "use": "code, forms, deliberate typewriter look",
+  "avoid": "body text"
+ },
+ "David": {
+  "category": "traditional Hebrew book serif (Microsoft)",
+  "use": "formal documents, letters, long Hebrew reading with niqqud/taamim",
+  "avoid": "tiny sizes on screen"
+ },
+ "Dorian CLM": {
+  "category": "light geometric sans (Culmus), Hebrew only",
+  "use": "elegant short headings, invitations",
+  "avoid": "small sizes, long text"
+ },
+ "FrankRuehl": {
+  "category": "classic Hebrew text serif (Frank-Ruehl), the traditional newspaper/sefer face",
+  "use": "body text of books, booklets, divrei Torah, long reading",
+  "avoid": "headline weight (only regular here; use FrankRuehl DP bold)"
+ },
+ "FrankRuehl DP": {
+  "category": "Frank-Ruehl serif with regular + bold, proprietary DP set",
+  "use": "body + bold emphasis in printed booklets and sefarim",
+  "avoid": "redistribution outside the owner (licence)"
+ },
+ "Gan CLM": {
+  "category": "rounded bold sans (Culmus), bold only",
+  "use": "kids, friendly headlines",
+  "avoid": "formal documents"
+ },
+ "Gisha": {
+  "category": "modern humanist sans, regular+bold",
+  "use": "screens, web, presentations, labels",
+  "avoid": "niqqud-heavy text (partial niqqud)"
+ },
+ "Gladia CLM": {
+  "category": "flat geometric display (Culmus), bold only",
+  "use": "posters, headlines",
+  "avoid": "body text"
+ },
+ "Guttman Aharoni": {
+  "category": "geometric sans, regular",
+  "use": "headlines, modern layouts",
+  "avoid": "Latin text (no Latin glyphs: Latin falls back)"
+ },
+ "Guttman-Aharoni": {
+  "category": "geometric sans, bold",
+  "use": "headlines, covers",
+  "avoid": "Latin text (no Latin glyphs)"
+ },
+ "Guttman-Aram": {
+  "category": "clean humanist sans",
+  "use": "notices, flyers, general modern text",
+  "avoid": "Latin text (no Latin glyphs)"
+ },
+ "Guttman-CourMir": {
+  "category": "monospace Hebrew",
+  "use": "forms, deliberate typewriter look",
+  "avoid": "body text"
+ },
+ "Guttman Drogolin": {
+  "category": "Drugulin-style traditional Hebrew serif, regular + bold, proprietary",
+  "use": "sefer/book typography, divrei Torah, long reading",
+  "avoid": "redistribution outside the owner (licence); Latin text (no Latin glyphs)"
+ },
+ "Guttman Frank": {
+  "category": "Frank-Ruehl style serif, regular + bold",
+  "use": "book body text",
+  "avoid": "Latin text (no Latin glyphs)"
+ },
+ "Guttman Frnew": {
+  "category": "newer Frank-Ruehl variant, regular",
+  "use": "book body text",
+  "avoid": "Latin text (no Latin glyphs)"
+ },
+ "Guttman Haim": {
+  "category": "very heavy display sans",
+  "use": "big headlines, posters",
+  "avoid": "anything below ~24pt"
+ },
+ "Guttman Haim-Condensed": {
+  "category": "condensed heavy display sans",
+  "use": "tight headlines, headings in narrow columns",
+  "avoid": "body text"
+ },
+ "Guttman Hatzvi": {
+  "category": "geometric sans with wide forms, regular + bold",
+  "use": "modern headings, short statements",
+  "avoid": "long text"
+ },
+ "Guttman Kav": {
+  "category": "monoline sans with open spacing, regular + bold",
+  "use": "modern headings, short text",
+  "avoid": "long text"
+ },
+ "Guttman Kav-Light": {
+  "category": "light monoline sans",
+  "use": "elegant short lines, subtitles",
+  "avoid": "small sizes, long text"
+ },
+ "Guttman Mantova": {
+  "category": "Mantua-style Hebrew book serif, regular + bold",
+  "use": "headings and text with traditional sefarim feel",
+  "avoid": "Latin text (no Latin glyphs)"
+ },
+ "Guttman Mantova-Decor": {
+  "category": "decorative outlined Mantova",
+  "use": "titles, covers",
+  "avoid": "body text"
+ },
+ "Guttman Miryam": {
+  "category": "Miriam-style clean sans, light + bold",
+  "use": "newspaper-like headings and modern text",
+  "avoid": "Latin text (no Latin glyphs)"
+ },
+ "Guttman Myamfix": {
+  "category": "light fixed-width sans",
+  "use": "tables, aligned columns",
+  "avoid": "running text"
+ },
+ "Guttman Rashi": {
+  "category": "Rashi script letters, regular + bold",
+  "use": "commentary text (Rashi-style), side notes",
+  "avoid": "primary text; readers expect Rashi script only for commentary"
+ },
+ "Guttman Stam": {
+  "category": "STaM-style scribal letters with crowns, regular",
+  "use": "headings in Torah-scroll style, certificates, invitations",
+  "avoid": "long text; scribal look is not for ordinary reading"
+ },
+ "Guttman Stam1": {
+  "category": "bolder STaM-style letters",
+  "use": "headings, certificates",
+  "avoid": "long text"
+ },
+ "Guttman Vilna": {
+  "category": "Vilna-edition (Talmud printing) serif, regular + bold",
+  "use": "Gemara/Talmud-style text, sefarim body",
+  "avoid": "Latin text (no Latin glyphs)"
+ },
+ "Guttman Yad": {
+  "category": "handwriting",
+  "use": "personal notes, informal headings",
+  "avoid": "formal or sacred text, long text"
+ },
+ "Guttman Yad-Brush": {
+  "category": "brush handwriting, bold",
+  "use": "expressive headings",
+  "avoid": "long text"
+ },
+ "Guttman Yad-Light": {
+  "category": "light handwriting",
+  "use": "informal notes, signatures",
+  "avoid": "long text"
+ },
+ "Hadassah Friedlaender": {
+  "category": "modern humanist book serif, regular + bold, full niqqud (no taamim)",
+  "use": "long reading on paper and screen, niqqud text",
+  "avoid": "cantillation marks (no taamim)"
+ },
+ "Ktav Yad CLM": {
+  "category": "handwriting italic (Culmus)",
+  "use": "informal notes, quotes",
+  "avoid": "long or formal text"
+ },
+ "Levenim MT": {
+  "category": "light geometric sans, regular + bold",
+  "use": "modern layouts, presentations, headings",
+  "avoid": "long text in light weight"
+ },
+ "Lucida Sans Unicode": {
+  "category": "humanist sans with wide coverage",
+  "use": "screens, labels, UI",
+  "avoid": "niqqud-heavy text (partial niqqud)"
+ },
+ "Microsoft Sans Serif": {
+  "category": "classic UI sans",
+  "use": "UI mock-ups, small labels",
+  "avoid": "design-forward layouts"
+ },
+ "Miriam": {
+  "category": "classic Hebrew sans (Helvetica-like)",
+  "use": "neutral headings and text, modern print",
+  "avoid": "sacred-text feel"
+ },
+ "Miriam Fixed": {
+  "category": "monospace sans",
+  "use": "tables, code-like content",
+  "avoid": "running text"
+ },
+ "Narkisim": {
+  "category": "serif with calligraphic touch",
+  "use": "headings and text with a literary feel",
+  "avoid": "tiny sizes"
+ },
+ "Ozrad CLM": {
+  "category": "bold sans (Culmus), bold only",
+  "use": "headlines",
+  "avoid": "body text"
+ },
+ "PFT_Rashi": {
+  "category": "Rashi script",
+  "use": "commentary text",
+  "avoid": "primary text"
+ },
+ "PFT_Vilna": {
+  "category": "Vilna-edition serif with real Latin, regular + bold",
+  "use": "Talmud/sefarim body mixed with Latin",
+  "avoid": "tiny sizes"
+ },
+ "Rashi DP": {
+  "category": "Rashi script (DP set, proprietary)",
+  "use": "commentary text in printed sefarim",
+  "avoid": "primary text; redistribution (licence)"
+ },
+ "Rod": {
+  "category": "monospace-styled Hebrew serif",
+  "use": "forms, deliberate typewriter look",
+  "avoid": "body text"
+ },
+ "Segoe UI": {
+  "category": "Windows UI sans, many weights (light to black)",
+  "use": "screens, presentations, clean documents",
+  "avoid": "traditional/sacred-text typography"
+ },
+ "Segoe UI Variable": {
+  "category": "variable UI sans, partial Hebrew only",
+  "use": "Latin-first UI",
+  "avoid": "Hebrew text (partial Hebrew coverage)"
+ },
+ "Tahoma": {
+  "category": "compact UI sans, regular + bold",
+  "use": "small sizes, forms, tables",
+  "avoid": "design-forward layouts"
+ },
+ "Times New Roman": {
+  "category": "classic serif, 4 styles with Hebrew and niqqud",
+  "use": "default formal documents, bilingual text",
+  "avoid": "distinctive design"
+ },
+ "VILNA מתוקן DP": {
+  "category": "corrected Vilna-style serif (DP set, proprietary)",
+  "use": "Talmud/sefarim body text",
+  "avoid": "redistribution (licence)"
+ },
+ "Baskerville Old Face": {
+  "category": "serif text",
+  "use": "Latin body text / long reading",
+  "avoid": ""
+ },
+ "Bell MT": {
+  "category": "serif text",
+  "use": "Latin body text / long reading",
+  "avoid": ""
+ },
+ "Book Antiqua": {
+  "category": "serif text",
+  "use": "Latin body text / long reading",
+  "avoid": ""
+ },
+ "Bookman Old Style": {
+  "category": "serif text",
+  "use": "Latin body text / long reading",
+  "avoid": ""
+ },
+ "Californian FB": {
+  "category": "serif text",
+  "use": "Latin body text / long reading",
+  "avoid": ""
+ },
+ "Calisto MT": {
+  "category": "serif text",
+  "use": "Latin body text / long reading",
+  "avoid": ""
+ },
+ "Cambria": {
+  "category": "serif text",
+  "use": "Latin body text / long reading",
+  "avoid": ""
+ },
+ "Century": {
+  "category": "serif text",
+  "use": "Latin body text / long reading",
+  "avoid": ""
+ },
+ "Century Schoolbook": {
+  "category": "serif text",
+  "use": "Latin body text / long reading",
+  "avoid": ""
+ },
+ "Constantia": {
+  "category": "serif text",
+  "use": "Latin body text / long reading",
+  "avoid": ""
+ },
+ "Garamond": {
+  "category": "serif text",
+  "use": "Latin body text / long reading",
+  "avoid": ""
+ },
+ "Georgia": {
+  "category": "serif text",
+  "use": "Latin body text / long reading",
+  "avoid": ""
+ },
+ "Goudy Old Style": {
+  "category": "serif text",
+  "use": "Latin body text / long reading",
+  "avoid": ""
+ },
+ "High Tower Text": {
+  "category": "serif text",
+  "use": "Latin body text / long reading",
+  "avoid": ""
+ },
+ "Palatino Linotype": {
+  "category": "serif text",
+  "use": "Latin body text / long reading",
+  "avoid": ""
+ },
+ "Perpetua": {
+  "category": "serif text",
+  "use": "Latin body text / long reading",
+  "avoid": ""
+ },
+ "Sitka": {
+  "category": "serif text",
+  "use": "Latin body text / long reading",
+  "avoid": ""
+ },
+ "Lucida Bright": {
+  "category": "serif text",
+  "use": "Latin body text / long reading",
+  "avoid": ""
+ },
+ "Lucida Fax": {
+  "category": "serif text",
+  "use": "Latin body text / long reading",
+  "avoid": ""
+ },
+ "Footlight MT Light": {
+  "category": "serif text",
+  "use": "Latin body text / long reading",
+  "avoid": ""
+ },
+ "Centaur": {
+  "category": "serif text",
+  "use": "Latin body text / long reading",
+  "avoid": ""
+ },
+ "Modern No. 20": {
+  "category": "serif text",
+  "use": "Latin body text / long reading",
+  "avoid": ""
+ },
+ "Poor Richard": {
+  "category": "serif text",
+  "use": "Latin body text / long reading",
+  "avoid": ""
+ },
+ "Bodoni MT": {
+  "category": "serif text",
+  "use": "Latin body text / long reading",
+  "avoid": ""
+ },
+ "Bahnschrift": {
+  "category": "sans text",
+  "use": "Latin body text, UI, general documents",
+  "avoid": ""
+ },
+ "Candara": {
+  "category": "sans text",
+  "use": "Latin body text, UI, general documents",
+  "avoid": ""
+ },
+ "Corbel": {
+  "category": "sans text",
+  "use": "Latin body text, UI, general documents",
+  "avoid": ""
+ },
+ "Dubai": {
+  "category": "sans text",
+  "use": "Latin body text, UI, general documents",
+  "avoid": ""
+ },
+ "Franklin Gothic Book": {
+  "category": "sans text",
+  "use": "Latin body text, UI, general documents",
+  "avoid": ""
+ },
+ "Gill Sans MT": {
+  "category": "sans text",
+  "use": "Latin body text, UI, general documents",
+  "avoid": ""
+ },
+ "Lucida Sans": {
+  "category": "sans text",
+  "use": "Latin body text, UI, general documents",
+  "avoid": ""
+ },
+ "Malgun Gothic": {
+  "category": "sans text",
+  "use": "Latin body text, UI, general documents",
+  "avoid": ""
+ },
+ "MS Reference Sans Serif": {
+  "category": "sans text",
+  "use": "Latin body text, UI, general documents",
+  "avoid": ""
+ },
+ "Trebuchet MS": {
+  "category": "sans text",
+  "use": "Latin body text, UI, general documents",
+  "avoid": ""
+ },
+ "Tw Cen MT": {
+  "category": "sans text",
+  "use": "Latin body text, UI, general documents",
+  "avoid": ""
+ },
+ "Verdana": {
+  "category": "sans text",
+  "use": "Latin body text, UI, general documents",
+  "avoid": ""
+ },
+ "Century Gothic": {
+  "category": "sans text",
+  "use": "Latin body text, UI, general documents",
+  "avoid": ""
+ },
+ "Gadugi": {
+  "category": "sans text",
+  "use": "Latin body text, UI, general documents",
+  "avoid": ""
+ },
+ "Ebrima": {
+  "category": "sans text",
+  "use": "Latin body text, UI, general documents",
+  "avoid": ""
+ },
+ "Leelawadee": {
+  "category": "sans text",
+  "use": "Latin body text, UI, general documents",
+  "avoid": ""
+ },
+ "Leelawadee UI": {
+  "category": "sans text",
+  "use": "Latin body text, UI, general documents",
+  "avoid": ""
+ },
+ "Nirmala Text": {
+  "category": "sans text",
+  "use": "Latin body text, UI, general documents",
+  "avoid": ""
+ },
+ "Nirmala UI": {
+  "category": "sans text",
+  "use": "Latin body text, UI, general documents",
+  "avoid": ""
+ },
+ "Yu Gothic": {
+  "category": "sans text",
+  "use": "Latin body text, UI, general documents",
+  "avoid": ""
+ },
+ "Yu Gothic UI": {
+  "category": "sans text",
+  "use": "Latin body text, UI, general documents",
+  "avoid": ""
+ },
+ "Maiandra GD": {
+  "category": "sans text",
+  "use": "Latin body text, UI, general documents",
+  "avoid": ""
+ },
+ "Franklin Gothic Medium": {
+  "category": "sans text",
+  "use": "Latin body text, UI, general documents",
+  "avoid": ""
+ },
+ "Agency FB": {
+  "category": "display sans / condensed",
+  "use": "Latin headlines, posters, short bold lines",
+  "avoid": "body text"
+ },
+ "Arial Rounded MT Bold": {
+  "category": "display sans / condensed",
+  "use": "Latin headlines, posters, short bold lines",
+  "avoid": "body text"
+ },
+ "Berlin Sans FB": {
+  "category": "display sans / condensed",
+  "use": "Latin headlines, posters, short bold lines",
+  "avoid": "body text"
+ },
+ "Berlin Sans FB Demi": {
+  "category": "display sans / condensed",
+  "use": "Latin headlines, posters, short bold lines",
+  "avoid": "body text"
+ },
+ "Bernard MT Condensed": {
+  "category": "display sans / condensed",
+  "use": "Latin headlines, posters, short bold lines",
+  "avoid": "body text"
+ },
+ "Britannic Bold": {
+  "category": "display sans / condensed",
+  "use": "Latin headlines, posters, short bold lines",
+  "avoid": "body text"
+ },
+ "Eras Bold ITC": {
+  "category": "display sans / condensed",
+  "use": "Latin headlines, posters, short bold lines",
+  "avoid": "body text"
+ },
+ "Eras Demi ITC": {
+  "category": "display sans / condensed",
+  "use": "Latin headlines, posters, short bold lines",
+  "avoid": "body text"
+ },
+ "Eras Light ITC": {
+  "category": "display sans / condensed",
+  "use": "Latin headlines, posters, short bold lines",
+  "avoid": "body text"
+ },
+ "Eras Medium ITC": {
+  "category": "display sans / condensed",
+  "use": "Latin headlines, posters, short bold lines",
+  "avoid": "body text"
+ },
+ "Franklin Gothic Demi": {
+  "category": "display sans / condensed",
+  "use": "Latin headlines, posters, short bold lines",
+  "avoid": "body text"
+ },
+ "Franklin Gothic Demi Cond": {
+  "category": "display sans / condensed",
+  "use": "Latin headlines, posters, short bold lines",
+  "avoid": "body text"
+ },
+ "Franklin Gothic Heavy": {
+  "category": "display sans / condensed",
+  "use": "Latin headlines, posters, short bold lines",
+  "avoid": "body text"
+ },
+ "Franklin Gothic Medium Cond": {
+  "category": "display sans / condensed",
+  "use": "Latin headlines, posters, short bold lines",
+  "avoid": "body text"
+ },
+ "Gill Sans MT Condensed": {
+  "category": "display sans / condensed",
+  "use": "Latin headlines, posters, short bold lines",
+  "avoid": "body text"
+ },
+ "Gill Sans MT Ext Condensed Bold": {
+  "category": "display sans / condensed",
+  "use": "Latin headlines, posters, short bold lines",
+  "avoid": "body text"
+ },
+ "Gill Sans Ultra Bold": {
+  "category": "display sans / condensed",
+  "use": "Latin headlines, posters, short bold lines",
+  "avoid": "body text"
+ },
+ "Gill Sans Ultra Bold Condensed": {
+  "category": "display sans / condensed",
+  "use": "Latin headlines, posters, short bold lines",
+  "avoid": "body text"
+ },
+ "Gloucester MT Extra Condensed": {
+  "category": "display sans / condensed",
+  "use": "Latin headlines, posters, short bold lines",
+  "avoid": "body text"
+ },
+ "Haettenschweiler": {
+  "category": "display sans / condensed",
+  "use": "Latin headlines, posters, short bold lines",
+  "avoid": "body text"
+ },
+ "Impact": {
+  "category": "display sans / condensed",
+  "use": "Latin headlines, posters, short bold lines",
+  "avoid": "body text"
+ },
+ "Rockwell Condensed": {
+  "category": "display sans / condensed",
+  "use": "Latin headlines, posters, short bold lines",
+  "avoid": "body text"
+ },
+ "Tw Cen MT Condensed": {
+  "category": "display sans / condensed",
+  "use": "Latin headlines, posters, short bold lines",
+  "avoid": "body text"
+ },
+ "Tw Cen MT Condensed Extra Bold": {
+  "category": "display sans / condensed",
+  "use": "Latin headlines, posters, short bold lines",
+  "avoid": "body text"
+ },
+ "Algerian": {
+  "category": "display serif / slab / titling",
+  "use": "Latin titles, covers, certificates, caps-only headings",
+  "avoid": "body text, small sizes"
+ },
+ "Bauhaus 93": {
+  "category": "display serif / slab / titling",
+  "use": "Latin titles, covers, certificates, caps-only headings",
+  "avoid": "body text, small sizes"
+ },
+ "Broadway": {
+  "category": "display serif / slab / titling",
+  "use": "Latin titles, covers, certificates, caps-only headings",
+  "avoid": "body text, small sizes"
+ },
+ "Castellar": {
+  "category": "display serif / slab / titling",
+  "use": "Latin titles, covers, certificates, caps-only headings",
+  "avoid": "body text, small sizes"
+ },
+ "Colonna MT": {
+  "category": "display serif / slab / titling",
+  "use": "Latin titles, covers, certificates, caps-only headings",
+  "avoid": "body text, small sizes"
+ },
+ "Cooper Black": {
+  "category": "display serif / slab / titling",
+  "use": "Latin titles, covers, certificates, caps-only headings",
+  "avoid": "body text, small sizes"
+ },
+ "Copperplate Gothic Bold": {
+  "category": "display serif / slab / titling",
+  "use": "Latin titles, covers, certificates, caps-only headings",
+  "avoid": "body text, small sizes"
+ },
+ "Copperplate Gothic Light": {
+  "category": "display serif / slab / titling",
+  "use": "Latin titles, covers, certificates, caps-only headings",
+  "avoid": "body text, small sizes"
+ },
+ "Elephant": {
+  "category": "display serif / slab / titling",
+  "use": "Latin titles, covers, certificates, caps-only headings",
+  "avoid": "body text, small sizes"
+ },
+ "Engravers MT": {
+  "category": "display serif / slab / titling",
+  "use": "Latin titles, covers, certificates, caps-only headings",
+  "avoid": "body text, small sizes"
+ },
+ "Felix Titling": {
+  "category": "display serif / slab / titling",
+  "use": "Latin titles, covers, certificates, caps-only headings",
+  "avoid": "body text, small sizes"
+ },
+ "Goudy Stout": {
+  "category": "display serif / slab / titling",
+  "use": "Latin titles, covers, certificates, caps-only headings",
+  "avoid": "body text, small sizes"
+ },
+ "Perpetua Titling MT": {
+  "category": "display serif / slab / titling",
+  "use": "Latin titles, covers, certificates, caps-only headings",
+  "avoid": "body text, small sizes"
+ },
+ "Rockwell": {
+  "category": "display serif / slab / titling",
+  "use": "Latin titles, covers, certificates, caps-only headings",
+  "avoid": "body text, small sizes"
+ },
+ "Rockwell Extra Bold": {
+  "category": "display serif / slab / titling",
+  "use": "Latin titles, covers, certificates, caps-only headings",
+  "avoid": "body text, small sizes"
+ },
+ "Wide Latin": {
+  "category": "display serif / slab / titling",
+  "use": "Latin titles, covers, certificates, caps-only headings",
+  "avoid": "body text, small sizes"
+ },
+ "Old English Text MT": {
+  "category": "display serif / slab / titling",
+  "use": "Latin titles, covers, certificates, caps-only headings",
+  "avoid": "body text, small sizes"
+ },
+ "Stencil": {
+  "category": "display serif / slab / titling",
+  "use": "Latin titles, covers, certificates, caps-only headings",
+  "avoid": "body text, small sizes"
+ },
+ "OCR A Extended": {
+  "category": "display serif / slab / titling",
+  "use": "Latin titles, covers, certificates, caps-only headings",
+  "avoid": "body text, small sizes"
+ },
+ "Showcard Gothic": {
+  "category": "display serif / slab / titling",
+  "use": "Latin titles, covers, certificates, caps-only headings",
+  "avoid": "body text, small sizes"
+ },
+ "Blackadder ITC": {
+  "category": "script / calligraphic",
+  "use": "invitations, certificates, short decorative lines",
+  "avoid": "all-caps, body text, small sizes"
+ },
+ "Brush Script MT": {
+  "category": "script / calligraphic",
+  "use": "invitations, certificates, short decorative lines",
+  "avoid": "all-caps, body text, small sizes"
+ },
+ "Edwardian Script ITC": {
+  "category": "script / calligraphic",
+  "use": "invitations, certificates, short decorative lines",
+  "avoid": "all-caps, body text, small sizes"
+ },
+ "Freestyle Script": {
+  "category": "script / calligraphic",
+  "use": "invitations, certificates, short decorative lines",
+  "avoid": "all-caps, body text, small sizes"
+ },
+ "French Script MT": {
+  "category": "script / calligraphic",
+  "use": "invitations, certificates, short decorative lines",
+  "avoid": "all-caps, body text, small sizes"
+ },
+ "Gabriola": {
+  "category": "script / calligraphic",
+  "use": "invitations, certificates, short decorative lines",
+  "avoid": "all-caps, body text, small sizes"
+ },
+ "Kunstler Script": {
+  "category": "script / calligraphic",
+  "use": "invitations, certificates, short decorative lines",
+  "avoid": "all-caps, body text, small sizes"
+ },
+ "Lucida Calligraphy": {
+  "category": "script / calligraphic",
+  "use": "invitations, certificates, short decorative lines",
+  "avoid": "all-caps, body text, small sizes"
+ },
+ "Mistral": {
+  "category": "script / calligraphic",
+  "use": "invitations, certificates, short decorative lines",
+  "avoid": "all-caps, body text, small sizes"
+ },
+ "Monotype Corsiva": {
+  "category": "script / calligraphic",
+  "use": "invitations, certificates, short decorative lines",
+  "avoid": "all-caps, body text, small sizes"
+ },
+ "Palace Script MT": {
+  "category": "script / calligraphic",
+  "use": "invitations, certificates, short decorative lines",
+  "avoid": "all-caps, body text, small sizes"
+ },
+ "Parchment": {
+  "category": "script / calligraphic",
+  "use": "invitations, certificates, short decorative lines",
+  "avoid": "all-caps, body text, small sizes"
+ },
+ "Pristina": {
+  "category": "script / calligraphic",
+  "use": "invitations, certificates, short decorative lines",
+  "avoid": "all-caps, body text, small sizes"
+ },
+ "Script MT Bold": {
+  "category": "script / calligraphic",
+  "use": "invitations, certificates, short decorative lines",
+  "avoid": "all-caps, body text, small sizes"
+ },
+ "Vladimir Script": {
+  "category": "script / calligraphic",
+  "use": "invitations, certificates, short decorative lines",
+  "avoid": "all-caps, body text, small sizes"
+ },
+ "Vivaldi": {
+  "category": "script / calligraphic",
+  "use": "invitations, certificates, short decorative lines",
+  "avoid": "all-caps, body text, small sizes"
+ },
+ "Matura MT Script Capitals": {
+  "category": "script / calligraphic",
+  "use": "invitations, certificates, short decorative lines",
+  "avoid": "all-caps, body text, small sizes"
+ },
+ "Harlow Solid Italic": {
+  "category": "script / calligraphic",
+  "use": "invitations, certificates, short decorative lines",
+  "avoid": "all-caps, body text, small sizes"
+ },
+ "Harrington": {
+  "category": "script / calligraphic",
+  "use": "invitations, certificates, short decorative lines",
+  "avoid": "all-caps, body text, small sizes"
+ },
+ "Bradley Hand ITC": {
+  "category": "handwriting / informal",
+  "use": "informal or children material, short lines",
+  "avoid": "formal documents"
+ },
+ "Comic Sans MS": {
+  "category": "handwriting / informal",
+  "use": "informal or children material, short lines",
+  "avoid": "formal documents"
+ },
+ "Ink Free": {
+  "category": "handwriting / informal",
+  "use": "informal or children material, short lines",
+  "avoid": "formal documents"
+ },
+ "Kristen ITC": {
+  "category": "handwriting / informal",
+  "use": "informal or children material, short lines",
+  "avoid": "formal documents"
+ },
+ "Lucida Handwriting": {
+  "category": "handwriting / informal",
+  "use": "informal or children material, short lines",
+  "avoid": "formal documents"
+ },
+ "MV Boli": {
+  "category": "handwriting / informal",
+  "use": "informal or children material, short lines",
+  "avoid": "formal documents"
+ },
+ "Segoe Print": {
+  "category": "handwriting / informal",
+  "use": "informal or children material, short lines",
+  "avoid": "formal documents"
+ },
+ "Segoe Script": {
+  "category": "handwriting / informal",
+  "use": "informal or children material, short lines",
+  "avoid": "formal documents"
+ },
+ "Tempus Sans ITC": {
+  "category": "handwriting / informal",
+  "use": "informal or children material, short lines",
+  "avoid": "formal documents"
+ },
+ "Viner Hand ITC": {
+  "category": "handwriting / informal",
+  "use": "informal or children material, short lines",
+  "avoid": "formal documents"
+ },
+ "Informal Roman": {
+  "category": "handwriting / informal",
+  "use": "informal or children material, short lines",
+  "avoid": "formal documents"
+ },
+ "Juice ITC": {
+  "category": "handwriting / informal",
+  "use": "informal or children material, short lines",
+  "avoid": "formal documents"
+ },
+ "Papyrus": {
+  "category": "handwriting / informal",
+  "use": "informal or children material, short lines",
+  "avoid": "formal documents"
+ },
+ "Chiller": {
+  "category": "novelty display (use sparingly)",
+  "use": "one-off themed headlines",
+  "avoid": "anything formal; body text"
+ },
+ "Curlz MT": {
+  "category": "novelty display (use sparingly)",
+  "use": "one-off themed headlines",
+  "avoid": "anything formal; body text"
+ },
+ "Forte": {
+  "category": "novelty display (use sparingly)",
+  "use": "one-off themed headlines",
+  "avoid": "anything formal; body text"
+ },
+ "Gigi": {
+  "category": "novelty display (use sparingly)",
+  "use": "one-off themed headlines",
+  "avoid": "anything formal; body text"
+ },
+ "Jokerman": {
+  "category": "novelty display (use sparingly)",
+  "use": "one-off themed headlines",
+  "avoid": "anything formal; body text"
+ },
+ "Magneto": {
+  "category": "novelty display (use sparingly)",
+  "use": "one-off themed headlines",
+  "avoid": "anything formal; body text"
+ },
+ "Niagara Engraved": {
+  "category": "novelty display (use sparingly)",
+  "use": "one-off themed headlines",
+  "avoid": "anything formal; body text"
+ },
+ "Niagara Solid": {
+  "category": "novelty display (use sparingly)",
+  "use": "one-off themed headlines",
+  "avoid": "anything formal; body text"
+ },
+ "Rage Italic": {
+  "category": "novelty display (use sparingly)",
+  "use": "one-off themed headlines",
+  "avoid": "anything formal; body text"
+ },
+ "Ravie": {
+  "category": "novelty display (use sparingly)",
+  "use": "one-off themed headlines",
+  "avoid": "anything formal; body text"
+ },
+ "Snap ITC": {
+  "category": "novelty display (use sparingly)",
+  "use": "one-off themed headlines",
+  "avoid": "anything formal; body text"
+ },
+ "Playbill": {
+  "category": "novelty display (use sparingly)",
+  "use": "one-off themed headlines",
+  "avoid": "anything formal; body text"
+ },
+ "Imprint MT Shadow": {
+  "category": "novelty display (use sparingly)",
+  "use": "one-off themed headlines",
+  "avoid": "anything formal; body text"
+ },
+ "Consolas": {
+  "category": "monospace",
+  "use": "code, tables, typewriter look",
+  "avoid": "body text"
+ },
+ "Lucida Console": {
+  "category": "monospace",
+  "use": "code, tables, typewriter look",
+  "avoid": "body text"
+ },
+ "Lucida Sans Typewriter": {
+  "category": "monospace",
+  "use": "code, tables, typewriter look",
+  "avoid": "body text"
+ },
+ "Bookshelf Symbol 7": {
+  "category": "symbols / icons - never for text",
+  "use": "icons only",
+  "avoid": "any text; Hebrew or Latin"
+ },
+ "Marlett": {
+  "category": "symbols / icons - never for text",
+  "use": "icons only",
+  "avoid": "any text; Hebrew or Latin"
+ },
+ "MS Reference Specialty": {
+  "category": "symbols / icons - never for text",
+  "use": "icons only",
+  "avoid": "any text; Hebrew or Latin"
+ },
+ "MT Extra": {
+  "category": "symbols / icons - never for text",
+  "use": "icons only",
+  "avoid": "any text; Hebrew or Latin"
+ },
+ "Segoe Fluent Icons": {
+  "category": "symbols / icons - never for text",
+  "use": "icons only",
+  "avoid": "any text; Hebrew or Latin"
+ },
+ "Segoe MDL2 Assets": {
+  "category": "symbols / icons - never for text",
+  "use": "icons only",
+  "avoid": "any text; Hebrew or Latin"
+ },
+ "Symbol": {
+  "category": "symbols / icons - never for text",
+  "use": "icons only",
+  "avoid": "any text; Hebrew or Latin"
+ },
+ "Webdings": {
+  "category": "symbols / icons - never for text",
+  "use": "icons only",
+  "avoid": "any text; Hebrew or Latin"
+ },
+ "Wingdings": {
+  "category": "symbols / icons - never for text",
+  "use": "icons only",
+  "avoid": "any text; Hebrew or Latin"
+ },
+ "Wingdings 2": {
+  "category": "symbols / icons - never for text",
+  "use": "icons only",
+  "avoid": "any text; Hebrew or Latin"
+ },
+ "Wingdings 3": {
+  "category": "symbols / icons - never for text",
+  "use": "icons only",
+  "avoid": "any text; Hebrew or Latin"
+ },
+ "Segoe UI Emoji": {
+  "category": "symbols / icons - never for text",
+  "use": "icons only",
+  "avoid": "any text; Hebrew or Latin"
+ },
+ "Segoe UI Symbol": {
+  "category": "symbols / icons - never for text",
+  "use": "icons only",
+  "avoid": "any text; Hebrew or Latin"
+ },
+ "Segoe UI Historic": {
+  "category": "symbols / icons - never for text",
+  "use": "icons only",
+  "avoid": "any text; Hebrew or Latin"
+ },
+ "Cambria Math": {
+  "category": "symbols / icons - never for text",
+  "use": "icons only",
+  "avoid": "any text; Hebrew or Latin"
+ },
+ "Javanese Text": {
+  "category": "other scripts (CJK, Indic, etc.) - only for those scripts",
+  "use": "text in those scripts only",
+  "avoid": "Hebrew/Latin text"
+ },
+ "Microsoft Himalaya": {
+  "category": "other scripts (CJK, Indic, etc.) - only for those scripts",
+  "use": "text in those scripts only",
+  "avoid": "Hebrew/Latin text"
+ },
+ "Microsoft JhengHei": {
+  "category": "other scripts (CJK, Indic, etc.) - only for those scripts",
+  "use": "text in those scripts only",
+  "avoid": "Hebrew/Latin text"
+ },
+ "Microsoft JhengHei UI": {
+  "category": "other scripts (CJK, Indic, etc.) - only for those scripts",
+  "use": "text in those scripts only",
+  "avoid": "Hebrew/Latin text"
+ },
+ "Microsoft New Tai Lue": {
+  "category": "other scripts (CJK, Indic, etc.) - only for those scripts",
+  "use": "text in those scripts only",
+  "avoid": "Hebrew/Latin text"
+ },
+ "Microsoft PhagsPa": {
+  "category": "other scripts (CJK, Indic, etc.) - only for those scripts",
+  "use": "text in those scripts only",
+  "avoid": "Hebrew/Latin text"
+ },
+ "Microsoft Tai Le": {
+  "category": "other scripts (CJK, Indic, etc.) - only for those scripts",
+  "use": "text in those scripts only",
+  "avoid": "Hebrew/Latin text"
+ },
+ "Microsoft Uighur": {
+  "category": "other scripts (CJK, Indic, etc.) - only for those scripts",
+  "use": "text in those scripts only",
+  "avoid": "Hebrew/Latin text"
+ },
+ "Microsoft YaHei": {
+  "category": "other scripts (CJK, Indic, etc.) - only for those scripts",
+  "use": "text in those scripts only",
+  "avoid": "Hebrew/Latin text"
+ },
+ "Microsoft YaHei UI": {
+  "category": "other scripts (CJK, Indic, etc.) - only for those scripts",
+  "use": "text in those scripts only",
+  "avoid": "Hebrew/Latin text"
+ },
+ "Microsoft Yi Baiti": {
+  "category": "other scripts (CJK, Indic, etc.) - only for those scripts",
+  "use": "text in those scripts only",
+  "avoid": "Hebrew/Latin text"
+ },
+ "MingLiU-ExtB": {
+  "category": "other scripts (CJK, Indic, etc.) - only for those scripts",
+  "use": "text in those scripts only",
+  "avoid": "Hebrew/Latin text"
+ },
+ "MingLiU_HKSCS-ExtB": {
+  "category": "other scripts (CJK, Indic, etc.) - only for those scripts",
+  "use": "text in those scripts only",
+  "avoid": "Hebrew/Latin text"
+ },
+ "MingLiU_MSCS-ExtB": {
+  "category": "other scripts (CJK, Indic, etc.) - only for those scripts",
+  "use": "text in those scripts only",
+  "avoid": "Hebrew/Latin text"
+ },
+ "Mongolian Baiti": {
+  "category": "other scripts (CJK, Indic, etc.) - only for those scripts",
+  "use": "text in those scripts only",
+  "avoid": "Hebrew/Latin text"
+ },
+ "MS Gothic": {
+  "category": "other scripts (CJK, Indic, etc.) - only for those scripts",
+  "use": "text in those scripts only",
+  "avoid": "Hebrew/Latin text"
+ },
+ "MS PGothic": {
+  "category": "other scripts (CJK, Indic, etc.) - only for those scripts",
+  "use": "text in those scripts only",
+  "avoid": "Hebrew/Latin text"
+ },
+ "MS UI Gothic": {
+  "category": "other scripts (CJK, Indic, etc.) - only for those scripts",
+  "use": "text in those scripts only",
+  "avoid": "Hebrew/Latin text"
+ },
+ "Myanmar Text": {
+  "category": "other scripts (CJK, Indic, etc.) - only for those scripts",
+  "use": "text in those scripts only",
+  "avoid": "Hebrew/Latin text"
+ },
+ "NSimSun": {
+  "category": "other scripts (CJK, Indic, etc.) - only for those scripts",
+  "use": "text in those scripts only",
+  "avoid": "Hebrew/Latin text"
+ },
+ "PMingLiU-ExtB": {
+  "category": "other scripts (CJK, Indic, etc.) - only for those scripts",
+  "use": "text in those scripts only",
+  "avoid": "Hebrew/Latin text"
+ },
+ "SimSun": {
+  "category": "other scripts (CJK, Indic, etc.) - only for those scripts",
+  "use": "text in those scripts only",
+  "avoid": "Hebrew/Latin text"
+ },
+ "SimSun-ExtB": {
+  "category": "other scripts (CJK, Indic, etc.) - only for those scripts",
+  "use": "text in those scripts only",
+  "avoid": "Hebrew/Latin text"
+ },
+ "SimSun-ExtG": {
+  "category": "other scripts (CJK, Indic, etc.) - only for those scripts",
+  "use": "text in those scripts only",
+  "avoid": "Hebrew/Latin text"
+ },
+ "Sans Serif Collection": {
+  "category": "other scripts (CJK, Indic, etc.) - only for those scripts",
+  "use": "text in those scripts only",
+  "avoid": "Hebrew/Latin text"
+ },
+ "Sylfaen": {
+  "category": "serif text",
+  "use": "Latin body text (also Georgian/Armenian)",
+  "avoid": ""
+ },
+ "Guttman Logo1": {
+  "category": "symbols / icons - never for text",
+  "use": "the Guttman logo glyphs only",
+  "avoid": "any text"
+ }
 }
