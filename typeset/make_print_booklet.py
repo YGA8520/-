@@ -16,6 +16,7 @@ import os
 import sys
 import numpy as np
 import pymupdf
+import outline_type3
 from PIL import Image
 
 MM = 72 / 25.4
@@ -136,6 +137,9 @@ def build(booklet, out, spine=None, fmt='B5'):
     FORMAT = fmt
     import tempfile
     os.makedirs(out, exist_ok=True)
+    text_booklet = booklet                                         # the original keeps the text (page numbers of the notes)
+    booklet = os.path.join(tempfile.mkdtemp(), 'outlined.pdf')
+    outline_type3.outline(text_booklet, booklet)                   # no Type 3 fonts in the print files (some viewers draw them as dots)
     src = pymupdf.open(booklet)
     n = src.page_count
     front, inside_front, inside_back, back = 0, 1, n - 2, n - 1
@@ -218,7 +222,7 @@ def build(booklet, out, spine=None, fmt='B5'):
         pages = os.path.join(out, 'zada-cover-pages-print.pdf')
         two.save(pages, garbage=3, deflate=True)
         two.close()
-    a1, a2, toc = article_pages(booklet, interior)
+    a1, a2, toc = article_pages(text_booklet, interior)
     report(out, [inside, outside, inner, pages], total, spine, a1, a2, toc)
     src.close()
 
@@ -240,6 +244,9 @@ def build_plain(booklet, out, fmt='A5'):
     FORMAT = fmt
     import tempfile
     os.makedirs(out, exist_ok=True)
+    outlined = os.path.join(tempfile.mkdtemp(), 'outlined.pdf')
+    outline_type3.outline(booklet, outlined)
+    booklet = outlined
     n = pymupdf.open(booklet).page_count
     interior = list(range(2, n - 2))
     assert len(interior) % 4 == 0

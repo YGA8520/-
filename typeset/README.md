@@ -87,3 +87,5 @@ Print version of the memorial booklet (`make_print_booklet.py booklet.pdf out_di
 A5 print version: `python make_print_booklet.py booklet.pdf out_dir --a5` scales every page uniformly from B5 (176 x 250 mm) to A5 (148 x 210 mm; scale 0.841, the proportions differ by 0.1 %, so type is 16 % smaller) with the same 3 mm bleed, marks and files; results in `output/print-zada-a5/`.
 
 Plain A5 inside (`python make_print_booklet.py booklet.pdf out_dir --a5 --plain`): only the inside (booklet pages 3-50 = 48 pages), black only, every page exactly 148 x 210 mm, no bleed, no crop marks, no slug line; result `output/print-zada-a5-interior/zada-interior-A5.pdf`.
+
+Print files without Type 3 fonts: the booklet's display / lead / note fonts are Type 3 fonts, which Adobe Acrobat at a printing house drew as dots in the print files. `outline_type3.py` turns all Type 3 text into vector shapes (one shared form XObject per glyph) and `make_print_booklet.py` runs it first, so no print file contains a Type 3 font (the remaining fonts are TrueType subsets); the digital booklet keeps its text.
