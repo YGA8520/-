@@ -1,0 +1,9 @@
+chidduda-daoraita_cover-print.pdf: 4 pages, sheet 196.0x270.0 mm, trim 176.0x250.0, bleed box 182.0x256.0, fonts 7 (all embedded: True), lowest artwork resolution 394 dpi, 5.7 MB
+chidduda-daoraita_cover-spread-print.pdf: 2 pages, sheet 382.0x270.0 mm, trim 362.0x250.0, bleed box 368.0x256.0, fonts 7 (all embedded: True), lowest artwork resolution 394 dpi, 5.8 MB
+chidduda-daoraita_interior-print.pdf: 196 pages, sheet 196.0x270.0 mm, trim 176.0x250.0, bleed box 182.0x256.0, fonts 9 (all embedded: True), lowest artwork resolution 134 dpi, 60.9 MB
+pilpula-daoraita_cover-print.pdf: 4 pages, sheet 196.0x270.0 mm, trim 176.0x250.0, bleed box 182.0x256.0, fonts 7 (all embedded: True), lowest artwork resolution 394 dpi, 5.5 MB
+pilpula-daoraita_cover-spread-print.pdf: 2 pages, sheet 403.5x270.0 mm, trim 383.5x250.0, bleed box 389.5x256.0, fonts 8 (all embedded: True), lowest artwork resolution 199 dpi, 12.4 MB
+pilpula-daoraita_interior-print.pdf: 632 pages, sheet 196.0x270.0 mm, trim 176.0x250.0, bleed box 182.0x256.0, fonts 11 (all embedded: True), lowest artwork resolution 155 dpi, 12.2 MB
+rithcha-daoraita_cover-print.pdf: 4 pages, sheet 196.0x270.0 mm, trim 176.0x250.0, bleed box 182.0x256.0, fonts 7 (all embedded: True), lowest artwork resolution 300 dpi, 6.3 MB
+rithcha-daoraita_cover-spread-print.pdf: 2 pages, sheet 375.0x270.0 mm, trim 355.0x250.0, bleed box 361.0x256.0, fonts 7 (all embedded: True), lowest artwork resolution 300 dpi, 6.3 MB
+rithcha-daoraita_interior-print.pdf: 64 pages, sheet 196.0x270.0 mm, trim 176.0x250.0, bleed box 182.0x256.0, fonts 7 (all embedded: True), lowest artwork resolution 1000000000 dpi, 1.3 MB

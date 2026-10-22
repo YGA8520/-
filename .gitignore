@@ -17,3 +17,6 @@ typeset/assets/cover/cover-bg.jpg
 typeset/chk/
 typeset/assets/cover/divider-bg.jpg
 typeset/_haskamot.html
+
+# print files made from the finished PDFs (delivered as files, not committed)
+output/print-booklets/*.pdf
