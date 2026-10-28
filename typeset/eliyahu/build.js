@@ -4,8 +4,12 @@ const { chromium } = require('playwright'); const path = require('path'); const 
   const out = process.argv[2] || 'out/eliyahu'; fs.mkdirSync(out, { recursive: true });
   const b = await chromium.launch(); const p = await b.newPage({ deviceScaleFactor: 600 / 96 });
   await p.goto('file://' + path.resolve(__dirname, 'page1.html')); await p.evaluate(() => document.fonts.ready);
-  const over = await p.evaluate(() => { const pg = document.querySelector('.page'); return pg.scrollHeight - pg.clientHeight; });
-  console.log('vertical overflow px:', over);
+  // overflow = how far the last block reaches below the padding of the page (mm); free = height of the spacer
+  const m = await p.evaluate(() => { const pg = document.querySelector('.page'), k = 25.4 / 96;
+    const bottom = pg.getBoundingClientRect().bottom - parseFloat(getComputedStyle(pg).paddingBottom);
+    return { overflow: ((pg.lastElementChild.getBoundingClientRect().bottom - bottom) * k).toFixed(2),
+             free: (document.querySelector('.spacer').getBoundingClientRect().height * k).toFixed(2) }; });
+  console.log('overflow mm:', m.overflow, ' free space mm:', m.free);
   await p.pdf({ path: path.join(out, 'page1.pdf'), width: '80mm', height: '110mm', printBackground: true, preferCSSPageSize: true });
   await p.setViewportSize({ width: Math.round(80 / 25.4 * 96), height: Math.round(110 / 25.4 * 96) });
   await p.screenshot({ path: path.join(out, 'page1.png') }); await b.close();
