@@ -3,7 +3,7 @@ const { chromium } = require('playwright'); const path = require('path'); const 
 (async () => {
   const out = process.argv[2] || 'out/eliyahu', name = process.argv[3] || 'page1'; fs.mkdirSync(out, { recursive: true });
   const b = await chromium.launch(); const p = await b.newPage({ deviceScaleFactor: 600 / 96 });
-  await p.goto('file://' + path.resolve(__dirname, name + '.html')); await p.evaluate(() => document.fonts.ready);
+  await p.goto('file://' + path.resolve(__dirname, name + '.html')); await p.evaluate(() => document.fonts.ready); await p.waitForTimeout(150);
   // overflow = how far the last block reaches below the padding of the box that must hold the text
   // ([data-fit], else the page) in mm; free = height of the spacer
   const m = await p.evaluate(() => { const pg = document.querySelector('[data-fit]') || document.querySelector('.page'), k = 25.4 / 96;
