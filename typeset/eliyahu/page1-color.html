@@ -20,6 +20,11 @@ body { font-family:"Guttman Drogolin",serif; color:var(--ink); }
 .ttl { font-family:"Taamim",serif; font-weight:400; color:var(--wine); font-size:20pt; line-height:1.02; text-align:center;
        direction:ltr; -webkit-text-stroke:0.035em var(--wine); paint-order:stroke fill; }
 .ttl span { display:block; white-space:nowrap; }
+/* the first (shorter) line has a leaf of the border frame on each side (make_frame_flourish.py): as in the frame on
+   the right, pointing outwards, mirrored on the left */
+.ttl span[data-orn] { display:flex; align-items:center; justify-content:center; gap:0.12em; }
+.ttl img.orn { height:0.66em; width:auto; display:block; position:relative; top:-0.04em; }
+.ttl img.orn.l { transform:scaleX(-1); }
 /* the panel covers the panel of the reference (5.66 - 75.25 mm, 20.1 - 100.4 mm) */
 .panel { position:absolute; left:5.2mm; right:5.2mm; top:19.5mm; bottom:9.2mm; box-sizing:border-box;
          padding:2.6mm 3.4mm 2.6mm; border-radius:2.6mm; display:flex; flex-direction:column; text-align:center;
@@ -57,7 +62,7 @@ sup { font-size:5pt; line-height:0; vertical-align:super; color:var(--gold); fon
 <div class="page">
   <img class="bg" src="bg-color.jpg" alt="">
   <!-- title: two lines in Taamim, centred in the cartouche; the script writes them in the code points of the font -->
-  <div class="cart"><div class="ttl"><span data-he="הכוונות קודם"></span><span data-he="תפילת שמונה עשרה"></span></div></div>
+  <div class="cart"><div class="ttl"><span data-he="הכוונות קודם" data-orn></span><span data-he="תפילת שמונה עשרה"></span></div></div>
   <div class="panel" data-fit>
     <div class="items">
       <p><strong>יכוון</strong> לקיים מצות תפילה, כי מצות צריכות כוונה.<sup>1</sup></p>
@@ -89,7 +94,11 @@ sup { font-size:5pt; line-height:0; vertical-align:super; color:var(--gold); fon
   const sym = he => [...he].map(c => c === ' ' ? '\uF020' :
     (c >= '\u05D0' && c <= '\u05EA') ? String.fromCharCode(0xF0E0 + c.charCodeAt(0) - 0x05D0) : c).reverse().join('');
   const box = document.querySelector('.cart'), t = document.querySelector('.ttl');
-  t.querySelectorAll('span').forEach(s => s.textContent = sym(s.dataset.he));
+  t.querySelectorAll('span').forEach(s => {
+    if (s.hasAttribute('data-orn'))
+      s.innerHTML = '<img class="orn l" src="flourish-frame.png" alt=""><b style="font-weight:inherit">' + sym(s.dataset.he) +
+                    '</b><img class="orn r" src="flourish-frame.png" alt="">';
+    else s.textContent = sym(s.dataset.he); });
   // the largest size at which both lines fit the inside of the cartouche (94 % of its width, 92 % of its height)
   const fit = () => { const k = Math.min(box.clientWidth * 0.94 / t.scrollWidth, box.clientHeight * 0.92 / t.scrollHeight);
     t.style.fontSize = (parseFloat(getComputedStyle(t).fontSize) * k).toFixed(2) + 'px'; };
