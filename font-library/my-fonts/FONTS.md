@@ -100,7 +100,7 @@ Legend: ✔ full · ◐ partial · — none. Hebrew = 27 letters incl. finals; N
 | BMH-Baruch | 400 | — | — | — | — | — | *(not set)* |  |  |
 | BN Drank | 400 | ✔ | — | — | ◐ | ✔ | *(not set)* |  |  |
 | BN Old Hebrew | 4 | ✔ | ◐ | — | ✔ | ✔ | *(not set)* |  |  |
-| Bodoni MT | 400, 400i, 700, 700i, 900, 900i | — | — | — | — | ✔ | serif text | Latin body text / long reading |  |
+| Bodoni MT | 300, 400, 400i, 700, 700i, 900, 900i | — | — | — | — | ✔ | serif text | Latin body text / long reading |  |
 | Bokertov | 700 | ✔ | ◐ | — | ✔ | ✔ | *(not set)* |  |  |
 | BokertovMedium | 400 | ✔ | ◐ | — | ✔ | ✔ | *(not set)* |  |  |
 | Book Antiqua | 400, 400i, 700, 700i | — | — | — | — | ✔ | serif text | Latin body text / long reading |  |
@@ -697,6 +697,7 @@ Legend: ✔ full · ◐ partial · — none. Hebrew = 27 letters incl. finals; N
 | OktavaBlack | 400 | ✔ | ◐ | — | ✔ | ✔ | *(not set)* |  |  |
 | OktavaMedium | 400 | ✔ | ◐ | — | ✔ | ✔ | *(not set)* |  |  |
 | Old English Text MT | 400 | — | — | — | — | ✔ | display serif / slab / titling | Latin titles, covers, certificates, caps-only headings | body text, small sizes |
+| Onyx | 400 | — | — | — | — | ✔ | *(not set)* |  |  |
 | Open Sans Hebrew | 300, 300i, 400, 400i, 700, 700i, 800, 800i | ✔ | ✔ | — | ◐ | ✔ | *(not set)* |  |  |
 | Orator Std | 400, 400i | — | — | — | — | ✔ | *(not set)* |  |  |
 | OS Aran FFC | 400 | ✔ | ✔ | — | ✔ | ✔ | *(not set)* |  |  |

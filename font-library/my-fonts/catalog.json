@@ -4571,6 +4571,31 @@
    "fonts": [
     {
      "family": "Bodoni MT",
+     "style": "Poster Compressed",
+     "full_name": "Bodoni MT Poster Compressed",
+     "weight": 300,
+     "italic": false,
+     "variable_axes": {},
+     "monospace": false,
+     "glyphs": 261,
+     "hebrew": "none",
+     "niqqud": "none",
+     "taamim": "none",
+     "hebrew_extras": "none",
+     "latin": "full",
+     "digits": "full",
+     "cyrillic": "none",
+     "greek": "partial",
+     "arabic": "none",
+     "license": "NOTIFICATION OF LICENSE AGREEMENT \r\n\r\nThis typeface is the property of Agfa Monotype Corporation (AMT) and its use by you is covered under the terms of a license agreement. You have obtained this typeface software either directly from AMT or together with software distributed by one of the licencees",
+     "license_url": "http://www.agfamonotype.com/html/type/license.html",
+     "designer": "",
+     "version": "Version 2.10",
+     "file": "fonts/BOD_PSTC.TTF",
+     "bytes": 91592
+    },
+    {
+     "family": "Bodoni MT",
      "style": "Condensed",
      "full_name": "Bodoni MT Condensed",
      "weight": 400,
@@ -34698,6 +34723,36 @@
      "version": "Version 1.55",
      "file": "fonts/OLDENGL.TTF",
      "bytes": 93068
+    }
+   ]
+  },
+  "Onyx": {
+   "notes": {},
+   "fonts": [
+    {
+     "family": "Onyx",
+     "style": "Regular",
+     "full_name": "Onyx",
+     "weight": 400,
+     "italic": false,
+     "variable_axes": {},
+     "monospace": false,
+     "glyphs": 241,
+     "hebrew": "none",
+     "niqqud": "none",
+     "taamim": "none",
+     "hebrew_extras": "none",
+     "latin": "full",
+     "digits": "full",
+     "cyrillic": "none",
+     "greek": "partial",
+     "arabic": "none",
+     "license": "",
+     "license_url": "",
+     "designer": "",
+     "version": "Version 1.51",
+     "file": "fonts/ONYX.TTF",
+     "bytes": 81044
     }
    ]
   },
