@@ -5,68 +5,83 @@
 <style>
 @page { size: 80mm 110mm; margin: 0; }
 html,body { margin:0; padding:0; }
-:root { --wine:#7b1f22; --ink:#2e1d14; --gold:#a88242; --gold-l:#d9c08a; }
+:root { --wine:#7b1f22; --ink:#2e1d14; --gold:#a88242; --gold-l:#dcc79a; }
 body { font-family:"Guttman Drogolin",serif; color:var(--ink); }
 .page { width:80mm; height:110mm; position:relative; overflow:hidden; }
 .bg { position:absolute; inset:0; width:100%; height:100%; display:block; }
-/* inside of the cartouche: 21 - 59 mm across, 1.5 - 15.5 mm down */
-.cart { position:absolute; left:21mm; right:21mm; top:2.3mm; height:13mm; display:flex; flex-direction:column;
-        align-items:center; justify-content:center; text-align:center; }
-h1 { font-family:"Guttman Vilna",serif; font-weight:700; color:var(--wine); font-size:10.8pt; line-height:1; margin:0; white-space:nowrap;
-     text-shadow:0 0.15mm 0.2mm rgba(90,40,20,.18); }
-.rule { display:flex; align-items:center; gap:1.1mm; margin:1mm 0 0.9mm; }
-.rule i { display:block; width:9mm; height:0; border-top:0.18mm solid var(--gold); }
-.rule b { display:block; width:1mm; height:1mm; background:var(--gold); transform:rotate(45deg); }
-.ded { font-size:5.9pt; line-height:1.22; color:#4a2a1c; }
-.ded strong { color:var(--wine); }
+/* inside of the cartouche: 21 - 59 mm across, 1.5 - 15.5 mm down; the title is an arched SVG */
+.title { position:absolute; left:20mm; top:1.4mm; width:40mm; height:14mm; overflow:visible; }
 /* the panel covers the panel of the reference (5.66 - 75.25 mm, 20.1 - 100.4 mm) */
 .panel { position:absolute; left:5.2mm; right:5.2mm; top:19.5mm; bottom:9.2mm; box-sizing:border-box;
-         padding:3mm 3.6mm 2.4mm; border-radius:2.6mm; display:flex; flex-direction:column;
+         padding:2.6mm 3.4mm 2.6mm; border-radius:2.6mm; display:flex; flex-direction:column; text-align:center;
          background:radial-gradient(ellipse at 50% 40%, #fffdf6 0%, #fbf6e8 70%, #f5eedb 100%);
          box-shadow:0 0 0 0.25mm rgba(255,255,255,.9), 0 0.6mm 2.2mm rgba(80,55,25,.28); }
 .panel > * { flex-shrink:0; } .panel > .spacer { flex:1; flex-shrink:1; }
-ol { list-style:none; margin:0; padding:0; }
-li { display:flex; gap:1.1mm; font-size:7.1pt; line-height:1.38; text-align:right; margin-bottom:0.5mm; }
-li .n { flex:0 0 3mm; font-weight:700; color:var(--wine); }
-li .t { flex:1; }
-li strong { font-weight:700; color:var(--wine); font-size:7.9pt; }
-sup { font-size:5.2pt; line-height:0; vertical-align:super; color:var(--gold); font-weight:700; padding-right:0.3mm; }
-.tip { margin:1.9mm 0 0; padding:1mm 2mm; border-radius:1.8mm; text-align:center; font-size:6.8pt; line-height:1.35;
-       background:linear-gradient(#f3e6c4, #ecdcb2); border:0.2mm solid var(--gold-l); }
-.tip strong { color:var(--wine); }
-.org { display:flex; justify-content:center; align-items:center; gap:2.4mm; margin-top:1.8mm; }
-.org img { height:10.5mm; display:block; }
+/* the items: centred, a small gold divider between them instead of letters */
+.items p { margin:0; font-size:7.1pt; line-height:1.3; }
+.items p + p::before { content:""; display:block; width:9mm; height:1.3mm; margin:0.3mm auto 0.3mm;
+  background:
+    linear-gradient(var(--gold-l),var(--gold-l)) left 50% / 3.4mm 0.16mm no-repeat,
+    linear-gradient(var(--gold-l),var(--gold-l)) right 50% / 3.4mm 0.16mm no-repeat,
+    radial-gradient(circle, var(--gold) 0 0.42mm, transparent 0.45mm) center / 1.6mm 1.6mm no-repeat; }
+.items strong { font-weight:700; color:var(--wine); font-size:7.9pt; }
+sup { font-size:5pt; line-height:0; vertical-align:super; color:var(--gold); font-weight:700; padding-right:0.3mm; }
+.notes { margin-top:1.2mm; padding-top:0.7mm; border-top:0.15mm solid var(--gold-l); font-family:"Guttman Rashi",serif;
+         font-size:4.9pt; line-height:1.38; color:#4a3526; }
+.notes .ttl { white-space:nowrap; font-family:"Guttman Drogolin",serif; font-weight:700; color:var(--wine); font-size:5.2pt; margin-left:0.6mm; }
+.notes span.fn { margin-left:1mm; white-space:nowrap; }
+.notes span.fn.long { white-space:normal; }
+.notes sup { font-family:"Guttman Drogolin",serif; font-size:4pt; padding:0 0 0 0.3mm; }
+.org { display:flex; justify-content:center; align-items:center; gap:2.2mm; margin-top:1.2mm; }
+.org img { height:8.4mm; display:block; }
 .org .sep { align-self:stretch; border-right:0.15mm solid var(--gold-l); margin:0.8mm 0; }
-.phones { display:flex; flex-direction:column; gap:0.5mm; font-size:5.8pt; line-height:1.25; color:#4a2a1c; }
+.phones { display:flex; flex-direction:column; gap:0.4mm; font-size:5.6pt; line-height:1.25; color:#4a2a1c; text-align:right; }
 .phones b { color:var(--wine); }
-.notes { border-top:0.18mm solid var(--gold); margin-top:1.3mm; padding-top:0.7mm; font-family:"Guttman Rashi",serif;
-         font-size:5.7pt; line-height:1.35; color:#3d2a1e; text-align:right; }
-.notes .ttl { white-space:nowrap; font-family:"Guttman Drogolin",serif; font-weight:700; color:var(--wine); font-size:6pt; margin-left:0.8mm; }
-.notes span.fn { margin-left:1.2mm; }
-.notes sup { font-family:"Guttman Drogolin",serif; font-size:4.6pt; padding:0 0 0 0.4mm; }
+.tip { margin-top:1.2mm; padding:0.9mm 2mm; border-radius:1.8mm; font-size:6.6pt; line-height:1.35;
+       background:#f8f0dc; border:0.12mm solid rgba(168,130,66,.22); }
+.tip strong { color:var(--wine); }
+/* dedication on the marble under the panel (100.8 - 106.5 mm, above the bar of the frame) */
+.ded { position:absolute; left:10mm; right:10mm; top:101.1mm; text-align:center; font-size:6pt; line-height:1.2;
+       color:#5a2318; text-shadow:0 0 0.6mm #fbf6ea, 0 0 0.3mm #fbf6ea; }
+.ded strong { color:var(--wine); }
 </style></head><body>
 <div class="page">
   <img class="bg" src="bg-color.jpg" alt="">
-  <div class="cart">
-    <h1>הקדמה לשמונה עשרה</h1>
-    <div class="rule"><i></i><b></b><i></i></div>
-    <div class="ded">לעילוי נשמת <strong>אליהו ז״ל</strong><br>בן יבדלחט״א חיים מאיר עזריאל</div>
-  </div>
+  <svg class="title" viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <path id="arc" d="M 2,100 Q 200,40 398,100"/>
+      <linearGradient id="face" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#a8353a"/><stop offset=".55" stop-color="#7b1f22"/><stop offset="1" stop-color="#561215"/>
+      </linearGradient>
+      <filter id="soft" x="-10%" y="-30%" width="120%" height="160%"><feGaussianBlur stdDeviation="2.2"/></filter>
+    </defs>
+    <g font-family="FrankRuehl DP" font-weight="700" font-size="51" text-anchor="middle" direction="rtl">
+      <!-- soft shadow on the parchment -->
+      <text fill="rgba(70,35,15,.35)" filter="url(#soft)" transform="translate(1,7)"><textPath href="#arc" startOffset="50%">הקדמה לשמונה עשרה</textPath></text>
+      <!-- the thickness: stacked copies in dark wine -->
+      <text fill="#3e0b0d" transform="translate(0,4.5)"><textPath href="#arc" startOffset="50%">הקדמה לשמונה עשרה</textPath></text>
+      <text fill="#4a0e10" transform="translate(0,3)"><textPath href="#arc" startOffset="50%">הקדמה לשמונה עשרה</textPath></text>
+      <text fill="#561215" transform="translate(0,1.5)"><textPath href="#arc" startOffset="50%">הקדמה לשמונה עשרה</textPath></text>
+      <!-- the face: gradient, thin gold edge -->
+      <text fill="url(#face)" stroke="#c9a45c" stroke-width="1.1" paint-order="stroke"><textPath href="#arc" startOffset="50%">הקדמה לשמונה עשרה</textPath></text>
+    </g>
+  </svg>
   <div class="panel" data-fit>
-    <ol>
-      <li><span class="n">א.</span><span class="t"><strong>יכוון</strong> לקיים מצות תפילה, כי מצות צריכות כוונה.<sup>1</sup></span></li>
-      <li><span class="n">ב.</span><span class="t"><strong>יתבונן</strong> שהשכינה כנגדו, ועומדים לפני מלך מלכי המלכים הקב״ה, שחוקר כל מחשבות וכוונות.<sup>2</sup></span></li>
-      <li><span class="n">ג.</span><span class="t"><strong>יחשוב</strong> מרוממותו ית׳, שהוא רם ונשא שוכן עד וכל יכול.<sup>3</sup></span></li>
-      <li><span class="n">ד.</span><span class="t"><strong>יתבונן</strong> בשפלות האדם, שצריך רחמים מרובים בכל רגע.<sup>4</sup></span></li>
-      <li><span class="n">ה.</span><span class="t"><strong>יחשוב</strong> כאילו עומד עתה בבהמ״ק בקה״ק לפני הכפרת.<sup>5</sup></span></li>
-      <li><span class="n">ו.</span><span class="t"><strong>יתפלל</strong> דרך תחנונים כעני בפתח, שנצרך מאד, ומבקש רחמים לפני המלך.<sup>6</sup></span></li>
-      <li><span class="n">ז.</span><span class="t"><strong>וישים</strong> אל לבו שאין שום נברא – מלאך או אדם – שיכול למלאות שאלתו כי אם ע״י רצונו של הקב״ה.<sup>7</sup></span></li>
-    </ol>
-    <div class="tip"><strong>עצה טובה</strong> – לעבוד על אחד מהסעיפים במשך שבוע,<br>ולאחר שיתרגל להוסיף עוד סעיף.</div>
+    <div class="items">
+      <p><strong>יכוון</strong> לקיים מצות תפילה, כי מצות צריכות כוונה.<sup>1</sup></p>
+      <p><strong>יתבונן</strong> שהשכינה כנגדו, ועומדים לפני מלך מלכי המלכים הקב״ה, שחוקר כל מחשבות וכוונות.<sup>2</sup></p>
+      <p><strong>יחשוב</strong> מרוממותו ית׳, שהוא רם ונשא שוכן עד וכל יכול.<sup>3</sup></p>
+      <p><strong>יתבונן</strong> בשפלות האדם, שצריך רחמים מרובים בכל רגע.<sup>4</sup></p>
+      <p><strong>יחשוב</strong> כאילו עומד עתה בבהמ״ק בקה״ק לפני הכפרת.<sup>5</sup></p>
+      <p><strong>יתפלל</strong> דרך תחנונים כעני בפתח, שנצרך מאד, ומבקש רחמים לפני המלך.<sup>6</sup></p>
+      <p><strong>וישים</strong> אל לבו שאין שום נברא – מלאך או אדם – שיכול למלאות שאלתו כי אם ע״י רצונו של הקב״ה.<sup>7</sup></p>
+    </div>
+    <div class="spacer"></div>
+    <div class="notes"><span class="ttl">מראי מקומות:</span> <span class="fn long"><sup>1</sup>ע׳ מ״ב סי׳&nbsp;ק״ו ס״ק&nbsp;ד׳ וסי׳&nbsp;ס׳ ס״ק&nbsp;י׳.</span> <span class="fn"><sup>2</sup>שו״ע סי׳&nbsp;צ״ח סעי׳&nbsp;א׳.</span> <span class="fn"><sup>3</sup>ע״פ הרמ״א שם.</span> <span class="fn"><sup>4</sup>שם.</span> <span class="fn long"><sup>5</sup>שו״ע סי׳&nbsp;צ״ה סעי׳&nbsp;ב׳, וסי׳&nbsp;צ״ד מ״ב ס״ק&nbsp;ג׳ וז׳.</span> <span class="fn"><sup>6</sup>סי׳&nbsp;צ״ח סעי׳&nbsp;ג׳.</span> <span class="fn"><sup>7</sup>שם מ״ב ס״ק&nbsp;ח׳.</span></div>
     <div class="org"><img src="logo-color.png" alt="ברומו של עולם"><span class="sep"></span>
       <div class="phones"><span><b>קו ׳בית הוראה׳:</b> 077.215.00.94</span><span><b>קו קול הלשון:</b> 0733718376</span></div></div>
-    <div class="spacer"></div>
-    <div class="notes"><span class="ttl">מראי מקומות:</span> <span class="fn"><sup>1</sup>ע׳ מ״ב סי׳&nbsp;ק״ו ס״ק&nbsp;ד׳ וסי׳&nbsp;ס׳ ס״ק&nbsp;י׳.</span> <span class="fn"><sup>2</sup>שו״ע סי׳&nbsp;צ״ח סעי׳&nbsp;א׳.</span> <span class="fn"><sup>3</sup>ע״פ הרמ״א שם.</span> <span class="fn"><sup>4</sup>שם.</span> <span class="fn"><sup>5</sup>שו״ע סי׳&nbsp;צ״ה סעי׳&nbsp;ב׳, וסי׳&nbsp;צ״ד מ״ב ס״ק&nbsp;ג׳ וז׳.</span> <span class="fn"><sup>6</sup>סי׳&nbsp;צ״ח סעי׳&nbsp;ג׳.</span> <span class="fn"><sup>7</sup>שם מ״ב ס״ק&nbsp;ח׳.</span></div>
+    <div class="tip"><strong>עצה טובה</strong> – לעבוד על אחד מהסעיפים במשך שבוע,<br>ולאחר שיתרגל להוסיף עוד סעיף.</div>
   </div>
+  <div class="ded">לעילוי נשמת <strong>אליהו ז״ל</strong><br>בן יבדלחט״א חיים מאיר עזריאל</div>
 </div>
 </body></html>

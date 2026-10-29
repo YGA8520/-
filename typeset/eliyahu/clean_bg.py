@@ -52,6 +52,8 @@ def fill_inside(img, poly, text_thr, grow):
     smooth = cv2.GaussianBlur(fill, (0, 0), 3)
     res = np.where(good[..., None] > 0, out, smooth)
     res = cv2.GaussianBlur(res, (0, 0), 1.2) * 0.5 + res * 0.5
+    # the parchment has almost no texture: a wide blur removes the last traces of the text and keeps the vignette
+    res = cv2.GaussianBlur(res, (0, 0), 9)
     m = cv2.GaussianBlur(inside.astype(np.float32), (0, 0), 2)[..., None]
     return (out * (1 - m) + res * m).clip(0, 255).astype(np.uint8), text
 
