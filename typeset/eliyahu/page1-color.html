@@ -95,7 +95,7 @@ sup { font-size:5pt; line-height:0; vertical-align:super; color:var(--gold); fon
     (c >= '\u05D0' && c <= '\u05EA') ? String.fromCharCode(0xF0E0 + c.charCodeAt(0) - 0x05D0) : c).reverse().join('');
   const box = document.querySelector('.cart'), t = document.querySelector('.ttl');
   t.querySelectorAll('span').forEach(s => {
-    if (s.hasAttribute('data-orn'))
+    if (s.hasAttribute('data-orn') && location.hash !== '#plain')   // #plain: the title without the two leaves
       s.innerHTML = '<img class="orn l" src="flourish-frame.png" alt=""><b style="font-weight:inherit">' + sym(s.dataset.he) +
                     '</b><img class="orn r" src="flourish-frame.png" alt="">';
     else s.textContent = sym(s.dataset.he); });
