@@ -15,9 +15,11 @@ body { font-family:"Guttman Drogolin",serif; color:var(--ink); }
 .page { width:80mm; height:110mm; position:relative; overflow:hidden; }
 .bg { position:absolute; inset:0; width:100%; height:100%; display:block; }
 /* inside of the cartouche: 21 - 59 mm across, 1.5 - 15.5 mm down */
-.cart { position:absolute; left:21mm; top:1.5mm; width:38mm; height:14mm; overflow:visible; }
-/* font of the title: one place to change it */
-.ttl { font-family:"Taamim",serif; font-weight:400; fill:var(--wine); font-size:34px; }
+.cart { position:absolute; left:21mm; top:1.5mm; width:38mm; height:14mm; display:flex; align-items:center; justify-content:center; }
+/* Taamim has a single (regular) weight: the bold is a stroke in the colour of the letters */
+.ttl { font-family:"Taamim",serif; font-weight:400; color:var(--wine); font-size:20pt; line-height:1.02; text-align:center;
+       direction:ltr; -webkit-text-stroke:0.035em var(--wine); paint-order:stroke fill; }
+.ttl span { display:block; white-space:nowrap; }
 /* the panel covers the panel of the reference (5.66 - 75.25 mm, 20.1 - 100.4 mm) */
 .panel { position:absolute; left:5.2mm; right:5.2mm; top:19.5mm; bottom:9.2mm; box-sizing:border-box;
          padding:2.6mm 3.4mm 2.6mm; border-radius:2.6mm; display:flex; flex-direction:column; text-align:center;
@@ -54,26 +56,8 @@ sup { font-size:5pt; line-height:0; vertical-align:super; color:var(--gold); fon
 </style></head><body>
 <div class="page">
   <img class="bg" src="bg-color.jpg" alt="">
-  <!-- title: an arched band with a raised gold frame; the title runs along the arch, the swirls of the
-       reference fill the hollow of the arch. units 0.1 mm, the box = the inside of the cartouche -->
-  <svg class="cart" viewBox="0 0 380 140" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <defs>
-      <path id="arc" d="M 26,94 Q 190,-14 354,94"/>
-      <linearGradient id="goldEdge" gradientUnits="userSpaceOnUse" x1="0" y1="8" x2="0" y2="124">
-        <stop offset="0" stop-color="#f4e2ae"/><stop offset=".45" stop-color="#c9a35e"/><stop offset="1" stop-color="#80592a"/>
-      </linearGradient>
-      <filter id="lift" x="-10%" y="-20%" width="120%" height="160%"><feGaussianBlur stdDeviation="3"/></filter>
-    </defs>
-    <g fill="none" stroke-linecap="round">
-      <use href="#arc" stroke="rgba(60,30,10,.38)" stroke-width="60" filter="url(#lift)" transform="translate(0,5)"/>
-      <use href="#arc" stroke="url(#goldEdge)" stroke-width="58"/>
-      <use href="#arc" stroke="rgba(255,244,214,.9)" stroke-width="51" transform="translate(0,-0.8)"/>
-      <use href="#arc" stroke="#9c7536" stroke-width="49.5"/>
-      <use href="#arc" stroke="#fbf3df" stroke-width="47"/>
-    </g>
-    <text id="ttl" class="ttl" text-anchor="middle" dominant-baseline="central" direction="ltr" data-he="הכוונות קודם שמונה עשרה"><textPath href="#arc" startOffset="50%">הכוונות קודם שמונה עשרה</textPath></text>
-    <image href="divider-swirl.svg" x="113" y="87" width="154" height="32.8"/>
-  </svg>
+  <!-- title: two lines in Taamim, centred in the cartouche; the script writes them in the code points of the font -->
+  <div class="cart"><div class="ttl"><span data-he="הכוונות קודם"></span><span data-he="תפילת שמונה עשרה"></span></div></div>
   <div class="panel" data-fit>
     <div class="items">
       <p><strong>יכוון</strong> לקיים מצות תפילה, כי מצות צריכות כוונה.<sup>1</sup></p>
@@ -99,14 +83,17 @@ sup { font-size:5pt; line-height:0; vertical-align:super; color:var(--gold); fon
   <div class="ded"><span>לעילוי נשמת <strong>אליהו ז״ל</strong> בן יבדלחט״א חיים מאיר עזריאל</span></div>
 </div>
 <script>
-(() => { const t = document.getElementById('ttl'), arc = document.getElementById('arc');
-  // Taamim: Hebrew letter -> U+F0E0 + (letter - alef), space -> U+F020; the code points are left-to-right, so the
-  // title is written reversed (visual order)
-  const he = t.dataset.he, sym = [...he].map(c => c === ' ' ? '\uF020' :
+(() => {
+  // Taamim: Hebrew letter -> U+F0E0 + (letter - alef), space -> U+F020; the code points run left to right,
+  // so every line is written reversed (visual order)
+  const sym = he => [...he].map(c => c === ' ' ? '\uF020' :
     (c >= '\u05D0' && c <= '\u05EA') ? String.fromCharCode(0xF0E0 + c.charCodeAt(0) - 0x05D0) : c).reverse().join('');
-  t.querySelector('textPath').textContent = sym;
-  const fit = () => { const want = arc.getTotalLength() * 0.84, have = t.getComputedTextLength();
-    t.style.fontSize = (parseFloat(getComputedStyle(t).fontSize) * want / have).toFixed(2) + 'px'; };
-  document.fonts.ready.then(() => { fit(); fit(); document.body.dataset.ready = 1; }); })();
+  const box = document.querySelector('.cart'), t = document.querySelector('.ttl');
+  t.querySelectorAll('span').forEach(s => s.textContent = sym(s.dataset.he));
+  // the largest size at which both lines fit the inside of the cartouche (94 % of its width, 92 % of its height)
+  const fit = () => { const k = Math.min(box.clientWidth * 0.94 / t.scrollWidth, box.clientHeight * 0.92 / t.scrollHeight);
+    t.style.fontSize = (parseFloat(getComputedStyle(t).fontSize) * k).toFixed(2) + 'px'; };
+  document.fonts.ready.then(() => { fit(); fit(); });
+})();
 </script>
 </body></html>
