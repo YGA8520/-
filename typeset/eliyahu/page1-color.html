@@ -4,6 +4,9 @@
      the title sits in the cartouche, the text in a cream panel drawn over the panel of the reference -->
 <style>
 @font-face { font-family:"BA Franknatan"; font-weight:700; src:url("../assets/fonts/BA-FRANKNATAN-BOLD.OTF"); }
+/* Taamim: an old symbol-encoded font (letters at U+F0E0-F0FA in cp1255 order, no Unicode Hebrew); the font
+   file is used as it is - the script below writes the title in its code points, in visual order */
+@font-face { font-family:"Taamim"; font-weight:400; src:url("../assets/fonts/TAAMIM.TTF"); }
 @page { size: 80mm 110mm; margin: 0; }
 html,body { margin:0; padding:0; }
 /* colours of the reference design: titles #662612, text #33110f, gold of its swirls */
@@ -14,7 +17,7 @@ body { font-family:"Guttman Drogolin",serif; color:var(--ink); }
 /* inside of the cartouche: 21 - 59 mm across, 1.5 - 15.5 mm down */
 .cart { position:absolute; left:21mm; top:1.5mm; width:38mm; height:14mm; overflow:visible; }
 /* font of the title: one place to change it */
-.ttl { font-family:"BA Franknatan",serif; font-weight:700; fill:var(--wine); font-size:34px; }
+.ttl { font-family:"Taamim",serif; font-weight:400; fill:var(--wine); font-size:34px; }
 /* the panel covers the panel of the reference (5.66 - 75.25 mm, 20.1 - 100.4 mm) */
 .panel { position:absolute; left:5.2mm; right:5.2mm; top:19.5mm; bottom:9.2mm; box-sizing:border-box;
          padding:2.6mm 3.4mm 2.6mm; border-radius:2.6mm; display:flex; flex-direction:column; text-align:center;
@@ -68,7 +71,7 @@ sup { font-size:5pt; line-height:0; vertical-align:super; color:var(--gold); fon
       <use href="#arc" stroke="#9c7536" stroke-width="49.5"/>
       <use href="#arc" stroke="#fbf3df" stroke-width="47"/>
     </g>
-    <text id="ttl" class="ttl" text-anchor="middle" dominant-baseline="central" direction="rtl"><textPath href="#arc" startOffset="50%">הכוונות קודם שמונה עשרה</textPath></text>
+    <text id="ttl" class="ttl" text-anchor="middle" dominant-baseline="central" direction="ltr" data-he="הכוונות קודם שמונה עשרה"><textPath href="#arc" startOffset="50%">הכוונות קודם שמונה עשרה</textPath></text>
     <image href="divider-swirl.svg" x="113" y="87" width="154" height="32.8"/>
   </svg>
   <div class="panel" data-fit>
@@ -97,6 +100,11 @@ sup { font-size:5pt; line-height:0; vertical-align:super; color:var(--gold); fon
 </div>
 <script>
 (() => { const t = document.getElementById('ttl'), arc = document.getElementById('arc');
+  // Taamim: Hebrew letter -> U+F0E0 + (letter - alef), space -> U+F020; the code points are left-to-right, so the
+  // title is written reversed (visual order)
+  const he = t.dataset.he, sym = [...he].map(c => c === ' ' ? '\uF020' :
+    (c >= '\u05D0' && c <= '\u05EA') ? String.fromCharCode(0xF0E0 + c.charCodeAt(0) - 0x05D0) : c).reverse().join('');
+  t.querySelector('textPath').textContent = sym;
   const fit = () => { const want = arc.getTotalLength() * 0.84, have = t.getComputedTextLength();
     t.style.fontSize = (parseFloat(getComputedStyle(t).fontSize) * want / have).toFixed(2) + 'px'; };
   document.fonts.ready.then(() => { fit(); fit(); document.body.dataset.ready = 1; }); })();
