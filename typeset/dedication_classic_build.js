@@ -14,7 +14,7 @@ const T = { w: 176, h: 250, x0: 17, x1: 159, top: 5.5, bottom: 241 };          /
 const DIRS = [path.join(__dirname, 'assets', 'fonts'), path.join(__dirname, '..', 'font-library', 'my-fonts', 'fonts'), process.env.FONT_DIR].filter(Boolean);
 const NOQ = 'U+0000-05F2,U+05F5-10FFFF';
 const FACES = [
-  ['Ded Title', 400, ['CALIG.TTF', 'ashkenazyregular.ttf'], 'StamAshkenazCLM.ttf'],
+  ['Ded Title', 400, ['EFT_Algebra OTS.ttf', 'ashkenazyregular.ttf'], 'StamAshkenazCLM.ttf'],
   ['Ded Name', 400, ['EFT_Pnina Decor.ttf', 'ashkenazyregular.ttf'], 'StamAshkenazCLM.ttf'],
   ['Ded Text', 700, ['EFT_Pnina Bold.ttf', 'פרנק בולד.otf'], 'FrankRuhlLibre.ttf'],
   ['Ded Lead', 400, ['EFT_Pnina.ttf', 'frank.otf'], 'FrankRuhlLibre.ttf'],
@@ -46,36 +46,32 @@ body { font-kerning: normal; text-rendering: geometricPrecision; }
 .page { position: relative; width: ${T.w}mm; height: ${T.h}mm; overflow: hidden; direction: rtl; color: ${ink}; background: #fff; }
 .frame { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
 .col { position: absolute; left: ${T.x0}mm; width: ${T.x1 - T.x0}mm; top: ${T.top}mm; height: ${T.bottom - T.top}mm; display: flex; flex-direction: column; align-items: center; text-align: center; }
-.titlerow { display: flex; align-items: center; justify-content: center; width: 100%; flex: none; }
-.titlerow .fl { width: 5.4mm; height: 21mm; position: relative; flex: none; }
-.titlerow .fl img { position: absolute; left: 50%; top: 50%; width: 21mm; height: auto; transform: translate(-50%, -50%) rotate(90deg); }
-.titlerow .mir { transform: scaleX(-1); }
-.band { flex: 1 1 auto; background: linear-gradient(to bottom, #ececed, #e2e2e3); border-top: 0.3mm solid ${rule}; border-bottom: 0.3mm solid ${rule}; padding: 1.4mm 5mm 1.2mm; margin: 0 0.6mm; }
-.t1 { font-family: "Ded Lead"; font-size: 13pt; line-height: 1.2; color: ${soft}; }
-.book { font-family: "Ded Title"; font-size: 34pt; line-height: 1.15; }
+.tf { position: relative; width: 138mm; aspect-ratio: 3304 / 995; margin-top: 3mm; flex: none; display: flex; align-items: center; justify-content: center; }
+.tf > img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.title { position: relative; font-family: "Ded Verse"; font-size: 30pt; line-height: 1; white-space: nowrap; margin-top: 1.6mm; }
+.t1 { font-family: "Ded Lead"; font-size: 14pt; line-height: 1.2; color: ${soft}; letter-spacing: 0.04em; }
+.book { font-family: "Ded Title"; font-size: 38pt; line-height: 1.2; margin-top: 0.6mm; }
 .sp { flex: 1 1 0; }
 .t2 { font-family: "Ded Lead"; font-size: 15pt; line-height: 1.55; }
 .honor { font-family: "Ded Lead"; font-size: 14pt; line-height: 1.5; color: ${soft}; }
-.nf { position: relative; width: 142mm; aspect-ratio: 3304 / 995; margin-top: 1.6mm; display: flex; align-items: center; justify-content: center; }
-.nf > img { position: absolute; inset: 0; width: 100%; height: 100%; }
-.name { position: relative; font-family: "Ded Name"; font-size: 34pt; line-height: 1; white-space: nowrap; margin-top: 0.8mm; }
+.name { font-family: "Ded Name"; font-size: 44pt; line-height: 1.2; white-space: nowrap; margin-top: 2.4mm; }
 .hy { font-family: "Ded Lead"; font-size: 15pt; margin-top: 1.4mm; }
-.div { width: 104mm; height: auto; display: block; }
 .bless { font-family: "Ded Text"; font-weight: 700; font-size: 16pt; line-height: 1.62; }
 .verse { font-family: "Ded Verse"; font-size: 25pt; line-height: 1.3; margin-top: 2.2mm; }
 .endo { width: 50mm; height: auto; display: block; }
 </style></head><body><div class="page" id="pg"><img class="frame" src="assets/haskamot/frame-silver.png">
 <div class="col" id="col">
-<div class="titlerow"><div class="fl">${sep}</div><div class="band"><div class="t1">${lines(c.top)}</div><div class="book">${esc(c.book)}</div></div><div class="fl mir">${sep}</div></div>
+<div class="tf"><img src="assets/ornaments/frame.png"><div class="title" id="title">${esc(c.title)}</div></div>
 <div class="sp" style="flex-grow:1"></div>
+<div class="t1">${lines(c.top)}</div>
+<div class="book">${esc(c.book)}</div>
+<div class="sp" style="flex-grow:0.5"></div>
 <div class="t2">${lines(c.sub)}</div>
 <div class="sp" style="flex-grow:0.8"></div>
 <div class="honor">${lines(c.honor)}</div>
-<div class="nf"><img src="assets/ornaments/frame.png"><div class="name" id="name">${esc(c.name)}</div></div>
+<div class="name" id="name">${esc(c.name)}</div>
 <div class="hy">${esc(c.hy)}</div>
-<div class="sp" style="flex-grow:1"></div>
-<img class="div" src="assets/ornaments/divider-long.png">
-<div class="sp" style="flex-grow:1"></div>
+<div class="sp" style="flex-grow:1.4"></div>
 <div class="bless">${lines(c.blessing)}</div>
 <div class="verse">״${esc(c.verse.text)}״</div>
 <div class="sp" style="flex-grow:1.1"></div>
@@ -88,10 +84,11 @@ body { font-kerning: normal; text-rendering: geometricPrecision; }
   await p.goto('file://' + path.join(__dirname, '_dedication.html'));
   await p.evaluate(async () => { await Promise.all([...document.images].map((i) => i.decode().catch(() => {}))); await document.fonts.ready; });
   const fit = await p.evaluate((MMv) => {
-    // the name: the largest size (up to 40 pt) at which it fits on one line inside the opening of the title frame of the booklet (74 % of its width)
-    const name = document.getElementById('name'), col = document.getElementById('col'), nf = name.parentElement;
-    let s = 40;
-    for (; s > 16; s -= 0.25) { name.style.fontSize = s + 'pt'; if (name.getBoundingClientRect().width <= 0.74 * nf.clientWidth) break; }
+    // the title: the largest size (up to 30 pt) that fills at most 70 % of the opening of the title frame; the name: the largest size (up to 44 pt) that fits the column
+    const title = document.getElementById('title'), tf = title.parentElement, name = document.getElementById('name'), col = document.getElementById('col');
+    for (let t = 30; t > 14; t -= 0.25) { title.style.fontSize = t + 'pt'; if (title.getBoundingClientRect().width <= 0.70 * tf.clientWidth) break; }
+    let s = 44;
+    for (; s > 16; s -= 0.25) { name.style.fontSize = s + 'pt'; if (name.getBoundingClientRect().width <= col.clientWidth - 16 * MMv) break; }
     const free = [...col.querySelectorAll('.sp')].reduce((u, e) => u + e.getBoundingClientRect().height, 0);
     return { namePt: s, freeMm: +(free / MMv).toFixed(1) };
   }, MM);
