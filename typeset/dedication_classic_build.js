@@ -3,8 +3,8 @@
  * space, a thin double rule round the page with the corner ornament of the booklet inside its corners, the small fleuron of the booklet above and below.
  * It differs from the other pages (a full frame instead of the two side rails, no grey bands) but uses only the fonts and ornaments of the booklet.
  *   node dedication_classic_build.js pages/<name>.json [out_dir]    ->  out_dir/<id>-classic.pdf, out_dir/<id>-classic.png
- * Fonts as in dedication_gold_build.js: assets/fonts, ../font-library/my-fonts/fonts, $FONT_DIR. Ashkenazy (the title of the booklet, the name),
- * FrankRuehl DP (the text; ׳ ״ from Frank Ruhl Libre), HadasaNew (the signature). */
+ * Fonts as in dedication_gold_build.js: assets/fonts, ../font-library/my-fonts/fonts, $FONT_DIR. EFT Algebra (the name of the booklet, as on the cover of
+ * Ritcha), Guttman Mantova Decor (the name of the donor), Guttman Mantova (the blessing, the verse, הי״ו), Livorna (the small lines), HadasaNew (the signature). */
 const fs = require('fs'), path = require('path');
 let chromium;
 try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = require('/opt/node22/lib/node_modules/playwright')); }
@@ -14,7 +14,11 @@ const T = { w: 176, h: 250, frame: 13, gap: 1.3 };                              
 const DIRS = [path.join(__dirname, 'assets', 'fonts'), path.join(__dirname, '..', 'font-library', 'my-fonts', 'fonts'), process.env.FONT_DIR].filter(Boolean);
 const NOQ = 'U+0000-05F2,U+05F5-10FFFF';
 const FACES = [
-  ['Ded Title', 400, ['ashkenazyregular.ttf'], 'StamAshkenazCLM.ttf'],
+  ['Ded Title', 400, ['EFT_Algebra OTS.ttf', 'ashkenazyregular.ttf'], 'StamAshkenazCLM.ttf'],
+  ['Ded Name', 400, ['MANTDEC.TTF', 'ashkenazyregular.ttf'], 'StamAshkenazCLM.ttf'],
+  ['Ded Text', 400, ['MANTM.TTF', 'frank.otf'], 'FrankRuhlLibre.ttf'],
+  ['Ded Text', 700, ['MANTB.TTF', 'פרנק בולד.otf'], 'FrankRuhlLibre.ttf'],
+  ['Ded Lead', 400, ['livornaregular.ttf', 'frank.otf'], 'FrankRuhlLibre.ttf'],
   ['Ded Body', 400, ['frank.otf'], 'FrankRuhlLibre.ttf', NOQ],
   ['Ded Body', 700, ['פרנק בולד.otf'], 'FrankRuhlLibre.ttf', NOQ],
   ['Ded Body', 400, ['-'], 'FrankRuhlLibre.ttf', 'U+05F3-05F4'],
@@ -56,15 +60,15 @@ body { font-kerning: normal; text-rendering: geometricPrecision; }
 .fl { width: 15mm; height: auto; display: block; opacity: 0.9; }
 .fl.dn { transform: scaleY(-1); }
 .sp { flex: 1 1 0; }
-.t1 { font-family: "Ded Body"; font-size: 13pt; letter-spacing: 0.04em; }
-.book { font-family: "Ded Title"; font-size: 25pt; line-height: 1.15; margin: 1mm 0 1.4mm; }
-.t2 { font-family: "Ded Body"; font-size: 13pt; line-height: 1.55; }
-.honor { font-family: "Ded Body"; font-size: 12pt; line-height: 1.5; color: ${soft}; }
-.name { font-family: "Ded Title"; font-size: 34pt; line-height: 1.2; white-space: nowrap; margin-top: 2.2mm; }
-.hy { font-family: "Ded Body"; font-size: 13pt; margin-top: 0.6mm; }
+.t1 { font-family: "Ded Lead"; font-size: 13pt; letter-spacing: 0.06em; }
+.book { font-family: "Ded Title"; font-size: 30pt; line-height: 1.2; margin: 0.6mm 0 1.6mm; }
+.t2 { font-family: "Ded Lead"; font-size: 13pt; line-height: 1.6; }
+.honor { font-family: "Ded Lead"; font-size: 12.5pt; line-height: 1.55; color: ${soft}; }
+.name { font-family: "Ded Name"; font-size: 40pt; line-height: 1.2; white-space: nowrap; margin-top: 2.4mm; }
+.hy { font-family: "Ded Text"; font-size: 14pt; margin-top: 0.8mm; }
 .bar { width: 26mm; border-top: 0.2mm solid ${rule}; }
-.bless { font-family: "Ded Body"; font-size: 12.5pt; line-height: 1.7; }
-.verse { font-family: "Ded Body"; font-weight: 700; font-size: 14pt; margin-top: 1.4mm; }
+.bless { font-family: "Ded Text"; font-size: 13.5pt; line-height: 1.62; }
+.verse { font-family: "Ded Text"; font-weight: 700; font-size: 15pt; margin-top: 1.6mm; }
 .verse .s { font-weight: 400; font-size: 9.5pt; color: ${soft}; margin-right: 1.5mm; }
 .foot { display: flex; flex-direction: column; align-items: center; gap: 1.8mm; }
 .foot img { width: 15mm; height: auto; display: block; opacity: 0.9; }
@@ -98,9 +102,9 @@ body { font-kerning: normal; text-rendering: geometricPrecision; }
   await p.goto('file://' + path.join(__dirname, '_dedication.html'));
   await p.evaluate(async () => { await Promise.all([...document.images].map((i) => i.decode().catch(() => {}))); await document.fonts.ready; });
   const fit = await p.evaluate((MMv) => {
-    // the name: the largest size (up to 34 pt) at which it fits on one line
+    // the name: the largest size (up to 40 pt) at which it fits on one line
     const name = document.getElementById('name'), col = document.getElementById('col');
-    let s = 34;
+    let s = 40;
     for (; s > 16; s -= 0.25) { name.style.fontSize = s + 'pt'; if (name.scrollWidth <= col.clientWidth) break; }
     const free = [...col.querySelectorAll('.sp')].reduce((u, e) => u + e.getBoundingClientRect().height, 0);
     return { namePt: s, freeMm: +(free / MMv).toFixed(1) };
