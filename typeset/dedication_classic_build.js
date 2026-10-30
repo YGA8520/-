@@ -10,20 +10,15 @@ let chromium;
 try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = require('/opt/node22/lib/node_modules/playwright')); }
 
 const MM = 96 / 25.4;
-const T = { w: 176, h: 250, frame: 13, gap: 1.3 };                              // page; distance of the outer rule from the edge, distance between the two rules (mm)
+const T = { w: 176, h: 250, x0: 17, x1: 159, top: 5.5, bottom: 241 };          // page, the free area between the silver rails of the haskamot (mm)
 const DIRS = [path.join(__dirname, 'assets', 'fonts'), path.join(__dirname, '..', 'font-library', 'my-fonts', 'fonts'), process.env.FONT_DIR].filter(Boolean);
 const NOQ = 'U+0000-05F2,U+05F5-10FFFF';
 const FACES = [
-  ['Ded Title', 400, ['EFT_Algebra OTS.ttf', 'ashkenazyregular.ttf'], 'StamAshkenazCLM.ttf'],
-  ['Ded Name', 400, ['MANTDEC.TTF', 'ashkenazyregular.ttf'], 'StamAshkenazCLM.ttf'],
-  ['Ded Text', 400, ['MANTM.TTF', 'frank.otf'], 'FrankRuhlLibre.ttf'],
-  ['Ded Text', 700, ['MANTB.TTF', 'פרנק בולד.otf'], 'FrankRuhlLibre.ttf'],
-  ['Ded Lead', 400, ['livornaregular.ttf', 'frank.otf'], 'FrankRuhlLibre.ttf'],
-  ['Ded Body', 400, ['frank.otf'], 'FrankRuhlLibre.ttf', NOQ],
-  ['Ded Body', 700, ['פרנק בולד.otf'], 'FrankRuhlLibre.ttf', NOQ],
-  ['Ded Body', 400, ['-'], 'FrankRuhlLibre.ttf', 'U+05F3-05F4'],
-  ['Ded Body', 700, ['-'], 'FrankRuhlLibre.ttf', 'U+05F3-05F4'],
-  ['Ded Small', 400, ['hadasanewregular.ttf'], 'DavidLibre-Regular.ttf'],
+  ['Ded Title', 400, ['CALIG.TTF', 'ashkenazyregular.ttf'], 'StamAshkenazCLM.ttf'],
+  ['Ded Name', 400, ['EFT_Pnina Decor.ttf', 'ashkenazyregular.ttf'], 'StamAshkenazCLM.ttf'],
+  ['Ded Text', 700, ['EFT_Pnina Bold.ttf', 'פרנק בולד.otf'], 'FrankRuhlLibre.ttf'],
+  ['Ded Lead', 400, ['EFT_Pnina.ttf', 'frank.otf'], 'FrankRuhlLibre.ttf'],
+  ['Ded Verse', 400, ['stamashkenazyregular.ttf'], 'StamAshkenazCLM.ttf'],
 ];
 
 (async () => {
@@ -37,10 +32,10 @@ const FACES = [
     console.log(`${fam} ${w}: ${f ? path.basename(f) : 'fallback ' + fb}`);
     return `@font-face{font-family:"${fam}";font-weight:${w};${range ? 'unicode-range:' + range + ';' : ''}src:url("${encodeURI('file://' + (f || path.join(__dirname, 'assets', 'fonts', fb)))}");}`;
   }).join('\n');
-  const ink = '#1a1a1a', soft = '#555', rule = '#2a2a2a';
-  const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const ink = '#1a1a1a', soft = '#4a4a4a', rule = '#8f9296';
+  const esc = (x) => x.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   const lines = (a) => a.map(esc).join('<br>');
-  const f = T.frame, g = T.gap;
+  const sep = '<img src="assets/cover/fleuron-sep.png">';
 
   const html = `<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><style>
 @page { size: ${T.w}mm ${T.h}mm; margin: 0; }
@@ -49,51 +44,42 @@ ${css}
 html, body { margin: 0; padding: 0; background: #fff; -webkit-print-color-adjust: exact; }
 body { font-kerning: normal; text-rendering: geometricPrecision; }
 .page { position: relative; width: ${T.w}mm; height: ${T.h}mm; overflow: hidden; direction: rtl; color: ${ink}; background: #fff; }
-.r1 { position: absolute; inset: ${f}mm; border: 0.45mm solid ${rule}; }
-.r2 { position: absolute; inset: ${f + g}mm; border: 0.15mm solid ${rule}; }
-.cn { position: absolute; width: 17mm; height: 17mm; background: url("assets/ornaments/corner.png") center / contain no-repeat; opacity: 0.85; }
-.cn.tr { top: ${f + g + 1.2}mm; right: ${f + g + 1.2}mm; }
-.cn.tl { top: ${f + g + 1.2}mm; left: ${f + g + 1.2}mm; transform: scaleX(-1); }
-.cn.br { bottom: ${f + g + 1.2}mm; right: ${f + g + 1.2}mm; transform: scaleY(-1); }
-.cn.bl { bottom: ${f + g + 1.2}mm; left: ${f + g + 1.2}mm; transform: scale(-1, -1); }
-.col { position: absolute; left: ${f + 18}mm; right: ${f + 18}mm; top: ${f + 13}mm; bottom: ${f + 11}mm; display: flex; flex-direction: column; align-items: center; text-align: center; }
-.fl { width: 15mm; height: auto; display: block; opacity: 0.9; }
-.fl.dn { transform: scaleY(-1); }
+.frame { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+.col { position: absolute; left: ${T.x0}mm; width: ${T.x1 - T.x0}mm; top: ${T.top}mm; height: ${T.bottom - T.top}mm; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.titlerow { display: flex; align-items: center; justify-content: center; width: 100%; flex: none; }
+.titlerow .fl { width: 5.4mm; height: 21mm; position: relative; flex: none; }
+.titlerow .fl img { position: absolute; left: 50%; top: 50%; width: 21mm; height: auto; transform: translate(-50%, -50%) rotate(90deg); }
+.titlerow .mir { transform: scaleX(-1); }
+.band { flex: 1 1 auto; background: linear-gradient(to bottom, #ececed, #e2e2e3); border-top: 0.3mm solid ${rule}; border-bottom: 0.3mm solid ${rule}; padding: 1.4mm 5mm 1.2mm; margin: 0 0.6mm; }
+.t1 { font-family: "Ded Lead"; font-size: 13pt; line-height: 1.2; color: ${soft}; }
+.book { font-family: "Ded Title"; font-size: 34pt; line-height: 1.15; }
 .sp { flex: 1 1 0; }
-.t1 { font-family: "Ded Lead"; font-size: 13pt; letter-spacing: 0.06em; }
-.book { font-family: "Ded Title"; font-size: 30pt; line-height: 1.2; margin: 0.6mm 0 1.6mm; }
-.t2 { font-family: "Ded Lead"; font-size: 13pt; line-height: 1.6; }
-.honor { font-family: "Ded Lead"; font-size: 12.5pt; line-height: 1.55; color: ${soft}; }
-.name { font-family: "Ded Name"; font-size: 40pt; line-height: 1.2; white-space: nowrap; margin-top: 2.4mm; }
-.hy { font-family: "Ded Text"; font-size: 14pt; margin-top: 0.8mm; }
-.bar { width: 26mm; border-top: 0.2mm solid ${rule}; }
-.bless { font-family: "Ded Text"; font-size: 13.5pt; line-height: 1.62; }
-.verse { font-family: "Ded Text"; font-weight: 700; font-size: 15pt; margin-top: 1.6mm; }
-.verse .s { font-weight: 400; font-size: 9.5pt; color: ${soft}; margin-right: 1.5mm; }
-.foot { display: flex; flex-direction: column; align-items: center; gap: 1.8mm; }
-.foot img { width: 15mm; height: auto; display: block; opacity: 0.9; }
-.sign { font-family: "Ded Small"; font-size: 9pt; color: ${soft}; letter-spacing: 0.02em; }
-</style></head><body><div class="page" id="pg">
-<div class="r1"></div><div class="r2"></div><div class="cn tr"></div><div class="cn tl"></div><div class="cn br"></div><div class="cn bl"></div>
+.t2 { font-family: "Ded Lead"; font-size: 15pt; line-height: 1.55; }
+.honor { font-family: "Ded Lead"; font-size: 14pt; line-height: 1.5; color: ${soft}; }
+.nf { position: relative; width: 142mm; aspect-ratio: 3304 / 995; margin-top: 1.6mm; display: flex; align-items: center; justify-content: center; }
+.nf > img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.name { position: relative; font-family: "Ded Name"; font-size: 34pt; line-height: 1; white-space: nowrap; margin-top: 0.8mm; }
+.hy { font-family: "Ded Lead"; font-size: 15pt; margin-top: 1.4mm; }
+.div { width: 104mm; height: auto; display: block; }
+.bless { font-family: "Ded Text"; font-weight: 700; font-size: 16pt; line-height: 1.62; }
+.verse { font-family: "Ded Verse"; font-size: 25pt; line-height: 1.3; margin-top: 2.2mm; }
+.endo { width: 50mm; height: auto; display: block; }
+</style></head><body><div class="page" id="pg"><img class="frame" src="assets/haskamot/frame-silver.png">
 <div class="col" id="col">
-<img class="fl" src="assets/ornaments/fleuron-small.png">
-<div class="sp" style="flex-grow:1.1"></div>
-<div class="t1">${lines(c.top)}</div>
-<div class="book">${esc(c.book)}</div>
+<div class="titlerow"><div class="fl">${sep}</div><div class="band"><div class="t1">${lines(c.top)}</div><div class="book">${esc(c.book)}</div></div><div class="fl mir">${sep}</div></div>
+<div class="sp" style="flex-grow:1"></div>
 <div class="t2">${lines(c.sub)}</div>
-<div class="sp" style="flex-grow:0.9"></div>
+<div class="sp" style="flex-grow:0.8"></div>
 <div class="honor">${lines(c.honor)}</div>
-<div class="name" id="name">${esc(c.name)}</div>
+<div class="nf"><img src="assets/ornaments/frame.png"><div class="name" id="name">${esc(c.name)}</div></div>
 <div class="hy">${esc(c.hy)}</div>
 <div class="sp" style="flex-grow:1"></div>
-<div class="bar"></div>
+<img class="div" src="assets/ornaments/divider-long.png">
 <div class="sp" style="flex-grow:1"></div>
 <div class="bless">${lines(c.blessing)}</div>
-<div class="verse">״${esc(c.verse.text)}״<span class="s">(${esc(c.verse.src)})</span></div>
-<div class="sp" style="flex-grow:1.2"></div>
-<img class="fl dn" src="assets/ornaments/fleuron-small.png">
-<div class="sp" style="flex-grow:0.5"></div>
-<div class="foot"><img src="assets/cover/logo-grey.png"><div class="sign">${esc(c.sign)}</div></div>
+<div class="verse">״${esc(c.verse.text)}״</div>
+<div class="sp" style="flex-grow:1.1"></div>
+<img class="endo" src="assets/ornaments/flourish-wide-2.png">
 </div></div></body></html>`;
   fs.writeFileSync(path.join(__dirname, '_dedication.html'), html);
 
@@ -102,10 +88,10 @@ body { font-kerning: normal; text-rendering: geometricPrecision; }
   await p.goto('file://' + path.join(__dirname, '_dedication.html'));
   await p.evaluate(async () => { await Promise.all([...document.images].map((i) => i.decode().catch(() => {}))); await document.fonts.ready; });
   const fit = await p.evaluate((MMv) => {
-    // the name: the largest size (up to 40 pt) at which it fits on one line
-    const name = document.getElementById('name'), col = document.getElementById('col');
+    // the name: the largest size (up to 40 pt) at which it fits on one line inside the opening of the title frame of the booklet (74 % of its width)
+    const name = document.getElementById('name'), col = document.getElementById('col'), nf = name.parentElement;
     let s = 40;
-    for (; s > 16; s -= 0.25) { name.style.fontSize = s + 'pt'; if (name.scrollWidth <= col.clientWidth) break; }
+    for (; s > 16; s -= 0.25) { name.style.fontSize = s + 'pt'; if (name.getBoundingClientRect().width <= 0.74 * nf.clientWidth) break; }
     const free = [...col.querySelectorAll('.sp')].reduce((u, e) => u + e.getBoundingClientRect().height, 0);
     return { namePt: s, freeMm: +(free / MMv).toFixed(1) };
   }, MM);
