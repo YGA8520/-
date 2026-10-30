@@ -11,6 +11,8 @@ try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = requ
 
 const MM = 96 / 25.4;
 const T = { w: 176, h: 250, x0: 17, x1: 159, top: 5.5, bottom: 241 };          // page, the free area between the silver rails of the haskamot (mm)
+const A = { w: 142, r: 92, span: 0.76, top: 13, ow: 25, gap: 3.2, nest: 15 };      // the arc of the title: width of the svg, radius, half angle (rad), height of the apex of the baseline, width of a flourish, gap text-flourish, how far the lines below rise into the arc (mm)
+A.cy = A.top + A.r; A.h = A.cy - A.r * Math.cos(A.span) + 6;
 const DIRS = [path.join(__dirname, 'assets', 'fonts'), path.join(__dirname, '..', 'font-library', 'my-fonts', 'fonts'), process.env.FONT_DIR].filter(Boolean);
 const NOQ = 'U+0000-05F2,U+05F5-10FFFF';
 const FACES = [
@@ -46,9 +48,10 @@ body { font-kerning: normal; text-rendering: geometricPrecision; }
 .page { position: relative; width: ${T.w}mm; height: ${T.h}mm; overflow: hidden; direction: rtl; color: ${ink}; background: #fff; }
 .frame { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
 .col { position: absolute; left: ${T.x0}mm; width: ${T.x1 - T.x0}mm; top: ${T.top}mm; height: ${T.bottom - T.top}mm; display: flex; flex-direction: column; align-items: center; text-align: center; }
-.tf { position: relative; width: 138mm; aspect-ratio: 3304 / 995; margin-top: 3mm; flex: none; display: flex; align-items: center; justify-content: center; }
-.tf > img { position: absolute; inset: 0; width: 100%; height: 100%; }
-.title { position: relative; font-family: "Ded Verse"; font-size: 30pt; line-height: 1; white-space: nowrap; margin-top: 1.6mm; }
+.arc { display: block; width: ${A.w}mm; height: ${A.h}mm; margin-top: 4mm; flex: none; overflow: visible; }
+.arc text { font-family: "Ded Verse"; fill: ${ink}; }
+.arc image { opacity: 0.8; }
+.under { margin-top: -${A.nest}mm; display: flex; flex-direction: column; align-items: center; }
 .t1 { font-family: "Ded Lead"; font-size: 14pt; line-height: 1.2; color: ${soft}; letter-spacing: 0.04em; }
 .book { font-family: "Ded Title"; font-size: 38pt; line-height: 1.2; margin-top: 0.6mm; }
 .sp { flex: 1 1 0; }
@@ -61,10 +64,11 @@ body { font-kerning: normal; text-rendering: geometricPrecision; }
 .endo { width: 50mm; height: auto; display: block; }
 </style></head><body><div class="page" id="pg"><img class="frame" src="assets/haskamot/frame-silver.png">
 <div class="col" id="col">
-<div class="tf"><img src="assets/ornaments/frame.png"><div class="title" id="title">${esc(c.title)}</div></div>
-<div class="sp" style="flex-grow:1"></div>
-<div class="t1">${lines(c.top)}</div>
-<div class="book">${esc(c.book)}</div>
+<svg class="arc" id="arc" viewBox="0 0 ${A.w} ${A.h}"><defs><path id="ap" d="M ${A.w / 2 - A.r * Math.sin(A.span)} ${A.cy - A.r * Math.cos(A.span)} A ${A.r} ${A.r} 0 0 1 ${A.w / 2 + A.r * Math.sin(A.span)} ${A.cy - A.r * Math.cos(A.span)}"/></defs>
+<text id="title" direction="rtl" text-anchor="middle" font-size="12"><textPath href="#ap" startOffset="50%">${esc(c.title)}</textPath></text>
+<image id="o1" href="assets/cover/fleuron-sep.png" width="${A.ow}" height="${A.ow * 168 / 648}"/><image id="o2" href="assets/cover/fleuron-sep.png" width="${A.ow}" height="${A.ow * 168 / 648}"/></svg>
+<div class="under"><div class="t1">${lines(c.top)}</div>
+<div class="book">${esc(c.book)}</div></div>
 <div class="sp" style="flex-grow:0.5"></div>
 <div class="t2">${lines(c.sub)}</div>
 <div class="sp" style="flex-grow:0.8"></div>
@@ -83,15 +87,26 @@ body { font-kerning: normal; text-rendering: geometricPrecision; }
   const p = await browser.newPage({ viewport: { width: 700, height: 1000 }, deviceScaleFactor: 4 });
   await p.goto('file://' + path.join(__dirname, '_dedication.html'));
   await p.evaluate(async () => { await Promise.all([...document.images].map((i) => i.decode().catch(() => {}))); await document.fonts.ready; });
-  const fit = await p.evaluate((MMv) => {
+  const fit = await p.evaluate(([MMv, arcGeom]) => {
     // the title: the largest size (up to 30 pt) that fills at most 70 % of the opening of the title frame; the name: the largest size (up to 44 pt) that fits the column
-    const title = document.getElementById('title'), tf = title.parentElement, name = document.getElementById('name'), col = document.getElementById('col');
-    for (let t = 30; t > 14; t -= 0.25) { title.style.fontSize = t + 'pt'; if (title.getBoundingClientRect().width <= 0.70 * tf.clientWidth) break; }
+    // the title on the arc: the largest size (up to 16 mm) whose length is at most 66 % of the arc; the two flourishes stand on the arc just beyond its ends,
+    // turned along it (the one on the right mirrored)
+    const title = document.getElementById('title'), name = document.getElementById('name'), col = document.getElementById('col'), A = arcGeom;
+    const arcLen = 2 * A.r * A.span;
+    let t = 16;
+    for (; t > 6; t -= 0.1) { title.setAttribute('font-size', t); if (title.getComputedTextLength() <= 0.66 * arcLen) break; }
+    const half = title.getComputedTextLength() / 2 / A.r, oh = A.ow * 168 / 648;
+    [['o1', -1], ['o2', 1]].forEach(([id, side]) => {
+      const a = side * (half + (A.gap + A.ow / 2) / A.r), x = A.w / 2 + A.r * Math.sin(a), y = A.cy - A.r * Math.cos(a) - 0.36 * t;
+      const deg = a * 180 / Math.PI, im = document.getElementById(id);
+      im.setAttribute('x', -A.ow / 2); im.setAttribute('y', -oh / 2);
+      im.setAttribute('transform', `translate(${x} ${y}) rotate(${deg})${side > 0 ? ' scale(-1 1)' : ''}`);
+    });
     let s = 44;
     for (; s > 16; s -= 0.25) { name.style.fontSize = s + 'pt'; if (name.getBoundingClientRect().width <= col.clientWidth - 16 * MMv) break; }
     const free = [...col.querySelectorAll('.sp')].reduce((u, e) => u + e.getBoundingClientRect().height, 0);
-    return { namePt: s, freeMm: +(free / MMv).toFixed(1) };
-  }, MM);
+    return { titleMm: +t.toFixed(1), namePt: s, freeMm: +(free / MMv).toFixed(1) };
+  }, [MM, A]);
   console.log(JSON.stringify(fit));
   if (fit.freeMm < 12) { console.error('the page is too full'); await browser.close(); process.exit(1); }
   await p.pdf({ path: path.join(outDir, d.id + '-classic.pdf'), width: `${T.w}mm`, height: `${T.h}mm`, printBackground: true, preferCSSPageSize: true });
