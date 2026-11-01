@@ -15,7 +15,7 @@ body { font-family:"Guttman Drogolin",serif; color:var(--ink); }
 .page { width:80mm; height:110mm; position:relative; overflow:hidden; }
 .bg { position:absolute; inset:0; width:100%; height:100%; display:block; }
 /* inside of the cartouche: 21 - 59 mm across, 1.5 - 15.5 mm down */
-.cart { position:absolute; left:21mm; top:1.5mm; width:38mm; height:14mm; display:flex; align-items:center; justify-content:center; }
+.cart { position:absolute; left:21mm; top:5.2mm; width:38mm; height:10.4mm; display:flex; align-items:center; justify-content:center; }
 /* Taamim has a single (regular) weight: the bold is a stroke in the colour of the letters */
 .ttl { font-family:"Taamim",serif; font-weight:400; color:var(--wine); font-size:20pt; line-height:1.02; text-align:center;
        direction:ltr; -webkit-text-stroke:0.035em var(--wine); paint-order:stroke fill; }
@@ -52,8 +52,8 @@ sup { font-size:5pt; line-height:0; vertical-align:super; color:var(--gold); fon
 .tip { margin:1.1mm -3.4mm 0; padding:0.8mm 4mm; font-size:5.9pt; line-height:1.35;
        background:linear-gradient(to right, rgba(226,207,163,0), rgba(226,207,163,.55) 22%, rgba(226,207,163,.55) 78%, rgba(226,207,163,0)); }
 .tip strong { color:var(--wine); }
-/* בס״ד in the top right corner of the panel (inside the safe area, away from the trim) */
-.bsd { position:absolute; top:1.1mm; right:2.2mm; font-size:5.2pt; line-height:1; color:var(--wine); }
+/* בס״ד centred above the title, inside the cartouche, 3 mm from the trim (safe from the cut) */
+.bsd { position:absolute; left:21mm; width:38mm; top:3mm; text-align:center; font-size:5.4pt; line-height:1; color:var(--wine); }
 /* dedication on the marble under the panel (100.8 - 106.5 mm, above the bar of the frame) */
 .ded { position:absolute; left:9mm; right:9mm; top:100.8mm; height:5.8mm; display:flex; align-items:center; justify-content:center;
        white-space:nowrap; font-size:6.4pt; line-height:1;
@@ -63,9 +63,9 @@ sup { font-size:5pt; line-height:0; vertical-align:super; color:var(--gold); fon
 <div class="page">
   <img class="bg" src="bg-color.jpg" alt="">
   <!-- title: two lines in Taamim, centred in the cartouche; the script writes them in the code points of the font -->
+  <div class="bsd">בס״ד</div>
   <div class="cart"><div class="ttl"><span data-he="הכוונות קודם" data-orn></span><span data-he="תפילת שמונה עשרה"></span></div></div>
   <div class="panel" data-fit>
-    <div class="bsd">בס״ד</div>
     <div class="items">
       <p><strong>יכוון</strong> לקיים מצות תפילה, כי מצות צריכות כוונה.<sup>1</sup></p>
       <img class="dv" src="divider-swirl.svg" alt="">
