@@ -2,12 +2,15 @@
 // BLEED=3 node eliyahu/build.js out_dir page1-color  -> <page>-bleed.pdf: (80 + 2*3) x (110 + 2*3) mm, the artwork runs into
 //   the bleed (bg-color-bleed.jpg, make_bleed_bg.py); make_print_sheet.py then adds the crop marks and the PDF boxes
 // PLAIN=1 (page1-color): the title without the leaves of the frame, outputs named <page>-plain*
+// DED=eliyahu|refua|hatzlacha|zivug (page1-color): which dedication; outputs named <page>[-plain]-<ded> (none = as in the page)
 const { chromium } = require('playwright'); const path = require('path'); const fs = require('fs');
 (async () => {
   const out = process.argv[2] || 'out/eliyahu', name = process.argv[3] || 'page1'; fs.mkdirSync(out, { recursive: true });
   const b = await chromium.launch(); const p = await b.newPage({ deviceScaleFactor: 600 / 96 });
-  const plain = !!process.env.PLAIN, tag = name + (plain ? '-plain' : '');
-  await p.goto('file://' + path.resolve(__dirname, name + '.html') + (plain ? '#plain' : '')); await p.evaluate(() => document.fonts.ready); await p.waitForTimeout(150);
+  const plain = !!process.env.PLAIN, ded = process.env.DED || '';
+  const tag = name + (plain ? '-plain' : '') + (ded ? '-' + ded : '');
+  const hash = [plain ? 'plain' : '', ded ? 'ded=' + ded : ''].filter(Boolean).join('&');
+  await p.goto('file://' + path.resolve(__dirname, name + '.html') + (hash ? '#' + hash : '')); await p.evaluate(() => document.fonts.ready); await p.waitForTimeout(150);
   // overflow = how far the last block reaches below the padding of the box that must hold the text
   // ([data-fit], else the page) in mm; free = height of the spacer
   const m = await p.evaluate(() => { const pg = document.querySelector('[data-fit]') || document.querySelector('.page'), k = 25.4 / 96;

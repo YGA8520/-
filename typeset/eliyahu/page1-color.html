@@ -109,6 +109,22 @@ sup { font-size:5pt; line-height:0; vertical-align:super; color:var(--gold); fon
   </div>
 </div>
 <script>
+// options in the hash, e.g. #plain&ded=refua : plain = the title without the two leaves; ded = which dedication
+const opts = new Map(location.hash.slice(1).split('&').filter(Boolean).map(kv => kv.split('=')));
+(() => {
+  // the dedication under the panel; the name of the person in the colour of the titles (<strong>)
+  const DED = {
+    eliyahu: 'לעילוי נשמת <strong>אליהו ז״ל</strong> בן יבדלחט״א חיים מאיר־עזריאל',
+    refua:   'לרפואת <strong>אפרת מרים לידיה</strong> בת נחמה בתוך שאר חולי ישראל',
+    hatzlacha: 'הוקדש על ידי הנגיד <strong>יוסף ג׳ורג׳</strong> בן ימנה להצלחה בכל העניינים במהרה',
+    zivug:   'לזכות <strong>הודיה</strong> בת אסתר לזיווג הגון בקרוב ממש',
+  };
+  const d = document.querySelector('.ded');
+  if (opts.has('ded')) d.innerHTML = DED[opts.get('ded')];
+  // one line: a long dedication gets smaller until it fits 64 mm (the band keeps 8 mm from the trim)
+  document.fonts.ready.then(() => { const max = 64 / 25.4 * 96;
+    if (d.scrollWidth > max) d.style.fontSize = (parseFloat(getComputedStyle(d).fontSize) * max / d.scrollWidth).toFixed(2) + 'px'; });
+})();
 (() => {
   // Taamim: Hebrew letter -> U+F0E0 + (letter - alef), space -> U+F020; the code points run left to right,
   // so every line is written reversed (visual order)
@@ -116,7 +132,7 @@ sup { font-size:5pt; line-height:0; vertical-align:super; color:var(--gold); fon
     (c >= '\u05D0' && c <= '\u05EA') ? String.fromCharCode(0xF0E0 + c.charCodeAt(0) - 0x05D0) : c).reverse().join('');
   const box = document.querySelector('.cart'), t = document.querySelector('.ttl');
   t.querySelectorAll('span').forEach(s => {
-    if (s.hasAttribute('data-orn') && location.hash !== '#plain')   // #plain: the title without the two leaves
+    if (s.hasAttribute('data-orn') && !opts.has('plain'))   // #plain: the title without the two leaves
       s.innerHTML = '<img class="orn l" src="flourish-frame.png" alt=""><b style="font-weight:inherit">' + sym(s.dataset.he) +
                     '</b><img class="orn r" src="flourish-frame.png" alt="">';
     else s.textContent = sym(s.dataset.he); });
