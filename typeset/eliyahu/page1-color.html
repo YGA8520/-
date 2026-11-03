@@ -26,8 +26,8 @@ body { font-family:"Guttman Drogolin",serif; color:var(--ink); }
 .ttl img.orn { height:0.66em; width:auto; display:block; position:relative; top:-0.04em; }
 .ttl img.orn.l { transform:scaleX(-1); }
 /* the panel covers the panel of the reference (5.66 - 75.25 mm, from 20.1 mm); under 91.5 mm the reference panel was
-   replaced by marble (clean_bg.py, marble_from 1650 px), where the bottom band stands */
-.panel { position:absolute; left:5.2mm; right:5.2mm; top:19.5mm; bottom:18.5mm; box-sizing:border-box;
+   replaced by marble (clean_bg.py, marble_from 1615 px), where the bottom band stands */
+.panel { position:absolute; left:5.2mm; right:5.2mm; top:19.5mm; bottom:19.45mm; box-sizing:border-box;
          padding:2.6mm 3.4mm 2.6mm; border-radius:2.6mm; display:flex; flex-direction:column; text-align:center;
          background:radial-gradient(ellipse at 50% 40%, #fffdf6 0%, #fbf6e8 70%, #f5eedb 100%);
          box-shadow:0 0 0 0.25mm rgba(255,255,255,.9), 0 0.6mm 2.2mm rgba(80,55,25,.28); }
@@ -55,21 +55,21 @@ sup { font-size:5pt; line-height:0; vertical-align:super; color:var(--gold); fon
    activities of the organisation beside it, as its caption (no rule between them); the line for quantities under all,
    centred on the page. The band may be wider than the panel. A soft cream glow without an edge keeps the small text
    clear of the veins */
-.band { position:absolute; left:4.5mm; right:4.5mm; top:92.1mm; height:14.4mm; display:flex; flex-direction:column;
-        align-items:center; justify-content:center; gap:0.75mm;
+.band { position:absolute; left:4.5mm; right:4.5mm; top:90.55mm; height:16mm; box-sizing:border-box; padding-top:1.6mm;
+        display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:0.75mm;
         background:radial-gradient(ellipse 60% 62% at 50% 52%, rgba(253,249,238,.92) 0%, rgba(253,249,238,.75) 55%, rgba(253,249,238,0) 100%); }
 .ded { white-space:nowrap; font-size:6.4pt; line-height:1; color:var(--ink); }
 .ded strong { color:var(--wine); }
-.org { display:flex; align-items:center; justify-content:center; gap:1.6mm; }
+.org { display:flex; align-items:center; justify-content:center; gap:1.5mm; margin-top:1.25mm; }   /* air under the dedication */
 .org .sep { align-self:stretch; border-right:0.15mm solid var(--gold); margin:0.6mm 0; opacity:.7; }
-.phones { display:flex; flex-direction:column; gap:0.55mm; font-size:4.7pt; line-height:1.18; color:var(--ink); text-align:center; white-space:nowrap; }
+.phones { display:flex; flex-direction:column; gap:0.45mm; font-size:4.4pt; line-height:1.15; color:var(--ink); text-align:center; white-space:nowrap; }
 .phones b { color:var(--wine); }
 .brand { display:flex; align-items:center; gap:1.1mm; }
-.brand img { height:8.2mm; display:block; }
-.acts { list-style:none; margin:0; padding:0; font-size:4.7pt; line-height:1.2; color:var(--ink); text-align:right; display:flex; flex-direction:column; gap:0.45mm; }
+.brand img { height:7mm; display:block; }
+.acts { list-style:none; margin:0; padding:0; font-size:4.4pt; line-height:1.2; color:var(--ink); text-align:right; display:flex; flex-direction:column; gap:0.35mm; }
 .acts li { white-space:nowrap; }
 .acts li::before { content:""; display:inline-block; width:0.5mm; height:0.5mm; background:var(--gold-l); transform:rotate(45deg); margin-left:0.7mm; position:relative; top:-0.25mm; }
-.qty { white-space:nowrap; font-size:4.2pt; line-height:1; color:var(--ink); }
+.qty { white-space:nowrap; font-size:4pt; line-height:1; color:var(--ink); }
 .qty b { color:var(--wine); }
 </style></head><body>
 <div class="page">
