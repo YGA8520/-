@@ -51,22 +51,26 @@ sup { font-size:5pt; line-height:0; vertical-align:super; color:var(--gold); fon
 /* בס״ד very small, centred above the title; the title box keeps its size (so the title its size) and is only moved
    0.9 mm down into the free space at the foot of the cartouche */
 .bsd { position:absolute; left:21mm; width:38mm; top:2.25mm; text-align:center; font-size:3.8pt; line-height:1; color:var(--wine); }
-/* bottom band on the marble (92 - 106.5 mm, above the bar of the frame): the dedication, then the organisation in three
-   columns - phones | logo | activities; a soft cream glow without an edge keeps the small text clear of the veins */
-.band { position:absolute; left:5.5mm; right:5.5mm; top:92.2mm; height:14.2mm; display:flex; flex-direction:column;
-        align-items:center; justify-content:center; gap:1.1mm;
+/* bottom band on the marble (92 - 106.5 mm, above the bar of the frame): the dedication; the phones | the logo with the
+   activities of the organisation beside it, as its caption (no rule between them); the line for quantities under all,
+   centred on the page. The band may be wider than the panel. A soft cream glow without an edge keeps the small text
+   clear of the veins */
+.band { position:absolute; left:4.5mm; right:4.5mm; top:92.1mm; height:14.4mm; display:flex; flex-direction:column;
+        align-items:center; justify-content:center; gap:0.75mm;
         background:radial-gradient(ellipse 60% 62% at 50% 52%, rgba(253,249,238,.92) 0%, rgba(253,249,238,.75) 55%, rgba(253,249,238,0) 100%); }
 .ded { white-space:nowrap; font-size:6.4pt; line-height:1; color:var(--ink); }
 .ded strong { color:var(--wine); }
-.org { display:flex; align-items:center; justify-content:center; gap:1.4mm; }
-.org img { height:8.2mm; display:block; }
+.org { display:flex; align-items:center; justify-content:center; gap:1.6mm; }
 .org .sep { align-self:stretch; border-right:0.15mm solid var(--gold); margin:0.6mm 0; opacity:.7; }
-.phones { display:flex; flex-direction:column; gap:0.35mm; font-size:4.7pt; line-height:1.25; color:var(--ink); text-align:right; white-space:nowrap; }
+.phones { display:flex; flex-direction:column; gap:0.55mm; font-size:4.7pt; line-height:1.18; color:var(--ink); text-align:center; white-space:nowrap; }
 .phones b { color:var(--wine); }
-.acts { list-style:none; margin:0; padding:0; font-size:4.7pt; line-height:1.2; color:var(--ink); text-align:right; display:flex; flex-direction:column; gap:0.35mm; }
+.brand { display:flex; align-items:center; gap:1.1mm; }
+.brand img { height:8.2mm; display:block; }
+.acts { list-style:none; margin:0; padding:0; font-size:4.7pt; line-height:1.2; color:var(--ink); text-align:right; display:flex; flex-direction:column; gap:0.45mm; }
 .acts li { white-space:nowrap; }
-.acts .cont { padding-right:1.55mm; }      /* second line of an item: under its text, not under the diamond */
-.acts li::before { content:""; display:inline-block; width:0.75mm; height:0.75mm; background:var(--gold); transform:rotate(45deg); margin-left:0.8mm; position:relative; top:-0.25mm; }
+.acts li::before { content:""; display:inline-block; width:0.5mm; height:0.5mm; background:var(--gold-l); transform:rotate(45deg); margin-left:0.7mm; position:relative; top:-0.25mm; }
+.qty { white-space:nowrap; font-size:4.2pt; line-height:1; color:var(--ink); }
+.qty b { color:var(--wine); }
 </style></head><body>
 <div class="page">
   <img class="bg" src="bg-color.jpg" alt="">
@@ -96,10 +100,12 @@ sup { font-size:5pt; line-height:0; vertical-align:super; color:var(--gold); fon
   <div class="band">
     <div class="ded">לעילוי נשמת <strong>אליהו ז״ל</strong> בן יבדלחט״א חיים מאיר־עזריאל</div>
     <div class="org">
-      <div class="phones"><span><b>קו ׳בית הוראה׳ לתפילה וברכות:</b> 077.215.00.94</span><span><b>קו קול הלשון:</b> 073.371.83.76</span><span><b>להזמנת כמויות:</b> 052.761.62.96</span></div>
-      <span class="sep"></span><img src="logo-color.png" alt="ברומו של עולם"><span class="sep"></span>
-      <ul class="acts"><li>כוללי אברכים</li><li>שיעורים בישיבות<br><span class="cont">גדולות וקטנות</span></li><li>פעילויות בתלמודי תורה</li></ul>
+      <div class="phones"><span><b>קו ׳בית הוראה׳ לתפילה וברכות</b><br>077.215.00.94</span><span><b>קו קול הלשון</b><br>073.371.83.76</span></div>
+      <span class="sep"></span>
+      <div class="brand"><img src="logo-color.png" alt="ברומו של עולם">
+        <ul class="acts"><li>כוללי אברכים</li><li>שיעורים בישיבות גדולות וקטנות</li><li>פעילויות בתלמודי תורה</li></ul></div>
     </div>
+    <div class="qty"><b>להזמנת כמויות:</b> 052.761.62.96</div>
   </div>
 </div>
 <script>
