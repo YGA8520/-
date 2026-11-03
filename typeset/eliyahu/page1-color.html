@@ -58,6 +58,9 @@ sup { font-size:5pt; line-height:0; vertical-align:super; color:var(--gold); fon
 .band { position:absolute; left:4.5mm; right:4.5mm; top:90.55mm; height:16mm; box-sizing:border-box; padding-top:1.6mm;
         display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:0.75mm;
         background:radial-gradient(ellipse 60% 62% at 50% 52%, rgba(253,249,238,.92) 0%, rgba(253,249,238,.75) 55%, rgba(253,249,238,0) 100%); }
+/* without a dedication the logo block and the quantities line stand in the middle of the band */
+.band.noded { justify-content:center; padding-top:0; }
+.band.noded .org { margin-top:0; }
 .ded { white-space:nowrap; font-size:6.4pt; line-height:1; color:var(--ink); }
 .ded strong { color:var(--wine); }
 .org { display:flex; align-items:center; justify-content:center; gap:1.5mm; margin-top:1.25mm; }   /* air under the dedication */
@@ -120,7 +123,8 @@ const opts = new Map(location.hash.slice(1).split('&').filter(Boolean).map(kv =>
     zivug:   'לזכות <strong>הודיה</strong> בת אסתר לזיווג הגון בקרוב ממש',
   };
   const d = document.querySelector('.ded');
-  if (opts.has('ded')) d.innerHTML = DED[opts.get('ded')];
+  if (opts.get('ded') === 'none') { d.remove(); document.querySelector('.band').classList.add('noded'); }   // no dedication
+  else if (opts.has('ded')) d.innerHTML = DED[opts.get('ded')];
   // one line: a long dedication gets smaller until it fits 64 mm (the band keeps 8 mm from the trim)
   document.fonts.ready.then(() => { const max = 64 / 25.4 * 96;
     if (d.scrollWidth > max) d.style.fontSize = (parseFloat(getComputedStyle(d).fontSize) * max / d.scrollWidth).toFixed(2) + 'px'; });

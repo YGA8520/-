@@ -2,7 +2,7 @@
 // BLEED=3 node eliyahu/build.js out_dir page1-color  -> <page>-bleed.pdf: (80 + 2*3) x (110 + 2*3) mm, the artwork runs into
 //   the bleed (bg-color-bleed.jpg, make_bleed_bg.py); make_print_sheet.py then adds the crop marks and the PDF boxes
 // PLAIN=1 (page1-color): the title without the leaves of the frame, outputs named <page>-plain*
-// DED=eliyahu|refua|hatzlacha|zivug (page1-color): which dedication; outputs named <page>[-plain]-<ded> (none = as in the page)
+// DED=eliyahu|refua|hatzlacha|zivug|none (page1-color): which dedication; outputs named <page>[-plain]-<ded> (none = as in the page)
 const { chromium } = require('playwright'); const path = require('path'); const fs = require('fs');
 (async () => {
   const out = process.argv[2] || 'out/eliyahu', name = process.argv[3] || 'page1'; fs.mkdirSync(out, { recursive: true });
