@@ -25,8 +25,9 @@ body { font-family:"Guttman Drogolin",serif; color:var(--ink); }
 .ttl span[data-orn] { display:flex; align-items:center; justify-content:center; gap:0.12em; }
 .ttl img.orn { height:0.66em; width:auto; display:block; position:relative; top:-0.04em; }
 .ttl img.orn.l { transform:scaleX(-1); }
-/* the panel covers the panel of the reference (5.66 - 75.25 mm, 20.1 - 100.4 mm) */
-.panel { position:absolute; left:5.2mm; right:5.2mm; top:19.5mm; bottom:9.2mm; box-sizing:border-box;
+/* the panel covers the panel of the reference (5.66 - 75.25 mm, from 20.1 mm); under 91.5 mm the reference panel was
+   replaced by marble (clean_bg.py, marble_from 1650 px), where the bottom band stands */
+.panel { position:absolute; left:5.2mm; right:5.2mm; top:19.5mm; bottom:18.5mm; box-sizing:border-box;
          padding:2.6mm 3.4mm 2.6mm; border-radius:2.6mm; display:flex; flex-direction:column; text-align:center;
          background:radial-gradient(ellipse at 50% 40%, #fffdf6 0%, #fbf6e8 70%, #f5eedb 100%);
          box-shadow:0 0 0 0.25mm rgba(255,255,255,.9), 0 0.6mm 2.2mm rgba(80,55,25,.28); }
@@ -44,22 +45,28 @@ sup { font-size:5pt; line-height:0; vertical-align:super; color:var(--gold); fon
 .notes span.fn { margin-left:1mm; white-space:nowrap; }
 .notes span.fn.long { white-space:normal; }
 .notes sup { font-family:"Guttman Drogolin",serif; font-size:4pt; padding:0 0 0 0.3mm; }
-.org { display:flex; justify-content:center; align-items:center; gap:2.2mm; margin-top:1.2mm; }
-.org img { height:8.4mm; display:block; }
-.org .sep { align-self:stretch; border-right:0.15mm solid var(--gold-l); margin:0.8mm 0; }
-.phones { display:flex; flex-direction:column; gap:0.4mm; font-size:5.6pt; line-height:1.25; color:var(--ink); text-align:right; }
-.phones b { color:var(--wine); }
 .tip { margin:1.1mm -3.4mm 0; padding:0.8mm 4mm; font-size:5.9pt; line-height:1.35;
        background:linear-gradient(to right, rgba(226,207,163,0), rgba(226,207,163,.55) 22%, rgba(226,207,163,.55) 78%, rgba(226,207,163,0)); }
 .tip strong { color:var(--wine); }
 /* בס״ד very small, centred above the title; the title box keeps its size (so the title its size) and is only moved
    0.9 mm down into the free space at the foot of the cartouche */
 .bsd { position:absolute; left:21mm; width:38mm; top:2.25mm; text-align:center; font-size:3.8pt; line-height:1; color:var(--wine); }
-/* dedication on the marble under the panel (100.8 - 106.5 mm, above the bar of the frame) */
-.ded { position:absolute; left:9mm; right:9mm; top:100.8mm; height:5.8mm; display:flex; align-items:center; justify-content:center;
-       white-space:nowrap; font-size:6.4pt; line-height:1;
-       color:var(--ink); text-shadow:0 0 0.6mm #fbf6ea, 0 0 0.3mm #fbf6ea; }
+/* bottom band on the marble (92 - 106.5 mm, above the bar of the frame): the dedication, then the organisation in three
+   columns - phones | logo | activities; a soft cream glow without an edge keeps the small text clear of the veins */
+.band { position:absolute; left:5.5mm; right:5.5mm; top:92.2mm; height:14.2mm; display:flex; flex-direction:column;
+        align-items:center; justify-content:center; gap:1.1mm;
+        background:radial-gradient(ellipse 60% 62% at 50% 52%, rgba(253,249,238,.92) 0%, rgba(253,249,238,.75) 55%, rgba(253,249,238,0) 100%); }
+.ded { white-space:nowrap; font-size:6.4pt; line-height:1; color:var(--ink); }
 .ded strong { color:var(--wine); }
+.org { display:flex; align-items:center; justify-content:center; gap:1.4mm; }
+.org img { height:8.2mm; display:block; }
+.org .sep { align-self:stretch; border-right:0.15mm solid var(--gold); margin:0.6mm 0; opacity:.7; }
+.phones { display:flex; flex-direction:column; gap:0.35mm; font-size:4.7pt; line-height:1.25; color:var(--ink); text-align:right; white-space:nowrap; }
+.phones b { color:var(--wine); }
+.acts { list-style:none; margin:0; padding:0; font-size:4.7pt; line-height:1.2; color:var(--ink); text-align:right; display:flex; flex-direction:column; gap:0.35mm; }
+.acts li { white-space:nowrap; }
+.acts .cont { padding-right:1.55mm; }      /* second line of an item: under its text, not under the diamond */
+.acts li::before { content:""; display:inline-block; width:0.75mm; height:0.75mm; background:var(--gold); transform:rotate(45deg); margin-left:0.8mm; position:relative; top:-0.25mm; }
 </style></head><body>
 <div class="page">
   <img class="bg" src="bg-color.jpg" alt="">
@@ -85,10 +92,15 @@ sup { font-size:5pt; line-height:0; vertical-align:super; color:var(--gold); fon
     <div class="spacer"></div>
     <div class="notes"><span class="fn long"><sup>1</sup>ע׳ מ״ב סי׳&nbsp;ק״ו ס״ק&nbsp;ד׳ וסי׳&nbsp;ס׳ ס״ק&nbsp;י׳.</span> <span class="fn"><sup>2</sup>שו״ע סי׳&nbsp;צ״ח סעי׳&nbsp;א׳.</span> <span class="fn"><sup>3</sup>ע״פ הרמ״א שם.</span> <span class="fn"><sup>4</sup>שם.</span> <span class="fn long"><sup>5</sup>שו״ע סי׳&nbsp;צ״ה סעי׳&nbsp;ב׳, וסי׳&nbsp;צ״ד מ״ב ס״ק&nbsp;ג׳ וז׳.</span> <span class="fn"><sup>6</sup>סי׳&nbsp;צ״ח סעי׳&nbsp;ג׳.</span> <span class="fn"><sup>7</sup>שם מ״ב ס״ק&nbsp;ח׳.</span></div>
     <div class="tip"><strong>עצה טובה</strong> – לעבוד על אחד מהסעיפים במשך שבוע,<br>ולאחר שיתרגל להוסיף עוד סעיף.</div>
-    <div class="org"><img src="logo-color.png" alt="ברומו של עולם"><span class="sep"></span>
-      <div class="phones"><span><b>קו ׳בית הוראה׳ לתפילה וברכות:</b> 077.215.00.94</span><span><b>קו קול הלשון:</b> 073.371.83.76</span></div></div>
   </div>
-  <div class="ded"><span>לעילוי נשמת <strong>אליהו ז״ל</strong> בן יבדלחט״א חיים מאיר־עזריאל</span></div>
+  <div class="band">
+    <div class="ded">לעילוי נשמת <strong>אליהו ז״ל</strong> בן יבדלחט״א חיים מאיר־עזריאל</div>
+    <div class="org">
+      <div class="phones"><span><b>קו ׳בית הוראה׳ לתפילה וברכות:</b> 077.215.00.94</span><span><b>קו קול הלשון:</b> 073.371.83.76</span><span><b>להזמנת כמויות:</b> 052.761.62.96</span></div>
+      <span class="sep"></span><img src="logo-color.png" alt="ברומו של עולם"><span class="sep"></span>
+      <ul class="acts"><li>כוללי אברכים</li><li>שיעורים בישיבות<br><span class="cont">גדולות וקטנות</span></li><li>פעילויות בתלמודי תורה</li></ul>
+    </div>
+  </div>
 </div>
 <script>
 (() => {
