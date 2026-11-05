@@ -71,7 +71,7 @@ table{{width:100%;border-collapse:collapse;table-layout:fixed;margin-top:4.5mm}}
 col.c-p{{width:21%}} col.c-d{{width:19%}}
 thead th{{background:var(--navy);color:#fff;font-family:Plex;font-weight:600;font-size:6.9pt;line-height:1.15;padding:1.5mm .3mm;vertical-align:middle}}
 thead th.p{{text-align:right;padding-right:2mm}}
-tbody td{{height:4.95mm;font-size:9.3pt;text-align:center;vertical-align:middle;white-space:nowrap;border-bottom:.12mm solid var(--hair)}}
+tbody td{{height:4.85mm;font-size:9.3pt;text-align:center;vertical-align:middle;white-space:nowrap;border-bottom:.12mm solid var(--hair)}}
 tbody tr:nth-child(even) td{{background:var(--zeb)}}
 td.p{{text-align:right;padding-right:2mm;font-family:Frank;font-weight:700;font-size:9.6pt;line-height:1}}
 td.p .sp{{font-family:Plex;font-weight:500;font-size:6.4pt;color:var(--gold);margin-right:1mm}}
