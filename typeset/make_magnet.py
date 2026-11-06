@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Magnet (A5 portrait + 3mm bleed): the times of the shabbat shiurim, winter 5787, from parashat Chayei Sarah.
 Laid on the brushed-gold background page that was sent (cleaned by make_magnet_bg.py: corner flourishes and Shabbat still life kept).
-Classic poster setting: logos at the top between the flourishes, Frank Ruhl Libre Black title, the table on a light glass panel with a
-white rounded border (as the box of the background page), black header row with gold letters, David Libre for the times,
-Motzaei Shabbat on a black plate, the phone lines between the bottom flourish and the still life.
+Classic poster setting: logos at the top between the flourishes, calligraphic title (Shmulik CLM) with a light halo and a shadow, the table on a light glass panel with a
+white rounded border (as the box of the background page), light cream header row, David Libre for the times,
+Motzaei Shabbat on a light plate, the phone lines beside the large Shabbat still life (shabbat-still.png) at the bottom right.
 usage: python3 make_magnet.py [out_dir]   -> magnet-shiurim-print.pdf (with bleed), magnet-shiurim.pdf / .png (trimmed)
 data: assets/magnet/zmanim-choref-5787.xlsx (the sheet that was sent by mail)"""
 import os, sys, subprocess, html, openpyxl
@@ -49,6 +49,7 @@ def build():
     fonts = os.path.join(HERE, 'assets', 'fonts')
     W, H = 154, 216
     page = f'''<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><style>
+@font-face{{font-family:Shmulik;src:url("file://{fonts}/ShmulikCLM.ttf")}}
 @font-face{{font-family:Frank;src:url("file://{fonts}/FrankRuhlLibre.ttf");font-weight:300 900}}
 @font-face{{font-family:David;src:url("file://{fonts}/DavidLibre-Bold.ttf");font-weight:700}}
 @font-face{{font-family:David;src:url("file://{fonts}/DavidLibre-Medium.ttf");font-weight:500}}
@@ -63,40 +64,44 @@ body{{font-family:Frank,serif;color:var(--ink);-webkit-print-color-adjust:exact;
 .logos img.oy{{height:25mm;filter:drop-shadow(0 .4mm .5mm rgba(60,35,5,.35))}}
 .logos img.bo{{height:19.5mm}}
 .ttl{{position:absolute;top:35.5mm;left:0;right:0;text-align:center}}
-.ttl h1{{font-weight:900;font-size:40pt;line-height:1;letter-spacing:-.3pt;text-shadow:0 .35mm .5mm rgba(255,245,215,.55)}}
-.ttl .yr{{margin-top:.6mm;font-weight:700;font-size:16pt;color:var(--brown)}}
+.ttl h1{{font-family:Shmulik;font-weight:400;font-size:41pt;line-height:1.05;color:#1a120a;
+  text-shadow:0 0 1.2mm rgba(255,250,232,.95),0 0 3mm rgba(255,244,214,.9),0 0 6mm rgba(255,238,200,.7),.6mm .9mm 1.1mm rgba(55,32,6,.55)}}
+.ttl .yr{{margin-top:-.4mm;font-family:Shmulik;font-size:19pt;color:#6b3a0e;
+  text-shadow:0 0 1mm rgba(255,250,232,.95),0 0 2.6mm rgba(255,244,214,.85),.4mm .6mm .8mm rgba(55,32,6,.45)}}
 .tbl{{position:absolute;top:61.5mm;left:13.5mm;right:13.5mm;border:.55mm solid #fff;border-radius:3mm;overflow:hidden;
   background:rgba(255,252,240,.42);box-shadow:0 .4mm 1.2mm rgba(70,45,10,.18)}}
 table{{width:100%;border-collapse:collapse;table-layout:fixed}}
 col.c-p{{width:21%}} col.c-d{{width:17%}}
-thead th{{background:var(--ink);color:var(--gold);font-weight:700;font-size:7.1pt;line-height:1.12;padding:1.45mm .2mm;vertical-align:middle}}
+thead th{{background:linear-gradient(180deg,#fdf6e4,#ecd9a8);color:#3a260c;border-bottom:.45mm solid #b48a3c;font-weight:700;font-size:7.1pt;line-height:1.12;padding:1.45mm .2mm;vertical-align:middle}}
 thead th.p{{text-align:right;padding-right:2mm}}
-tbody td{{height:4.42mm;font-size:9.6pt;text-align:center;vertical-align:middle;white-space:nowrap;border-top:.15mm solid var(--line)}}
+tbody td{{height:4.28mm;line-height:1;padding:0 .2mm;font-size:9.6pt;text-align:center;vertical-align:middle;white-space:nowrap;border-top:.15mm solid var(--line)}}
 tbody tr:nth-child(even) td{{background:rgba(255,255,255,.38)}}
 td.p{{text-align:right;padding-right:2mm;font-weight:800;font-size:9.4pt}}
 td.p .sp{{font-weight:600;font-size:6.6pt;color:var(--brown)}}
 td.d{{font-weight:500;font-size:7.9pt;color:#3d2c14}}
 td.t{{font-family:David;font-weight:700;font-size:10.2pt}}
-.mot{{position:absolute;top:181mm;left:30mm;right:30mm;height:9.5mm;background:var(--ink);border-radius:4.75mm;color:#fff;
-  display:flex;align-items:center;justify-content:center;gap:2.6mm;box-shadow:0 .4mm 1mm rgba(60,35,5,.3);border:.35mm solid #c9a24f}}
-.mot .k{{color:var(--gold);font-weight:700;font-size:10pt}}
-.mot .s{{font-weight:700;font-size:11pt}}
-.mot .tm{{font-family:David;font-weight:700;font-size:13pt;color:var(--gold)}}
-.mot i{{width:.3mm;height:4.2mm;background:#7d6230}}
-.foot{{position:absolute;top:193.5mm;left:28mm;right:38mm;display:flex}}
+.mot{{position:absolute;top:177mm;left:25mm;right:49mm;height:9.5mm;background:linear-gradient(180deg,#fffaf0,#f1e2bb);border-radius:4.75mm;color:var(--ink);
+  display:flex;align-items:center;justify-content:center;gap:2.4mm;box-shadow:0 .4mm 1mm rgba(60,35,5,.25);border:.45mm solid #b48a3c}}
+.mot .k{{color:var(--brown);font-weight:700;font-size:9.4pt}}
+.mot .s{{font-weight:800;font-size:10.4pt}}
+.mot .tm{{font-family:David;font-weight:700;font-size:12.5pt;color:#7a2c10}}
+.mot i{{width:.3mm;height:4.2mm;background:#c4a463}}
+.foot{{position:absolute;top:190.5mm;left:25mm;right:49mm;display:flex}}
 .c{{flex:1;text-align:center}}
+.still{{position:absolute;right:0;bottom:0;width:48mm;filter:drop-shadow(-.4mm -.2mm .8mm rgba(60,35,5,.25))}}
 .c + .c{{border-right:.2mm solid var(--line)}}
 .cl{{font-weight:700;font-size:7.4pt;color:var(--brown)}}
-.cn{{font-family:David;font-weight:700;font-size:11pt;letter-spacing:.3pt;line-height:1.15}}
+.cn{{font-family:David;font-weight:700;font-size:10.2pt;letter-spacing:.3pt;line-height:1.15}}
 .cs{{font-weight:500;font-size:5.6pt;color:#4a3618}}
 </style></head><body><div class="page">
 <div class="bsd">בס״ד</div>
 <div class="logos"><img class="oy" src="file://{MAG}/ohel-yissachar.png"><img class="bo" src="file://{HERE}/assets/cover/logo.png"></div>
-<div class="ttl"><h1>זמני השיעורים</h1><div class="yr">לחורף תשפ״ז</div></div>
+<div class="ttl"><h1>זמני השיעורים</h1><div class="yr">חורף תשפ״ז</div></div>
 <div class="tbl"><table><colgroup><col class="c-p"><col class="c-d">{'<col>' * 6}</colgroup>
 <thead><tr>{''.join(f'<th class="{"p" if i == 0 else ""}">{c}</th>' for i, c in enumerate(COLS))}</tr></thead><tbody>{tr}</tbody></table></div>
 <div class="mot"><span class="k">מוצאי שבת קודש</span><i></i><span class="s">שיעור לכיתה ח׳</span><i></i><span class="tm">20:15</span></div>
 <div class="foot">{foot}</div>
+<img class="still" src="file://{MAG}/shabbat-still.png">
 </div></body></html>'''
     os.makedirs(OUT, exist_ok=True)
     src = os.path.join(HERE, '_magnet.html')
