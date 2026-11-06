@@ -119,7 +119,46 @@ await p.screenshot({{path:'{OUT}/_full.png'}});await b.close()}})()'''
     trim.save(f'{OUT}/magnet-shiurim.png', dpi=(300, 300))
     trim.save(f'{OUT}/magnet-shiurim.pdf', resolution=300)
     os.remove(f'{OUT}/_full.png')
+    marks(f'{OUT}/magnet-shiurim-print.pdf', f'{OUT}/magnet-shiurim-print-marks.pdf', W, H)
     print(len(data), 'shabbatot ->', OUT)
+
+
+def marks(src, dst, W, H, bleed=3, margin=12, length=6, gap=1.5):
+    """the print PDF (trim + bleed) centred on a larger sheet with crop marks (registration black, outside the bleed),
+    a slug line, and TrimBox / BleedBox set for the printer"""
+    from pypdf import PdfReader, PdfWriter, Transformation
+    from pypdf.generic import RectangleObject, DecodedStreamObject, NameObject, ArrayObject
+    mm = 72 / 25.4
+    SW, SH = W + 2 * margin, H + 2 * margin
+    page = PdfReader(src).pages[0]
+    w = PdfWriter()
+    sheet = w.add_blank_page(SW * mm, SH * mm)
+    sheet.merge_transformed_page(page, Transformation().translate(margin * mm, margin * mm))
+    t0x, t0y = margin + bleed, margin + bleed               # trim box, mm from the sheet's lower left
+    t1x, t1y = SW - margin - bleed, SH - margin - bleed
+    off = bleed + gap                                       # marks start beyond the bleed
+    ops = ['q 0.25 w 0 0 0 1 K']
+    for x in (t0x, t1x):
+        for y, sgn in ((t0y, -1), (t1y, 1)):
+            ops.append(f'{x * mm:.3f} {(y + sgn * off) * mm:.3f} m {x * mm:.3f} {(y + sgn * (off + length)) * mm:.3f} l S')
+    for y in (t0y, t1y):
+        for x, sgn in ((t0x, -1), (t1x, 1)):
+            ops.append(f'{(x + sgn * off) * mm:.3f} {y * mm:.3f} m {(x + sgn * (off + length)) * mm:.3f} {y * mm:.3f} l S')
+    ops.append('Q')
+    slug = f'magnet-shiurim  |  trim {W - 2 * bleed} x {H - 2 * bleed} mm (A5)  |  bleed {bleed} mm'
+    ops.append(f'BT /F1 6 Tf 0 0 0 1 k {(t0x + 2) * mm:.3f} {(margin - 7) * mm:.3f} Td ({slug}) Tj ET')
+    st = DecodedStreamObject(); st.set_data(('\n'.join(ops)).encode())
+    from pypdf.generic import DictionaryObject
+    font = DictionaryObject({NameObject('/Type'): NameObject('/Font'), NameObject('/Subtype'): NameObject('/Type1'),
+                             NameObject('/BaseFont'): NameObject('/Helvetica')})
+    res = sheet['/Resources']
+    fonts = res.get('/Font', DictionaryObject()); fonts[NameObject('/F1')] = w._add_object(font); res[NameObject('/Font')] = fonts
+    cont = sheet['/Contents']
+    arr = cont if isinstance(cont, ArrayObject) else ArrayObject([cont])
+    arr.append(w._add_object(st)); sheet[NameObject('/Contents')] = arr
+    sheet.trimbox = RectangleObject([t0x * mm, t0y * mm, t1x * mm, t1y * mm])
+    sheet.bleedbox = RectangleObject([margin * mm, margin * mm, (SW - margin) * mm, (SH - margin) * mm])
+    w.write(dst)
 
 
 if __name__ == '__main__':
