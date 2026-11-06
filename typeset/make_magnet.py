@@ -63,32 +63,32 @@ body{{font-family:Frank,serif;color:var(--ink);-webkit-print-color-adjust:exact;
 .logos{{position:absolute;top:9mm;left:0;right:0;display:flex;justify-content:center;align-items:center;gap:7mm}}
 .logos img.oy{{height:25mm;filter:drop-shadow(0 .4mm .5mm rgba(60,35,5,.35))}}
 .logos img.bo{{height:19.5mm}}
-.ttl{{position:absolute;top:35.5mm;left:0;right:0;text-align:center}}
+.ttl{{position:absolute;top:35mm;left:0;right:0;text-align:center}}
 .ttl h1{{font-family:Shmulik;font-weight:400;font-size:41pt;line-height:1.05;color:#1a120a;
   text-shadow:0 0 1.2mm rgba(255,250,232,.95),0 0 3mm rgba(255,244,214,.9),0 0 6mm rgba(255,238,200,.7),.6mm .9mm 1.1mm rgba(55,32,6,.55)}}
 .ttl .yr{{margin-top:-.4mm;font-family:Shmulik;font-size:19pt;color:#6b3a0e;
   text-shadow:0 0 1mm rgba(255,250,232,.95),0 0 2.6mm rgba(255,244,214,.85),.4mm .6mm .8mm rgba(55,32,6,.45)}}
-.tbl{{position:absolute;top:61.5mm;left:13.5mm;right:13.5mm;border:.55mm solid #fff;border-radius:3mm;overflow:hidden;
+.tbl{{position:absolute;top:60.5mm;left:13.5mm;right:13.5mm;border:.55mm solid #fff;border-radius:3mm;overflow:hidden;
   background:rgba(255,252,240,.42);box-shadow:0 .4mm 1.2mm rgba(70,45,10,.18)}}
 table{{width:100%;border-collapse:collapse;table-layout:fixed}}
 col.c-p{{width:21%}} col.c-d{{width:17%}}
 thead th{{background:linear-gradient(180deg,#fdf6e4,#ecd9a8);color:#3a260c;border-bottom:.45mm solid #b48a3c;font-weight:700;font-size:7.1pt;line-height:1.12;padding:1.45mm .2mm;vertical-align:middle}}
 thead th.p{{text-align:right;padding-right:2mm}}
-tbody td{{height:4.28mm;line-height:1;padding:0 .2mm;font-size:9.6pt;text-align:center;vertical-align:middle;white-space:nowrap;border-top:.15mm solid var(--line)}}
+tbody td{{height:4.2mm;line-height:1;padding:0 .2mm;font-size:9.6pt;text-align:center;vertical-align:middle;white-space:nowrap;border-top:.15mm solid var(--line)}}
 tbody tr:nth-child(even) td{{background:rgba(255,255,255,.38)}}
 td.p{{text-align:right;padding-right:2mm;font-weight:800;font-size:9.4pt}}
 td.p .sp{{font-weight:600;font-size:6.6pt;color:var(--brown)}}
 td.d{{font-weight:500;font-size:7.9pt;color:#3d2c14}}
 td.t{{font-family:David;font-weight:700;font-size:10.2pt}}
-.mot{{position:absolute;top:177mm;left:25mm;right:49mm;height:9.5mm;background:linear-gradient(180deg,#fffaf0,#f1e2bb);border-radius:4.75mm;color:var(--ink);
+.mot{{position:absolute;top:174.5mm;left:37mm;right:33mm;height:9.5mm;background:linear-gradient(180deg,#fffaf0,#f1e2bb);border-radius:4.75mm;color:var(--ink);
   display:flex;align-items:center;justify-content:center;gap:2.4mm;box-shadow:0 .4mm 1mm rgba(60,35,5,.25);border:.45mm solid #b48a3c}}
 .mot .k{{color:var(--brown);font-weight:700;font-size:9.4pt}}
 .mot .s{{font-weight:800;font-size:10.4pt}}
 .mot .tm{{font-family:David;font-weight:700;font-size:12.5pt;color:#7a2c10}}
 .mot i{{width:.3mm;height:4.2mm;background:#c4a463}}
-.foot{{position:absolute;top:190.5mm;left:25mm;right:49mm;display:flex}}
+.foot{{position:absolute;top:188mm;left:36mm;right:41mm;display:flex}}
 .c{{flex:1;text-align:center}}
-.still{{position:absolute;right:0;bottom:0;width:48mm;filter:drop-shadow(-.4mm -.2mm .8mm rgba(60,35,5,.25))}}
+.still{{position:absolute;right:5mm;bottom:4.5mm;width:46mm;filter:drop-shadow(-.4mm -.2mm .8mm rgba(60,35,5,.25))}}
 .c + .c{{border-right:.2mm solid var(--line)}}
 .cl{{font-weight:700;font-size:7.4pt;color:var(--brown)}}
 .cn{{font-family:David;font-weight:700;font-size:10.2pt;letter-spacing:.3pt;line-height:1.15}}
