@@ -104,6 +104,21 @@ td.t{{font-family:David;font-weight:700;font-size:10.2pt}}
 <img class="still" src="file://{MAG}/shabbat-still.png">
 </div></body></html>'''
     os.makedirs(OUT, exist_ok=True)
+    M, BL = 12, 3                                           # sheet margin around the bleed, bleed
+    SW, SH = W + 2 * M, H + 2 * M
+    off, ln = BL + 1.5, 6
+    tx, ty = (M + BL, SW - M - BL), (M + BL, SH - M - BL)
+    lines = [(x, ty[0] - off, x, ty[0] - off - ln) for x in tx] + [(x, ty[1] + off, x, ty[1] + off + ln) for x in tx] + \
+            [(tx[0] - off, y, tx[0] - off - ln, y) for y in ty] + [(tx[1] + off, y, tx[1] + off + ln, y) for y in ty]
+    svg = (f'<svg style="position:absolute;left:0;top:0" width="{SW}mm" height="{SH}mm" viewBox="0 0 {SW} {SH}">'
+           + ''.join(f'<line x1="{a}" y1="{b}" x2="{c}" y2="{d}" stroke="#000" stroke-width="0.09"/>' for a, b, c, d in lines)
+           + f'<text x="{tx[0] + 2}" y="{SH - M + 7}" font-family="Helvetica,Arial" font-size="2.1" fill="#000" direction="ltr">'
+             f'magnet-shiurim  |  trim {W - 2 * BL} x {H - 2 * BL} mm (A5)  |  bleed {BL} mm</text></svg>')
+    sheet = (page.replace(f'@page{{size:{W}mm {H}mm;margin:0}}', f'@page{{size:{SW}mm {SH}mm;margin:0}}')
+                 .replace(f'html,body{{width:{W}mm;height:{H}mm}}', f'html,body{{width:{SW}mm;height:{SH}mm;background:#fff}}')
+                 .replace('<body><div class="page">', f'<body>{svg}<div class="page" style="position:absolute;left:{M}mm;top:{M}mm">'))
+    assert sheet != page
+    open(os.path.join(HERE, '_magnet_marks.html'), 'w', encoding='utf-8').write(sheet)
     src = os.path.join(HERE, '_magnet.html')
     open(src, 'w', encoding='utf-8').write(page)
     js = f'''let c;try{{c=require('playwright').chromium}}catch(e){{c=require('/opt/node22/lib/node_modules/playwright').chromium}}
@@ -111,7 +126,10 @@ td.t{{font-family:David;font-weight:700;font-size:10.2pt}}
 await p.goto('file://{src}');await p.evaluate(()=>document.fonts.ready);
 console.log(await p.evaluate(()=>{{const r=e=>document.querySelector(e).getBoundingClientRect(),px=96/25.4;return 'table ends '+(r('.tbl').bottom/px).toFixed(1)+'mm, mot '+(r('.mot').top/px).toFixed(1)+'mm, foot '+(r('.foot').top/px).toFixed(1)+'-'+(r('.foot').bottom/px).toFixed(1)+'mm'}}));
 await p.pdf({{path:'{OUT}/magnet-shiurim-print.pdf',width:'{W}mm',height:'{H}mm',printBackground:true}});
-await p.screenshot({{path:'{OUT}/_full.png'}});await b.close()}})()'''
+await p.screenshot({{path:'{OUT}/_full.png'}});
+await p.goto('file://{HERE}/_magnet_marks.html');await p.evaluate(()=>document.fonts.ready);
+await p.pdf({{path:'{OUT}/magnet-shiurim-print-marks.pdf',width:'{SW}mm',height:'{SH}mm',printBackground:true}});
+await b.close()}})()'''
     subprocess.run(['node', '-e', js], check=True)
     im = Image.open(f'{OUT}/_full.png').convert('RGB')
     px = im.width / W
@@ -119,47 +137,22 @@ await p.screenshot({{path:'{OUT}/_full.png'}});await b.close()}})()'''
     trim.save(f'{OUT}/magnet-shiurim.png', dpi=(300, 300))
     trim.save(f'{OUT}/magnet-shiurim.pdf', resolution=300)
     os.remove(f'{OUT}/_full.png')
-    marks(f'{OUT}/magnet-shiurim-print.pdf', f'{OUT}/magnet-shiurim-print-marks.pdf', W, H)
+    boxes(f'{OUT}/magnet-shiurim-print-marks.pdf', SW, SH, M, BL)
     print(len(data), 'shabbatot ->', OUT)
 
 
-def marks(src, dst, W, H, bleed=3, margin=12, length=6, gap=1.5):
-    """the print PDF (trim + bleed) centred on a larger sheet with crop marks (registration black, outside the bleed),
-    a slug line, and TrimBox / BleedBox set for the printer"""
-    from pypdf import PdfReader, PdfWriter, Transformation
-    from pypdf.generic import RectangleObject, DecodedStreamObject, NameObject, ArrayObject
+def boxes(path, SW, SH, M, BL):
+    """TrimBox / BleedBox on the sheet with the crop marks (the content itself is drawn by the browser, not merged)"""
+    from pypdf import PdfReader, PdfWriter
+    from pypdf.generic import RectangleObject
     mm = 72 / 25.4
-    SW, SH = W + 2 * margin, H + 2 * margin
-    page = PdfReader(src).pages[0]
-    w = PdfWriter()
-    sheet = w.add_blank_page(SW * mm, SH * mm)
-    sheet.merge_transformed_page(page, Transformation().translate(margin * mm, margin * mm))
-    t0x, t0y = margin + bleed, margin + bleed               # trim box, mm from the sheet's lower left
-    t1x, t1y = SW - margin - bleed, SH - margin - bleed
-    off = bleed + gap                                       # marks start beyond the bleed
-    ops = ['q 0.25 w 0 0 0 1 K']
-    for x in (t0x, t1x):
-        for y, sgn in ((t0y, -1), (t1y, 1)):
-            ops.append(f'{x * mm:.3f} {(y + sgn * off) * mm:.3f} m {x * mm:.3f} {(y + sgn * (off + length)) * mm:.3f} l S')
-    for y in (t0y, t1y):
-        for x, sgn in ((t0x, -1), (t1x, 1)):
-            ops.append(f'{(x + sgn * off) * mm:.3f} {y * mm:.3f} m {(x + sgn * (off + length)) * mm:.3f} {y * mm:.3f} l S')
-    ops.append('Q')
-    slug = f'magnet-shiurim  |  trim {W - 2 * bleed} x {H - 2 * bleed} mm (A5)  |  bleed {bleed} mm'
-    ops.append(f'BT /F1 6 Tf 0 0 0 1 k {(t0x + 2) * mm:.3f} {(margin - 7) * mm:.3f} Td ({slug}) Tj ET')
-    st = DecodedStreamObject(); st.set_data(('\n'.join(ops)).encode())
-    from pypdf.generic import DictionaryObject
-    font = DictionaryObject({NameObject('/Type'): NameObject('/Font'), NameObject('/Subtype'): NameObject('/Type1'),
-                             NameObject('/BaseFont'): NameObject('/Helvetica')})
-    res = sheet['/Resources']
-    fonts = res.get('/Font', DictionaryObject()); fonts[NameObject('/F1')] = w._add_object(font); res[NameObject('/Font')] = fonts
-    cont = sheet['/Contents']
-    arr = cont if isinstance(cont, ArrayObject) else ArrayObject([cont])
-    arr.append(w._add_object(st)); sheet[NameObject('/Contents')] = arr
-    sheet.trimbox = RectangleObject([t0x * mm, t0y * mm, t1x * mm, t1y * mm])
-    sheet.bleedbox = RectangleObject([margin * mm, margin * mm, (SW - margin) * mm, (SH - margin) * mm])
-    w.write(dst)
-
+    w = PdfWriter(clone_from=PdfReader(path))
+    pg = w.pages[0]
+    top = float(pg.mediabox.top)               # the browser rounds the sheet size a little: measure from the top left, as laid out
+    box = lambda x0, y0, x1, y1: RectangleObject([x0 * mm, top - y1 * mm, x1 * mm, top - y0 * mm])
+    pg.trimbox = box(M + BL, M + BL, SW - M - BL, SH - M - BL)
+    pg.bleedbox = box(M, M, SW - M, SH - M)
+    w.write(path)
 
 if __name__ == '__main__':
     build()
