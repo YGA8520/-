@@ -4,14 +4,14 @@
  *   node haskamot_build.js [haskamot/<set>.json] [out_dir]   ->  out_dir/<set>-silver.pdf (haskamot.json -> haskamot-silver.pdf), out_dir/haskama-<id>.png
  * Content: one json per booklet (haskamot/haskamot.json = לחידודא דאורייתא, haskamot/haskamot-pilpula.json = פלפולא דאורייתא);  side rails: python make_haskama_frame.py.
  * The title "הסכמות" stands in the ornamented title frame of the booklet (assets/ornaments/frame.png, the frame of the article titles, whole and in proportion),
- * as the first title of the dedication page had it.  Nothing here is part of any booklet until it is merged (merge_haskamot.py / merge_front_pages.py). */
+ * as the first title of the dedication page had it; the frame follows the word (the word takes TF.fill of its width).  Nothing here is part of any booklet until it is merged (merge_haskamot.py / merge_front_pages.py). */
 const fs = require('fs'), path = require('path');
 let chromium;
 try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = require('/opt/node22/lib/node_modules/playwright')); }
 
 const MM = 96 / 25.4;
 const T = { w: 176, h: 250, x0: 17, x1: 159, top: 5.5, bottom: 241 };       // page and the free area between the rails (mm); the axis is the middle of the page
-const TF = { w: 112, ratio: 3304 / 995, size: 30 };                           // the title frame: width (mm), proportions of frame.png, size of הסכמות (pt)
+const TF = { ratio: 3304 / 995, size: +(process.env.TF_SIZE || 32), fill: +(process.env.TF_FILL || 0.48) };   // the title frame: proportions of frame.png, size of הסכמות (pt), share of the frame's width taken by the word (the frame follows the word)
 
 (async () => {
   const args = process.argv.slice(2);
@@ -54,10 +54,10 @@ body { font-kerning: normal; text-rendering: geometricPrecision; }
 .page:last-child { page-break-after: auto; break-after: auto; }
 .frame { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
 .col { position: absolute; left: ${T.x0}mm; width: ${T.x1 - T.x0}mm; top: ${T.top}mm; height: ${T.bottom - T.top}mm; display: flex; flex-direction: column; align-items: center; text-align: center; }
-.tf { position: relative; width: ${TF.w}mm; aspect-ratio: ${TF.ratio}; flex: none; display: flex; align-items: center; justify-content: center; }
+.tf { position: relative; width: 112mm; aspect-ratio: ${TF.ratio}; flex: none; display: flex; align-items: center; justify-content: center; }
 .tf > img { position: absolute; inset: 0; width: 100%; height: 100%; }
 .title { position: relative; font-family: "${F.display}"; font-size: ${TF.size}pt; line-height: 1; white-space: nowrap; margin: 0; color: ${ink}; text-align: center; }
-.head { font-family: "${F.toc}"; font-weight: 700; font-size: 12.5pt; margin-top: 1.4mm; line-height: 1.25; }
+.head { font-family: "${F.toc}"; font-weight: 700; font-size: 12.5pt; margin-top: 2.4mm; line-height: 1.25; }
 .sub { font-family: "${F.toc}"; font-size: 9.5pt; margin-top: 0.8mm; color: ${soft}; line-height: 1.3; }
 .rule { width: 64mm; height: 0.25mm; background: ${rule}; margin: 2.2mm 0 2.6mm; opacity: .85; flex: none; }
 .fac { margin: 0 auto 3mm; padding: 1.6mm; background: #fffefb; border: 0.25mm solid ${soft}; box-shadow: 0.9mm 1.1mm 2.4mm rgba(40,40,40,.26), inset 0 0 0 0.9mm #fffefb, inset 0 0 0 1.15mm ${rule}; flex: none; position: relative; }
@@ -83,6 +83,9 @@ body { font-kerning: normal; text-rendering: geometricPrecision; }
   await p.evaluate(async () => { await Promise.all([...document.images].map((i) => i.decode().catch(() => {}))); });
   await p.evaluate(async (fams) => { await Promise.all(fams.flatMap((f) => [400, 700].map((w) => document.fonts.load(w + ' 16px "' + f + '"', 'אבג')))); await document.fonts.ready; }, [F.body, F.display, F.toc, F.author]);
 
+  // the frame in proportion to the word: the word takes TF.fill of the frame's width (whole frame.png, scaled as a whole)
+  const tfw = await p.evaluate((fill) => { let w = 0; document.querySelectorAll('.tf').forEach((tf) => { const t = tf.querySelector('.title'); t.style.display = 'inline-block'; w = t.getBoundingClientRect().width / fill; tf.style.width = w + 'px'; }); return w; }, TF.fill);
+  console.log('title frame width (mm):', (tfw / MM).toFixed(1));
   // fit: the typed text takes the largest size that leaves the facsimile at least `minFac` mm of height; the facsimile takes what is left
   const fit = await p.evaluate(([MMv, bottom, top, minFac, maxW]) => {
     const res = [];

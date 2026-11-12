@@ -2,13 +2,6 @@
  "title": "הסכמות",
  "pages": [
   {
-   "id": "mordechai-potash",
-   "head": "הסכמת נשיא הכולל הגאון רבי מרדכי פוטאש שליט״א",
-   "sub": "",
-   "layout": "original",
-   "original": "assets/haskamot/mordechai-letter.jpg"
-  },
-  {
    "id": "rabbanim",
    "head": "הסכמת הגאונים מרנן ורבנן גדולי ישראל שליט״א",
    "sub": "",
@@ -32,6 +25,13 @@
      "דוב לנדו"
     ]
    ]
+  },
+  {
+   "id": "mordechai-potash",
+   "head": "הסכמת נשיא הכולל הגאון רבי מרדכי פוטאש שליט״א",
+   "sub": "",
+   "layout": "original",
+   "original": "assets/haskamot/mordechai-letter.jpg"
   },
   {
    "id": "weiss",
