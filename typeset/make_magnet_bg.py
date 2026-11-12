@@ -49,6 +49,7 @@ out=low*(1+det[...,None]/lum)
 # paste the ornaments and the still life by their difference from the light field (the brushed ground stays synthetic)
 box=R(270,1580,1135,1960)
 d_=round(4.5/25.4*300)                    # 4.5 mm inward
+CORNERS=False
 SHIFT={'tl':(d_,d_),'tr':(-d_,d_),'bl':(d_,-d_)}
 for k,(x0,y0,x1,y1) in keep.items():
     x0=max(0,x0);y0=max(0,y0);x1=min(W,x1);y1=min(H,y1)
@@ -77,6 +78,7 @@ for k,(x0,y0,x1,y1) in keep.items():
         cv2.imwrite(STILL,np.dstack([np.clip(rgb,0,255),a8*255]).astype(np.uint8))
         continue
     # move the flourish inward so it stays whole after trimming (it sat inside the bleed in the source)
+    if not CORNERS: continue               # the corner flourishes are left out (the client's request): the ground stays clean
     sx,sy=SHIFT[k]; al=np.roll(al,(sy,sx),(0,1)); piece=np.roll(piece,(sy,sx),(0,1))
     out=out*(1-al[...,None])+piece*al[...,None]
 cv2.imwrite(DST,np.clip(out,0,255).astype(np.uint8),[cv2.IMWRITE_JPEG_QUALITY,93])
