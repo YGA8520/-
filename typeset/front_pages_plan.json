@@ -1,9 +1,8 @@
 [
  {"name": "pilpula", "booklet": "in/chavurot.pdf", "out": "out/front/pilpula-daoraita.pdf",
-  "ops": [{"after": 4, "insert": ["out/haskamot/haskamot-pilpula-silver.pdf", "../output/hakdasha/hakdasha-yosef-classic.pdf"]}]},
+  "ops": [{"after": 4, "insert": ["../output/hakdasha/hakdasha-yosef-classic.pdf", "out/haskamot/haskamot-pilpula-silver.pdf"]}]},
  {"name": "chidudda", "booklet": "in/chidonim.pdf", "out": "out/front/lechidoda-daoraita.pdf",
-  "ops": [{"replace": [5, 7], "with": ["out/haskamot/haskamot-silver.pdf"]},
-          {"after": 8, "insert": ["../output/hakdasha/hakdasha-yosef-chidudda-classic.pdf"]}]},
+  "ops": [{"replace": [5, 7], "with": ["../output/hakdasha/hakdasha-yosef-chidudda-classic.pdf", "out/haskamot/haskamot-silver.pdf"]}]},
  {"name": "ritcha", "booklet": "in/rithcha.pdf", "out": "out/front/ritcha-daoraita.pdf",
   "ops": [{"after": 2, "insert": ["../output/hakdasha/hakdasha-yosef-ritcha-classic.pdf"]}]}
 ]
