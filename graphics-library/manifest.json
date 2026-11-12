@@ -1,0 +1,4812 @@
+{
+ "איורים/01C.png": {
+  "source": "איורים\\01C.BMP",
+  "source_bytes": 298276,
+  "px": [
+   641,
+   155
+  ],
+  "transparent": false,
+  "bytes": 47021
+ },
+ "איורים/02C.png": {
+  "source": "איורים\\02C.BMP",
+  "source_bytes": 424172,
+  "px": [
+   611,
+   231
+  ],
+  "transparent": false,
+  "bytes": 53498
+ },
+ "איורים/03C.png": {
+  "source": "איורים\\03C.BMP",
+  "source_bytes": 339296,
+  "px": [
+   685,
+   165
+  ],
+  "transparent": false,
+  "bytes": 34479
+ },
+ "איורים/04C.png": {
+  "source": "איורים\\04C.BMP",
+  "source_bytes": 287096,
+  "px": [
+   613,
+   156
+  ],
+  "transparent": false,
+  "bytes": 62414
+ },
+ "איורים/05C.png": {
+  "source": "איורים\\05C.BMP",
+  "source_bytes": 322528,
+  "px": [
+   621,
+   173
+  ],
+  "transparent": false,
+  "bytes": 79587
+ },
+ "איורים/06C.png": {
+  "source": "איורים\\06C.BMP",
+  "source_bytes": 440072,
+  "px": [
+   712,
+   206
+  ],
+  "transparent": false,
+  "bytes": 116229
+ },
+ "איורים/07C.png": {
+  "source": "איורים\\07C.BMP",
+  "source_bytes": 452232,
+  "px": [
+   638,
+   236
+  ],
+  "transparent": false,
+  "bytes": 74115
+ },
+ "איורים/08C.png": {
+  "source": "איורים\\08C.BMP",
+  "source_bytes": 301512,
+  "px": [
+   605,
+   166
+  ],
+  "transparent": false,
+  "bytes": 77578
+ },
+ "איורים/09C.png": {
+  "source": "איורים\\09C.BMP",
+  "source_bytes": 228664,
+  "px": [
+   501,
+   152
+  ],
+  "transparent": false,
+  "bytes": 56472
+ },
+ "איורים/100C.png": {
+  "source": "איורים\\100C.BMP",
+  "source_bytes": 292856,
+  "px": [
+   488,
+   200
+  ],
+  "transparent": false,
+  "bytes": 86195
+ },
+ "איורים/101C.png": {
+  "source": "איורים\\101C.BMP",
+  "source_bytes": 632072,
+  "px": [
+   354,
+   594
+  ],
+  "transparent": false,
+  "bytes": 104249
+ },
+ "איורים/102C.png": {
+  "source": "איורים\\102C.BMP",
+  "source_bytes": 417844,
+  "px": [
+   401,
+   347
+  ],
+  "transparent": false,
+  "bytes": 89404
+ },
+ "איורים/10C.png": {
+  "source": "איורים\\10C.BMP",
+  "source_bytes": 335324,
+  "px": [
+   555,
+   201
+  ],
+  "transparent": false,
+  "bytes": 61291
+ },
+ "איורים/11C.png": {
+  "source": "איורים\\11C.BMP",
+  "source_bytes": 514136,
+  "px": [
+   672,
+   255
+  ],
+  "transparent": false,
+  "bytes": 81141
+ },
+ "איורים/12C.png": {
+  "source": "איורים\\12C.BMP",
+  "source_bytes": 346916,
+  "px": [
+   564,
+   205
+  ],
+  "transparent": false,
+  "bytes": 53431
+ },
+ "איורים/13C.png": {
+  "source": "איורים\\13C.BMP",
+  "source_bytes": 449856,
+  "px": [
+   461,
+   325
+  ],
+  "transparent": false,
+  "bytes": 37168
+ },
+ "איורים/14C.png": {
+  "source": "איורים\\14C.BMP",
+  "source_bytes": 521196,
+  "px": [
+   489,
+   355
+  ],
+  "transparent": false,
+  "bytes": 46163
+ },
+ "איורים/15C.png": {
+  "source": "איורים\\15C.BMP",
+  "source_bytes": 638360,
+  "px": [
+   650,
+   327
+  ],
+  "transparent": false,
+  "bytes": 49080
+ },
+ "איורים/16C.png": {
+  "source": "איורים\\16C.BMP",
+  "source_bytes": 538668,
+  "px": [
+   497,
+   361
+  ],
+  "transparent": false,
+  "bytes": 34419
+ },
+ "איורים/17C.png": {
+  "source": "איורים\\17C.BMP",
+  "source_bytes": 481976,
+  "px": [
+   639,
+   251
+  ],
+  "transparent": false,
+  "bytes": 35780
+ },
+ "איורים/18C.png": {
+  "source": "איורים\\18C.BMP",
+  "source_bytes": 257288,
+  "px": [
+   621,
+   138
+  ],
+  "transparent": false,
+  "bytes": 21471
+ },
+ "איורים/19C.png": {
+  "source": "איורים\\19C.BMP",
+  "source_bytes": 396068,
+  "px": [
+   721,
+   183
+  ],
+  "transparent": false,
+  "bytes": 31185
+ },
+ "איורים/20C.png": {
+  "source": "איורים\\20C.BMP",
+  "source_bytes": 278796,
+  "px": [
+   513,
+   181
+  ],
+  "transparent": false,
+  "bytes": 41772
+ },
+ "איורים/21C.png": {
+  "source": "איורים\\21C.BMP",
+  "source_bytes": 349496,
+  "px": [
+   693,
+   168
+  ],
+  "transparent": false,
+  "bytes": 66758
+ },
+ "איורים/22C.png": {
+  "source": "איורים\\22C.BMP",
+  "source_bytes": 709688,
+  "px": [
+   469,
+   504
+  ],
+  "transparent": false,
+  "bytes": 71593
+ },
+ "איורים/23C.png": {
+  "source": "איורים\\23C.BMP",
+  "source_bytes": 474288,
+  "px": [
+   422,
+   374
+  ],
+  "transparent": false,
+  "bytes": 30891
+ },
+ "איורים/24C.png": {
+  "source": "איורים\\24C.BMP",
+  "source_bytes": 410648,
+  "px": [
+   501,
+   273
+  ],
+  "transparent": false,
+  "bytes": 19759
+ },
+ "איורים/25C.png": {
+  "source": "איורים\\25C.BMP",
+  "source_bytes": 262964,
+  "px": [
+   436,
+   201
+  ],
+  "transparent": false,
+  "bytes": 44803
+ },
+ "איורים/26C.png": {
+  "source": "איורים\\26C.BMP",
+  "source_bytes": 599240,
+  "px": [
+   456,
+   438
+  ],
+  "transparent": false,
+  "bytes": 20722
+ },
+ "איורים/27C.png": {
+  "source": "איורים\\27C.BMP",
+  "source_bytes": 396536,
+  "px": [
+   280,
+   472
+  ],
+  "transparent": false,
+  "bytes": 8784
+ },
+ "איורים/28C.png": {
+  "source": "איורים\\28C.BMP",
+  "source_bytes": 468544,
+  "px": [
+   418,
+   373
+  ],
+  "transparent": false,
+  "bytes": 24351
+ },
+ "איורים/29C.png": {
+  "source": "איורים\\29C.BMP",
+  "source_bytes": 481108,
+  "px": [
+   425,
+   377
+  ],
+  "transparent": false,
+  "bytes": 39697
+ },
+ "איורים/30C.png": {
+  "source": "איורים\\30C.BMP",
+  "source_bytes": 650592,
+  "px": [
+   465,
+   466
+  ],
+  "transparent": false,
+  "bytes": 50461
+ },
+ "איורים/31C.png": {
+  "source": "איורים\\31C.BMP",
+  "source_bytes": 896516,
+  "px": [
+   446,
+   669
+  ],
+  "transparent": false,
+  "bytes": 87401
+ },
+ "איורים/32C.png": {
+  "source": "איורים\\32C.BMP",
+  "source_bytes": 988140,
+  "px": [
+   449,
+   733
+  ],
+  "transparent": false,
+  "bytes": 123745
+ },
+ "איורים/33C.png": {
+  "source": "איורים\\33C.BMP",
+  "source_bytes": 174330,
+  "px": [
+   411,
+   141
+  ],
+  "transparent": false,
+  "bytes": 25766
+ },
+ "איורים/34C.png": {
+  "source": "איורים\\34C.BMP",
+  "source_bytes": 889976,
+  "px": [
+   479,
+   618
+  ],
+  "transparent": false,
+  "bytes": 88199
+ },
+ "איורים/35C.png": {
+  "source": "איורים\\35C.BMP",
+  "source_bytes": 928232,
+  "px": [
+   488,
+   634
+  ],
+  "transparent": false,
+  "bytes": 95349
+ },
+ "איורים/36C.png": {
+  "source": "איורים\\36C.BMP",
+  "source_bytes": 951968,
+  "px": [
+   452,
+   702
+  ],
+  "transparent": false,
+  "bytes": 112681
+ },
+ "איורים/37C.png": {
+  "source": "איורים\\37C.BMP",
+  "source_bytes": 364952,
+  "px": [
+   672,
+   181
+  ],
+  "transparent": false,
+  "bytes": 55757
+ },
+ "איורים/38C.png": {
+  "source": "איורים\\38C.BMP",
+  "source_bytes": 400396,
+  "px": [
+   721,
+   185
+  ],
+  "transparent": false,
+  "bytes": 40697
+ },
+ "איורים/39C.png": {
+  "source": "איורים\\39C.BMP",
+  "source_bytes": 282776,
+  "px": [
+   620,
+   152
+  ],
+  "transparent": false,
+  "bytes": 37761
+ },
+ "איורים/40C.png": {
+  "source": "איורים\\40C.BMP",
+  "source_bytes": 395320,
+  "px": [
+   682,
+   193
+  ],
+  "transparent": false,
+  "bytes": 96737
+ },
+ "איורים/41C.png": {
+  "source": "איורים\\41C.BMP",
+  "source_bytes": 748312,
+  "px": [
+   714,
+   349
+  ],
+  "transparent": false,
+  "bytes": 121941
+ },
+ "איורים/42C.png": {
+  "source": "איורים\\42C.BMP",
+  "source_bytes": 587896,
+  "px": [
+   586,
+   334
+  ],
+  "transparent": false,
+  "bytes": 132576
+ },
+ "איורים/43C.png": {
+  "source": "איורים\\43C.BMP",
+  "source_bytes": 383656,
+  "px": [
+   466,
+   274
+  ],
+  "transparent": false,
+  "bytes": 112166
+ },
+ "איורים/44C.png": {
+  "source": "איורים\\44C.BMP",
+  "source_bytes": 499016,
+  "px": [
+   539,
+   308
+  ],
+  "transparent": false,
+  "bytes": 114100
+ },
+ "איורים/45C.png": {
+  "source": "איורים\\45C.BMP",
+  "source_bytes": 351576,
+  "px": [
+   450,
+   260
+  ],
+  "transparent": false,
+  "bytes": 44878
+ },
+ "איורים/46C.png": {
+  "source": "איורים\\46C.BMP",
+  "source_bytes": 332024,
+  "px": [
+   658,
+   168
+  ],
+  "transparent": false,
+  "bytes": 98713
+ },
+ "איורים/47C.png": {
+  "source": "איורים\\47C.BMP",
+  "source_bytes": 417176,
+  "px": [
+   632,
+   220
+  ],
+  "transparent": false,
+  "bytes": 102497
+ },
+ "איורים/48C.png": {
+  "source": "איורים\\48C.BMP",
+  "source_bytes": 477368,
+  "px": [
+   602,
+   264
+  ],
+  "transparent": false,
+  "bytes": 33758
+ },
+ "איורים/49C.png": {
+  "source": "איורים\\49C.BMP",
+  "source_bytes": 604748,
+  "px": [
+   678,
+   297
+  ],
+  "transparent": false,
+  "bytes": 83489
+ },
+ "איורים/50C.png": {
+  "source": "איורים\\50C.BMP",
+  "source_bytes": 426008,
+  "px": [
+   464,
+   306
+  ],
+  "transparent": false,
+  "bytes": 52314
+ },
+ "איורים/51C.png": {
+  "source": "איורים\\51C.BMP",
+  "source_bytes": 644972,
+  "px": [
+   321,
+   669
+  ],
+  "transparent": false,
+  "bytes": 107694
+ },
+ "איורים/53C.png": {
+  "source": "איורים\\53C.BMP",
+  "source_bytes": 922952,
+  "px": [
+   463,
+   663
+  ],
+  "transparent": false,
+  "bytes": 67710
+ },
+ "איורים/54C.png": {
+  "source": "איורים\\54C.BMP",
+  "source_bytes": 410872,
+  "px": [
+   349,
+   392
+  ],
+  "transparent": false,
+  "bytes": 45445
+ },
+ "איורים/55C.png": {
+  "source": "איורים\\55C.BMP",
+  "source_bytes": 492536,
+  "px": [
+   405,
+   405
+  ],
+  "transparent": false,
+  "bytes": 93656
+ },
+ "איורים/56C.png": {
+  "source": "איורים\\56C.BMP",
+  "source_bytes": 482312,
+  "px": [
+   407,
+   394
+  ],
+  "transparent": false,
+  "bytes": 38715
+ },
+ "איורים/57C.png": {
+  "source": "איורים\\57C.BMP",
+  "source_bytes": 715448,
+  "px": [
+   490,
+   486
+  ],
+  "transparent": false,
+  "bytes": 96606
+ },
+ "איורים/58C.png": {
+  "source": "איורים\\58C.BMP",
+  "source_bytes": 438536,
+  "px": [
+   348,
+   420
+  ],
+  "transparent": false,
+  "bytes": 36209
+ },
+ "איורים/59C.png": {
+  "source": "איורים\\59C.BMP",
+  "source_bytes": 267212,
+  "px": [
+   492,
+   181
+  ],
+  "transparent": false,
+  "bytes": 14344
+ },
+ "איורים/60C.png": {
+  "source": "איורים\\60C.BMP",
+  "source_bytes": 573976,
+  "px": [
+   453,
+   422
+  ],
+  "transparent": false,
+  "bytes": 102425
+ },
+ "איורים/61C.png": {
+  "source": "איורים\\61C.BMP",
+  "source_bytes": 667856,
+  "px": [
+   420,
+   530
+  ],
+  "transparent": false,
+  "bytes": 100160
+ },
+ "איורים/62C.png": {
+  "source": "איורים\\62C.BMP",
+  "source_bytes": 632476,
+  "px": [
+   409,
+   515
+  ],
+  "transparent": false,
+  "bytes": 97516
+ },
+ "איורים/63C.png": {
+  "source": "איורים\\63C.BMP",
+  "source_bytes": 377264,
+  "px": [
+   371,
+   338
+  ],
+  "transparent": false,
+  "bytes": 40574
+ },
+ "איורים/64C.png": {
+  "source": "איורים\\64C.BMP",
+  "source_bytes": 543368,
+  "px": [
+   410,
+   441
+  ],
+  "transparent": false,
+  "bytes": 56527
+ },
+ "איורים/65C.png": {
+  "source": "איורים\\65C.BMP",
+  "source_bytes": 482076,
+  "px": [
+   417,
+   385
+  ],
+  "transparent": false,
+  "bytes": 69208
+ },
+ "איורים/66C.png": {
+  "source": "איורים\\66C.BMP",
+  "source_bytes": 451640,
+  "px": [
+   335,
+   448
+  ],
+  "transparent": false,
+  "bytes": 36448
+ },
+ "איורים/67C.png": {
+  "source": "איורים\\67C.BMP",
+  "source_bytes": 328576,
+  "px": [
+   286,
+   382
+  ],
+  "transparent": false,
+  "bytes": 36896
+ },
+ "איורים/68C.png": {
+  "source": "איורים\\68C.BMP",
+  "source_bytes": 340536,
+  "px": [
+   426,
+   266
+  ],
+  "transparent": false,
+  "bytes": 21512
+ },
+ "איורים/69C.png": {
+  "source": "איורים\\69C.BMP",
+  "source_bytes": 517976,
+  "px": [
+   415,
+   415
+  ],
+  "transparent": false,
+  "bytes": 100557
+ },
+ "איורים/70C.png": {
+  "source": "איורים\\70C.BMP",
+  "source_bytes": 325784,
+  "px": [
+   623,
+   174
+  ],
+  "transparent": false,
+  "bytes": 33123
+ },
+ "איורים/71C.png": {
+  "source": "איורים\\71C.BMP",
+  "source_bytes": 621572,
+  "px": [
+   457,
+   453
+  ],
+  "transparent": false,
+  "bytes": 108924
+ },
+ "איורים/72C.png": {
+  "source": "איורים\\72C.BMP",
+  "source_bytes": 406616,
+  "px": [
+   308,
+   440
+  ],
+  "transparent": false,
+  "bytes": 36441
+ },
+ "איורים/73C.png": {
+  "source": "איורים\\73C.BMP",
+  "source_bytes": 421112,
+  "px": [
+   544,
+   258
+  ],
+  "transparent": false,
+  "bytes": 38560
+ },
+ "איורים/74C.png": {
+  "source": "איורים\\74C.BMP",
+  "source_bytes": 313352,
+  "px": [
+   488,
+   214
+  ],
+  "transparent": false,
+  "bytes": 32452
+ },
+ "איורים/75C.png": {
+  "source": "איורים\\75C.BMP",
+  "source_bytes": 308700,
+  "px": [
+   681,
+   151
+  ],
+  "transparent": false,
+  "bytes": 80630
+ },
+ "איורים/76C.png": {
+  "source": "איורים\\76C.BMP",
+  "source_bytes": 610424,
+  "px": [
+   544,
+   374
+  ],
+  "transparent": false,
+  "bytes": 73845
+ },
+ "איורים/77C.png": {
+  "source": "איורים\\77C.BMP",
+  "source_bytes": 546616,
+  "px": [
+   426,
+   427
+  ],
+  "transparent": false,
+  "bytes": 108506
+ },
+ "איורים/78C.png": {
+  "source": "איורים\\78C.BMP",
+  "source_bytes": 408328,
+  "px": [
+   430,
+   316
+  ],
+  "transparent": false,
+  "bytes": 36097
+ },
+ "איורים/79C.png": {
+  "source": "איורים\\79C.BMP",
+  "source_bytes": 536696,
+  "px": [
+   520,
+   344
+  ],
+  "transparent": false,
+  "bytes": 49547
+ },
+ "איורים/80C.png": {
+  "source": "איורים\\80C.BMP",
+  "source_bytes": 383048,
+  "px": [
+   315,
+   404
+  ],
+  "transparent": false,
+  "bytes": 24764
+ },
+ "איורים/81C.png": {
+  "source": "איורים\\81C.BMP",
+  "source_bytes": 386156,
+  "px": [
+   571,
+   225
+  ],
+  "transparent": false,
+  "bytes": 71306
+ },
+ "איורים/82C.png": {
+  "source": "איורים\\82C.BMP",
+  "source_bytes": 266624,
+  "px": [
+   510,
+   174
+  ],
+  "transparent": false,
+  "bytes": 65549
+ },
+ "איורים/83C.png": {
+  "source": "איורים\\83C.BMP",
+  "source_bytes": 91260,
+  "px": [
+   201,
+   151
+  ],
+  "transparent": false,
+  "bytes": 34177
+ },
+ "איורים/84C.png": {
+  "source": "איורים\\84C.BMP",
+  "source_bytes": 332696,
+  "px": [
+   410,
+   270
+  ],
+  "transparent": false,
+  "bytes": 53783
+ },
+ "איורים/85C.png": {
+  "source": "איורים\\85C.BMP",
+  "source_bytes": 458360,
+  "px": [
+   448,
+   341
+  ],
+  "transparent": false,
+  "bytes": 25901
+ },
+ "איורים/86C.png": {
+  "source": "איורים\\86C.BMP",
+  "source_bytes": 313556,
+  "px": [
+   366,
+   285
+  ],
+  "transparent": false,
+  "bytes": 19394
+ },
+ "איורים/87C.png": {
+  "source": "איורים\\87C.BMP",
+  "source_bytes": 277400,
+  "px": [
+   431,
+   214
+  ],
+  "transparent": false,
+  "bytes": 35962
+ },
+ "איורים/88C.png": {
+  "source": "איורים\\88C.BMP",
+  "source_bytes": 453308,
+  "px": [
+   428,
+   353
+  ],
+  "transparent": false,
+  "bytes": 29099
+ },
+ "איורים/89C.png": {
+  "source": "איורים\\89C.BMP",
+  "source_bytes": 636032,
+  "px": [
+   583,
+   363
+  ],
+  "transparent": false,
+  "bytes": 37947
+ },
+ "איורים/90C.png": {
+  "source": "איורים\\90C.BMP",
+  "source_bytes": 541688,
+  "px": [
+   578,
+   312
+  ],
+  "transparent": false,
+  "bytes": 23388
+ },
+ "איורים/91C.png": {
+  "source": "איורים\\91C.BMP",
+  "source_bytes": 476804,
+  "px": [
+   491,
+   323
+  ],
+  "transparent": false,
+  "bytes": 25956
+ },
+ "איורים/92C.png": {
+  "source": "איורים\\92C.BMP",
+  "source_bytes": 413944,
+  "px": [
+   618,
+   223
+  ],
+  "transparent": false,
+  "bytes": 31251
+ },
+ "איורים/93C.png": {
+  "source": "איורים\\93C.BMP",
+  "source_bytes": 461504,
+  "px": [
+   589,
+   261
+  ],
+  "transparent": false,
+  "bytes": 28236
+ },
+ "איורים/94C.png": {
+  "source": "איורים\\94C.BMP",
+  "source_bytes": 553856,
+  "px": [
+   568,
+   325
+  ],
+  "transparent": false,
+  "bytes": 36211
+ },
+ "איורים/95C.png": {
+  "source": "איורים\\95C.BMP",
+  "source_bytes": 647528,
+  "px": [
+   656,
+   329
+  ],
+  "transparent": false,
+  "bytes": 48390
+ },
+ "איורים/96C.png": {
+  "source": "איורים\\96C.BMP",
+  "source_bytes": 225848,
+  "px": [
+   511,
+   147
+  ],
+  "transparent": false,
+  "bytes": 17564
+ },
+ "איורים/97C.png": {
+  "source": "איורים\\97C.BMP",
+  "source_bytes": 390784,
+  "px": [
+   589,
+   221
+  ],
+  "transparent": false,
+  "bytes": 30316
+ },
+ "איורים/98C.png": {
+  "source": "איורים\\98C.BMP",
+  "source_bytes": 524168,
+  "px": [
+   715,
+   244
+  ],
+  "transparent": false,
+  "bytes": 34812
+ },
+ "איורים/99C.png": {
+  "source": "איורים\\99C.BMP",
+  "source_bytes": 200256,
+  "px": [
+   606,
+   110
+  ],
+  "transparent": false,
+  "bytes": 22964
+ },
+ "איורים/ח33C.png": {
+  "source": "איורים\\ח33C.BMP",
+  "source_bytes": 888738,
+  "px": [
+   411,
+   719
+  ],
+  "transparent": false,
+  "bytes": 111890
+ },
+ "אלמנטים פונטייפ/A1106.png": {
+  "source": "אלמנטים פונטייפ\\A1106.png",
+  "source_bytes": 2570489,
+  "px": [
+   3300,
+   3508
+  ],
+  "transparent": true,
+  "bytes": 1441865
+ },
+ "אלמנטים פונטייפ/E509-A5.png": {
+  "source": "אלמנטים פונטייפ\\E509-A5.png",
+  "source_bytes": 1376785,
+  "px": [
+   2244,
+   3071
+  ],
+  "transparent": true,
+  "bytes": 1201518
+ },
+ "אלמנטים פונטייפ/E512-A5.png": {
+  "source": "אלמנטים פונטייפ\\E512-A5.png",
+  "source_bytes": 502069,
+  "px": [
+   1760,
+   2489
+  ],
+  "transparent": true,
+  "bytes": 403181
+ },
+ "אלמנטים פונטייפ/E513-A5.png": {
+  "source": "אלמנטים פונטייפ\\E513-A5.png",
+  "source_bytes": 860343,
+  "px": [
+   1760,
+   2489
+  ],
+  "transparent": true,
+  "bytes": 682199
+ },
+ "אלמנטים פונטייפ/E519-A5.png": {
+  "source": "אלמנטים פונטייפ\\E519-A5.png",
+  "source_bytes": 442409,
+  "px": [
+   2480,
+   615
+  ],
+  "transparent": true,
+  "bytes": 346618
+ },
+ "אלמנטים פונטייפ/E520-A5.png": {
+  "source": "אלמנטים פונטייפ\\E520-A5.png",
+  "source_bytes": 627614,
+  "px": [
+   2480,
+   1797
+  ],
+  "transparent": true,
+  "bytes": 470812
+ },
+ "אלמנטים פונטייפ/E522-A.png": {
+  "source": "אלמנטים פונטייפ\\E522-A.png",
+  "source_bytes": 347824,
+  "px": [
+   1281,
+   747
+  ],
+  "transparent": true,
+  "bytes": 276538
+ },
+ "אלמנטים פונטייפ/E525-A5.png": {
+  "source": "אלמנטים פונטייפ\\E525-A5.png",
+  "source_bytes": 1870415,
+  "px": [
+   2480,
+   2624
+  ],
+  "transparent": true,
+  "bytes": 1440432
+ },
+ "אלמנטים פונטייפ/E526-A5.png": {
+  "source": "אלמנטים פונטייפ\\E526-A5.png",
+  "source_bytes": 810766,
+  "px": [
+   2480,
+   2066
+  ],
+  "transparent": true,
+  "bytes": 641394
+ },
+ "אלמנטים פונטייפ/E527-A5.png": {
+  "source": "אלמנטים פונטייפ\\E527-A5.png",
+  "source_bytes": 971720,
+  "px": [
+   2480,
+   1008
+  ],
+  "transparent": true,
+  "bytes": 782154
+ },
+ "אלמנטים פונטייפ/E528-A5.png": {
+  "source": "אלמנטים פונטייפ\\E528-A5.png",
+  "source_bytes": 1468272,
+  "px": [
+   2480,
+   1626
+  ],
+  "transparent": true,
+  "bytes": 1203007
+ },
+ "אלמנטים פונטייפ/E534-A5.png": {
+  "source": "אלמנטים פונטייפ\\E534-A5.png",
+  "source_bytes": 590913,
+  "px": [
+   1527,
+   2480
+  ],
+  "transparent": true,
+  "bytes": 457558
+ },
+ "אלמנטים פונטייפ/E536-A5.png": {
+  "source": "אלמנטים פונטייפ\\E536-A5.png",
+  "source_bytes": 1345995,
+  "px": [
+   2717,
+   1207
+  ],
+  "transparent": true,
+  "bytes": 1074008
+ },
+ "אלמנטים פונטייפ/E540-A5.png": {
+  "source": "אלמנטים פונטייפ\\E540-A5.png",
+  "source_bytes": 996426,
+  "px": [
+   1550,
+   2539
+  ],
+  "transparent": true,
+  "bytes": 794295
+ },
+ "אלמנטים פונטייפ/E543-A5.png": {
+  "source": "אלמנטים פונטייפ\\E543-A5.png",
+  "source_bytes": 2928417,
+  "px": [
+   1832,
+   2480
+  ],
+  "transparent": true,
+  "bytes": 2379690
+ },
+ "אלמנטים פונטייפ/E547-A5.png": {
+  "source": "אלמנטים פונטייפ\\E547-A5.png",
+  "source_bytes": 1949329,
+  "px": [
+   1915,
+   2480
+  ],
+  "transparent": true,
+  "bytes": 1607815
+ },
+ "אלמנטים פונטייפ/E548-A5.png": {
+  "source": "אלמנטים פונטייפ\\E548-A5.png",
+  "source_bytes": 2066919,
+  "px": [
+   1967,
+   2480
+  ],
+  "transparent": true,
+  "bytes": 1623507
+ },
+ "אלמנטים פונטייפ/E555-A5.png": {
+  "source": "אלמנטים פונטייפ\\E555-A5.png",
+  "source_bytes": 1340677,
+  "px": [
+   1748,
+   3187
+  ],
+  "transparent": true,
+  "bytes": 1105932
+ },
+ "אלמנטים פונטייפ/E557-A5.png": {
+  "source": "אלמנטים פונטייפ\\E557-A5.png",
+  "source_bytes": 1184764,
+  "px": [
+   2717,
+   1266
+  ],
+  "transparent": true,
+  "bytes": 995517
+ },
+ "אלמנטים פונטייפ/E558-A5.png": {
+  "source": "אלמנטים פונטייפ\\E558-A5.png",
+  "source_bytes": 6975726,
+  "px": [
+   3508,
+   1369
+  ],
+  "transparent": true,
+  "bytes": 1083547
+ },
+ "אלמנטים פונטייפ/E560-A5.png": {
+  "source": "אלמנטים פונטייפ\\E560-A5.png",
+  "source_bytes": 541245,
+  "px": [
+   2598,
+   835
+  ],
+  "transparent": true,
+  "bytes": 460605
+ },
+ "אלמנטים פונטייפ/E563-A5.png": {
+  "source": "אלמנטים פונטייפ\\E563-A5.png",
+  "source_bytes": 2110753,
+  "px": [
+   2255,
+   2862
+  ],
+  "transparent": true,
+  "bytes": 1811743
+ },
+ "אלמנטים פונטייפ/E578-A5.png": {
+  "source": "אלמנטים פונטייפ\\E578-A5.png",
+  "source_bytes": 3290547,
+  "px": [
+   1748,
+   2480
+  ],
+  "transparent": true,
+  "bytes": 3102753
+ },
+ "אלמנטים פונטייפ/E587-A5.png": {
+  "source": "אלמנטים פונטייפ\\E587-A5.png",
+  "source_bytes": 1816020,
+  "px": [
+   2480,
+   1846
+  ],
+  "transparent": true,
+  "bytes": 1546813
+ },
+ "אלמנטים פונטייפ/E590-A5.png": {
+  "source": "אלמנטים פונטייפ\\E590-A5.png",
+  "source_bytes": 3229169,
+  "px": [
+   1812,
+   2480
+  ],
+  "transparent": false,
+  "bytes": 3219916
+ },
+ "אלמנטים פונטייפ/E591-A5.png": {
+  "source": "אלמנטים פונטייפ\\E591-A5.png",
+  "source_bytes": 3725968,
+  "px": [
+   1753,
+   2480
+  ],
+  "transparent": true,
+  "bytes": 3709638
+ },
+ "אלמנטים פונטייפ/E603-A5.png": {
+  "source": "אלמנטים פונטייפ\\E603-A5.png",
+  "source_bytes": 1561903,
+  "px": [
+   1748,
+   1966
+  ],
+  "transparent": true,
+  "bytes": 1317807
+ },
+ "אלמנטים פונטייפ/E604-A5.png": {
+  "source": "אלמנטים פונטייפ\\E604-A5.png",
+  "source_bytes": 1385052,
+  "px": [
+   2480,
+   714
+  ],
+  "transparent": true,
+  "bytes": 1165100
+ },
+ "אלמנטים פונטייפ/E605-A5.png": {
+  "source": "אלמנטים פונטייפ\\E605-A5.png",
+  "source_bytes": 1727076,
+  "px": [
+   1472,
+   2480
+  ],
+  "transparent": true,
+  "bytes": 1467628
+ },
+ "אלמנטים פונטייפ/E607-A5.png": {
+  "source": "אלמנטים פונטייפ\\E607-A5.png",
+  "source_bytes": 826046,
+  "px": [
+   1539,
+   2480
+  ],
+  "transparent": true,
+  "bytes": 634436
+ },
+ "אלמנטים פונטייפ/E612-A5.png": {
+  "source": "אלמנטים פונטייפ\\E612-A5.png",
+  "source_bytes": 3309874,
+  "px": [
+   2480,
+   1682
+  ],
+  "transparent": true,
+  "bytes": 2614565
+ },
+ "אלמנטים פונטייפ/E617-A5.png": {
+  "source": "אלמנטים פונטייפ\\E617-A5.png",
+  "source_bytes": 1395283,
+  "px": [
+   1286,
+   2480
+  ],
+  "transparent": true,
+  "bytes": 1066841
+ },
+ "אלמנטים פונטייפ/E626-A5.png": {
+  "source": "אלמנטים פונטייפ\\E626-A5.png",
+  "source_bytes": 1482858,
+  "px": [
+   2480,
+   1455
+  ],
+  "transparent": true,
+  "bytes": 1276913
+ },
+ "אלמנטים פונטייפ/E639-A5.png": {
+  "source": "אלמנטים פונטייפ\\E639-A5.png",
+  "source_bytes": 2843296,
+  "px": [
+   1759,
+   2480
+  ],
+  "transparent": true,
+  "bytes": 2430502
+ },
+ "אלמנטים פונטייפ/E649-A5.png": {
+  "source": "אלמנטים פונטייפ\\E649-A5.png",
+  "source_bytes": 2905094,
+  "px": [
+   1800,
+   2481
+  ],
+  "transparent": false,
+  "bytes": 2011118
+ },
+ "אלמנטים פונטייפ/E650-A5.png": {
+  "source": "אלמנטים פונטייפ\\E650-A5.png",
+  "source_bytes": 1591275,
+  "px": [
+   1972,
+   2717
+  ],
+  "transparent": false,
+  "bytes": 972020
+ },
+ "אלמנטים פונטייפ/E679_A5.png": {
+  "source": "אלמנטים פונטייפ\\E679_A5.png",
+  "source_bytes": 1150976,
+  "px": [
+   2615,
+   2598
+  ],
+  "transparent": true,
+  "bytes": 1137229
+ },
+ "אלמנטים פונטייפ/E692_A5.png": {
+  "source": "אלמנטים פונטייפ\\E692_A5.png",
+  "source_bytes": 532480,
+  "px": [
+   2480,
+   1388
+  ],
+  "transparent": true,
+  "bytes": 519155
+ },
+ "אלמנטים פונטייפ/E696_A5.png": {
+  "source": "אלמנטים פונטייפ\\E696_A5.png",
+  "source_bytes": 2136064,
+  "px": [
+   2480,
+   1339
+  ],
+  "transparent": true,
+  "bytes": 2120432
+ },
+ "אלמנטים פונטייפ/E709_A5.png": {
+  "source": "אלמנטים פונטייפ\\E709_A5.png",
+  "source_bytes": 2088960,
+  "px": [
+   1822,
+   2480
+  ],
+  "transparent": true,
+  "bytes": 2067193
+ },
+ "אלמנטים פונטייפ/E716_A5.png": {
+  "source": "אלמנטים פונטייפ\\E716_A5.png",
+  "source_bytes": 1353720,
+  "px": [
+   1397,
+   2480
+  ],
+  "transparent": true,
+  "bytes": 1348000
+ },
+ "אלמנטים פונטייפ/E725_A5.png": {
+  "source": "אלמנטים פונטייפ\\E725_A5.png",
+  "source_bytes": 1263230,
+  "px": [
+   1922,
+   2480
+  ],
+  "transparent": true,
+  "bytes": 1233886
+ },
+ "אלמנטים פונטייפ/E746_A5.png": {
+  "source": "אלמנטים פונטייפ\\E746_A5.png",
+  "source_bytes": 416241,
+  "px": [
+   934,
+   2480
+  ],
+  "transparent": true,
+  "bytes": 414451
+ },
+ "אלמנטים פונטייפ/E747_A5.png": {
+  "source": "אלמנטים פונטייפ\\E747_A5.png",
+  "source_bytes": 1993426,
+  "px": [
+   2480,
+   2262
+  ],
+  "transparent": true,
+  "bytes": 1957052
+ },
+ "אלמנטים פונטייפ/E787_A5.png": {
+  "source": "אלמנטים פונטייפ\\E787_A5.png",
+  "source_bytes": 126089,
+  "px": [
+   2480,
+   417
+  ],
+  "transparent": true,
+  "bytes": 124504
+ },
+ "אלמנטים/1.jpg": {
+  "source": "אלמנטים\\1.jpg",
+  "source_bytes": 255925,
+  "px": [
+   1772,
+   2542
+  ],
+  "transparent": false,
+  "bytes": 149170
+ },
+ "אלמנטים/1010246.jpg": {
+  "source": "אלמנטים\\1010246.jpg",
+  "source_bytes": 12546,
+  "px": [
+   333,
+   196
+  ],
+  "transparent": false,
+  "bytes": 7779
+ },
+ "אלמנטים/1280739.jpg": {
+  "source": "אלמנטים\\1280739.jpg",
+  "source_bytes": 12680,
+  "px": [
+   176,
+   250
+  ],
+  "transparent": false,
+  "bytes": 7565
+ },
+ "אלמנטים/1349443.jpg": {
+  "source": "אלמנטים\\1349443.jpg",
+  "source_bytes": 6834,
+  "px": [
+   333,
+   95
+  ],
+  "transparent": false,
+  "bytes": 4412
+ },
+ "אלמנטים/1444609.jpg": {
+  "source": "אלמנטים\\1444609.jpg",
+  "source_bytes": 7327,
+  "px": [
+   176,
+   250
+  ],
+  "transparent": false,
+  "bytes": 4008
+ },
+ "אלמנטים/1695730.jpg": {
+  "source": "אלמנטים\\1695730.jpg",
+  "source_bytes": 12244,
+  "px": [
+   333,
+   159
+  ],
+  "transparent": false,
+  "bytes": 7728
+ },
+ "אלמנטים/1797840.jpg": {
+  "source": "אלמנטים\\1797840.jpg",
+  "source_bytes": 22449,
+  "px": [
+   333,
+   236
+  ],
+  "transparent": false,
+  "bytes": 9404
+ },
+ "אלמנטים/2.png": {
+  "source": "אלמנטים\\2.png",
+  "source_bytes": 104159,
+  "px": [
+   850,
+   227
+  ],
+  "transparent": true,
+  "bytes": 105464
+ },
+ "אלמנטים/2176532.jpg": {
+  "source": "אלמנטים\\2176532.jpg",
+  "source_bytes": 18666,
+  "px": [
+   333,
+   196
+  ],
+  "transparent": false,
+  "bytes": 10548
+ },
+ "אלמנטים/2305527.jpg": {
+  "source": "אלמנטים\\2305527.jpg",
+  "source_bytes": 6800,
+  "px": [
+   168,
+   250
+  ],
+  "transparent": false,
+  "bytes": 4665
+ },
+ "אלמנטים/2366552.jpg": {
+  "source": "אלמנטים\\2366552.jpg",
+  "source_bytes": 17364,
+  "px": [
+   177,
+   250
+  ],
+  "transparent": false,
+  "bytes": 8410
+ },
+ "אלמנטים/2416185.jpg": {
+  "source": "אלמנטים\\2416185.jpg",
+  "source_bytes": 11371,
+  "px": [
+   176,
+   250
+  ],
+  "transparent": false,
+  "bytes": 6782
+ },
+ "אלמנטים/2749054.jpg": {
+  "source": "אלמנטים\\2749054.jpg",
+  "source_bytes": 10294,
+  "px": [
+   333,
+   87
+  ],
+  "transparent": false,
+  "bytes": 6522
+ },
+ "אלמנטים/2783853.jpg": {
+  "source": "אלמנטים\\2783853.jpg",
+  "source_bytes": 13668,
+  "px": [
+   292,
+   250
+  ],
+  "transparent": false,
+  "bytes": 8752
+ },
+ "אלמנטים/2827233.jpg": {
+  "source": "אלמנטים\\2827233.jpg",
+  "source_bytes": 6074,
+  "px": [
+   176,
+   250
+  ],
+  "transparent": false,
+  "bytes": 3902
+ },
+ "אלמנטים/2915474.jpg": {
+  "source": "אלמנטים\\2915474.jpg",
+  "source_bytes": 10598,
+  "px": [
+   333,
+   214
+  ],
+  "transparent": false,
+  "bytes": 6911
+ },
+ "אלמנטים/2919598.jpg": {
+  "source": "אלמנטים\\2919598.jpg",
+  "source_bytes": 18151,
+  "px": [
+   333,
+   196
+  ],
+  "transparent": false,
+  "bytes": 10240
+ },
+ "אלמנטים/3.png": {
+  "source": "אלמנטים\\3.png",
+  "source_bytes": 332290,
+  "px": [
+   1984,
+   567
+  ],
+  "transparent": true,
+  "bytes": 326642
+ },
+ "אלמנטים/3018880.jpg": {
+  "source": "אלמנטים\\3018880.jpg",
+  "source_bytes": 5477,
+  "px": [
+   131,
+   250
+  ],
+  "transparent": false,
+  "bytes": 3819
+ },
+ "אלמנטים/3200634.jpg": {
+  "source": "אלמנטים\\3200634.jpg",
+  "source_bytes": 7104,
+  "px": [
+   176,
+   250
+  ],
+  "transparent": false,
+  "bytes": 4554
+ },
+ "אלמנטים/3268126.jpg": {
+  "source": "אלמנטים\\3268126.jpg",
+  "source_bytes": 7978,
+  "px": [
+   221,
+   250
+  ],
+  "transparent": false,
+  "bytes": 5008
+ },
+ "אלמנטים/3940287.jpg": {
+  "source": "אלמנטים\\3940287.jpg",
+  "source_bytes": 13027,
+  "px": [
+   180,
+   250
+  ],
+  "transparent": false,
+  "bytes": 6491
+ },
+ "אלמנטים/4050421.jpg": {
+  "source": "אלמנטים\\4050421.jpg",
+  "source_bytes": 15697,
+  "px": [
+   176,
+   250
+  ],
+  "transparent": false,
+  "bytes": 9663
+ },
+ "אלמנטים/4164014.jpg": {
+  "source": "אלמנטים\\4164014.jpg",
+  "source_bytes": 14195,
+  "px": [
+   177,
+   250
+  ],
+  "transparent": false,
+  "bytes": 6966
+ },
+ "אלמנטים/4231107.jpg": {
+  "source": "אלמנטים\\4231107.jpg",
+  "source_bytes": 11440,
+  "px": [
+   177,
+   250
+  ],
+  "transparent": false,
+  "bytes": 5349
+ },
+ "אלמנטים/4307087.jpg": {
+  "source": "אלמנטים\\4307087.jpg",
+  "source_bytes": 23661,
+  "px": [
+   333,
+   208
+  ],
+  "transparent": false,
+  "bytes": 14120
+ },
+ "אלמנטים/4427463.jpg": {
+  "source": "אלמנטים\\4427463.jpg",
+  "source_bytes": 15879,
+  "px": [
+   168,
+   250
+  ],
+  "transparent": false,
+  "bytes": 9737
+ },
+ "אלמנטים/443591.jpg": {
+  "source": "אלמנטים\\443591.jpg",
+  "source_bytes": 18703,
+  "px": [
+   176,
+   250
+  ],
+  "transparent": false,
+  "bytes": 11549
+ },
+ "אלמנטים/4460375.jpg": {
+  "source": "אלמנטים\\4460375.jpg",
+  "source_bytes": 18656,
+  "px": [
+   333,
+   196
+  ],
+  "transparent": false,
+  "bytes": 10471
+ },
+ "אלמנטים/4587477.jpg": {
+  "source": "אלמנטים\\4587477.jpg",
+  "source_bytes": 16240,
+  "px": [
+   176,
+   250
+  ],
+  "transparent": false,
+  "bytes": 10090
+ },
+ "אלמנטים/4721559.jpg": {
+  "source": "אלמנטים\\4721559.jpg",
+  "source_bytes": 12346,
+  "px": [
+   333,
+   103
+  ],
+  "transparent": false,
+  "bytes": 8227
+ },
+ "אלמנטים/479103.jpg": {
+  "source": "אלמנטים\\479103.jpg",
+  "source_bytes": 11165,
+  "px": [
+   215,
+   250
+  ],
+  "transparent": false,
+  "bytes": 7032
+ },
+ "אלמנטים/4885487.jpg": {
+  "source": "אלמנטים\\4885487.jpg",
+  "source_bytes": 15249,
+  "px": [
+   333,
+   235
+  ],
+  "transparent": false,
+  "bytes": 8581
+ },
+ "אלמנטים/5.jpg": {
+  "source": "אלמנטים\\5.jpg",
+  "source_bytes": 47946,
+  "px": [
+   438,
+   295
+  ],
+  "transparent": false,
+  "bytes": 21277
+ },
+ "אלמנטים/5047047.jpg": {
+  "source": "אלמנטים\\5047047.jpg",
+  "source_bytes": 16881,
+  "px": [
+   176,
+   250
+  ],
+  "transparent": false,
+  "bytes": 10193
+ },
+ "אלמנטים/514513.jpg": {
+  "source": "אלמנטים\\514513.jpg",
+  "source_bytes": 12430,
+  "px": [
+   333,
+   158
+  ],
+  "transparent": false,
+  "bytes": 7767
+ },
+ "אלמנטים/5164400.jpg": {
+  "source": "אלמנטים\\5164400.jpg",
+  "source_bytes": 8429,
+  "px": [
+   176,
+   250
+  ],
+  "transparent": false,
+  "bytes": 5542
+ },
+ "אלמנטים/5221983.jpg": {
+  "source": "אלמנטים\\5221983.jpg",
+  "source_bytes": 12789,
+  "px": [
+   333,
+   156
+  ],
+  "transparent": false,
+  "bytes": 7875
+ },
+ "אלמנטים/5261853.jpg": {
+  "source": "אלמנטים\\5261853.jpg",
+  "source_bytes": 12226,
+  "px": [
+   176,
+   250
+  ],
+  "transparent": false,
+  "bytes": 7439
+ },
+ "אלמנטים/5428932.jpg": {
+  "source": "אלמנטים\\5428932.jpg",
+  "source_bytes": 6238,
+  "px": [
+   176,
+   250
+  ],
+  "transparent": false,
+  "bytes": 4107
+ },
+ "אלמנטים/5450576.jpg": {
+  "source": "אלמנטים\\5450576.jpg",
+  "source_bytes": 13397,
+  "px": [
+   176,
+   250
+  ],
+  "transparent": false,
+  "bytes": 8022
+ },
+ "אלמנטים/5488613.jpg": {
+  "source": "אלמנטים\\5488613.jpg",
+  "source_bytes": 23921,
+  "px": [
+   333,
+   235
+  ],
+  "transparent": false,
+  "bytes": 13783
+ },
+ "אלמנטים/6115945.jpg": {
+  "source": "אלמנטים\\6115945.jpg",
+  "source_bytes": 17610,
+  "px": [
+   177,
+   250
+  ],
+  "transparent": false,
+  "bytes": 7403
+ },
+ "אלמנטים/611829.jpg": {
+  "source": "אלמנטים\\611829.jpg",
+  "source_bytes": 12324,
+  "px": [
+   178,
+   250
+  ],
+  "transparent": false,
+  "bytes": 7787
+ },
+ "אלמנטים/6183566.jpg": {
+  "source": "אלמנטים\\6183566.jpg",
+  "source_bytes": 14817,
+  "px": [
+   176,
+   250
+  ],
+  "transparent": false,
+  "bytes": 9384
+ },
+ "אלמנטים/6291678.jpg": {
+  "source": "אלמנטים\\6291678.jpg",
+  "source_bytes": 9341,
+  "px": [
+   191,
+   250
+  ],
+  "transparent": false,
+  "bytes": 6071
+ },
+ "אלמנטים/6302858.jpg": {
+  "source": "אלמנטים\\6302858.jpg",
+  "source_bytes": 10180,
+  "px": [
+   176,
+   250
+  ],
+  "transparent": false,
+  "bytes": 4854
+ },
+ "אלמנטים/6840730.jpg": {
+  "source": "אלמנטים\\6840730.jpg",
+  "source_bytes": 12991,
+  "px": [
+   333,
+   153
+  ],
+  "transparent": false,
+  "bytes": 6683
+ },
+ "אלמנטים/6915784.jpg": {
+  "source": "אלמנטים\\6915784.jpg",
+  "source_bytes": 16733,
+  "px": [
+   177,
+   250
+  ],
+  "transparent": false,
+  "bytes": 7178
+ },
+ "אלמנטים/7071430.jpg": {
+  "source": "אלמנטים\\7071430.jpg",
+  "source_bytes": 8908,
+  "px": [
+   176,
+   250
+  ],
+  "transparent": false,
+  "bytes": 5731
+ },
+ "אלמנטים/730406.jpg": {
+  "source": "אלמנטים\\730406.jpg",
+  "source_bytes": 16146,
+  "px": [
+   176,
+   250
+  ],
+  "transparent": false,
+  "bytes": 10237
+ },
+ "אלמנטים/7360740.jpg": {
+  "source": "אלמנטים\\7360740.jpg",
+  "source_bytes": 13740,
+  "px": [
+   242,
+   250
+  ],
+  "transparent": false,
+  "bytes": 8648
+ },
+ "אלמנטים/7475435.jpg": {
+  "source": "אלמנטים\\7475435.jpg",
+  "source_bytes": 16728,
+  "px": [
+   176,
+   250
+  ],
+  "transparent": false,
+  "bytes": 10388
+ },
+ "אלמנטים/7625757.jpg": {
+  "source": "אלמנטים\\7625757.jpg",
+  "source_bytes": 6941,
+  "px": [
+   176,
+   250
+  ],
+  "transparent": false,
+  "bytes": 4383
+ },
+ "אלמנטים/7699748.jpg": {
+  "source": "אלמנטים\\7699748.jpg",
+  "source_bytes": 14479,
+  "px": [
+   176,
+   250
+  ],
+  "transparent": false,
+  "bytes": 9014
+ },
+ "אלמנטים/8213650.jpg": {
+  "source": "אלמנטים\\8213650.jpg",
+  "source_bytes": 10953,
+  "px": [
+   176,
+   250
+  ],
+  "transparent": false,
+  "bytes": 6674
+ },
+ "אלמנטים/8377875.jpg": {
+  "source": "אלמנטים\\8377875.jpg",
+  "source_bytes": 31726,
+  "px": [
+   333,
+   235
+  ],
+  "transparent": false,
+  "bytes": 19474
+ },
+ "אלמנטים/8930090.jpg": {
+  "source": "אלמנטים\\8930090.jpg",
+  "source_bytes": 16590,
+  "px": [
+   160,
+   250
+  ],
+  "transparent": false,
+  "bytes": 10454
+ },
+ "אלמנטים/8981569.jpg": {
+  "source": "אלמנטים\\8981569.jpg",
+  "source_bytes": 12261,
+  "px": [
+   176,
+   250
+  ],
+  "transparent": false,
+  "bytes": 8270
+ },
+ "אלמנטים/9049487.jpg": {
+  "source": "אלמנטים\\9049487.jpg",
+  "source_bytes": 11495,
+  "px": [
+   168,
+   250
+  ],
+  "transparent": false,
+  "bytes": 7481
+ },
+ "אלמנטים/9146165.jpg": {
+  "source": "אלמנטים\\9146165.jpg",
+  "source_bytes": 8336,
+  "px": [
+   240,
+   250
+  ],
+  "transparent": false,
+  "bytes": 5577
+ },
+ "אלמנטים/9162043.jpg": {
+  "source": "אלמנטים\\9162043.jpg",
+  "source_bytes": 13287,
+  "px": [
+   192,
+   250
+  ],
+  "transparent": false,
+  "bytes": 7534
+ },
+ "אלמנטים/9200961.jpg": {
+  "source": "אלמנטים\\9200961.jpg",
+  "source_bytes": 13187,
+  "px": [
+   333,
+   196
+  ],
+  "transparent": false,
+  "bytes": 8410
+ },
+ "אלמנטים/9222868.jpg": {
+  "source": "אלמנטים\\9222868.jpg",
+  "source_bytes": 5206,
+  "px": [
+   149,
+   250
+  ],
+  "transparent": false,
+  "bytes": 3640
+ },
+ "אלמנטים/9258882.jpg": {
+  "source": "אלמנטים\\9258882.jpg",
+  "source_bytes": 11510,
+  "px": [
+   176,
+   250
+  ],
+  "transparent": false,
+  "bytes": 7603
+ },
+ "אלמנטים/958498.jpg": {
+  "source": "אלמנטים\\958498.jpg",
+  "source_bytes": 13418,
+  "px": [
+   176,
+   250
+  ],
+  "transparent": false,
+  "bytes": 8327
+ },
+ "אלמנטים/9613496.jpg": {
+  "source": "אלמנטים\\9613496.jpg",
+  "source_bytes": 13733,
+  "px": [
+   178,
+   250
+  ],
+  "transparent": false,
+  "bytes": 8585
+ },
+ "אלמנטים/981758.jpg": {
+  "source": "אלמנטים\\981758.jpg",
+  "source_bytes": 12215,
+  "px": [
+   276,
+   250
+  ],
+  "transparent": false,
+  "bytes": 7885
+ },
+ "אלמנטים/9827510.jpg": {
+  "source": "אלמנטים\\9827510.jpg",
+  "source_bytes": 11553,
+  "px": [
+   176,
+   250
+  ],
+  "transparent": false,
+  "bytes": 6741
+ },
+ "אלמנטים/9870039.jpg": {
+  "source": "אלמנטים\\9870039.jpg",
+  "source_bytes": 29852,
+  "px": [
+   296,
+   250
+  ],
+  "transparent": false,
+  "bytes": 18370
+ },
+ "אלמנטים/9975220.jpg": {
+  "source": "אלמנטים\\9975220.jpg",
+  "source_bytes": 7458,
+  "px": [
+   176,
+   250
+  ],
+  "transparent": false,
+  "bytes": 4891
+ },
+ "אלמנטים/בקבוק יין.jpg": {
+  "source": "אלמנטים\\בקבוק יין.jpg",
+  "source_bytes": 5269,
+  "px": [
+   123,
+   250
+  ],
+  "transparent": false,
+  "bytes": 3352
+ },
+ "אלמנטים/גביע.jpg": {
+  "source": "אלמנטים\\גביע.jpg",
+  "source_bytes": 8289,
+  "px": [
+   270,
+   250
+  ],
+  "transparent": false,
+  "bytes": 5077
+ },
+ "אלמנטים/חופה.jpg": {
+  "source": "אלמנטים\\חופה.jpg",
+  "source_bytes": 11839,
+  "px": [
+   292,
+   250
+  ],
+  "transparent": false,
+  "bytes": 7804
+ },
+ "אלמנטים/כתר.jpg": {
+  "source": "אלמנטים\\כתר.jpg",
+  "source_bytes": 31210,
+  "px": [
+   333,
+   194
+  ],
+  "transparent": false,
+  "bytes": 18368
+ },
+ "אלמנטים/מגילה.jpg": {
+  "source": "אלמנטים\\מגילה.jpg",
+  "source_bytes": 14003,
+  "px": [
+   333,
+   235
+  ],
+  "transparent": false,
+  "bytes": 8566
+ },
+ "אלמנטים/נר 2.jpg": {
+  "source": "אלמנטים\\נר 2.jpg",
+  "source_bytes": 6292,
+  "px": [
+   162,
+   250
+  ],
+  "transparent": false,
+  "bytes": 4344
+ },
+ "אלמנטים/נר 3.jpg": {
+  "source": "אלמנטים\\נר 3.jpg",
+  "source_bytes": 4053,
+  "px": [
+   162,
+   250
+  ],
+  "transparent": false,
+  "bytes": 2966
+ },
+ "אלמנטים/נר תלוי.jpg": {
+  "source": "אלמנטים\\נר תלוי.jpg",
+  "source_bytes": 5638,
+  "px": [
+   176,
+   250
+  ],
+  "transparent": false,
+  "bytes": 3810
+ },
+ "אלמנטים/נר.jpg": {
+  "source": "אלמנטים\\נר.jpg",
+  "source_bytes": 8143,
+  "px": [
+   235,
+   250
+  ],
+  "transparent": false,
+  "bytes": 5511
+ },
+ "אלמנטים/ספר עם נר.jpg": {
+  "source": "אלמנטים\\ספר עם נר.jpg",
+  "source_bytes": 24939,
+  "px": [
+   250,
+   250
+  ],
+  "transparent": false,
+  "bytes": 13947
+ },
+ "אלמנטים/ספר פתוח.jpg": {
+  "source": "אלמנטים\\ספר פתוח.jpg",
+  "source_bytes": 11437,
+  "px": [
+   333,
+   134
+  ],
+  "transparent": false,
+  "bytes": 7161
+ },
+ "אלמנטים/ספר תורה 2.jpg": {
+  "source": "אלמנטים\\ספר תורה 2.jpg",
+  "source_bytes": 13630,
+  "px": [
+   333,
+   235
+  ],
+  "transparent": false,
+  "bytes": 8831
+ },
+ "אלמנטים/ספר תורה.jpg": {
+  "source": "אלמנטים\\ספר תורה.jpg",
+  "source_bytes": 12587,
+  "px": [
+   323,
+   250
+  ],
+  "transparent": false,
+  "bytes": 7821
+ },
+ "אלמנטים/ספרים סגורים.jpg": {
+  "source": "אלמנטים\\ספרים סגורים.jpg",
+  "source_bytes": 16940,
+  "px": [
+   282,
+   250
+  ],
+  "transparent": false,
+  "bytes": 10094
+ },
+ "אלמנטים/פמוט.jpg": {
+  "source": "אלמנטים\\פמוט.jpg",
+  "source_bytes": 4363,
+  "px": [
+   131,
+   250
+  ],
+  "transparent": false,
+  "bytes": 2971
+ },
+ "אלמנטים/תפילין.jpg": {
+  "source": "אלמנטים\\תפילין.jpg",
+  "source_bytes": 16801,
+  "px": [
+   318,
+   250
+  ],
+  "transparent": false,
+  "bytes": 11063
+ },
+ "וילונות/%E5%E9%EC%E5%EF1.jpg": {
+  "source": "וילונות\\%E5%E9%EC%E5%EF1.jpg",
+  "source_bytes": 56548,
+  "px": [
+   802,
+   602
+  ],
+  "transparent": false,
+  "bytes": 45476
+ },
+ "וילונות/%E5%E9%EC%E5%F0%E5%FA1.jpg": {
+  "source": "וילונות\\%E5%E9%EC%E5%F0%E5%FA1.jpg",
+  "source_bytes": 179764,
+  "px": [
+   802,
+   647
+  ],
+  "transparent": false,
+  "bytes": 143483
+ },
+ "וילונות/%E5%E9%EC%E5%F0%E5%FA2.jpg": {
+  "source": "וילונות\\%E5%E9%EC%E5%F0%E5%FA2.jpg",
+  "source_bytes": 136226,
+  "px": [
+   802,
+   534
+  ],
+  "transparent": false,
+  "bytes": 107816
+ },
+ "וילונות/%E5%E9%EC%E5%F0%E5%FA3.jpg": {
+  "source": "וילונות\\%E5%E9%EC%E5%F0%E5%FA3.jpg",
+  "source_bytes": 134909,
+  "px": [
+   535,
+   802
+  ],
+  "transparent": false,
+  "bytes": 107310
+ },
+ "וילונות/%E5%E9%EC%E5%F0%E5%FA4.jpg": {
+  "source": "וילונות\\%E5%E9%EC%E5%F0%E5%FA4.jpg",
+  "source_bytes": 136725,
+  "px": [
+   700,
+   802
+  ],
+  "transparent": false,
+  "bytes": 106689
+ },
+ "וילונות/1.jpg": {
+  "source": "וילונות\\1.jpg",
+  "source_bytes": 6821388,
+  "px": [
+   3508,
+   2366
+  ],
+  "transparent": false,
+  "bytes": 1003233
+ },
+ "וילונות/1_DSC_0211.jpg": {
+  "source": "וילונות\\1_DSC_0211.jpg",
+  "source_bytes": 37380,
+  "px": [
+   373,
+   500
+  ],
+  "transparent": false,
+  "bytes": 36898
+ },
+ "וילונות/1_DSC_0212.jpg": {
+  "source": "וילונות\\1_DSC_0212.jpg",
+  "source_bytes": 27721,
+  "px": [
+   500,
+   361
+  ],
+  "transparent": false,
+  "bytes": 28755
+ },
+ "וילונות/2.jpg": {
+  "source": "וילונות\\2.jpg",
+  "source_bytes": 2726516,
+  "px": [
+   2287,
+   1889
+  ],
+  "transparent": false,
+  "bytes": 521497
+ },
+ "וילונות/curtain%209.jpg": {
+  "source": "וילונות\\curtain%209.JPG",
+  "source_bytes": 875258,
+  "px": [
+   2338,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 555808
+ },
+ "וילונות/iStock_000004939958Large.jpg": {
+  "source": "וילונות\\iStock_000004939958Large.jpg",
+  "source_bytes": 2409426,
+  "px": [
+   2702,
+   1819
+  ],
+  "transparent": false,
+  "bytes": 545801
+ },
+ "וילונות/iStock_000005530740Medium.jpg": {
+  "source": "וילונות\\iStock_000005530740Medium.jpg",
+  "source_bytes": 2363236,
+  "px": [
+   1184,
+   1622
+  ],
+  "transparent": false,
+  "bytes": 326050
+ },
+ "וילונות/stockxpertcom_id1651921_size2.jpg": {
+  "source": "וילונות\\stockxpertcom_id1651921_size2.jpg",
+  "source_bytes": 79893,
+  "px": [
+   802,
+   628
+  ],
+  "transparent": false,
+  "bytes": 63698
+ },
+ "וילונות/וילון.jpg": {
+  "source": "וילונות\\וילון.jpg",
+  "source_bytes": 1287104,
+  "px": [
+   3508,
+   1701
+  ],
+  "transparent": false,
+  "bytes": 725856
+ },
+ "וילונות/‏‏עותק של וילון.jpg": {
+  "source": "וילונות\\‏‏עותק של וילון.jpg",
+  "source_bytes": 4069733,
+  "px": [
+   3508,
+   1788
+  ],
+  "transparent": false,
+  "bytes": 300655
+ },
+ "וילונות/‏‏עותק של וילוןעותק.png": {
+  "source": "וילונות\\‏‏עותק של וילוןעותק.png",
+  "source_bytes": 32029420,
+  "px": [
+   3508,
+   2464
+  ],
+  "transparent": true,
+  "bytes": 6321808
+ },
+ "מסגרות/DOC076_עמוד_29.jpg": {
+  "source": "מסגרות\\DOC076_עמוד_29.jpg",
+  "source_bytes": 566417,
+  "px": [
+   2479,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 887714
+ },
+ "מסגרות/F003.jpg": {
+  "source": "מסגרות\\F003.jpg",
+  "source_bytes": 183385,
+  "px": [
+   559,
+   700
+  ],
+  "transparent": false,
+  "bytes": 64559
+ },
+ "מסגרות/Frame02.jpg": {
+  "source": "מסגרות\\Frame02.JPG",
+  "source_bytes": 242781,
+  "px": [
+   900,
+   1200
+  ],
+  "transparent": false,
+  "bytes": 178105
+ },
+ "מסגרות/Frame03.jpg": {
+  "source": "מסגרות\\Frame03.JPG",
+  "source_bytes": 79882,
+  "px": [
+   1200,
+   900
+  ],
+  "transparent": false,
+  "bytes": 88492
+ },
+ "מסגרות/iStock_000002.jpg": {
+  "source": "מסגרות\\iStock_000002.jpg",
+  "source_bytes": 2027659,
+  "px": [
+   1153,
+   1665
+  ],
+  "transparent": false,
+  "bytes": 240174
+ },
+ "מסגרות/parchement1_1.jpg": {
+  "source": "מסגרות\\parchement1_1.jpg",
+  "source_bytes": 376579,
+  "px": [
+   1534,
+   1125
+  ],
+  "transparent": false,
+  "bytes": 311300
+ },
+ "מסגרות/parchement1mask.jpg": {
+  "source": "מסגרות\\parchement1mask.jpg",
+  "source_bytes": 70128,
+  "px": [
+   1534,
+   1125
+  ],
+  "transparent": false,
+  "bytes": 38845
+ },
+ "מסגרות/scale-center-middle-1280-1024-PNL-AD3.jpg": {
+  "source": "מסגרות\\scale-center-middle-1280-1024-PNL-AD3.jpg",
+  "source_bytes": 144933,
+  "px": [
+   514,
+   1000
+  ],
+  "transparent": false,
+  "bytes": 156298
+ },
+ "מסגרות/shutterstock_1981804.jpg": {
+  "source": "מסגרות\\shutterstock_1981804.jpg",
+  "source_bytes": 4705859,
+  "px": [
+   3127,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 1136045
+ },
+ "מסגרות/shutterstock_2415554.jpg": {
+  "source": "מסגרות\\shutterstock_2415554.jpg",
+  "source_bytes": 5392374,
+  "px": [
+   3025,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 454964
+ },
+ "מסגרות/shutterstock_2773326.jpg": {
+  "source": "מסגרות\\shutterstock_2773326.jpg",
+  "source_bytes": 15476460,
+  "px": [
+   3508,
+   2464
+  ],
+  "transparent": false,
+  "bytes": 668883
+ },
+ "מסגרות/shutterstock_3474911.jpg": {
+  "source": "מסגרות\\shutterstock_3474911.jpg",
+  "source_bytes": 8981381,
+  "px": [
+   3508,
+   2450
+  ],
+  "transparent": false,
+  "bytes": 544914
+ },
+ "מסגרות/shutterstock_3517324.jpg": {
+  "source": "מסגרות\\shutterstock_3517324.jpg",
+  "source_bytes": 6151151,
+  "px": [
+   3008,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 512330
+ },
+ "מסגרות/shutterstock_452190.jpg": {
+  "source": "מסגרות\\shutterstock_452190.jpg",
+  "source_bytes": 30629510,
+  "px": [
+   2734,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 3339931
+ },
+ "מסגרות/במכתב.jpg": {
+  "source": "מסגרות\\במכתב.jpg",
+  "source_bytes": 319091,
+  "px": [
+   1772,
+   2362
+  ],
+  "transparent": false,
+  "bytes": 333520
+ },
+ "מסגרות/וילנא רקע.png": {
+  "source": "מסגרות\\וילנא רקע.gif",
+  "source_bytes": 3035724,
+  "px": [
+   2472,
+   3508
+  ],
+  "transparent": true,
+  "bytes": 8400863
+ },
+ "מסגרות/זכותים 004.jpg": {
+  "source": "מסגרות\\זכותים 004.jpg",
+  "source_bytes": 129299,
+  "px": [
+   1214,
+   1731
+  ],
+  "transparent": false,
+  "bytes": 131444
+ },
+ "מסגרות/זכותים 005.jpg": {
+  "source": "מסגרות\\זכותים 005.jpg",
+  "source_bytes": 172061,
+  "px": [
+   1214,
+   1741
+  ],
+  "transparent": false,
+  "bytes": 180196
+ },
+ "מסגרות/כתר מסריקה טובה - עותק.jpg": {
+  "source": "מסגרות\\כתר מסריקה טובה - עותק.jpg",
+  "source_bytes": 741550,
+  "px": [
+   3079,
+   2423
+  ],
+  "transparent": false,
+  "bytes": 605214
+ },
+ "מסגרות/כתר מסריקה טובה.jpg": {
+  "source": "מסגרות\\כתר מסריקה טובה.jpg",
+  "source_bytes": 23694198,
+  "px": [
+   2480,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 356596
+ },
+ "מסגרות/מסגרות ס 12.jpg": {
+  "source": "מסגרות\\מסגרות ס 12.jpg",
+  "source_bytes": 6807319,
+  "px": [
+   2456,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 434308
+ },
+ "מסגרות/מסגרות ס 14.jpg": {
+  "source": "מסגרות\\מסגרות ס 14.jpg",
+  "source_bytes": 8923904,
+  "px": [
+   2456,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 617823
+ },
+ "מסגרות/מסגרות ס 19.jpg": {
+  "source": "מסגרות\\מסגרות ס 19.jpg",
+  "source_bytes": 9616607,
+  "px": [
+   2456,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 632105
+ },
+ "מסגרות/מסגרת  22.jpg": {
+  "source": "מסגרות\\מסגרת  22.jpg",
+  "source_bytes": 6697114,
+  "px": [
+   2456,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 479028
+ },
+ "מסגרות/מסגרת 19.jpg": {
+  "source": "מסגרות\\מסגרת 19.jpg",
+  "source_bytes": 5496815,
+  "px": [
+   2456,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 569340
+ },
+ "מסגרות/מסגרת 21.jpg": {
+  "source": "מסגרות\\מסגרת 21.jpg",
+  "source_bytes": 4231077,
+  "px": [
+   2456,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 372326
+ },
+ "מסגרות/מסגרת 22.jpg": {
+  "source": "מסגרות\\מסגרת 22.jpg",
+  "source_bytes": 5061268,
+  "px": [
+   2456,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 448199
+ },
+ "מסגרות/מסגרת 25.jpg": {
+  "source": "מסגרות\\מסגרת 25.jpg",
+  "source_bytes": 4970474,
+  "px": [
+   2456,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 568545
+ },
+ "מסגרות/מסגרת 31.jpg": {
+  "source": "מסגרות\\מסגרת 31.jpg",
+  "source_bytes": 6903292,
+  "px": [
+   2456,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 682666
+ },
+ "מסגרות/מסגרת 33.jpg": {
+  "source": "מסגרות\\מסגרת 33.jpg",
+  "source_bytes": 7485643,
+  "px": [
+   2456,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 783360
+ },
+ "מסגרות/מסגרת 666666.jpg": {
+  "source": "מסגרות\\מסגרת 666666.jpg",
+  "source_bytes": 10820476,
+  "px": [
+   2456,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 700940
+ },
+ "מסגרות/מסגרת עם רקע.jpg": {
+  "source": "מסגרות\\מסגרת עם רקע.jpg",
+  "source_bytes": 718141,
+  "px": [
+   2480,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 460271
+ },
+ "מסגרות/נר.jpg": {
+  "source": "מסגרות\\נר.JPG",
+  "source_bytes": 74772,
+  "px": [
+   1248,
+   1696
+  ],
+  "transparent": false,
+  "bytes": 77290
+ },
+ "מסגרות/סמל 2.jpg": {
+  "source": "מסגרות\\סמל 2.jpg",
+  "source_bytes": 356432,
+  "px": [
+   2425,
+   2020
+  ],
+  "transparent": false,
+  "bytes": 265673
+ },
+ "מסגרות/עט.jpg": {
+  "source": "מסגרות\\עט.JPG",
+  "source_bytes": 79530,
+  "px": [
+   1248,
+   1696
+  ],
+  "transparent": false,
+  "bytes": 77023
+ },
+ "מסגרות/עיטוור.jpg": {
+  "source": "מסגרות\\עיטוור.jpg",
+  "source_bytes": 195936,
+  "px": [
+   1307,
+   1303
+  ],
+  "transparent": false,
+  "bytes": 104926
+ },
+ "מסגרות/עמוד.jpg": {
+  "source": "מסגרות\\עמוד.JPG",
+  "source_bytes": 75008,
+  "px": [
+   1248,
+   1696
+  ],
+  "transparent": false,
+  "bytes": 75067
+ },
+ "מסגרות/רקע יפה.jpg": {
+  "source": "מסגרות\\רקע יפה.jpg",
+  "source_bytes": 2265597,
+  "px": [
+   2551,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 719061
+ },
+ "מסגרות/שער 1.jpg": {
+  "source": "מסגרות\\שער 1.jpg",
+  "source_bytes": 1716323,
+  "px": [
+   2479,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 650012
+ },
+ "מסגרות/תמונה 011.jpg": {
+  "source": "מסגרות\\תמונה 011.jpg",
+  "source_bytes": 6046014,
+  "px": [
+   2458,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 483461
+ },
+ "מסגרות/תמונה 012.jpg": {
+  "source": "מסגרות\\תמונה 012.jpg",
+  "source_bytes": 11605439,
+  "px": [
+   2481,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 1015644
+ },
+ "מסגרות/תמונה 015.jpg": {
+  "source": "מסגרות\\תמונה 015.jpg",
+  "source_bytes": 20477840,
+  "px": [
+   2458,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 1592310
+ },
+ "רקעי פורמייקה ועץ/Wood Texture 001.jpg": {
+  "source": "רקעי פורמייקה ועץ\\Wood Texture 001.jpg",
+  "source_bytes": 5739404,
+  "px": [
+   2409,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 1867708
+ },
+ "רקעי פורמייקה ועץ/Wood Texture 002.jpg": {
+  "source": "רקעי פורמייקה ועץ\\Wood Texture 002.jpg",
+  "source_bytes": 7708773,
+  "px": [
+   2389,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 956010
+ },
+ "רקעי פורמייקה ועץ/Wood Texture 003.jpg": {
+  "source": "רקעי פורמייקה ועץ\\Wood Texture 003.jpg",
+  "source_bytes": 5577375,
+  "px": [
+   2399,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 501204
+ },
+ "רקעי פורמייקה ועץ/Wood Texture 004.jpg": {
+  "source": "רקעי פורמייקה ועץ\\Wood Texture 004.jpg",
+  "source_bytes": 6756085,
+  "px": [
+   2385,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 1777634
+ },
+ "רקעי פורמייקה ועץ/Wood Texture 005.jpg": {
+  "source": "רקעי פורמייקה ועץ\\Wood Texture 005.jpg",
+  "source_bytes": 10304706,
+  "px": [
+   2415,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 1972910
+ },
+ "רקעי פורמייקה ועץ/Wood Texture 006.jpg": {
+  "source": "רקעי פורמייקה ועץ\\Wood Texture 006.jpg",
+  "source_bytes": 6362940,
+  "px": [
+   2367,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 1620976
+ },
+ "רקעי פורמייקה ועץ/Wood Texture 007.jpg": {
+  "source": "רקעי פורמייקה ועץ\\Wood Texture 007.jpg",
+  "source_bytes": 4889458,
+  "px": [
+   2367,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 342252
+ },
+ "רקעי פורמייקה ועץ/Wood Texture 008.jpg": {
+  "source": "רקעי פורמייקה ועץ\\Wood Texture 008.jpg",
+  "source_bytes": 7855312,
+  "px": [
+   2394,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 1091836
+ },
+ "רקעי פורמייקה ועץ/Wood Texture 009.jpg": {
+  "source": "רקעי פורמייקה ועץ\\Wood Texture 009.jpg",
+  "source_bytes": 6459719,
+  "px": [
+   2398,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 1633715
+ },
+ "רקעי פורמייקה ועץ/Wood Texture 010.jpg": {
+  "source": "רקעי פורמייקה ועץ\\Wood Texture 010.jpg",
+  "source_bytes": 5452367,
+  "px": [
+   2417,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 456867
+ },
+ "רקעי פורמייקה ועץ/Wood Texture 011.jpg": {
+  "source": "רקעי פורמייקה ועץ\\Wood Texture 011.jpg",
+  "source_bytes": 6009844,
+  "px": [
+   2403,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 594470
+ },
+ "רקעי פורמייקה ועץ/Wood Texture 012.jpg": {
+  "source": "רקעי פורמייקה ועץ\\Wood Texture 012.jpg",
+  "source_bytes": 7744030,
+  "px": [
+   2393,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 997150
+ },
+ "רקעי פורמייקה ועץ/Wood Texture 013.jpg": {
+  "source": "רקעי פורמייקה ועץ\\Wood Texture 013.jpg",
+  "source_bytes": 6092707,
+  "px": [
+   2401,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 1398410
+ },
+ "רקעי פורמייקה ועץ/Wood Texture 014.jpg": {
+  "source": "רקעי פורמייקה ועץ\\Wood Texture 014.jpg",
+  "source_bytes": 5421846,
+  "px": [
+   2414,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 1549963
+ },
+ "רקעי פורמייקה ועץ/Wood Texture 015.jpg": {
+  "source": "רקעי פורמייקה ועץ\\Wood Texture 015.jpg",
+  "source_bytes": 3636181,
+  "px": [
+   2433,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 936070
+ },
+ "רקעי פורמייקה ועץ/Wood Texture 016.jpg": {
+  "source": "רקעי פורמייקה ועץ\\Wood Texture 016.jpg",
+  "source_bytes": 1885616,
+  "px": [
+   2438,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 483219
+ },
+ "רקעי פורמייקה ועץ/Wood Texture 017.jpg": {
+  "source": "רקעי פורמייקה ועץ\\Wood Texture 017.jpg",
+  "source_bytes": 6012365,
+  "px": [
+   2413,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 554610
+ },
+ "רקעי פורמייקה ועץ/Wood Texture 018.jpg": {
+  "source": "רקעי פורמייקה ועץ\\Wood Texture 018.jpg",
+  "source_bytes": 1007668,
+  "px": [
+   2439,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 1025147
+ },
+ "רקעי פורמייקה ועץ/Wood Texture 019.jpg": {
+  "source": "רקעי פורמייקה ועץ\\Wood Texture 019.jpg",
+  "source_bytes": 5605492,
+  "px": [
+   2385,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 1867072
+ },
+ "רקעי פורמייקה ועץ/Wood Texture 020.jpg": {
+  "source": "רקעי פורמייקה ועץ\\Wood Texture 020.jpg",
+  "source_bytes": 1123519,
+  "px": [
+   2413,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 1114677
+ },
+ "רקעי פורמייקה ועץ/Wood Texture 021.jpg": {
+  "source": "רקעי פורמייקה ועץ\\Wood Texture 021.jpg",
+  "source_bytes": 6840124,
+  "px": [
+   2399,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 1680914
+ },
+ "רקעי פורמייקה ועץ/Wood Texture 022.jpg": {
+  "source": "רקעי פורמייקה ועץ\\Wood Texture 022.jpg",
+  "source_bytes": 8870624,
+  "px": [
+   2384,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 1207503
+ },
+ "רקעי פורמייקה ועץ/Wood Texture 023.jpg": {
+  "source": "רקעי פורמייקה ועץ\\Wood Texture 023.jpg",
+  "source_bytes": 854147,
+  "px": [
+   2435,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 900099
+ },
+ "רקעי פורמייקה ועץ/Wood Texture 024.jpg": {
+  "source": "רקעי פורמייקה ועץ\\Wood Texture 024.jpg",
+  "source_bytes": 7675091,
+  "px": [
+   2382,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 970213
+ },
+ "רקעי פורמייקה ועץ/Wood Texture 025.jpg": {
+  "source": "רקעי פורמייקה ועץ\\Wood Texture 025.jpg",
+  "source_bytes": 4332327,
+  "px": [
+   2397,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 1919007
+ },
+ "רקעי פורמייקה ועץ/Wood Texture 026.jpg": {
+  "source": "רקעי פורמייקה ועץ\\Wood Texture 026.jpg",
+  "source_bytes": 6837565,
+  "px": [
+   2416,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 1634957
+ },
+ "רקעי פורמייקה ועץ/Wood Texture 027.jpg": {
+  "source": "רקעי פורמייקה ועץ\\Wood Texture 027.jpg",
+  "source_bytes": 6938422,
+  "px": [
+   2419,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 1773677
+ },
+ "רקעי פורמייקה ועץ/Wood Texture 028.jpg": {
+  "source": "רקעי פורמייקה ועץ\\Wood Texture 028.jpg",
+  "source_bytes": 7215931,
+  "px": [
+   2402,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 1000819
+ },
+ "רקעי פורמייקה ועץ/Wood Texture 029.jpg": {
+  "source": "רקעי פורמייקה ועץ\\Wood Texture 029.jpg",
+  "source_bytes": 5355207,
+  "px": [
+   2425,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 458596
+ },
+ "רקעי פורמייקה ועץ/Wood Texture 030.jpg": {
+  "source": "רקעי פורמייקה ועץ\\Wood Texture 030.jpg",
+  "source_bytes": 6413822,
+  "px": [
+   2405,
+   3508
+  ],
+  "transparent": false,
+  "bytes": 1484663
+ },
+ "רקעי פורמייקה ועץ/Wood Texture 031.jpg": {
+  "source": "רקעי פורמייקה ועץ\\Wood Texture 031.jpg",
+  "source_bytes": 1845793,
+  "px": [
+   2274,
+   3307
+  ],
+  "transparent": false,
+  "bytes": 429959
+ },
+ "רקעים 2/0.png": {
+  "source": "רקעים 2\\0.png",
+  "source_bytes": 983496,
+  "px": [
+   1545,
+   969
+  ],
+  "transparent": true,
+  "bytes": 951563
+ },
+ "רקעים 2/1121.png": {
+  "source": "רקעים 2\\1121.png",
+  "source_bytes": 6305690,
+  "px": [
+   2481,
+   3508
+  ],
+  "transparent": true,
+  "bytes": 3779261
+ },
+ "רקעים 2/גביע.png": {
+  "source": "רקעים 2\\גביע.png",
+  "source_bytes": 761332,
+  "px": [
+   3508,
+   2481
+  ],
+  "transparent": true,
+  "bytes": 359595
+ },
+ "רקעים 2/חלות.png": {
+  "source": "רקעים 2\\חלות.png",
+  "source_bytes": 4300431,
+  "px": [
+   3412,
+   2060
+  ],
+  "transparent": true,
+  "bytes": 4274989
+ },
+ "רקעים 2/כד יין.png": {
+  "source": "רקעים 2\\כד יין.png",
+  "source_bytes": 1361585,
+  "px": [
+   3508,
+   2481
+  ],
+  "transparent": true,
+  "bytes": 591834
+ },
+ "רקעים 2/רקע כחול.png": {
+  "source": "רקעים 2\\רקע כחול.png",
+  "source_bytes": 16050829,
+  "px": [
+   3508,
+   2481
+  ],
+  "transparent": true,
+  "bytes": 7604845
+ },
+ "רקעים 2/רקע עם סימונים יפים.png": {
+  "source": "רקעים 2\\רקע עם סימונים יפים.png",
+  "source_bytes": 5533999,
+  "px": [
+   3508,
+   2481
+  ],
+  "transparent": true,
+  "bytes": 4165137
+ },
+ "רקעים וכדומה/אנוכי-אירועים 18.jpg": {
+  "source": "רקעים וכדומה\\אנוכי-אירועים 18.jpg",
+  "source_bytes": 31759,
+  "px": [
+   600,
+   424
+  ],
+  "transparent": false,
+  "bytes": 18763
+ },
+ "רקעים וכדומה/אנכי_אירועים 1.jpg": {
+  "source": "רקעים וכדומה\\אנכי_אירועים 1.jpg",
+  "source_bytes": 45859,
+  "px": [
+   600,
+   424
+  ],
+  "transparent": false,
+  "bytes": 20977
+ },
+ "רקעים וכדומה/אנכי_אירועים 10.jpg": {
+  "source": "רקעים וכדומה\\אנכי_אירועים 10.jpg",
+  "source_bytes": 105418,
+  "px": [
+   600,
+   432
+  ],
+  "transparent": false,
+  "bytes": 56891
+ },
+ "רקעים וכדומה/אנכי_אירועים 12.jpg": {
+  "source": "רקעים וכדומה\\אנכי_אירועים 12.jpg",
+  "source_bytes": 97510,
+  "px": [
+   600,
+   432
+  ],
+  "transparent": false,
+  "bytes": 49618
+ },
+ "רקעים וכדומה/אנכי_אירועים 13.jpg": {
+  "source": "רקעים וכדומה\\אנכי_אירועים 13.jpg",
+  "source_bytes": 119178,
+  "px": [
+   600,
+   432
+  ],
+  "transparent": false,
+  "bytes": 54253
+ },
+ "רקעים וכדומה/אנכי_אירועים 14.jpg": {
+  "source": "רקעים וכדומה\\אנכי_אירועים 14.jpg",
+  "source_bytes": 124511,
+  "px": [
+   600,
+   432
+  ],
+  "transparent": false,
+  "bytes": 62177
+ },
+ "רקעים וכדומה/אנכי_אירועים 15.jpg": {
+  "source": "רקעים וכדומה\\אנכי_אירועים 15.jpg",
+  "source_bytes": 79334,
+  "px": [
+   600,
+   432
+  ],
+  "transparent": false,
+  "bytes": 40278
+ },
+ "רקעים וכדומה/אנכי_אירועים 16.jpg": {
+  "source": "רקעים וכדומה\\אנכי_אירועים 16.jpg",
+  "source_bytes": 41753,
+  "px": [
+   600,
+   432
+  ],
+  "transparent": false,
+  "bytes": 20458
+ },
+ "רקעים וכדומה/אנכי_אירועים 17.jpg": {
+  "source": "רקעים וכדומה\\אנכי_אירועים 17.jpg",
+  "source_bytes": 100185,
+  "px": [
+   600,
+   432
+  ],
+  "transparent": false,
+  "bytes": 51831
+ },
+ "רקעים וכדומה/אנכי_אירועים 2.jpg": {
+  "source": "רקעים וכדומה\\אנכי_אירועים 2.jpg",
+  "source_bytes": 69333,
+  "px": [
+   600,
+   424
+  ],
+  "transparent": false,
+  "bytes": 32884
+ },
+ "רקעים וכדומה/אנכי_אירועים 3.jpg": {
+  "source": "רקעים וכדומה\\אנכי_אירועים 3.jpg",
+  "source_bytes": 98378,
+  "px": [
+   600,
+   424
+  ],
+  "transparent": false,
+  "bytes": 48160
+ },
+ "רקעים וכדומה/אנכי_אירועים 4.jpg": {
+  "source": "רקעים וכדומה\\אנכי_אירועים 4.jpg",
+  "source_bytes": 46275,
+  "px": [
+   600,
+   424
+  ],
+  "transparent": false,
+  "bytes": 24512
+ },
+ "רקעים וכדומה/אנכי_אירועים 5.jpg": {
+  "source": "רקעים וכדומה\\אנכי_אירועים 5.jpg",
+  "source_bytes": 42423,
+  "px": [
+   600,
+   424
+  ],
+  "transparent": false,
+  "bytes": 21508
+ },
+ "רקעים וכדומה/אנכי_אירועים 6.jpg": {
+  "source": "רקעים וכדומה\\אנכי_אירועים 6.jpg",
+  "source_bytes": 55462,
+  "px": [
+   600,
+   432
+  ],
+  "transparent": false,
+  "bytes": 30848
+ },
+ "רקעים וכדומה/אנכי_אירועים 7.jpg": {
+  "source": "רקעים וכדומה\\אנכי_אירועים 7.jpg",
+  "source_bytes": 86104,
+  "px": [
+   600,
+   432
+  ],
+  "transparent": false,
+  "bytes": 47933
+ },
+ "רקעים וכדומה/אנכי_אירועים 8.jpg": {
+  "source": "רקעים וכדומה\\אנכי_אירועים 8.jpg",
+  "source_bytes": 87760,
+  "px": [
+   600,
+   432
+  ],
+  "transparent": false,
+  "bytes": 46439
+ },
+ "רקעים וכדומה/אנכי_אירועים 9.jpg": {
+  "source": "רקעים וכדומה\\אנכי_אירועים 9.jpg",
+  "source_bytes": 44664,
+  "px": [
+   600,
+   432
+  ],
+  "transparent": false,
+  "bytes": 24506
+ },
+ "רקעים וכדומה/אנכי_אירעוים 8.jpg": {
+  "source": "רקעים וכדומה\\אנכי_אירעוים 8.jpg",
+  "source_bytes": 74497,
+  "px": [
+   600,
+   432
+  ],
+  "transparent": false,
+  "bytes": 39230
+ },
+ "רקעים וכדומה/אנכי_בר מצווה 1.jpg": {
+  "source": "רקעים וכדומה\\אנכי_בר מצווה 1.jpg",
+  "source_bytes": 175063,
+  "px": [
+   600,
+   432
+  ],
+  "transparent": false,
+  "bytes": 91402
+ },
+ "רקעים וכדומה/אנכי_בר מצווה 2.jpg": {
+  "source": "רקעים וכדומה\\אנכי_בר מצווה 2.jpg",
+  "source_bytes": 103446,
+  "px": [
+   600,
+   432
+  ],
+  "transparent": false,
+  "bytes": 58213
+ },
+ "רקעים וכדומה/אנכי_בר מצווה 3.jpg": {
+  "source": "רקעים וכדומה\\אנכי_בר מצווה 3.jpg",
+  "source_bytes": 97038,
+  "px": [
+   600,
+   432
+  ],
+  "transparent": false,
+  "bytes": 49506
+ },
+ "רקעים וכדומה/אנכי_בר מצווה 4.jpg": {
+  "source": "רקעים וכדומה\\אנכי_בר מצווה 4.jpg",
+  "source_bytes": 129754,
+  "px": [
+   600,
+   432
+  ],
+  "transparent": false,
+  "bytes": 68504
+ },
+ "רקעים וכדומה/אנכי_בר מצווה 5.jpg": {
+  "source": "רקעים וכדומה\\אנכי_בר מצווה 5.jpg",
+  "source_bytes": 103147,
+  "px": [
+   600,
+   424
+  ],
+  "transparent": false,
+  "bytes": 55041
+ },
+ "רקעים וכדומה/אנכי_בר מצווה 6.jpg": {
+  "source": "רקעים וכדומה\\אנכי_בר מצווה 6.jpg",
+  "source_bytes": 66933,
+  "px": [
+   600,
+   424
+  ],
+  "transparent": false,
+  "bytes": 34781
+ },
+ "רקעים וכדומה/אנכי_בר מצווה 7.jpg": {
+  "source": "רקעים וכדומה\\אנכי_בר מצווה 7.jpg",
+  "source_bytes": 113787,
+  "px": [
+   600,
+   424
+  ],
+  "transparent": false,
+  "bytes": 61342
+ },
+ "רקעים וכדומה/אנכי_בר מצווה10.jpg": {
+  "source": "רקעים וכדומה\\אנכי_בר מצווה10.jpg",
+  "source_bytes": 113713,
+  "px": [
+   600,
+   432
+  ],
+  "transparent": false,
+  "bytes": 64972
+ },
+ "רקעים וכדומה/אנכי_ברית 2.jpg": {
+  "source": "רקעים וכדומה\\אנכי_ברית 2.jpg",
+  "source_bytes": 96672,
+  "px": [
+   600,
+   432
+  ],
+  "transparent": false,
+  "bytes": 51343
+ },
+ "רקעים וכדומה/אנכי_ברית 3.jpg": {
+  "source": "רקעים וכדומה\\אנכי_ברית 3.jpg",
+  "source_bytes": 102678,
+  "px": [
+   600,
+   432
+  ],
+  "transparent": false,
+  "bytes": 52223
+ },
+ "רקעים וכדומה/אנכי_ברית 4.jpg": {
+  "source": "רקעים וכדומה\\אנכי_ברית 4.jpg",
+  "source_bytes": 114044,
+  "px": [
+   600,
+   432
+  ],
+  "transparent": false,
+  "bytes": 58978
+ },
+ "רקעים וכדומה/אנכי_ברית 5.jpg": {
+  "source": "רקעים וכדומה\\אנכי_ברית 5.jpg",
+  "source_bytes": 143192,
+  "px": [
+   600,
+   432
+  ],
+  "transparent": false,
+  "bytes": 76404
+ },
+ "רקעים וכדומה/אנכי_בת מצווה 1.jpg": {
+  "source": "רקעים וכדומה\\אנכי_בת מצווה 1.jpg",
+  "source_bytes": 49126,
+  "px": [
+   600,
+   424
+  ],
+  "transparent": false,
+  "bytes": 23486
+ },
+ "רקעים וכדומה/אנכי_בת מצווה 2.jpg": {
+  "source": "רקעים וכדומה\\אנכי_בת מצווה 2.jpg",
+  "source_bytes": 145401,
+  "px": [
+   600,
+   432
+  ],
+  "transparent": false,
+  "bytes": 77131
+ },
+ "רקעים וכדומה/אנכי_בת מצווה 3.jpg": {
+  "source": "רקעים וכדומה\\אנכי_בת מצווה 3.jpg",
+  "source_bytes": 104982,
+  "px": [
+   600,
+   432
+  ],
+  "transparent": false,
+  "bytes": 55024
+ },
+ "רקעים וכדומה/אנכי_בת מצווה 4.jpg": {
+  "source": "רקעים וכדומה\\אנכי_בת מצווה 4.jpg",
+  "source_bytes": 73085,
+  "px": [
+   600,
+   432
+  ],
+  "transparent": false,
+  "bytes": 40992
+ },
+ "רקעים וכדומה/אנכי_הולדת בן 1.jpg": {
+  "source": "רקעים וכדומה\\אנכי_הולדת בן 1.jpg",
+  "source_bytes": 33570,
+  "px": [
+   600,
+   424
+  ],
+  "transparent": false,
+  "bytes": 17086
+ },
+ "רקעים וכדומה/אנכי_הולדת בן 2.jpg": {
+  "source": "רקעים וכדומה\\אנכי_הולדת בן 2.jpg",
+  "source_bytes": 58654,
+  "px": [
+   600,
+   424
+  ],
+  "transparent": false,
+  "bytes": 28194
+ },
+ "רקעים וכדומה/אנכי_חלאקה 1.jpg": {
+  "source": "רקעים וכדומה\\אנכי_חלאקה 1.jpg",
+  "source_bytes": 55122,
+  "px": [
+   600,
+   424
+  ],
+  "transparent": false,
+  "bytes": 28409
+ },
+ "רקעים וכדומה/אנכי_חלאקה 2.jpg": {
+  "source": "רקעים וכדומה\\אנכי_חלאקה 2.jpg",
+  "source_bytes": 107287,
+  "px": [
+   600,
+   432
+  ],
+  "transparent": false,
+  "bytes": 57115
+ },
+ "רקעים וכדומה/אנכי_חנוכה 1.jpg": {
+  "source": "רקעים וכדומה\\אנכי_חנוכה 1.jpg",
+  "source_bytes": 50093,
+  "px": [
+   600,
+   424
+  ],
+  "transparent": false,
+  "bytes": 21679
+ },
+ "רקעים וכדומה/אנכי_חתונה 1.jpg": {
+  "source": "רקעים וכדומה\\אנכי_חתונה 1.jpg",
+  "source_bytes": 65570,
+  "px": [
+   600,
+   424
+  ],
+  "transparent": false,
+  "bytes": 29370
+ },
+ "רקעים וכדומה/אנכי_חתונה 2.jpg": {
+  "source": "רקעים וכדומה\\אנכי_חתונה 2.jpg",
+  "source_bytes": 58862,
+  "px": [
+   600,
+   424
+  ],
+  "transparent": false,
+  "bytes": 31051
+ },
+ "רקעים וכדומה/אנכי_חתונה 3.jpg": {
+  "source": "רקעים וכדומה\\אנכי_חתונה 3.jpg",
+  "source_bytes": 35335,
+  "px": [
+   600,
+   424
+  ],
+  "transparent": false,
+  "bytes": 17918
+ },
+ "רקעים וכדומה/אנכי_חתונה 4.jpg": {
+  "source": "רקעים וכדומה\\אנכי_חתונה 4.jpg",
+  "source_bytes": 98795,
+  "px": [
+   600,
+   424
+  ],
+  "transparent": false,
+  "bytes": 50532
+ },
+ "רקעים וכדומה/אנכי_חתונה 5.jpg": {
+  "source": "רקעים וכדומה\\אנכי_חתונה 5.jpg",
+  "source_bytes": 74168,
+  "px": [
+   600,
+   432
+  ],
+  "transparent": false,
+  "bytes": 40492
+ },
+ "רקעים וכדומה/אנכי_חתונה 6.jpg": {
+  "source": "רקעים וכדומה\\אנכי_חתונה 6.jpg",
+  "source_bytes": 87671,
+  "px": [
+   600,
+   432
+  ],
+  "transparent": false,
+  "bytes": 48050
+ },
+ "רקעים וכדומה/אנכי_יום נישואין 1.jpg": {
+  "source": "רקעים וכדומה\\אנכי_יום נישואין 1.jpg",
+  "source_bytes": 85223,
+  "px": [
+   600,
+   424
+  ],
+  "transparent": false,
+  "bytes": 44223
+ },
+ "רקעים וכדומה/אנכי_יום נישואין 2.jpg": {
+  "source": "רקעים וכדומה\\אנכי_יום נישואין 2.jpg",
+  "source_bytes": 40031,
+  "px": [
+   600,
+   424
+  ],
+  "transparent": false,
+  "bytes": 19817
+ },
+ "רקעים וכדומה/אנכי_יום נישואין 3.jpg": {
+  "source": "רקעים וכדומה\\אנכי_יום נישואין 3.jpg",
+  "source_bytes": 45888,
+  "px": [
+   600,
+   424
+  ],
+  "transparent": false,
+  "bytes": 22469
+ },
+ "רקעים וכדומה/אנכי_יום נישואין 5.jpg": {
+  "source": "רקעים וכדומה\\אנכי_יום נישואין 5.jpg",
+  "source_bytes": 49552,
+  "px": [
+   600,
+   424
+  ],
+  "transparent": false,
+  "bytes": 25307
+ },
+ "רקעים וכדומה/אנכי_יום נישואין 6.jpg": {
+  "source": "רקעים וכדומה\\אנכי_יום נישואין 6.jpg",
+  "source_bytes": 45860,
+  "px": [
+   600,
+   424
+  ],
+  "transparent": false,
+  "bytes": 22814
+ },
+ "רקעים וכדומה/אנכי_יום נישואין 7.jpg": {
+  "source": "רקעים וכדומה\\אנכי_יום נישואין 7.jpg",
+  "source_bytes": 45004,
+  "px": [
+   600,
+   424
+  ],
+  "transparent": false,
+  "bytes": 22218
+ },
+ "רקעים וכדומה/אנכי_ירושלים 1.jpg": {
+  "source": "רקעים וכדומה\\אנכי_ירושלים 1.jpg",
+  "source_bytes": 167429,
+  "px": [
+   600,
+   424
+  ],
+  "transparent": false,
+  "bytes": 83900
+ },
+ "רקעים וכדומה/אנכי_ירושלים 2.jpg": {
+  "source": "רקעים וכדומה\\אנכי_ירושלים 2.jpg",
+  "source_bytes": 147347,
+  "px": [
+   600,
+   424
+  ],
+  "transparent": false,
+  "bytes": 79345
+ },
+ "רקעים וכדומה/אנכי_משפחתי 1.jpg": {
+  "source": "רקעים וכדומה\\אנכי_משפחתי 1.jpg",
+  "source_bytes": 143730,
+  "px": [
+   600,
+   432
+  ],
+  "transparent": false,
+  "bytes": 73621
+ },
+ "רקעים וכדומה/אנכי_משפחתי 2.jpg": {
+  "source": "רקעים וכדומה\\אנכי_משפחתי 2.jpg",
+  "source_bytes": 130906,
+  "px": [
+   600,
+   432
+  ],
+  "transparent": false,
+  "bytes": 71523
+ },
+ "רקעים וכדומה/אנכי_משפחתי 5.jpg": {
+  "source": "רקעים וכדומה\\אנכי_משפחתי 5.jpg",
+  "source_bytes": 144144,
+  "px": [
+   600,
+   432
+  ],
+  "transparent": false,
+  "bytes": 73992
+ },
+ "רקעים וכדומה/אנכי_משפחתי 6.jpg": {
+  "source": "רקעים וכדומה\\אנכי_משפחתי 6.jpg",
+  "source_bytes": 70256,
+  "px": [
+   600,
+   432
+  ],
+  "transparent": false,
+  "bytes": 35633
+ },
+ "רקעים וכדומה/אנכי_ראש השנה 1.jpg": {
+  "source": "רקעים וכדומה\\אנכי_ראש השנה 1.jpg",
+  "source_bytes": 32058,
+  "px": [
+   600,
+   424
+  ],
+  "transparent": false,
+  "bytes": 17471
+ },
+ "רקעים וכדומה/אנכי_ראש השנה 2.jpg": {
+  "source": "רקעים וכדומה\\אנכי_ראש השנה 2.jpg",
+  "source_bytes": 82927,
+  "px": [
+   600,
+   424
+  ],
+  "transparent": false,
+  "bytes": 39529
+ },
+ "רקעים וכדומה/אנכי_ראש השנה 3.jpg": {
+  "source": "רקעים וכדומה\\אנכי_ראש השנה 3.jpg",
+  "source_bytes": 39951,
+  "px": [
+   600,
+   424
+  ],
+  "transparent": false,
+  "bytes": 21321
+ },
+ "רקעים וכדומה/בקבוק יין מכסף.png": {
+  "source": "רקעים וכדומה\\בקבוק יין מכסף.png",
+  "source_bytes": 906004,
+  "px": [
+   1687,
+   3407
+  ],
+  "transparent": true,
+  "bytes": 882502
+ },
+ "רקעים וכדומה/חלאקה 3אנכי_.jpg": {
+  "source": "רקעים וכדומה\\חלאקה 3אנכי_.jpg",
+  "source_bytes": 123625,
+  "px": [
+   600,
+   433
+  ],
+  "transparent": false,
+  "bytes": 63730
+ },
+ "רקעים וכדומה/יום הולדת 1אנכי_.jpg": {
+  "source": "רקעים וכדומה\\יום הולדת 1אנכי_.jpg",
+  "source_bytes": 98283,
+  "px": [
+   600,
+   424
+  ],
+  "transparent": false,
+  "bytes": 48406
+ },
+ "רקעים וכדומה/יום נישואין 4אנכי_.jpg": {
+  "source": "רקעים וכדומה\\יום נישואין 4אנכי_.jpg",
+  "source_bytes": 41400,
+  "px": [
+   600,
+   424
+  ],
+  "transparent": false,
+  "bytes": 20753
+ },
+ "רקעים וכדומה/לב 1.png": {
+  "source": "רקעים וכדומה\\לב 1.png",
+  "source_bytes": 384066,
+  "px": [
+   1772,
+   2362
+  ],
+  "transparent": false,
+  "bytes": 499577
+ },
+ "רקעים וכדומה/לב 2.png": {
+  "source": "רקעים וכדומה\\לב 2.png",
+  "source_bytes": 189156,
+  "px": [
+   1772,
+   2362
+  ],
+  "transparent": false,
+  "bytes": 261182
+ },
+ "רקעים וכדומה/לב 3.png": {
+  "source": "רקעים וכדומה\\לב 3.png",
+  "source_bytes": 144644,
+  "px": [
+   1772,
+   2362
+  ],
+  "transparent": false,
+  "bytes": 166237
+ },
+ "רקעים מלכות/דף רקע מדרגות.jpg": {
+  "source": "רקעים מלכות\\דף רקע מדרגות.JPG",
+  "source_bytes": 34611,
+  "px": [
+   720,
+   929
+  ],
+  "transparent": false,
+  "bytes": 36772
+ },
+ "רקעים מלכות/דף רקע מדרגות2.jpg": {
+  "source": "רקעים מלכות\\דף רקע מדרגות2.JPG",
+  "source_bytes": 38067,
+  "px": [
+   768,
+   991
+  ],
+  "transparent": false,
+  "bytes": 40254
+ },
+ "רקעים מלכות/מדבקה צבעונית קטנה.jpg": {
+  "source": "רקעים מלכות\\מדבקה צבעונית קטנה.jpg",
+  "source_bytes": 11080,
+  "px": [
+   297,
+   213
+  ],
+  "transparent": false,
+  "bytes": 9655
+ },
+ "רקעים מלכות/מדבקה-קטן.jpg": {
+  "source": "רקעים מלכות\\מדבקה-קטן.jpg",
+  "source_bytes": 3096,
+  "px": [
+   213,
+   84
+  ],
+  "transparent": false,
+  "bytes": 2843
+ },
+ "רקעים מלכות/רקע אוניה.jpg": {
+  "source": "רקעים מלכות\\רקע אוניה.jpg",
+  "source_bytes": 250591,
+  "px": [
+   709,
+   994
+  ],
+  "transparent": false,
+  "bytes": 62802
+ },
+ "רקעים מלכות/רקע טלית.jpg": {
+  "source": "רקעים מלכות\\רקע טלית.jpg",
+  "source_bytes": 141594,
+  "px": [
+   709,
+   989
+  ],
+  "transparent": false,
+  "bytes": 143920
+ },
+ "רקעים מלכות/רקע כותל.jpg": {
+  "source": "רקעים מלכות\\רקע כותל.jpg",
+  "source_bytes": 122088,
+  "px": [
+   709,
+   987
+  ],
+  "transparent": false,
+  "bytes": 118165
+ },
+ "רקעים מלכות/רקע מגילה תעודה.jpg": {
+  "source": "רקעים מלכות\\רקע מגילה תעודה.jpg",
+  "source_bytes": 79349,
+  "px": [
+   709,
+   987
+  ],
+  "transparent": false,
+  "bytes": 76396
+ },
+ "רקעים מלכות/רקע מסגרת 2.jpg": {
+  "source": "רקעים מלכות\\רקע מסגרת 2.jpg",
+  "source_bytes": 65558,
+  "px": [
+   709,
+   989
+  ],
+  "transparent": false,
+  "bytes": 58614
+ },
+ "רקעים מלכות/רקע מסגרת.jpg": {
+  "source": "רקעים מלכות\\רקע מסגרת.jpg",
+  "source_bytes": 82585,
+  "px": [
+   709,
+   992
+  ],
+  "transparent": false,
+  "bytes": 79194
+ },
+ "רקעים מלכות/רקע נבל.jpg": {
+  "source": "רקעים מלכות\\רקע נבל.jpg",
+  "source_bytes": 131393,
+  "px": [
+   709,
+   986
+  ],
+  "transparent": false,
+  "bytes": 127624
+ },
+ "רקעים מלכות/רקע סידור.jpg": {
+  "source": "רקעים מלכות\\רקע סידור.jpg",
+  "source_bytes": 36277,
+  "px": [
+   455,
+   640
+  ],
+  "transparent": false,
+  "bytes": 36979
+ },
+ "רקעים מלכות/רקע עדין.jpg": {
+  "source": "רקעים מלכות\\רקע עדין.jpg",
+  "source_bytes": 65261,
+  "px": [
+   709,
+   991
+  ],
+  "transparent": false,
+  "bytes": 58312
+ },
+ "רקעים מלכות/רקע עט.jpg": {
+  "source": "רקעים מלכות\\רקע עט.JPG",
+  "source_bytes": 18395,
+  "px": [
+   427,
+   575
+  ],
+  "transparent": false,
+  "bytes": 18418
+ },
+ "רקעים מלכות/רקע עמוד צד.jpg": {
+  "source": "רקעים מלכות\\רקע עמוד צד.jpg",
+  "source_bytes": 45813,
+  "px": [
+   709,
+   989
+  ],
+  "transparent": false,
+  "bytes": 39244
+ },
+ "רקעים מלכות/רקע קולמוס 3.jpg": {
+  "source": "רקעים מלכות\\רקע קולמוס 3.jpg",
+  "source_bytes": 47064,
+  "px": [
+   709,
+   992
+  ],
+  "transparent": false,
+  "bytes": 44192
+ },
+ "רקעים מלכות/רקע קולמוס.jpg": {
+  "source": "רקעים מלכות\\רקע קולמוס.jpg",
+  "source_bytes": 245074,
+  "px": [
+   709,
+   993
+  ],
+  "transparent": false,
+  "bytes": 56277
+ },
+ "רקעים מלכות/רקע שער 2.jpg": {
+  "source": "רקעים מלכות\\רקע שער 2.jpg",
+  "source_bytes": 87599,
+  "px": [
+   709,
+   991
+  ],
+  "transparent": false,
+  "bytes": 82949
+ },
+ "רקעים מלכות/רקע שער 3.jpg": {
+  "source": "רקעים מלכות\\רקע שער 3.jpg",
+  "source_bytes": 157917,
+  "px": [
+   709,
+   992
+  ],
+  "transparent": false,
+  "bytes": 153361
+ },
+ "רקעים מלכות/רקע שער 4.jpg": {
+  "source": "רקעים מלכות\\רקע שער 4.jpg",
+  "source_bytes": 109462,
+  "px": [
+   656,
+   921
+  ],
+  "transparent": false,
+  "bytes": 112064
+ },
+ "רקעים מלכות/רקע שער 5.jpg": {
+  "source": "רקעים מלכות\\רקע שער 5.jpg",
+  "source_bytes": 108208,
+  "px": [
+   709,
+   996
+  ],
+  "transparent": false,
+  "bytes": 102376
+ },
+ "רקעים מלכות/רקע שער.jpg": {
+  "source": "רקעים מלכות\\רקע שער.jpg",
+  "source_bytes": 80524,
+  "px": [
+   709,
+   989
+  ],
+  "transparent": false,
+  "bytes": 77532
+ },
+ "רקעים מלכות/רקע-אוניה.png": {
+  "source": "רקעים מלכות\\רקע-אוניה.gif",
+  "source_bytes": 60908,
+  "px": [
+   342,
+   480
+  ],
+  "transparent": false,
+  "bytes": 105237
+ },
+ "רקעים מלכות/רקע-מסגרת-3.jpg": {
+  "source": "רקעים מלכות\\רקע-מסגרת-3.jpg",
+  "source_bytes": 87832,
+  "px": [
+   709,
+   989
+  ],
+  "transparent": false,
+  "bytes": 62266
+ },
+ "רקעים מלכות/רקע-מסגרת.jpg": {
+  "source": "רקעים מלכות\\רקע-מסגרת.jpg",
+  "source_bytes": 269231,
+  "px": [
+   709,
+   992
+  ],
+  "transparent": false,
+  "bytes": 76457
+ },
+ "רקעים מלכות/רקע-קולמוס-2.jpg": {
+  "source": "רקעים מלכות\\רקע-קולמוס-2.jpg",
+  "source_bytes": 52574,
+  "px": [
+   709,
+   985
+  ],
+  "transparent": false,
+  "bytes": 37976
+ },
+ "רקעים מלכות/רקע-קולמוס-3.jpg": {
+  "source": "רקעים מלכות\\רקע-קולמוס-3.jpg",
+  "source_bytes": 5629,
+  "px": [
+   178,
+   247
+  ],
+  "transparent": false,
+  "bytes": 5373
+ },
+ "רקעים מלכות/רקע-קולמוס-4.jpg": {
+  "source": "רקעים מלכות\\רקע-קולמוס-4.jpg",
+  "source_bytes": 17009,
+  "px": [
+   355,
+   493
+  ],
+  "transparent": false,
+  "bytes": 15861
+ },
+ "רקעים מלכות/רקע-קולמוס-5.jpg": {
+  "source": "רקעים מלכות\\רקע-קולמוס-5.jpg",
+  "source_bytes": 11090,
+  "px": [
+   284,
+   394
+  ],
+  "transparent": false,
+  "bytes": 10506
+ },
+ "רקעים מלכות/רקע-קולמוס-קטן.jpg": {
+  "source": "רקעים מלכות\\רקע-קולמוס-קטן.jpg",
+  "source_bytes": 2319,
+  "px": [
+   92,
+   128
+  ],
+  "transparent": false,
+  "bytes": 2248
+ },
+ "רקעים מלכות/שער-מלכות לוגו.jpg": {
+  "source": "רקעים מלכות\\שער-מלכות לוגו.JPG",
+  "source_bytes": 141143,
+  "px": [
+   708,
+   992
+  ],
+  "transparent": false,
+  "bytes": 150799
+ },
+ "רקעים מלכות/שער-מלכות.jpg": {
+  "source": "רקעים מלכות\\שער-מלכות.jpg",
+  "source_bytes": 177504,
+  "px": [
+   709,
+   992
+  ],
+  "transparent": false,
+  "bytes": 154283
+ },
+ "רקעים מלכות/תמונה חדשה (1).png": {
+  "source": "רקעים מלכות\\תמונה חדשה (1).png",
+  "source_bytes": 1489110,
+  "px": [
+   885,
+   858
+  ],
+  "transparent": true,
+  "bytes": 1005956
+ },
+ "רקעים מלכות/תמונה חדשה - עותק.png": {
+  "source": "רקעים מלכות\\תמונה חדשה - עותק.png",
+  "source_bytes": 118581,
+  "px": [
+   412,
+   166
+  ],
+  "transparent": false,
+  "bytes": 95348
+ },
+ "רקעים מלכות/תמונה חדשה.png": {
+  "source": "רקעים מלכות\\תמונה חדשה.png",
+  "source_bytes": 1489110,
+  "px": [
+   885,
+   858
+  ],
+  "transparent": true,
+  "bytes": 1005956
+ },
+ "תמונת מסגרת 1/Frame01.jpg": {
+  "source": "תמונת מסגרת 1\\Frame01.JPG",
+  "source_bytes": 130034,
+  "px": [
+   1200,
+   900
+  ],
+  "transparent": false,
+  "bytes": 143640
+ },
+ "תמונת מסגרת 1/Frame02.jpg": {
+  "source": "תמונת מסגרת 1\\Frame02.JPG",
+  "source_bytes": 119771,
+  "px": [
+   1200,
+   900
+  ],
+  "transparent": false,
+  "bytes": 135026
+ },
+ "תמונת מסגרת 1/Frame03.jpg": {
+  "source": "תמונת מסגרת 1\\Frame03.JPG",
+  "source_bytes": 79882,
+  "px": [
+   1200,
+   900
+  ],
+  "transparent": false,
+  "bytes": 88492
+ },
+ "תמונת מסגרת 1/Frame04.jpg": {
+  "source": "תמונת מסגרת 1\\Frame04.JPG",
+  "source_bytes": 84178,
+  "px": [
+   1200,
+   900
+  ],
+  "transparent": false,
+  "bytes": 85364
+ },
+ "תמונת מסגרת 1/Frame05.jpg": {
+  "source": "תמונת מסגרת 1\\Frame05.JPG",
+  "source_bytes": 102945,
+  "px": [
+   1200,
+   900
+  ],
+  "transparent": false,
+  "bytes": 113826
+ },
+ "תמונת מסגרת 1/Frame06.jpg": {
+  "source": "תמונת מסגרת 1\\Frame06.JPG",
+  "source_bytes": 87241,
+  "px": [
+   1200,
+   900
+  ],
+  "transparent": false,
+  "bytes": 91504
+ },
+ "תמונת מסגרת 1/Frame07.jpg": {
+  "source": "תמונת מסגרת 1\\Frame07.JPG",
+  "source_bytes": 98344,
+  "px": [
+   1200,
+   900
+  ],
+  "transparent": false,
+  "bytes": 97392
+ },
+ "תמונת מסגרת 1/Frame08.jpg": {
+  "source": "תמונת מסגרת 1\\Frame08.JPG",
+  "source_bytes": 104283,
+  "px": [
+   1200,
+   900
+  ],
+  "transparent": false,
+  "bytes": 113454
+ },
+ "תמונת מסגרת 1/Frame09.jpg": {
+  "source": "תמונת מסגרת 1\\Frame09.JPG",
+  "source_bytes": 70412,
+  "px": [
+   1200,
+   900
+  ],
+  "transparent": false,
+  "bytes": 74724
+ },
+ "תמונת מסגרת 1/Frame10.jpg": {
+  "source": "תמונת מסגרת 1\\Frame10.JPG",
+  "source_bytes": 77072,
+  "px": [
+   900,
+   900
+  ],
+  "transparent": false,
+  "bytes": 79931
+ },
+ "תמונת מסגרת 1/Frame11.jpg": {
+  "source": "תמונת מסגרת 1\\Frame11.JPG",
+  "source_bytes": 98701,
+  "px": [
+   900,
+   900
+  ],
+  "transparent": false,
+  "bytes": 110183
+ },
+ "תמונת מסגרת 1/Frame12.jpg": {
+  "source": "תמונת מסגרת 1\\Frame12.JPG",
+  "source_bytes": 57712,
+  "px": [
+   900,
+   900
+  ],
+  "transparent": false,
+  "bytes": 60490
+ },
+ "תמונת מסגרת 1/Frame13.jpg": {
+  "source": "תמונת מסגרת 1\\Frame13.JPG",
+  "source_bytes": 42885,
+  "px": [
+   900,
+   900
+  ],
+  "transparent": false,
+  "bytes": 41191
+ },
+ "תמונת מסגרת 1/Frame14.jpg": {
+  "source": "תמונת מסגרת 1\\Frame14.JPG",
+  "source_bytes": 48843,
+  "px": [
+   900,
+   900
+  ],
+  "transparent": false,
+  "bytes": 51595
+ },
+ "תמונת מסגרת 1/Frame15.jpg": {
+  "source": "תמונת מסגרת 1\\Frame15.JPG",
+  "source_bytes": 53946,
+  "px": [
+   900,
+   900
+  ],
+  "transparent": false,
+  "bytes": 55503
+ },
+ "תמונת מסגרת 1/Frame16.jpg": {
+  "source": "תמונת מסגרת 1\\Frame16.JPG",
+  "source_bytes": 79091,
+  "px": [
+   900,
+   900
+  ],
+  "transparent": false,
+  "bytes": 88352
+ },
+ "תמונת מסגרת 1/Frame17.jpg": {
+  "source": "תמונת מסגרת 1\\Frame17.JPG",
+  "source_bytes": 83281,
+  "px": [
+   900,
+   900
+  ],
+  "transparent": false,
+  "bytes": 93869
+ },
+ "תמונת מסגרת 1/Frame18.jpg": {
+  "source": "תמונת מסגרת 1\\Frame18.JPG",
+  "source_bytes": 111641,
+  "px": [
+   900,
+   900
+  ],
+  "transparent": false,
+  "bytes": 124806
+ },
+ "תמונת מסגרת 1/Frame19.jpg": {
+  "source": "תמונת מסגרת 1\\Frame19.JPG",
+  "source_bytes": 65377,
+  "px": [
+   900,
+   900
+  ],
+  "transparent": false,
+  "bytes": 70376
+ },
+ "תמונת מסגרת 1/Frame20.jpg": {
+  "source": "תמונת מסגרת 1\\Frame20.JPG",
+  "source_bytes": 73791,
+  "px": [
+   900,
+   900
+  ],
+  "transparent": false,
+  "bytes": 75350
+ },
+ "תמונת מסגרת 1/Frame21.jpg": {
+  "source": "תמונת מסגרת 1\\Frame21.JPG",
+  "source_bytes": 86273,
+  "px": [
+   900,
+   900
+  ],
+  "transparent": false,
+  "bytes": 85818
+ },
+ "תמונת מסגרת 1/Frame22.jpg": {
+  "source": "תמונת מסגרת 1\\Frame22.JPG",
+  "source_bytes": 106069,
+  "px": [
+   900,
+   900
+  ],
+  "transparent": false,
+  "bytes": 113647
+ },
+ "תמונת מסגרת 1/Frame23.jpg": {
+  "source": "תמונת מסגרת 1\\Frame23.JPG",
+  "source_bytes": 49347,
+  "px": [
+   900,
+   900
+  ],
+  "transparent": false,
+  "bytes": 49392
+ },
+ "תמונת מסגרת 1/Frame24.jpg": {
+  "source": "תמונת מסגרת 1\\Frame24.JPG",
+  "source_bytes": 60347,
+  "px": [
+   900,
+   900
+  ],
+  "transparent": false,
+  "bytes": 64555
+ },
+ "תמונת מסגרת 1/Frame25.jpg": {
+  "source": "תמונת מסגרת 1\\Frame25.JPG",
+  "source_bytes": 63323,
+  "px": [
+   900,
+   900
+  ],
+  "transparent": false,
+  "bytes": 70318
+ },
+ "תמונת מסגרת 1/Frame26.jpg": {
+  "source": "תמונת מסגרת 1\\Frame26.JPG",
+  "source_bytes": 95505,
+  "px": [
+   900,
+   900
+  ],
+  "transparent": false,
+  "bytes": 108486
+ },
+ "תמונת מסגרת 1/Frame27.jpg": {
+  "source": "תמונת מסגרת 1\\Frame27.JPG",
+  "source_bytes": 80185,
+  "px": [
+   900,
+   900
+  ],
+  "transparent": false,
+  "bytes": 90755
+ },
+ "תמונת מסגרת 1/Frame28.jpg": {
+  "source": "תמונת מסגרת 1\\Frame28.JPG",
+  "source_bytes": 43375,
+  "px": [
+   900,
+   900
+  ],
+  "transparent": false,
+  "bytes": 47680
+ },
+ "תמונת מסגרת 1/Frame29.jpg": {
+  "source": "תמונת מסגרת 1\\Frame29.JPG",
+  "source_bytes": 81209,
+  "px": [
+   900,
+   900
+  ],
+  "transparent": false,
+  "bytes": 91643
+ },
+ "תמונת מסגרת 1/Frame30.jpg": {
+  "source": "תמונת מסגרת 1\\Frame30.JPG",
+  "source_bytes": 61663,
+  "px": [
+   900,
+   900
+  ],
+  "transparent": false,
+  "bytes": 68252
+ },
+ "תמונת מסגרת 1/Frame31.jpg": {
+  "source": "תמונת מסגרת 1\\Frame31.JPG",
+  "source_bytes": 143431,
+  "px": [
+   1200,
+   900
+  ],
+  "transparent": false,
+  "bytes": 154333
+ },
+ "תמונת מסגרת 1/Frame32.jpg": {
+  "source": "תמונת מסגרת 1\\Frame32.JPG",
+  "source_bytes": 118144,
+  "px": [
+   1200,
+   900
+  ],
+  "transparent": false,
+  "bytes": 130507
+ },
+ "תמונת מסגרת 1/Frame33.jpg": {
+  "source": "תמונת מסגרת 1\\Frame33.JPG",
+  "source_bytes": 154635,
+  "px": [
+   1200,
+   900
+  ],
+  "transparent": false,
+  "bytes": 170027
+ },
+ "תמונת מסגרת 1/Frame34.jpg": {
+  "source": "תמונת מסגרת 1\\Frame34.JPG",
+  "source_bytes": 88655,
+  "px": [
+   1200,
+   900
+  ],
+  "transparent": false,
+  "bytes": 95284
+ },
+ "תמונת מסגרת 1/Frame35.jpg": {
+  "source": "תמונת מסגרת 1\\Frame35.JPG",
+  "source_bytes": 100577,
+  "px": [
+   1200,
+   900
+  ],
+  "transparent": false,
+  "bytes": 113097
+ },
+ "תמונת מסגרת 1/Frame36.jpg": {
+  "source": "תמונת מסגרת 1\\Frame36.JPG",
+  "source_bytes": 133071,
+  "px": [
+   1200,
+   900
+  ],
+  "transparent": false,
+  "bytes": 149089
+ },
+ "תמונת מסגרת 1/Frame37.jpg": {
+  "source": "תמונת מסגרת 1\\Frame37.JPG",
+  "source_bytes": 70581,
+  "px": [
+   1200,
+   900
+  ],
+  "transparent": false,
+  "bytes": 75767
+ },
+ "תמונת מסגרת 1/Frame38.jpg": {
+  "source": "תמונת מסגרת 1\\Frame38.JPG",
+  "source_bytes": 81102,
+  "px": [
+   1200,
+   900
+  ],
+  "transparent": false,
+  "bytes": 87553
+ },
+ "תמונת מסגרת 1/Frame41.jpg": {
+  "source": "תמונת מסגרת 1\\Frame41.JPG",
+  "source_bytes": 60118,
+  "px": [
+   900,
+   900
+  ],
+  "transparent": false,
+  "bytes": 68504
+ },
+ "תמונת מסגרת 1/Frame42.jpg": {
+  "source": "תמונת מסגרת 1\\Frame42.JPG",
+  "source_bytes": 54187,
+  "px": [
+   900,
+   900
+  ],
+  "transparent": false,
+  "bytes": 60374
+ },
+ "תמונת מסגרת 1/Frame43.jpg": {
+  "source": "תמונת מסגרת 1\\Frame43.JPG",
+  "source_bytes": 113289,
+  "px": [
+   900,
+   900
+  ],
+  "transparent": false,
+  "bytes": 131836
+ },
+ "תמונת מסגרת 1/Frame44.jpg": {
+  "source": "תמונת מסגרת 1\\Frame44.JPG",
+  "source_bytes": 74352,
+  "px": [
+   1200,
+   900
+  ],
+  "transparent": false,
+  "bytes": 75135
+ },
+ "תמונת מסגרת 1/Frame45.jpg": {
+  "source": "תמונת מסגרת 1\\Frame45.JPG",
+  "source_bytes": 107614,
+  "px": [
+   1200,
+   900
+  ],
+  "transparent": false,
+  "bytes": 108804
+ },
+ "תמונת מסגרת 1/Frame46.jpg": {
+  "source": "תמונת מסגרת 1\\Frame46.JPG",
+  "source_bytes": 145322,
+  "px": [
+   1200,
+   900
+  ],
+  "transparent": false,
+  "bytes": 159365
+ },
+ "תמונת מסגרת 1/Frame47.jpg": {
+  "source": "תמונת מסגרת 1\\Frame47.JPG",
+  "source_bytes": 77222,
+  "px": [
+   900,
+   900
+  ],
+  "transparent": false,
+  "bytes": 81100
+ },
+ "תמונת מסגרת 1/Frame48.jpg": {
+  "source": "תמונת מסגרת 1\\Frame48.JPG",
+  "source_bytes": 107736,
+  "px": [
+   900,
+   900
+  ],
+  "transparent": false,
+  "bytes": 123114
+ },
+ "תמונת מסגרת 1/Frame49.jpg": {
+  "source": "תמונת מסגרת 1\\Frame49.JPG",
+  "source_bytes": 108295,
+  "px": [
+   900,
+   900
+  ],
+  "transparent": false,
+  "bytes": 123644
+ },
+ "תמונת מסגרת 1/Frame50.jpg": {
+  "source": "תמונת מסגרת 1\\Frame50.JPG",
+  "source_bytes": 93161,
+  "px": [
+   900,
+   900
+  ],
+  "transparent": false,
+  "bytes": 104583
+ },
+ "תמונת מסגרת 1/מסגרתA4-1.jpg": {
+  "source": "תמונת מסגרת 1\\מסגרתA4-1.jpg",
+  "source_bytes": 1936040,
+  "px": [
+   3508,
+   2480
+  ],
+  "transparent": false,
+  "bytes": 984999
+ }
+}
