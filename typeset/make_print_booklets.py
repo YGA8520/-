@@ -138,8 +138,9 @@ def put_page(page, src, i, x, y, sides=('t', 'b', 'l', 'r')):
     return arr
 
 
-def spine_strip(left_arr, right_arr, spine_mm, path):
-    """a gradient between the right edge of the left page and the left edge of the right page, row by row, bleed included top and bottom"""
+def spine_strip(left_arr, right_arr, spine_mm, path, sigma=6):
+    """a gradient between the right edge of the left page and the left edge of the right page, row by row, bleed included top and bottom
+    (sigma: vertical smoothing in px; a large value keeps the ornaments at the edge of the covers from drawing streaks across the spine)"""
     la, ppm, pad = left_arr[:3]
     ra = right_arr[0]
     strip = int(round(1.5 * ppm))
@@ -148,11 +149,34 @@ def spine_strip(left_arr, right_arr, spine_mm, path):
     if len(right) != len(left):                              # the two pages lost a different sliver: bring the rows to the same count
         src_y = np.linspace(0, 1, len(right)); dst_y = np.linspace(0, 1, len(left))
         right = np.stack([np.interp(dst_y, src_y, right[:, c]) for c in range(3)], axis=1)
-    left, right = ndimage.gaussian_filter1d(left, 6, axis=0), ndimage.gaussian_filter1d(right, 6, axis=0)
+    left, right = ndimage.gaussian_filter1d(left, sigma, axis=0, mode='nearest'), ndimage.gaussian_filter1d(right, sigma, axis=0, mode='nearest')
     sw = max(2, int(round(spine_mm * ppm)))
     t = np.linspace(0, 1, sw, dtype=np.float32)[None, :, None]
     g = np.clip(left[:, None, :] * (1 - t) + right[:, None, :] * t, 0, 255).astype(np.uint8)
     Image.fromarray(g).save(path, quality=94, subsampling=0)
+
+
+def spine_title(pg, a, x0, spine):
+    """the title along the spine, reading from the top down (Hebrew; the first letter at the top), centred across the spine, and the logo at its foot
+    when the spine is 12 mm or wider; the em is 72 % of the spine width (at most 46 pt): the body of the letters (0.56 em in Ashkenazy) takes 40 % of the
+    spine and the whole ink (ל included, 0.82 em) keeps about 2 mm from each fold on a 10 mm spine; the body of the letters is centred across the spine"""
+    font = fitz.Font(fontfile=a.spine_font)
+    col = tuple(int(a.spine_color[i:i + 2], 16) / 255 for i in (0, 2, 4))
+    title = a.spine_title[::-1]                                           # visual order for a left-to-right drawing routine
+    fs = min(spine * 0.72 * MM, 46)
+    L = font.text_length(title, fontsize=fs) / MM
+    cx = x0 + spine / 2
+    logo_h = 0
+    if a.spine_logo and spine >= 12:
+        im = Image.open(a.spine_logo)
+        lw = min(spine - 8, 24.0)
+        lh = lw * im.height / im.width
+        ly = M + TH - 16 - lh
+        pg.insert_image(fitz.Rect(pt(cx - lw / 2), pt(ly), pt(cx + lw / 2), pt(ly + lh)), filename=a.spine_logo)
+        logo_h = lh + 16 + 8
+    avail = TH - 30 - logo_h
+    ytop = M + 18 + (avail - L) / 2
+    pg.insert_text(fitz.Point(pt(cx + 0.278 * fs / MM), pt(ytop + L)), title, fontsize=fs, fontfile=a.spine_font, fontname='spine', color=col, rotate=90)
 
 
 def main():
@@ -167,6 +191,12 @@ def main():
     ap.add_argument('--interior-name', default=None, help='file name of the interior (default <slug>_interior-print.pdf)')
     ap.add_argument('--cover-name', default=None, help='file name of the 4 cover sheets (default <slug>_cover-print.pdf)')
     ap.add_argument('--no-spread', action='store_true', help='no cover spread')
+    ap.add_argument('--spread-name', default=None, help='file name of the cover spread (default <slug>_cover-spread-print.pdf)')
+    ap.add_argument('--spine-title', default=None, help='title along the spine (Hebrew, logical order; first letter at the top)')
+    ap.add_argument('--spine-font', default=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets', 'fonts', 'Ashkenazy-Regular.ttf'))
+    ap.add_argument('--spine-color', default='4d3c2b')
+    ap.add_argument('--spine-logo', default=None, help='picture at the foot of the spine (only when the spine is 12 mm or wider)')
+    ap.add_argument('--spine-smooth', type=float, default=6.0, help='vertical smoothing of the spine gradient (mm)')
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
     work = fitz.open(a.text_src or a.src)                 # pages placed on the sheets (vector)
@@ -226,7 +256,7 @@ def main():
         la = la or padded_render(work, li)
         ra = ra or padded_render(work, ri)
         sp_path = os.path.join(a.out, f'.spine{sheet_no}.jpg')
-        spine_strip(la, ra, spine, sp_path)
+        spine_strip(la, ra, spine, sp_path, sigma=a.spine_smooth * la[1] if sheet_no == 0 else 6)
         pg.insert_image(fitz.Rect(pt(lx + TW), pt(M - B), pt(rx), pt(M + TH + B)), filename=sp_path, keep_proportion=False)
         os.remove(sp_path)
         for arr, x, pno in ((la, lx, li), (ra, rx, ri)):
@@ -239,11 +269,13 @@ def main():
         for (arr, x, sides) in ((la, lx, ('t', 'b', 'l', 'r')), (ra, rx, ('t', 'b', 'l', 'r'))):
             inner = 'r' if x == lx else 'l'                                         # the side towards the spine: only the 0.25 mm over the edge, the spine takes the rest
             bleed_strips(pg, arr[0], arr[2], arr[1], x, M, tuple(c for c in sides if c != inner), inner=inner)
+        if sheet_no == 0 and a.spine_title and spine >= 6:
+            spine_title(pg, a, lx + TW, spine)
         marks(pg, M, M, SW - M, M + TH, folds=(lx + TW, rx), slug=f'{nice} - cover spread, {label} - spine {spine:g} mm (estimate) - trim {2 * TW + spine:g} x {TH:g} mm - bleed {B:g} mm')
         pg.set_trimbox(fitz.Rect(pt(M), pt(M), pt(SW - M), pt(M + TH)))
         pg.set_bleedbox(fitz.Rect(pt(M - B), pt(M - B), pt(SW - M + B), pt(M + TH + B)))
     doc.set_metadata({'title': f'{nice} - cover spread, 2 sheets (print)', 'subject': f'outside and inside, spine {spine:g} mm', 'producer': 'make_print_booklets.py'})
-    p_spr = os.path.join(a.out, f'{a.slug}_cover-spread-print.pdf')
+    p_spr = os.path.join(a.out, a.spread_name or f'{a.slug}_cover-spread-print.pdf')
     doc.save(p_spr, garbage=3, deflate=True)
     doc.close()
     json.dump({'interior': p_in, 'cover': p_cov, 'spread': p_spr, 'interior_pages': len(interior), 'pad': pad, 'total': total, 'spine': spine, 'source_pages': n},
