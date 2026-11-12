@@ -26,8 +26,8 @@ body { font-family:"Guttman Drogolin",serif; color:var(--ink); }
 .ttl img.orn { height:0.66em; width:auto; display:block; position:relative; top:-0.04em; }
 .ttl img.orn.l { transform:scaleX(-1); }
 /* the panel covers the panel of the reference (5.66 - 75.25 mm, from 20.1 mm); under 91.5 mm the reference panel was
-   replaced by marble (clean_bg.py, marble_from 1615 px), where the bottom band stands */
-.panel { position:absolute; left:5.2mm; right:5.2mm; top:19.5mm; bottom:19.45mm; box-sizing:border-box;
+   replaced by marble (clean_bg.py, marble_from 1580 px), where the bottom band stands */
+.panel { position:absolute; left:5.2mm; right:5.2mm; top:19.5mm; bottom:20.6mm; box-sizing:border-box;
          padding:2.6mm 3.4mm 2.6mm; border-radius:2.6mm; display:flex; flex-direction:column; text-align:center;
          background:radial-gradient(ellipse at 50% 40%, #fffdf6 0%, #fbf6e8 70%, #f5eedb 100%);
          box-shadow:0 0 0 0.25mm rgba(255,255,255,.9), 0 0.6mm 2.2mm rgba(80,55,25,.28); }
@@ -37,7 +37,7 @@ body { font-family:"Guttman Drogolin",serif; color:var(--ink); }
 /* dividers: the swirls of the reference, traced (make_swirl_divider.py). Chromium snaps the size of an image to
    whole CSS px when it prints, so the size is given in whole px (28 x 6 px = 7.41 x 1.59 mm): every divider
    then has exactly the same size, wherever it falls */
-.items img.dv { display:block; width:28px; height:6px; margin:0.5mm auto; }
+.items img.dv { display:block; width:28px; height:6px; margin:0.4mm auto; }
 .items strong { font-weight:700; color:var(--wine); font-size:7.9pt; }
 sup { font-size:5pt; line-height:0; vertical-align:super; color:var(--gold); font-weight:700; padding-right:0.3mm; }
 .notes { margin-top:1.2mm; padding-top:0.7mm; border-top:0.15mm solid var(--gold-l); font-family:"Guttman Rashi",serif;
@@ -51,11 +51,11 @@ sup { font-size:5pt; line-height:0; vertical-align:super; color:var(--gold); fon
 /* בס״ד very small, centred above the title; the title box keeps its size (so the title its size) and is only moved
    0.9 mm down into the free space at the foot of the cartouche */
 .bsd { position:absolute; left:21mm; width:38mm; top:2.25mm; text-align:center; font-size:3.8pt; line-height:1; color:var(--wine); }
-/* bottom band on the marble (90.5 - 106.4 mm, above the bar of the frame, which starts at 106.75 mm): the dedication;
+/* bottom band on the marble (89.4 - 106.4 mm, above the bar of the frame, which starts at 106.75 mm): the dedication;
    the logo (right) with the בית הוראה line and its extensions beside it as its caption; the line for quantities at the
    foot of the band, centred on the page. A soft cream glow without an edge keeps the small text clear of the veins */
-.band { position:absolute; left:4.5mm; right:4.5mm; top:90.55mm; height:15.85mm; box-sizing:border-box; padding-top:1mm;
-        display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:0.6mm;
+.band { position:absolute; left:4.5mm; right:4.5mm; top:89.4mm; height:17mm; box-sizing:border-box; padding-top:1mm;
+        display:flex; flex-direction:column; align-items:center; justify-content:space-between;
         background:radial-gradient(ellipse 60% 62% at 50% 52%, rgba(253,249,238,.92) 0%, rgba(253,249,238,.75) 55%, rgba(253,249,238,0) 100%); }
 /* without a dedication the logo block and the quantities line stand in the middle of the band */
 .band.noded { justify-content:center; padding-top:0; }
@@ -63,20 +63,22 @@ sup { font-size:5pt; line-height:0; vertical-align:super; color:var(--gold); fon
 .band.noded .qty { margin-top:1.6mm; }
 .ded { white-space:nowrap; font-size:6.4pt; line-height:1; color:var(--ink); }
 .ded strong { color:var(--wine); }
-.org { display:flex; align-items:center; justify-content:center; gap:1.4mm; margin-top:0.6mm; }   /* air under the dedication */
+/* the logo and the בית הוראה line on a light banner that fades out to both sides (like the good-advice band, lighter) */
+.org { align-self:stretch; display:flex; align-items:center; justify-content:center; gap:1.4mm; padding:0.7mm 0;
+       background:linear-gradient(to right, rgba(232,216,178,0), rgba(232,216,178,.42) 18%, rgba(232,216,178,.42) 82%, rgba(232,216,178,0)); }
 .org img { height:7.6mm; display:block; }
 .org .sep { align-self:stretch; border-right:0.15mm solid var(--gold); margin:0.6mm 0; opacity:.7; }
 /* left of the logo, after a rule: the בית הוראה line with its number (larger, centred), a gold rule with "שלוחות הקו" in it,
    so it reads as the list of the extensions of that line, and the eight extensions in three columns */
 .ext { color:var(--ink); white-space:nowrap; }
 .ext-t { font-size:4.8pt; line-height:1; text-align:center; }
-.ext-s { display:flex; align-items:center; gap:1mm; margin:0.35mm 0 0.3mm; font-size:3.9pt; line-height:1; color:var(--gold); font-weight:700; }
-.ext-s::before, .ext-s::after { content:""; flex:1; border-top:0.12mm solid var(--gold-l); }
+.ext-s { display:flex; align-items:center; justify-content:center; gap:0.9mm; margin:0.35mm 0 0.3mm; font-size:3.9pt; line-height:1; color:var(--gold); font-weight:700; }
+.ext-s::before, .ext-s::after { content:""; width:0.6mm; height:0.6mm; background:var(--gold); transform:rotate(45deg); }
 .ext-t b { color:var(--wine); }
 .ext ol { list-style:none; margin:0; padding:0; display:grid; grid-template-rows:repeat(3, auto); grid-auto-flow:column;
           column-gap:1.9mm; row-gap:0.1mm; font-size:4.2pt; line-height:1.05; text-align:right; }
 .ext li b { display:inline-block; min-width:1.5mm; font-weight:700; color:var(--gold); margin-left:0.45mm; text-align:center; }
-.qty { margin-top:auto; white-space:nowrap; font-size:4pt; line-height:1; color:var(--ink); }
+.qty { white-space:nowrap; font-size:4pt; line-height:1; color:var(--ink); }
 .qty b { color:var(--wine); }
 </style></head><body>
 <div class="page">
