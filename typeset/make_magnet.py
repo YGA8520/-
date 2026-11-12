@@ -38,7 +38,8 @@ def rows():
 
 
 def parasha(name, date):
-    """the parasha, and under it in small letters what is special about the Shabbat (Chanukah, Shekalim..., Shabbat Mevarchim)"""
+    """the parasha and, beside it in small letters one under the other, what is special about the Shabbat
+    (Chanukah, Shekalim..., Shabbat Mevarchim): every row keeps the height of one line"""
     name = RENAME.get(name, name)
     tags = []
     if ' - ' in name:
@@ -46,8 +47,8 @@ def parasha(name, date):
         tags.append(b)
     if date in MEVARCHIM:
         tags.append('שבת מברכים')
-    sub = f'<span class="sp">{" · ".join(html.escape(t) for t in tags)}</span>' if tags else ''
-    return f'<b>{html.escape(name)}</b>{sub}'
+    sub = f'<span class="sp">{"".join(f"<i>{html.escape(t)}</i>" for t in tags)}</span>' if tags else ''
+    return f'<div class="pw"><b>{html.escape(name)}</b>{sub}</div>'
 
 
 def build():
@@ -61,75 +62,92 @@ def build():
     foot = ''.join(f'<div class="c"><div class="cl">{a}</div><div class="cn" dir="ltr">{n}</div><div class="cs">{b}</div></div>' for a, n, b in FOOT)
     fonts = os.path.join(HERE, 'assets', 'fonts')
     W, H = 154, 216
+    wave = ('M0,9 C18,3 34,2 52,6 C72,10.5 92,12 112,7 C126,3.6 141,2.6 154,5.5 V40 H0 Z')
+    hi = ('M0,9 C18,3 34,2 52,6 C72,10.5 92,12 112,7 C126,3.6 141,2.6 154,5.5')
+    banner = (f'<svg class="ban" viewBox="0 0 154 40" width="154mm" height="40mm" preserveAspectRatio="none">'
+              '<defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9b768"/><stop offset=".45" stop-color="#b98e3e"/>'
+              '<stop offset="1" stop-color="#94692a"/></linearGradient>'
+              '<linearGradient id="sh" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff6dc" stop-opacity=".2"/><stop offset=".5" stop-color="#fff6dc" stop-opacity=".9"/>'
+              '<stop offset="1" stop-color="#fff6dc" stop-opacity=".25"/></linearGradient></defs>'
+              f'<path d="{wave}" fill="url(#bg)"/>'
+              f'<path d="{hi}" fill="none" stroke="url(#sh)" stroke-width=".9" transform="translate(0,1.6)"/>'
+              f'<path d="{hi}" fill="none" stroke="#7d5820" stroke-width=".35" transform="translate(0,-.15)" opacity=".6"/></svg>')
     page = f'''<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><style>
 @font-face{{font-family:Shmulik;src:url("file://{fonts}/ShmulikCLM.ttf")}}
 @font-face{{font-family:Frank;src:url("file://{fonts}/FrankRuhlLibre.ttf");font-weight:300 900}}
 @font-face{{font-family:David;src:url("file://{fonts}/DavidLibre-Bold.ttf");font-weight:700}}
 @font-face{{font-family:David;src:url("file://{fonts}/DavidLibre-Medium.ttf");font-weight:500}}
 @page{{size:{W}mm {H}mm;margin:0}}
-:root{{--ink:#17120c;--brown:#5b3c14;--gold:#e2c27a;--line:rgba(91,60,20,.26);--plate:#2a1c0b}}
+:root{{--ink:#17120c;--brown:#5b3c14;--gold:#e2c27a;--line:rgba(91,60,20,.24)}}
 *{{box-sizing:border-box;margin:0;padding:0}}
 html,body{{width:{W}mm;height:{H}mm}}
 body{{font-family:Frank,serif;color:var(--ink);-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 .page{{position:relative;width:{W}mm;height:{H}mm;overflow:hidden;background:#e9d9a8 url("file://{MAG}/bg-gold.jpg") 0 0/100% 100% no-repeat}}
-.bsd{{position:absolute;top:7mm;right:12mm;font-weight:500;font-size:7pt;color:var(--brown)}}
-.logos{{position:absolute;top:7.3mm;left:0;right:0;display:flex;justify-content:center;align-items:center;gap:7mm}}
-.logos img.oy{{height:20mm;filter:drop-shadow(0 .4mm .5mm rgba(60,35,5,.35))}}
-.logos img.bo{{height:15.5mm}}
-.ttl{{position:absolute;top:27.2mm;left:0;right:0;text-align:center}}
-.ttl h1{{font-family:Shmulik;font-weight:400;font-size:35pt;line-height:1.05;color:#1a120a;
+.bsd{{position:absolute;top:6.2mm;right:11.5mm;font-weight:500;font-size:6.6pt;color:var(--brown)}}
+/* header: the title in the middle, a logo on each side */
+header{{position:absolute;top:8.5mm;left:10.5mm;right:10.5mm;height:25mm;display:flex;align-items:center;justify-content:space-between}}
+header img.oy{{height:24mm;filter:drop-shadow(0 .4mm .5mm rgba(60,35,5,.35))}}
+header img.bo{{height:19mm}}
+.ttl{{text-align:center;flex:1}}
+.ttl h1{{font-family:Shmulik;font-weight:400;font-size:36pt;line-height:1;color:#1a120a;white-space:nowrap;
   text-shadow:0 0 1.2mm rgba(255,250,232,.95),0 0 3mm rgba(255,244,214,.9),0 0 6mm rgba(255,238,200,.7),.6mm .9mm 1.1mm rgba(55,32,6,.55)}}
-.ttl .yr{{margin-top:-.8mm;font-family:Shmulik;font-size:15.5pt;color:#6b3a0e;
+.ttl .yr{{margin-top:.6mm;font-family:Shmulik;font-size:16pt;line-height:1;color:#6b3a0e;
   text-shadow:0 0 1mm rgba(255,250,232,.95),0 0 2.6mm rgba(255,244,214,.85),.4mm .6mm .8mm rgba(55,32,6,.45)}}
-.tbl{{position:absolute;top:47mm;left:11mm;right:11mm;border:.55mm solid #fff;border-radius:3mm;overflow:hidden;
-  background:rgba(255,252,240,.42);box-shadow:0 .4mm 1.2mm rgba(70,45,10,.18)}}
+.tbl{{position:absolute;top:34.5mm;left:10.5mm;right:10.5mm;border:.55mm solid #fff;border-radius:3mm;overflow:hidden;
+  background:rgba(255,252,240,.45);box-shadow:0 .4mm 1.2mm rgba(70,45,10,.18)}}
 table{{width:100%;border-collapse:collapse;table-layout:fixed}}
-col.c-p{{width:22%}} col.c-d{{width:14%}}
-thead th{{color:#3a260c;font-weight:700;font-size:7.1pt;line-height:1.08;padding:1.1mm .1mm;vertical-align:middle}}
-thead tr.lb th{{background:linear-gradient(180deg,#fdf6e4,#ecd9a8);border-bottom:.45mm solid #b48a3c}}
-thead th.p{{text-align:right;padding-right:2mm}}
-/* the day row: Friday (ivory) and Shabbat Kodesh (gold) */
-thead tr.dy th{{font-size:9pt;font-weight:800;padding:.7mm 0 .6mm;letter-spacing:.3pt}}
-thead tr.dy th.fr{{background:#fffaf0;color:#5b3c14}}
-thead tr.dy th.sh{{background:linear-gradient(180deg,#e8cd8a,#d4ae5f);color:#2a1a06;border-right:.6mm solid #fff}}
-thead tr.dy th.e{{background:linear-gradient(180deg,#fdf6e4,#f6ead0)}}
-thead tr.lb th.fr{{background:linear-gradient(180deg,#fffdf6,#f3e8cc)}}
-thead tr.lb th.sh{{background:linear-gradient(180deg,#f4e3b6,#e2c47f)}}
-thead tr.lb th.g, td.g{{border-right:.6mm solid #fff}}
-tbody td{{height:5.2mm;line-height:1;padding:0 .2mm;text-align:center;vertical-align:middle;white-space:nowrap;border-top:.15mm solid var(--line)}}
-td.fr{{background:rgba(255,255,255,.32)}}
-td.sh{{background:rgba(214,176,96,.26)}}
-tbody tr:nth-child(even) td.p, tbody tr:nth-child(even) td.d{{background:rgba(255,255,255,.3)}}
-tbody tr:nth-child(even) td.fr{{background:rgba(255,255,255,.55)}}
-tbody tr:nth-child(even) td.sh{{background:rgba(214,176,96,.4)}}
-td.p{{text-align:right;padding-right:2mm;line-height:.86}}
-td.p b{{display:block;font-weight:800;font-size:10.4pt;line-height:.82}}
-td.p .sp{{display:block;font-weight:600;font-size:5.9pt;line-height:.88;color:#7a4a12;margin-top:.3mm}}
+col.c-p{{width:26%}} col.c-d{{width:14.5%}}
+thead th{{color:#3a260c;font-weight:700;font-size:7.3pt;line-height:1.08;padding:1.2mm .1mm;vertical-align:middle}}
+thead tr.lb th{{background:linear-gradient(180deg,#fdf6e4,#efdfb4);border-bottom:.45mm solid #b48a3c}}
+thead th.p{{text-align:right;padding-right:2.2mm}}
+thead tr.dy th{{font-size:9.4pt;font-weight:800;padding:.8mm 0 .7mm;letter-spacing:.3pt}}
+thead tr.dy th.e{{background:linear-gradient(180deg,#fdf6e4,#f5e8c8)}}
+/* Friday: a soft wheat tone, Shabbat Kodesh: deeper gold; the step between them is gentle, with a thin gold rule */
+thead tr.dy th.fr{{background:linear-gradient(180deg,#f3e2b4,#e9d39a);color:#4a300c}}
+thead tr.dy th.sh{{background:linear-gradient(180deg,#e2c37c,#cfa655);color:#2a1a06}}
+thead tr.lb th.fr{{background:linear-gradient(180deg,#f7ebc8,#ecd9a6)}}
+thead tr.lb th.sh{{background:linear-gradient(180deg,#ecd49a,#ddbd76)}}
+thead th.g, td.g{{border-right:.35mm solid #b48a3c}}
+tbody td{{height:5.35mm;line-height:1;padding:0 .2mm;text-align:center;vertical-align:middle;white-space:nowrap;border-top:.15mm solid var(--line)}}
+td.fr{{background:rgba(232,206,146,.30)}}
+td.sh{{background:rgba(212,172,90,.34)}}
+tbody tr:nth-child(even) td.p, tbody tr:nth-child(even) td.d{{background:rgba(255,255,255,.32)}}
+tbody tr:nth-child(even) td.fr{{background:rgba(232,206,146,.46)}}
+tbody tr:nth-child(even) td.sh{{background:rgba(212,172,90,.48)}}
+td.p{{text-align:right;padding-right:2.2mm}}
+.pw{{display:flex;align-items:center;gap:1.6mm}}
+.pw b{{font-weight:800;font-size:10.6pt;line-height:1}}
+.pw .sp{{display:flex;flex-direction:column;justify-content:center;font-weight:600;font-size:6pt;line-height:1.02;color:#7a4a12;
+  border-right:.25mm solid rgba(122,74,18,.45);padding-right:1.1mm}}
+.pw .sp i{{font-style:normal;display:block}}
 td.d{{font-weight:500;font-size:8.6pt;color:#3d2c14}}
-td.t{{font-family:David;font-weight:700;font-size:11.6pt;letter-spacing:.1pt}}
-.mot{{position:absolute;top:180mm;left:12mm;right:46mm;height:8.6mm;background:linear-gradient(180deg,#fffaf0,#f1e2bb);border-radius:4.75mm;color:var(--ink);
+td.t{{font-family:David;font-weight:700;font-size:11.8pt;letter-spacing:.1pt}}
+/* Motzaei Shabbat, between the table and the banner, beside the candles */
+.mot{{position:absolute;top:169mm;left:58mm;right:10.5mm;height:8.8mm;background:linear-gradient(180deg,#fffaf0,#f1e2bb);border-radius:4.4mm;color:var(--ink);
   display:flex;align-items:center;justify-content:center;gap:2.4mm;box-shadow:0 .4mm 1mm rgba(60,35,5,.25);border:.45mm solid #b48a3c}}
 .mot .k{{color:var(--brown);font-weight:700;font-size:9.6pt}}
 .mot .s{{font-weight:800;font-size:10.8pt}}
 .mot .tm{{font-family:David;font-weight:700;font-size:13pt;color:#7a2c10}}
 .mot i{{width:.3mm;height:4.2mm;background:#c4a463}}
-/* the phone lines: white numbers on a dark plate */
-.foot{{position:absolute;top:191.4mm;left:12mm;right:46mm;height:17mm;display:flex;align-items:center;background:linear-gradient(180deg,#3a2810,var(--plate));
-  border-radius:3mm;border:.45mm solid #b48a3c;box-shadow:0 .4mm 1mm rgba(60,35,5,.3)}}
-.c{{flex:1;text-align:center}}
-.c + .c{{border-right:.2mm solid rgba(226,194,122,.45)}}
-.cl{{font-weight:700;font-size:7.6pt;color:var(--gold)}}
-.cn{{font-family:David;font-weight:700;font-size:11.4pt;letter-spacing:.3pt;line-height:1.2;color:#fff}}
-.cs{{font-weight:500;font-size:5.7pt;color:#e9dcc0;min-height:2.2mm}}
-.still{{position:absolute;right:5mm;bottom:4.5mm;width:40mm;filter:drop-shadow(-.4mm -.2mm .8mm rgba(60,35,5,.25))}}
+/* the wavy banner along the bottom, with the phone lines on it and the Shabbat still life standing on its left end */
+.ban{{position:absolute;left:0;bottom:0;filter:drop-shadow(0 -.6mm 1mm rgba(70,45,10,.3))}}
+.foot{{position:absolute;top:189.5mm;left:56mm;right:8mm;height:20mm;display:flex;align-items:center}}
+.c{{flex:1;text-align:center;padding:0 .8mm}}
+.c + .c{{border-right:.25mm solid rgba(255,246,220,.6)}}
+.cl{{font-weight:800;font-size:8pt;color:#3a230a}}
+.cn{{white-space:nowrap;font-family:David;font-weight:700;font-size:12pt;letter-spacing:.3pt;line-height:1.2;color:#fff;
+  text-shadow:0 .25mm .5mm rgba(60,35,5,.7),0 0 1.2mm rgba(90,55,10,.5)}}
+.cs{{font-weight:600;font-size:6pt;color:#3a230a;min-height:2.2mm}}
+.still{{position:absolute;left:5mm;bottom:4.5mm;width:50mm;filter:drop-shadow(.4mm -.2mm .9mm rgba(60,35,5,.3))}}
 </style></head><body><div class="page">
 <div class="bsd">בס״ד</div>
-<div class="logos"><img class="oy" src="file://{MAG}/ohel-yissachar.png"><img class="bo" src="file://{HERE}/assets/cover/logo.png"></div>
-<div class="ttl"><h1>זמני השיעורים</h1><div class="yr">חורף תשפ״ז</div></div>
+<header><img class="oy" src="file://{MAG}/ohel-yissachar.png"><div class="ttl"><h1>זמני השיעורים</h1><div class="yr">חורף תשפ״ז</div></div>
+<img class="bo" src="file://{HERE}/assets/cover/logo.png"></header>
 <div class="tbl"><table><colgroup><col class="c-p"><col class="c-d">{'<col>' * 6}</colgroup>
-<thead><tr class="dy"><th class="e" colspan="2"></th><th class="fr" colspan="3">יום שישי</th><th class="sh" colspan="3">שבת קודש</th></tr>
+<thead><tr class="dy"><th class="e" colspan="2"></th><th class="fr" colspan="3">יום שישי</th><th class="sh g" colspan="3">שבת קודש</th></tr>
 <tr class="lb">{''.join(f'<th class="{"p" if i == 0 else ("fr" if 2 <= i < 5 else ("sh" if i >= 5 else ""))}{" g" if i == 5 else ""}">{c}</th>' for i, c in enumerate(COLS))}</tr></thead><tbody>{tr}</tbody></table></div>
 <div class="mot"><span class="k">מוצאי שבת קודש</span><i></i><span class="s">שיעור לכיתה ח׳</span><i></i><span class="tm">20:15</span></div>
+{banner}
 <div class="foot">{foot}</div>
 <img class="still" src="file://{MAG}/shabbat-still.png">
 </div></body></html>'''
