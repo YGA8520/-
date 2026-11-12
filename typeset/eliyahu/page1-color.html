@@ -54,7 +54,7 @@ sup { font-size:5pt; line-height:0; vertical-align:super; color:var(--gold); fon
 /* bottom band on the marble (90.5 - 106.4 mm, above the bar of the frame, which starts at 106.75 mm): the dedication;
    the logo (right) with the בית הוראה line and its extensions beside it as its caption; the line for quantities at the
    foot of the band, centred on the page. A soft cream glow without an edge keeps the small text clear of the veins */
-.band { position:absolute; left:4.5mm; right:4.5mm; top:90.55mm; height:15.85mm; box-sizing:border-box; padding-top:1.3mm;
+.band { position:absolute; left:4.5mm; right:4.5mm; top:90.55mm; height:15.85mm; box-sizing:border-box; padding-top:1mm;
         display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:0.6mm;
         background:radial-gradient(ellipse 60% 62% at 50% 52%, rgba(253,249,238,.92) 0%, rgba(253,249,238,.75) 55%, rgba(253,249,238,0) 100%); }
 /* without a dedication the logo block and the quantities line stand in the middle of the band */
@@ -63,14 +63,18 @@ sup { font-size:5pt; line-height:0; vertical-align:super; color:var(--gold); fon
 .band.noded .qty { margin-top:1.6mm; }
 .ded { white-space:nowrap; font-size:6.4pt; line-height:1; color:var(--ink); }
 .ded strong { color:var(--wine); }
-.org { display:flex; align-items:center; justify-content:center; gap:1.8mm; margin-top:0.9mm; }   /* air under the dedication */
+.org { display:flex; align-items:center; justify-content:center; gap:1.4mm; margin-top:0.6mm; }   /* air under the dedication */
 .org img { height:7.6mm; display:block; }
-/* beside the logo (left of it), as its caption: the בית הוראה line with its number, and under it its eight extensions in three columns */
+.org .sep { align-self:stretch; border-right:0.15mm solid var(--gold); margin:0.6mm 0; opacity:.7; }
+/* left of the logo, after a rule: the בית הוראה line with its number (larger, centred), a gold rule with "שלוחות הקו" in it,
+   so it reads as the list of the extensions of that line, and the eight extensions in three columns */
 .ext { color:var(--ink); white-space:nowrap; }
-.ext-t { font-size:4.5pt; line-height:1; text-align:right; margin-bottom:0.5mm; }
+.ext-t { font-size:4.8pt; line-height:1; text-align:center; }
+.ext-s { display:flex; align-items:center; gap:1mm; margin:0.35mm 0 0.3mm; font-size:3.9pt; line-height:1; color:var(--gold); font-weight:700; }
+.ext-s::before, .ext-s::after { content:""; flex:1; border-top:0.12mm solid var(--gold-l); }
 .ext-t b { color:var(--wine); }
 .ext ol { list-style:none; margin:0; padding:0; display:grid; grid-template-rows:repeat(3, auto); grid-auto-flow:column;
-          column-gap:2.4mm; row-gap:0.25mm; font-size:4.2pt; line-height:1.12; text-align:right; }
+          column-gap:1.9mm; row-gap:0.1mm; font-size:4.2pt; line-height:1.05; text-align:right; }
 .ext li b { display:inline-block; min-width:1.5mm; font-weight:700; color:var(--gold); margin-left:0.45mm; text-align:center; }
 .qty { margin-top:auto; white-space:nowrap; font-size:4pt; line-height:1; color:var(--ink); }
 .qty b { color:var(--wine); }
@@ -103,8 +107,9 @@ sup { font-size:5pt; line-height:0; vertical-align:super; color:var(--gold); fon
   <div class="band">
     <div class="ded">לעילוי נשמת <strong>אליהו ז״ל</strong> בן יבדלחט״א חיים מאיר־עזריאל</div>
     <div class="org">
-      <img src="logo-color.png" alt="ברומו של עולם">
+      <img src="logo-color.png" alt="ברומו של עולם"><span class="sep"></span>
       <div class="ext"><div class="ext-t"><b>קו ׳בית הוראה׳ לתפילה וברכות:</b> 077.215.00.94</div>
+        <div class="ext-s"><span>שלוחות הקו</span></div>
         <ol><li><b>1</b>שאלות בהלכה</li><li><b>2</b>שאלות בביאורי התפילה</li><li><b>3</b>ריתחא דאורייתא</li><li><b>4</b>שיעורים מרבני הארגון</li>
             <li><b>5</b>תרומה מאובטחת בנדרים פלוס</li><li><b>6</b>השארת הודעה למנהלים</li><li><b>7</b>אודות בית ההוראה</li><li><b>8</b>זמני היום על פי ההלכה</li></ol></div>
     </div>
