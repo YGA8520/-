@@ -51,31 +51,28 @@ sup { font-size:5pt; line-height:0; vertical-align:super; color:var(--gold); fon
 /* בס״ד very small, centred above the title; the title box keeps its size (so the title its size) and is only moved
    0.9 mm down into the free space at the foot of the cartouche */
 .bsd { position:absolute; left:21mm; width:38mm; top:2.25mm; text-align:center; font-size:3.8pt; line-height:1; color:var(--wine); }
-/* bottom band on the marble (92 - 106.5 mm, above the bar of the frame): the dedication; the phones | the logo with the
-   activities of the organisation beside it, as its caption (no rule between them); the line for quantities under all,
-   centred on the page. The band may be wider than the panel. A soft cream glow without an edge keeps the small text
-   clear of the veins */
-.band { position:absolute; left:4.5mm; right:4.5mm; top:90.55mm; height:16mm; box-sizing:border-box; padding-top:1.3mm;
+/* bottom band on the marble (90.5 - 106.4 mm, above the bar of the frame, which starts at 106.75 mm): the dedication;
+   the logo (right) with the בית הוראה line and its extensions beside it as its caption; the line for quantities at the
+   foot of the band, centred on the page. A soft cream glow without an edge keeps the small text clear of the veins */
+.band { position:absolute; left:4.5mm; right:4.5mm; top:90.55mm; height:15.85mm; box-sizing:border-box; padding-top:1.3mm;
         display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:0.6mm;
         background:radial-gradient(ellipse 60% 62% at 50% 52%, rgba(253,249,238,.92) 0%, rgba(253,249,238,.75) 55%, rgba(253,249,238,0) 100%); }
 /* without a dedication the logo block and the quantities line stand in the middle of the band */
 .band.noded { justify-content:center; padding-top:0; }
 .band.noded .org { margin-top:0; }
+.band.noded .qty { margin-top:1.6mm; }
 .ded { white-space:nowrap; font-size:6.4pt; line-height:1; color:var(--ink); }
 .ded strong { color:var(--wine); }
-.org { display:flex; align-items:center; justify-content:center; gap:1.5mm; margin-top:0.9mm; }   /* air under the dedication */
-.org .sep { align-self:stretch; border-right:0.15mm solid var(--gold); margin:0.6mm 0; opacity:.7; }
-.phones { display:flex; flex-direction:column; gap:0.4mm; font-size:4.3pt; line-height:1.07; color:var(--ink); text-align:center; white-space:nowrap; }
-.phones b { color:var(--wine); }
-.brand { display:flex; align-items:center; gap:1.1mm; }
-.brand img { height:7mm; display:block; }
-/* beside the logo, as its caption: the extensions of the בית הוראה line - a heading, then two columns of four */
+.org { display:flex; align-items:center; justify-content:center; gap:1.8mm; margin-top:0.9mm; }   /* air under the dedication */
+.org img { height:7.6mm; display:block; }
+/* beside the logo (left of it), as its caption: the בית הוראה line with its number, and under it its eight extensions in three columns */
 .ext { color:var(--ink); white-space:nowrap; }
-.ext-t { font-size:4.2pt; line-height:1; font-weight:700; color:var(--wine); text-align:right; margin-bottom:0.35mm; }
-.ext ol { list-style:none; margin:0; padding:0; display:grid; grid-template-rows:repeat(4, auto); grid-auto-flow:column;
-          column-gap:2.2mm; row-gap:0.15mm; font-size:4.1pt; line-height:1.1; text-align:right; }
+.ext-t { font-size:4.5pt; line-height:1; text-align:right; margin-bottom:0.5mm; }
+.ext-t b { color:var(--wine); }
+.ext ol { list-style:none; margin:0; padding:0; display:grid; grid-template-rows:repeat(3, auto); grid-auto-flow:column;
+          column-gap:2.4mm; row-gap:0.25mm; font-size:4.2pt; line-height:1.12; text-align:right; }
 .ext li b { display:inline-block; min-width:1.5mm; font-weight:700; color:var(--gold); margin-left:0.45mm; text-align:center; }
-.qty { white-space:nowrap; font-size:4pt; line-height:1; color:var(--ink); }
+.qty { margin-top:auto; white-space:nowrap; font-size:4pt; line-height:1; color:var(--ink); }
 .qty b { color:var(--wine); }
 </style></head><body>
 <div class="page">
@@ -106,12 +103,10 @@ sup { font-size:5pt; line-height:0; vertical-align:super; color:var(--gold); fon
   <div class="band">
     <div class="ded">לעילוי נשמת <strong>אליהו ז״ל</strong> בן יבדלחט״א חיים מאיר־עזריאל</div>
     <div class="org">
-      <div class="phones"><span><b>קו ׳בית הוראה׳<br>לתפילה וברכות</b><br>077.215.00.94</span><span><b>קו קול הלשון</b><br>073.371.83.76</span></div>
-      <span class="sep"></span>
-      <div class="brand"><img src="logo-color.png" alt="ברומו של עולם">
-        <div class="ext"><div class="ext-t">שלוחות קו ׳בית הוראה׳</div>
-          <ol><li><b>1</b>שאלות בהלכה</li><li><b>2</b>שאלות בביאורי התפילה</li><li><b>3</b>ריתחא דאורייתא</li><li><b>4</b>שיעורים מרבני הארגון</li>
-              <li><b>5</b>תרומה מאובטחת בנדרים פלוס</li><li><b>6</b>השארת הודעה למנהלים</li><li><b>7</b>אודות בית ההוראה</li><li><b>8</b>זמני היום על פי ההלכה</li></ol></div></div>
+      <img src="logo-color.png" alt="ברומו של עולם">
+      <div class="ext"><div class="ext-t"><b>קו ׳בית הוראה׳ לתפילה וברכות:</b> 077.215.00.94</div>
+        <ol><li><b>1</b>שאלות בהלכה</li><li><b>2</b>שאלות בביאורי התפילה</li><li><b>3</b>ריתחא דאורייתא</li><li><b>4</b>שיעורים מרבני הארגון</li>
+            <li><b>5</b>תרומה מאובטחת בנדרים פלוס</li><li><b>6</b>השארת הודעה למנהלים</li><li><b>7</b>אודות בית ההוראה</li><li><b>8</b>זמני היום על פי ההלכה</li></ol></div>
     </div>
     <div class="qty"><b>להזמנת כמויות:</b> 052.761.62.96</div>
   </div>
