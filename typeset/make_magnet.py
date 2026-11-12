@@ -73,7 +73,7 @@ def build():
 html,body{{width:{W}mm;height:{H}mm}}
 body{{font-family:Frank,serif;color:var(--ink);-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 .page{{position:relative;width:{W}mm;height:{H}mm;overflow:hidden;background:#e9d9a8 url("file://{MAG}/bg-gold.jpg") 0 0/100% 100% no-repeat}}
-.bsd{{position:absolute;top:6.2mm;right:11.5mm;font-weight:500;font-size:6.6pt;color:var(--brown)}}
+.bsd{{position:absolute;top:5.6mm;left:0;right:0;text-align:center;font-weight:500;font-size:7pt;letter-spacing:.3pt;color:var(--brown)}}
 /* header: the title in the middle, a logo on each side */
 header{{position:absolute;top:7mm;left:9mm;right:9mm;height:24mm;display:flex;align-items:center;justify-content:space-between}}
 header img.oy{{height:21mm;filter:drop-shadow(0 .4mm .5mm rgba(60,35,5,.35))}}
@@ -128,7 +128,7 @@ td.t{{font-family:David;font-weight:700;font-size:11.8pt;letter-spacing:.1pt}}
   text-shadow:0 .2mm .45mm rgba(70,40,5,.75),0 0 1.2mm rgba(90,55,10,.45)}}
 .cs{{font-weight:600;font-size:6pt;color:#3d2508;min-height:2.2mm}}
 </style></head><body><div class="page">
-<div class="bsd">בס״ד</div>
+<div class="bsd">בסייעתא דשמיא</div>
 <header><img class="oy" src="file://{MAG}/ohel-yissachar.png"><div class="ttl"><h1>זמני השיעורים</h1><div class="yr">חורף תשפ״ז</div></div>
 <img class="bo" src="file://{HERE}/assets/cover/logo.png"></header>
 <div class="tbl"><table><colgroup><col class="c-p"><col class="c-d">{'<col>' * 6}</colgroup>
