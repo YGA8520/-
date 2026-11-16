@@ -66,18 +66,19 @@ sup { font-size:5pt; line-height:0; vertical-align:super; color:var(--gold); fon
 /* the logo and the בית הוראה line on a light banner that fades out to both sides (like the good-advice band, lighter) */
 .org { align-self:stretch; display:flex; align-items:center; justify-content:center; gap:1.4mm; padding:0.7mm 0;
        background:linear-gradient(to right, rgba(232,216,178,0), rgba(232,216,178,.42) 18%, rgba(232,216,178,.42) 82%, rgba(232,216,178,0)); }
-.org img { height:7.6mm; display:block; }
+.org img { height:9mm; display:block; }
 .org .sep { align-self:stretch; border-right:0.15mm solid var(--gold); margin:0.6mm 0; opacity:.7; }
 /* left of the logo, after a rule: the בית הוראה line with its number (larger, centred), a gold rule with "שלוחות הקו" in it,
-   so it reads as the list of the extensions of that line, and the eight extensions in three columns */
+   so it reads as the list of the extensions of that line, and the four extensions kept (1, 2, 3, 8) in two columns of two,
+   in letters as large as the room of the five removed extensions allows (items 6.3 pt over 4.2 pt, heading 5.8 over 4.8) */
 .ext { color:var(--ink); white-space:nowrap; }
-.ext-t { font-size:4.8pt; line-height:1; text-align:center; }
-.ext-s { display:flex; align-items:center; justify-content:center; gap:0.9mm; margin:0.35mm 0 0.3mm; font-size:3.9pt; line-height:1; color:var(--gold); font-weight:700; }
-.ext-s::before, .ext-s::after { content:""; width:0.6mm; height:0.6mm; background:var(--gold); transform:rotate(45deg); }
+.ext-t { font-size:5.8pt; line-height:1; text-align:center; }
+.ext-s { display:flex; align-items:center; justify-content:center; gap:1mm; margin:0.35mm 0 0.3mm; font-size:4.6pt; line-height:1; color:var(--gold); font-weight:700; }
+.ext-s::before, .ext-s::after { content:""; width:0.7mm; height:0.7mm; background:var(--gold); transform:rotate(45deg); }
 .ext-t b { color:var(--wine); }
-.ext ol { list-style:none; margin:0; padding:0; display:grid; grid-template-rows:repeat(3, auto); grid-auto-flow:column;
-          column-gap:1.9mm; row-gap:0.1mm; font-size:4.2pt; line-height:1.05; text-align:right; }
-.ext li b { display:inline-block; min-width:1.5mm; font-weight:700; color:var(--gold); margin-left:0.45mm; text-align:center; }
+.ext ol { list-style:none; margin:0; padding:0; display:grid; grid-template-rows:repeat(2, auto); grid-auto-flow:column;
+          justify-content:center; column-gap:3.4mm; row-gap:0.15mm; font-size:6.3pt; line-height:1.08; text-align:right; }
+.ext li b { display:inline-block; min-width:1.8mm; font-weight:700; color:var(--gold); margin-left:0.5mm; text-align:center; }
 .qty { white-space:nowrap; font-size:4pt; line-height:1; color:var(--ink); }
 .qty b { color:var(--wine); }
 </style></head><body>
@@ -112,8 +113,7 @@ sup { font-size:5pt; line-height:0; vertical-align:super; color:var(--gold); fon
       <img src="logo-color.png" alt="ברומו של עולם"><span class="sep"></span>
       <div class="ext"><div class="ext-t"><b>קו ׳בית הוראה׳ לתפילה וברכות:</b> 077.215.00.94</div>
         <div class="ext-s"><span>שלוחות הקו</span></div>
-        <ol><li><b>1</b>שאלות בהלכה</li><li><b>2</b>שאלות בביאורי התפילה</li><li><b>3</b>ריתחא דאורייתא</li><li><b>4</b>שיעורים מרבני הארגון</li>
-            <li><b>5</b>תרומה מאובטחת בנדרים פלוס</li><li><b>6</b>השארת הודעה למנהלים</li><li><b>7</b>אודות בית ההוראה</li><li><b>8</b>זמני היום על פי ההלכה</li></ol></div>
+        <ol><li><b>1</b>שאלות בהלכה</li><li><b>2</b>שאלות בביאורי התפילה</li><li><b>3</b>ריתחא דאורייתא</li><li><b>8</b>זמני היום על פי ההלכה</li></ol></div>
     </div>
     <div class="qty"><b>להזמנת כמויות:</b> 052.761.62.96</div>
   </div>
@@ -128,7 +128,11 @@ const opts = new Map(location.hash.slice(1).split('&').filter(Boolean).map(kv =>
     refua:   'לרפואת <strong>אפרת מרים לידיה</strong> בת נחמה בתוך שאר חולי ישראל',
     hatzlacha: 'הוקדש על ידי הנגיד <strong>יוסף ג׳ורג׳</strong> בן ימנה להצלחה בכל העניינים במהרה',
     zivug:   'לזכות <strong>הודיה</strong> בת אסתר לזיווג הגון בקרוב ממש',
+    yosef:   'לרפואת <strong>יוסף</strong> בן טווס בתוך שאר חולי ישראל',
   };
+  // #notitle: the cartouche is left empty, title and בס״ד (they are laid over afterwards from title-taamim.pdf by
+  // make_versions.py, when the Taamim font file is not at hand)
+  if (opts.has('notitle')) document.querySelectorAll('.ttl, .bsd').forEach(e => e.style.visibility = 'hidden');
   const d = document.querySelector('.ded');
   if (opts.get('ded') === 'none') { d.remove(); document.querySelector('.band').classList.add('noded'); }   // no dedication
   else if (opts.has('ded')) d.innerHTML = DED[opts.get('ded')];
